@@ -1,0 +1,14 @@
+cp main.py /flash
+cp application.py /flash
+cp ./lib/radio.py /flash/lib
+
+#repl
+repl pyboard import machine~
+repl pyboard machine.reset()
+#repl
+
+#repl pyboard import sys~
+#repl pyboard sys.exit()~
+
+#repl pyboard from main import reset~
+#repl pyboard reset()
