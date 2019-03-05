@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # (c) 2017-2019 Andreas Motl <andreas@terkin.org>
+# License: GNU General Public License, Version 3
 
 # micropython -m upip install micropython-json micropython-copy
 import json
@@ -8,18 +9,12 @@ import json
 # micropython -m upip install micropython-urequests
 #import urequests
 
-# http.client works
-# micropython -m upip install micropython-http.client micropython-io micropython-time
 
 try:
-	from urllib import urlsplit, urlencode
-	from http.client import HTTPConnection
-	from copy import copy
+    from urllib import urlsplit, urlencode
+    from copy import copy
 except:
-	pass
-
-# micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
-from mqtt import MQTTClient
+    pass
 
 
 class TelemetryClient:
@@ -35,12 +30,14 @@ class TelemetryClient:
     FORMAT_CSV          = 'csv'
 
     def __init__(self, uri, format, suffixes=None):
+
+        print('Starting Terkin TelemetryClient')
         self.uri = uri
 
         self.transport = None
         self.format = format
         self.suffixes = suffixes or {}
-        
+
         """
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
@@ -103,6 +100,11 @@ class TelemetryClient:
 class TelemetryTransportHTTP:
 
     def __init__(self, uri, format):
+
+        # http.client works
+        # micropython -m upip install micropython-http.client micropython-io micropython-time
+        from http.client import HTTPConnection
+
         self.uri = uri
         self.format = format
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
@@ -145,6 +147,10 @@ class TelemetryTransportHTTP:
 class TelemetryTransportMQTT:
 
     def __init__(self, uri, format):
+
+        # micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
+        from mqtt import MQTTClient
+
         self.uri = uri
         self.format = format
         # self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
@@ -153,7 +159,7 @@ class TelemetryTransportMQTT:
         self.connection.connect()
 
     def send(self, request_data):
-        topic = "hiveeyes/testdrive/irgendwas/baz/data.json" 
+        topic = "hiveeyes/testdrive/irgendwas/baz/data.json"
         print('MQTT Topic:  ', topic)
         print('Payload:     ', request_data['payload'])
         self.connection.publish(topic, request_data['payload'])
