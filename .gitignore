@@ -1,5 +1,5 @@
-*_local.py
 .venv*
 .idea
 .pioenvs
 *.pyc
+settings.py

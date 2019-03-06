@@ -31,9 +31,15 @@ class NetworkManager:
 
         # Check WiFi connectivity.
         if self.station.isconnected():
+
             print("WiFi STA: Already connected")
+
             # Give system some breath.
             time.sleep(0.25)
+
+            # Inform about networking status.
+            self.print_status()
+
             return True
 
         print("WiFi STA: Starting connection")
@@ -58,7 +64,10 @@ class NetworkManager:
                 machine.idle()
 
             print('WiFi STA: Succeeded')
+
+            # Inform about networking status.
             self.print_status()
+
             return True
 
         except Exception as ex:
@@ -83,7 +92,7 @@ class NetworkManager:
                 break
             except OSError as ex:
                 print(ex)
-            print('Waiting for NIC')
+            print('Waiting for networking')
             time.sleep(0.25)
             attempts += 1
-        print('NIC arrived')
+        print('Networking established')

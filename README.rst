@@ -92,7 +92,10 @@ Firmware upgrade
 Pycom Upgrader application
 ==========================
 Install the Pycom Upgrader application for your platform.
-See also: https://pycom.io/downloads/
+See also:
+
+- https://pycom.io/downloads/
+- https://docs.pycom.io/gettingstarted/installation/firmwaretool.html
 
 .. todo:: Add command for ArchLinux et al.
 
@@ -134,3 +137,10 @@ See also: https://docs.pycom.io/advance/downgrade.html
 
     # List built-in modules
     >>> help('modules')
+
+
+*******
+Credits
+*******
+- micropython-lib
+- Microhomie

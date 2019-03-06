@@ -1,5 +1,6 @@
-# from https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
-
+# -*- coding: utf-8 -*-
+# (c) 2017 Daniel Campora
+# https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
 import usocket as socket
 import ustruct as struct
 from ubinascii import hexlify
@@ -13,7 +14,6 @@ class MQTTClient:
                  ssl=False, ssl_params={}):
         if port == 0:
             port = 8883 if ssl else 1883
-        print("mqtt connect:", server, port)
         self.client_id = client_id
         self.sock = None
         self.addr = socket.getaddrinfo(server, port)[0][-1]

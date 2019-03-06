@@ -1,0 +1,7 @@
+# Install requirements of Hiveeyes MPY logger to target device using "rshell"
+
+mkdir /flash/lib/terkin
+rsync terkin /flash/lib/terkin
+
+mkdir /flash/lib/hiveeyes
+rsync hiveeyes /flash/lib/hiveeyes

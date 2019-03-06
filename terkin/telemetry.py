@@ -35,6 +35,8 @@ class TelemetryClient:
         self.uri = uri
 
         self.transport = None
+        self.handlers = {}
+
         self.format = format
         self.suffixes = suffixes or {}
 
@@ -77,14 +79,7 @@ class TelemetryClient:
         suffix = self.suffixes.get(self.transport, '').format(**self.__dict__)
         real_uri = real_uri + suffix
 
-        if self.transport == TelemetryClient.TRANSPORT_HTTP:
-            transport = TelemetryTransportHTTP(real_uri, self.format)
-
-        elif self.transport == TelemetryClient.TRANSPORT_MQTT:
-            transport = TelemetryTransportMQTT(real_uri, self.format)
-
-        else:
-            raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
+        handler = self.get_handler(real_uri)
 
         payload = data
         if serialize:
@@ -94,7 +89,25 @@ class TelemetryClient:
             'payload': payload,
         }
 
-        return transport.send(request)
+        return handler.send(request)
+
+    def get_handler(self, uri):
+
+        if uri in self.handlers:
+            return self.handlers[uri]
+
+        if self.transport == TelemetryClient.TRANSPORT_HTTP:
+            handler = TelemetryTransportHTTP(uri, self.format)
+
+        elif self.transport == TelemetryClient.TRANSPORT_MQTT:
+            handler = TelemetryTransportMQTT(uri, self.format)
+
+        else:
+            raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
+
+        self.handlers[uri] = handler
+
+        return handler
 
 
 class TelemetryTransportHTTP:
@@ -148,11 +161,21 @@ class TelemetryTransportMQTT:
 
     def __init__(self, uri, format):
 
-        # micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
-        from mqtt import MQTTClient
-
+        print('TelemetryTransportMQTT')
         self.uri = uri
         self.format = format
+
+        try:
+            self.start()
+        except Exception as ex:
+            print('ERROR: Failed to connect to MQTT broker. {}'.format(ex))
+
+    def start(self):
+
+        # TODO: Add multiadapter thing, currently based on mqtt.py by Pycom.
+        # INACTIVE: micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
+        from mqtt import MQTTClient
+
         # self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
         self.connection = MQTTClient("umqtt_client", "swarm.hiveeyes.org")
         self.connection.DEBUG = True
