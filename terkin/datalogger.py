@@ -101,5 +101,8 @@ class TerkinDatalogger:
         else:
             self.device.tlog('Telemetry data transmission failed')
 
+        # Run the garbage collector.
+        self.device.run_gc()
+
         # Sleep a little bit
         utime.sleep(self.settings.MAINLOOP_INTERVAL)

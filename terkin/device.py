@@ -20,6 +20,8 @@ class TerkinDevice:
         self.chrono.start()
 
         self.networking = None
+        self.wdt = None
+        self.rtc = None
 
     def start_networking(self):
         self.tlog('Starting networking')
@@ -64,6 +66,14 @@ class TerkinDevice:
         while not rtc.synced():
             time.sleep_ms(50)
         print(rtc.now())
+
+    def run_gc(self):
+        """
+        Run a garbage collection.
+        https://docs.pycom.io/firmwareapi/micropython/gc.html
+        """
+        import gc
+        gc.collect()
 
     def start_telemetry(self):
         self.tlog('Starting telemetry')
