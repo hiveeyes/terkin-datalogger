@@ -19,4 +19,4 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Add another sensor.
         memfree = MemoryFree()
-        self.add_sensor(memfree)
+        self.register_sensor(memfree)

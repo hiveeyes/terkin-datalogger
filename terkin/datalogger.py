@@ -46,6 +46,9 @@ class TerkinDatalogger:
         """
         pass
 
+    def register_sensor(self, sensor):
+        self.sensors.append(sensor)
+
     def start_mainloop(self):
         # TODO: Refactor by using timers.
 
@@ -67,9 +70,6 @@ class TerkinDatalogger:
 
             # Yup.
             machine.idle()
-
-    def add_sensor(self, sensor):
-        self.sensors.append(sensor)
 
     def read_sensors(self):
         data = {}

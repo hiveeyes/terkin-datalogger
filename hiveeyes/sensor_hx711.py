@@ -56,7 +56,7 @@ class HX711Sensor:
             self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
         except Exception as ex:
             print('ERROR: HX711 hardware driver failed. {}'.format(ex))
-            return
+            raise
 
         # Configure the HX711 driver.
         if self.scale is not None:

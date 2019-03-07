@@ -31,9 +31,12 @@ class BobDatalogger(HiveeyesDatalogger):
         self.device.tlog('Registering BOB sensors')
 
         # Setup the HX711.
-        self.register_hx711()
+        try:
+            self.add_hx711_sensor()
+        except Exception as ex:
+            print('INFO:  Skipping HX711 sensor. {}'.format(ex))
 
-    def register_hx711(self):
+    def add_hx711_sensor(self):
         """
         Setup and register the HX711 sensor component with your data logger.
         """
@@ -54,7 +57,7 @@ class BobDatalogger(HiveeyesDatalogger):
         hx711_sensor.start()
 
         # Register with framework.
-        self.add_sensor(hx711_sensor)
+        self.register_sensor(hx711_sensor)
 
     def loop(self):
         """
