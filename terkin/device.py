@@ -59,13 +59,19 @@ class TerkinDevice:
             self.wdt.feed()
 
     def start_rtc(self):
+        """
+        The RTC is used to keep track of the date and time.
+        """
+        # https://docs.pycom.io/firmwareapi/pycom/machine/rtc.html
         # https://medium.com/@chrismisztur/pycom-uasyncio-installation-94931fc71283
+        import time
         from machine import RTC
-        rtc = RTC()
-        rtc.ntp_sync("pool.ntp.org", 360)
-        while not rtc.synced():
+        self.rtc = RTC()
+        # TODO: Use values from configuration settings here.
+        self.rtc.ntp_sync("pool.ntp.org", 360)
+        while not self.rtc.synced():
             time.sleep_ms(50)
-        print(rtc.now())
+        print(self.rtc.now())
 
     def run_gc(self):
         """
