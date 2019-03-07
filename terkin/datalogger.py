@@ -3,6 +3,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import utime
+import machine
 from terkin.device import TerkinDevice
 
 
@@ -57,6 +58,9 @@ class TerkinDatalogger:
             self.device.feed_wdt()
 
             self.loop()
+
+            # Yup.
+            machine.idle()
 
     def add_sensor(self, sensor):
         self.sensors.append(sensor)
