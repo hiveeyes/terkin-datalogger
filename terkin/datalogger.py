@@ -35,7 +35,7 @@ class TerkinDatalogger:
 
         self.register_sensors()
 
-        self._mainloop()
+        self.start_mainloop()
 
     def register_sensors(self):
         self.device.tlog('Registering Terkin sensors')
@@ -46,8 +46,9 @@ class TerkinDatalogger:
         """
         pass
 
-    def _mainloop(self):
+    def start_mainloop(self):
         # TODO: Refactor by using timers.
+
         # Start the watchdog for sanity.
         #self.device.start_wdt()
 
@@ -57,6 +58,11 @@ class TerkinDatalogger:
             # Feed the watchdog timer to keep the system alive.
             self.device.feed_wdt()
 
+            # Indicate activity.
+            # TODO: Optionally disable this output.
+            print('--- loop ---')
+
+            # Run downstream mainloop handlers.
             self.loop()
 
             # Yup.
@@ -69,20 +75,24 @@ class TerkinDatalogger:
         data = {}
         for sensor in self.sensors:
             sensor_name = sensor.__class__.__name__
-            print('Reading sensor "{}"'.format(sensor_name))
+            print('INFO:  Reading sensor "{}"'.format(sensor_name))
             try:
                 data.update(sensor.read())
             except Exception as ex:
-                print('Reading sensor "{}" failed: {}'.format(sensor_name, ex))
+                print('ERROR: Reading sensor "{}" failed: {}'.format(sensor_name, ex))
         return data
 
     def loop(self):
-        self.device.tlog('Terkin mainloop')
+        self.device.tlog('Terkin loop')
 
         # Read sensors.
         data = self.read_sensors()
 
+        # Debugging: Short-circuit telemetry.
+        #print(data); return
+
         # Transmit data.
+        # TODO: Optionally disable telemetry.
         success = self.device.telemetry.transmit(data)
 
         # Evaluate outcome.

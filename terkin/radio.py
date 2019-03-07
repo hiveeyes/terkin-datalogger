@@ -20,6 +20,9 @@ class NetworkManager:
         self.station = None
 
     def start_wifi(self):
+        """
+        https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
+        """
         self.station = WLAN()
 
         # Save the default ssid and auth for restoring AP mode later
