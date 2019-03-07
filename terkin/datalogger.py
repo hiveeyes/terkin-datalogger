@@ -77,7 +77,9 @@ class TerkinDatalogger:
             sensor_name = sensor.__class__.__name__
             print('INFO:  Reading sensor "{}"'.format(sensor_name))
             try:
-                data.update(sensor.read())
+                reading = sensor.read()
+                if reading is not None:
+                    data.update(reading)
             except Exception as ex:
                 print('ERROR: Reading sensor "{}" failed: {}'.format(sensor_name, ex))
         return data
