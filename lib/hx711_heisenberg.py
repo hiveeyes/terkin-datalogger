@@ -9,8 +9,8 @@ Updates
 License: GNU General Public License, Version 3
 https://github.com/walterheisenberg/hivewatch_esp32/blob/master/lib/hx711lib.py
 
-Setup China-Waage
-=================
+Setup
+=====
 ::
 
     sc = HX711(0, 2)

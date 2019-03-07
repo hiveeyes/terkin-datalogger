@@ -8,7 +8,7 @@ from machine import Pin, enable_irq, disable_irq, idle
 class HX711:
     def __init__(self, dout, pd_sck, gain=128):
 
-        self.pSCK = Pin(pd_sck , mode=Pin.OUT)
+        self.pSCK = Pin(pd_sck, mode=Pin.OUT)
         self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_DOWN)
         self.pSCK.value(False)
 
@@ -19,7 +19,7 @@ class HX711:
         self.time_constant = 0.1
         self.filtered = 0
 
-        self.set_gain(gain);
+        self.set_gain(gain)
 
     def set_gain(self, gain):
         if gain is 128:

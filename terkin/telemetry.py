@@ -208,7 +208,7 @@ class TelemetryTransportMQTT:
             from mqtt import MQTTClient
 
         except Exception as ex:
-            print('ERROR: Loading MQTT module failed: {}'.format(ex))
+            print('ERROR: Loading MQTT module failed. {}'.format(ex))
             self.defunct = True
             return False
 
@@ -217,12 +217,14 @@ class TelemetryTransportMQTT:
         try:
             # TODO: Use MQTT broker value from configuration settings.
             # TODO: Use device identifier here to make the MQTT client id more unique.
+            print('INFO: Connecting to MQTT broker')
             self.connection = MQTTClient("umqtt_client", "swarm.hiveeyes.org")
             self.connection.DEBUG = True
             self.connection.connect()
+            print('INFO: Connecting to MQTT broker succeeded')
 
         except Exception as ex:
-            print('ERROR: Connecting to MQTT broker failed: {}'.format(ex))
+            print('ERROR: Connecting to MQTT broker failed. {}'.format(ex))
             self.defunct = True
             return False
 

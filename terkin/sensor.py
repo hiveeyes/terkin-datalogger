@@ -13,6 +13,7 @@ class DummySensor:
 
 
 class MemoryFree:
+
     def read(self):
         import gc
         return {'memfree': gc.mem_free()}

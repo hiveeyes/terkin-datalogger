@@ -6,6 +6,7 @@ import utime
 from terkin.device import TerkinDevice
 
 
+# Maybe refactor to TerkinCore.
 class TerkinDatalogger:
 
     def __init__(self, settings):
