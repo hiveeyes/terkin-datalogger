@@ -47,7 +47,15 @@ class TerkinDatalogger:
 
     def _mainloop(self):
         # TODO: Refactor by using timers.
+        # Start the watchdog for sanity.
+        #self.device.start_wdt()
+
+        # Enter the main loop.
         while True:
+
+            # Feed the watchdog timer to keep the system alive.
+            self.device.feed_wdt()
+
             self.loop()
 
     def add_sensor(self, sensor):

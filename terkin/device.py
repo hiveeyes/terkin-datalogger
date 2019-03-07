@@ -35,6 +35,27 @@ class TerkinDevice:
         # Inform about networking status.
         #self.networking.print_status()
 
+    def start_wdt(self):
+        """
+        The WDT is used to restart the system when the application crashes and
+        ends up into a non recoverable state. After enabling, the application
+        must "feed" the watchdog periodically to prevent it from expiring and
+        resetting the system.
+        """
+        # https://docs.pycom.io/firmwareapi/pycom/machine/wdt.html
+
+        print('INFO: Starting the watchdog timer (WDT)')
+
+        from machine import WDT
+        # Enable it with a specified timeout.
+        # TODO: Use values from configuration settings here.
+        self.wdt = WDT(timeout=5000)
+        self.wdt.feed()
+
+    def feed_wdt(self):
+        if self.wdt is not None:
+            self.wdt.feed()
+
     def start_rtc(self):
         # https://medium.com/@chrismisztur/pycom-uasyncio-installation-94931fc71283
         from machine import RTC
