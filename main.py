@@ -7,6 +7,7 @@ Convenient data logger framework conceived for the Bee Observer (BOB) project.
 https://community.hiveeyes.org/c/bee-observer
 """
 import settings
+from terkin.sensor import DummySensor
 from hiveeyes.datalogger import HiveeyesDatalogger
 
 
@@ -29,6 +30,9 @@ class BobDatalogger(HiveeyesDatalogger):
         # Add some sensors for the Bee Observer (BOB) project.
         self.device.tlog('Registering BOB sensors')
 
+        # Add a new sensor. This is just an example sensor.
+        sensor = DummySensor()
+        self.add_sensor(sensor)
 
     def loop(self):
         """
