@@ -1,4 +1,5 @@
 from . import __version__
+from terkin.sensor import MemoryFree
 from terkin.datalogger import TerkinDatalogger
 
 
@@ -11,3 +12,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
     def register_sensors(self):
         super().register_sensors()
         self.device.tlog('Registering Hiveeyes sensors')
+
+        # Add another sensor.
+        memfree = MemoryFree()
+        self.add_sensor(memfree)

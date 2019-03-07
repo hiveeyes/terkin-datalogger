@@ -10,3 +10,9 @@ class DummySensor:
         # Fake measurement.
         data = {"temperature": 42.84, "humidity": 83}
         return data
+
+
+class MemoryFree:
+    def read(self):
+        import gc
+        return {'memfree': gc.mem_free()}
