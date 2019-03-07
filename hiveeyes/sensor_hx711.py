@@ -44,15 +44,19 @@ class HX711Sensor:
 
         # Error out for unknown hardware driver.
         else:
-            raise ValueError('ERROR: Unknown HX711 driver "{}"'.format(name))
+            raise ValueError('ERROR: Unknown HX711 hardware driver "{}"'.format(name))
 
-        print('INFO: Selected HX711 hardware driver "{}"'.format(name))
+        print('INFO:  Selected HX711 hardware driver "{}"'.format(name))
         self.driver_class = HX711
 
     def start(self):
 
         # Initialize the HX711 hardware driver.
-        self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+        try:
+            self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+        except Exception as ex:
+            print('ERROR: HX711 hardware driver failed. {}'.format(ex))
+            return
 
         # Configure the HX711 driver.
         if self.scale is not None:
@@ -61,6 +65,10 @@ class HX711Sensor:
             self.loadcell.set_offset(self.offset)
 
     def read(self):
+        if self.loadcell is None:
+            # TODO: Return Sensor.DISABLED
+            return
+
         print('INFO: Acquire reading from HX711')
         value = self.loadcell.read_median()
         return {'weight': value}

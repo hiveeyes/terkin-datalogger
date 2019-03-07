@@ -19,6 +19,8 @@ class HX711:
         self.time_constant = 0.1
         self.filtered = 0
 
+        self.initialized = False
+
         self.set_gain(gain)
 
     def set_gain(self, gain):
@@ -29,16 +31,37 @@ class HX711:
         elif gain is 32:
             self.GAIN = 2
 
-        self.read()
-        self.filtered = self.read()
-        print('Gain & initial value set')
-
     def is_ready(self):
         return self.pOUT() == 0
 
+    def initialize(self):
+        """To initialize the chip, perform an initial reading once"""
+        if not self.initialized:
+            print('INFO:  HX711 initialization started')
+            if self.is_ready():
+                self.initialized = True
+
+                # FIXME: These two functions have been moved
+                #        here from the ``set_gain()`` method.
+                #        Are they actually required?
+                self.read()
+                self.filtered = self.read()
+
+                print('INFO:  HX711 initialization succeeded')
+                return True
+            else:
+                print('ERROR: HX711 not found, skipping initialization')
+                return False
+
     def read(self):
+
+        # Initialize the hardware once.
+        if self.initialize() is False:
+            # TODO: HardwareNotFoundError
+            raise KeyError('HX711 not available')
+
         # wait for the device being ready
-        while self.pOUT() == 1:
+        while not self.is_ready():
             idle()
 
         # shift in data, and gain & channel info
