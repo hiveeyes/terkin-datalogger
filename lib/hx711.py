@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+# (c) 2017-2018 David Gerber <https://github.com/geda>
+# HX711 library for the LoPy.
+# https://github.com/geda/hx711-lopy
 from machine import Pin, enable_irq, disable_irq, idle
+
 
 class HX711:
     def __init__(self, dout, pd_sck, gain=128):

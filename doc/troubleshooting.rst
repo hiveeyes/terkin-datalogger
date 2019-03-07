@@ -4,6 +4,8 @@ Hiveeyes MPY data logger troubleshooting
 
 We've jumped through some tires that you don't have to.
 
+.. _upgrade your firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
+
 
 ************
 Introduction
@@ -219,5 +221,46 @@ so we will probably have to use one of the two ``urllib`` modules **not based on
 [1] https://forum.pycom.io/topic/4494/libpcre-missing
 
 
+*****************************
+7. HX711 library not starting
+*****************************
+Q::
 
-.. _upgrade your firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
+    Traceback (most recent call last):
+      File "main.py", line 72, in <module>
+      File "main.py", line 67, in main
+      File "/flash/lib/terkin/datalogger.py", line 34, in start
+      File "main.py", line 34, in register_sensors
+      File "main.py", line 55, in __init__
+      File "/flash/lib/hx711.py", line 12, in __init__
+    ValueError: invalid argument(s) value
+
+A::
+
+    # v1: Does not work on the Pycom, will need strings as pin identifiers.
+    #self.loadcell = self.driver(0, 2)
+
+    # v2: Works with Pycom MicroPython.
+    # https://docs.pycom.io/firmwareapi/pycom/machine/pin.html
+    # https://docs.pycom.io/firmwareapi/pycom/machine/pin.html#attributes
+    #self.loadcell = self.driver('P0', 'P2')
+
+
+***********************************
+8. HX711 library freezes the device
+***********************************
+Q: The device freezes when trying to initialize the HX711 driver::
+
+    [12.15742] Registering Hiveeyes sensors
+    [12.16116] Registering BOB sensors
+    INFO: Selecting HX711 driver "heisenberg"
+
+A: The HX711 library should be improved.
+   See also https://github.com/bogde/HX711/pull/123 and https://github.com/bogde/HX711/issues/125.
+
+
+******************************
+9. HX711 library yields errors
+******************************
+1. Q: ``Reading sensor "HX711Sensor" failed: 'NoneType' object has no attribute 'read_median'``
+   A: Ensure you have select the "heisenberg" hardware driver.
