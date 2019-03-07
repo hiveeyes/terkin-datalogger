@@ -11,6 +11,7 @@ class TerkinDatalogger:
     def __init__(self, settings):
         self.settings = settings
         self.device = None
+        self.sensors = []
 
     def start(self):
 
@@ -27,7 +28,7 @@ class TerkinDatalogger:
         self.device.start_networking()
         self.device.start_telemetry()
 
-        # Signal readyness by publishing information about the device.
+        # Signal readyness by publishing information about the device (Microhomie).
         # self.device.publish_properties()
 
         self.register_sensors()
@@ -40,25 +41,42 @@ class TerkinDatalogger:
         TODO: Add more sensors.
         - Metadata from NetworkManager.station
         - Device stats, see Microhomie
-        - >>> import uos; uos.uname()
-          (sysname='FiPy', nodename='FiPy', release='1.20.0.rc7', version='v1.9.4-2833cf5 on 2019-02-08', machine='FiPy with ESP32', lorawan='1.0.2', sigfox='1.0.1')
         """
         pass
 
     def _mainloop(self):
+        # TODO: Refactor by using timers.
         while True:
             self.loop()
+
+    def add_sensor(self, sensor):
+        self.sensors.append(sensor)
+
+    def read_sensors(self):
+        data = {}
+        for sensor in self.sensors:
+            sensor_name = sensor.__class__.__name__
+            print('Reading sensor "{}"'.format(sensor_name))
+            try:
+                data.update(sensor.read())
+            except Exception as ex:
+                print('Reading sensor "{}" failed: {}'.format(sensor_name, ex))
+        return data
 
     def loop(self):
         self.device.tlog('Terkin mainloop')
 
-        # Fake measurement.
-        data = {"temperature": 42.84, "humidity": 83}
+        # Read sensors.
+        data = self.read_sensors()
 
-        # Transmit data
+        # Transmit data.
         success = self.device.telemetry.transmit(data)
-        print('Telemetry success:', success)
-        print()
+
+        # Evaluate outcome.
+        if success:
+            self.device.tlog('Telemetry data successfully transmitted')
+        else:
+            self.device.tlog('Telemetry data transmission failed')
 
         # Sleep a little bit
         utime.sleep(self.settings.MAINLOOP_INTERVAL)
