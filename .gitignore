@@ -3,3 +3,4 @@
 .pioenvs
 *.pyc
 settings.py
+/dist-packages

@@ -6,6 +6,14 @@ include tools/core.mk
 # Main targets
 # ============
 
+setup-micropython:
+	@# FIXME: Describe how to install MicroPython on other platforms.
+	@# brew install micropython
+
+install-requirements:
+	@echo "INFO: Please install MicroPython for Unix"
+	micropython -m upip install -p dist-packages -r requirements-mpy.txt
+
 recycle:
 	$(rshell) $(rshell_options) --file tools/upload-requirements.rshell
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell

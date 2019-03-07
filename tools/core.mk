@@ -19,7 +19,7 @@ setup-virtualenv2:
 
 setup-virtualenv3:
 	@test -e $(python) || `command -v virtualenv` --python=python3 --no-site-packages $(venv3path)
-	$(pip3) --quiet install --requirement requirements.txt
+	$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3
 

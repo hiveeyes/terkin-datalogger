@@ -1,0 +1,3 @@
+micropython-copy
+# Will not work on Pycom MicroPython
+#micropython-urllib.parse
