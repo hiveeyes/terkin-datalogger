@@ -32,6 +32,12 @@ recycle:
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 	@#$(MAKE) reset
 
+list-serials:
+	@$(rshell) $(rshell_options) --list
+
+list-boards:
+	@$(rshell) $(rshell_options) boards
+
 
 # =====================
 # Miscellaneous targets

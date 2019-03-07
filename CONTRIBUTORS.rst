@@ -32,3 +32,23 @@ working on the infrastructure the software is leveraging.
 
 Thank you so much for providing such great infrastructure
 components and resources to the community! You know who you are.
+
+
+**********
+Foundation
+**********
+This is a reference list of things this program is and will partly be based upon:
+
+- https://github.com/pycom/pycom-libraries
+- https://github.com/micropython/micropython-lib
+- https://github.com/daq-tools/terkin/tree/master/src/micropython
+- The RaTrack firmware (undisclosed yet)
+- https://github.com/microhomie/microhomie
+- https://github.com/ClemensGruber
+- https://github.com/hiveeyes/arduino
+- https://github.com/jacobron/EasyHive_Pycom_Shield/tree/master/V1.0/software
+- https://github.com/walterheisenberg/hivewatch_esp32
+- https://github.com/Quernon/honeypi
+- https://github.com/geda/hx711-lopy
+
+Standing on the shoulders of giants. Thank you so much!

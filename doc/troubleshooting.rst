@@ -251,9 +251,10 @@ A::
 ***********************************
 Q: The device freezes when trying to initialize the HX711 driver::
 
-    [12.15742] Registering Hiveeyes sensors
-    [12.16116] Registering BOB sensors
-    INFO: Selecting HX711 driver "heisenberg"
+    [12.22129] Registering Hiveeyes sensors
+    [12.22535] Registering BOB sensors
+    INFO: Initializing HX711 sensor with DOUT=P0, PD_SCK=P2, GAIN=None, scale=11.02667, offset=130800.0
+    INFO: Selected HX711 hardware driver "heisenberg"
 
 A: The HX711 library should be improved.
    See also https://github.com/bogde/HX711/pull/123 and https://github.com/bogde/HX711/issues/125.
@@ -264,3 +265,24 @@ A: The HX711 library should be improved.
 ******************************
 1. Q: ``Reading sensor "HX711Sensor" failed: 'NoneType' object has no attribute 'read_median'``
    A: Ensure you have select the "heisenberg" hardware driver.
+
+
+*********************
+10. Memory corruption
+*********************
+Do you get a weird syntax error while your sources are perfectly okay?
+You should just power-cycle your controller, it's probably memory corruption only.
+::
+
+    [10.5782] Registering Hiveeyes sensors
+    [10.58196] Registering BOB sensors
+    INFO: Initializing HX711 sensor with DOUT=P0, PD_SCK=P2, GAIN=None, scale=11.02667, offset=130800.0
+    Traceback (most recent call last):
+      File "main.py", line 79, in <module>
+      File "main.py", line 74, in main
+      File "/flash/lib/terkin/datalogger.py", line 36, in start
+      File "main.py", line 34, in register_sensors
+      File "main.py", line 51, in register_hx711
+      File "/flash/lib/hiveeyes/sensor_hx711.py", line 43, in select_driver
+      File "/flash/lib/hx711_heisenberg.py", line 87
+    SyntaxError: invalid syntax
