@@ -7,6 +7,7 @@ Hiveeyes MPY data logger research
 - https://github.com/dhylands/rshell
 - https://github.com/wendlers/mpfshell
 
+# See also: https://github.com/microhomie/microhomie/blob/master/install.mpf
 
 
 import sys; sys.exit()
@@ -29,6 +30,25 @@ platformio device list
 ------------------------
 Hardware ID: USB VID:PID=04D8:EF98 SER=Pye090a1 LOCATION=20-2
 Description: Expansion3
+
+
+
+Default AP WiFi credentials.
+
+2 fipy-wlan-42bc (3, 'www.pycom.io') 0
+
+
+
+How to reset machine using rshell?
+::
+
+    #repl
+
+    #repl pyboard import sys~
+    #repl pyboard sys.exit()~
+
+    #repl pyboard from main import reset~
+    #repl pyboard reset()
 
 
 
