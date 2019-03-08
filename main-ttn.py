@@ -1,3 +1,4 @@
+import gc
 import time
 import socket
 import ubinascii
@@ -19,7 +20,7 @@ def init_lora_wan(lora, timeout):
     return lorasocket
 
 
-def sent_lora_message(lorasocket, p):
+def send_lora_message(lorasocket, p):
     # Send LoRaWAN Message
     lorasocket.setblocking(True)
     lorasocket.send(p)
@@ -27,3 +28,15 @@ def sent_lora_message(lorasocket, p):
     # (because if there's no data received it will block forever...)
     lorasocket.setblocking(False)
     return lorasocket.recv(64)
+
+
+if __name__ == '__main__':
+
+    lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
+    time.sleep(2)
+    gc.enable()
+
+    lora_socket = init_lora_wan(lora, 14)
+    while True:
+        send_lora_message(lora_socket, 'Hello world!')
+        time.sleep(2)
