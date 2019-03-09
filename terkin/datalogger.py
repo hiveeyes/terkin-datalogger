@@ -4,6 +4,8 @@
 # License: GNU General Public License, Version 3
 import utime
 import machine
+
+from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 
 
@@ -11,7 +13,9 @@ from terkin.device import TerkinDevice
 class TerkinDatalogger:
 
     def __init__(self, settings):
-        self.settings = settings
+        self.settings = TerkinConfiguration()
+        self.settings.add(settings)
+        self.settings.dump()
         self.device = None
         self.sensors = []
 
@@ -107,4 +111,4 @@ class TerkinDatalogger:
         self.device.run_gc()
 
         # Sleep a little bit
-        utime.sleep(self.settings.MAINLOOP_INTERVAL)
+        utime.sleep(self.settings.get('main.interval'))

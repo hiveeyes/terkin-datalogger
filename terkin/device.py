@@ -26,7 +26,7 @@ class TerkinDevice:
     def start_networking(self):
         self.tlog('Starting networking')
 
-        self.networking = NetworkManager(self.settings.WIFI_NETWORKS)
+        self.networking = NetworkManager(self.settings)
 
         # Start WiFi
         self.networking.start_wifi()
