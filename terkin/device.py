@@ -29,7 +29,7 @@ class TerkinDevice:
         self.networking = NetworkManager(self.settings)
 
 
-        if not self.settings.get('networking.LoRa.antenna_attached'):
+        if not self.settings.get('networking.lora.antenna_attached'):
             print("[LoRa] Antenna need to be attached, otherwise device will break")
             return
 
@@ -37,6 +37,8 @@ class TerkinDevice:
         self.networking.start_lora()
 
         self.networking.wait_for_lora_join(42)
+
+        time.sleep(2.5)
 
         if self.networking.lora_joined:
             self.networking.create_lora_socket()

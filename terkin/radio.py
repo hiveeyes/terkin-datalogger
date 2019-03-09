@@ -27,8 +27,6 @@ class NetworkManager:
         self.station = None
 
         """ LoRa settings """
-        print(self.settings.get('networking.lora.otaa'))
-        print(self.settings.get('networking.lora.otaa'))
         self.otaa_settings = self.settings.get('networking.lora.otaa')
 
     def start_wifi(self):
@@ -156,20 +154,20 @@ class NetworkManager:
 
     def start_lora(self):
         pycom.rgbled(0x0f0000) # red
-        #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings.region)
+        #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
         # create an OTA authentication params
-        self.dev_eui = binascii.unhexlify(self.otaa_settings.device_eui) # these settings can be found from TTN
-        self.app_eui = binascii.unhexlify(self.otaa_settings.application_eui) # these settings can be found from TTN
-        self.app_key = binascii.unhexlify(self.otaa_settings.application_key) # these settings can be found from TTN
+        self.dev_eui = binascii.unhexlify(self.otaa_settings['device_eui']) # these settings can be found from TTN
+        self.app_eui = binascii.unhexlify(self.otaa_settings['application_eui']) # these settings can be found from TTN
+        self.app_key = binascii.unhexlify(self.otaa_settings['application_key']) # these settings can be found from TTN
 
         # set the 3 default channels to the same frequency (must be before sending the otaa join request)
-        self.lora.add_channel(0, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
-        self.lora.add_channel(1, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
-        self.lora.add_channel(2, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
+        self.lora.add_channel(0, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
+        self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
+        self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
 
-        self.lora.join(activation=LoRa.otaa, auth=(self.otaa_settings.dev_eui, self.otaa_settings.app_eui, self.otaa_settings.app_key), timeout=0, dr=self.otaa_settings.datarate)
+        self.lora.join(activation=LoRa.OTAA, auth=(self.otaa_settings['device_eui'], self.otaa_settings['application_eui'], self.otaa_settings['application_key']), timeout=0, dr=self.otaa_settings['datarate'])
 
 
     def wait_for_lora_join(self, attempts):
@@ -201,7 +199,7 @@ class NetworkManager:
         self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
         # set the LoRaWAN data rate
-        self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings.datarate)
+        self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
 
         # make the socket non-blocking
         self.socket.setblocking(False)
