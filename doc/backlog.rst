@@ -23,6 +23,7 @@ Misc
 - [o] Docs, docs, docs
 - [o] Report about how much this framework weighs in - in terms of
       memory (RAM and flash) and maybe other resources
+      {"memfree": 2522016}
 
 
 *************
@@ -36,11 +37,14 @@ Documentation
 **********
 Datalogger
 **********
+
+Open
+====
 - [o] Solid configuration system
 - [o] Use pure-Python "urllib" without dependency to "libpcre"
 - [o] Appropriate logging
 - [o] Periodic servicing tasks
-- [o] Poll/refresh WiFi connection
+- [o] Poll/refresh WiFi and reconnect
 - [o] Timekeeping, use RTC and NTP
 - [o] Add Watchdog timer
 - [o] Basic telemetry: Battery, Temperature, Hall-Sensor
@@ -64,3 +68,19 @@ Datalogger
     2 fipy-wlan-42bc (3, 'www.pycom.io') 0
     Networking established
     [3.663849] Starting telemetry
+- [o] Bootsplash MQTT message like::
+
+    hiveeyes/fe344422-05bf-40f2-a299-fbf4df5d7e2b/vay55/gateway/status.json {"status": "online", "program": "beradio 0.12.3", "date": "2019-03-07T19:38:28.462900"}
+
+- [o] Reenable WiFi AP mode
+
+
+Closed
+======
+- [/] Unlock NVRAM storage
+   > Set the value of the specified key in the NVRAM memory area of the external flash.
+   > Data stored here is preserved across resets and power cycles.
+   > Value can only take 32-bit integers at the moment.
+  - https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/pycom.md#pycomnvs_setkey-value
+  - https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/storage/nvs_flash.html
+- [/] class NvsStore: https://forum.pycom.io/topic/2775/keeping-state-when-awaking-from-sleep

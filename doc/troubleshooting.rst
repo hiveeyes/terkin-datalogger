@@ -6,6 +6,8 @@ We've jumped through some tires that you don't have to.
 
 .. _upgrade your firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 
+When experiencing problems, please also visit
+https://docs.pycom.io/gettingstarted/troubleshooting-guide.html.
 
 ************
 Introduction

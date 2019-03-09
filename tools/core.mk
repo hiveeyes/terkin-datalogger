@@ -15,10 +15,10 @@ $(eval rshell       := $(venv3path)/bin/rshell)
 
 # Setup Python virtualenv
 setup-virtualenv2:
-	@test -e $(python) || `command -v virtualenv` --python=python2 --no-site-packages $(venv2path)
+	@test -e $(python2) || `command -v virtualenv` --python=python2 --no-site-packages $(venv2path)
 
 setup-virtualenv3:
-	@test -e $(python) || `command -v virtualenv` --python=python3 --no-site-packages $(venv3path)
+	@test -e $(python3) || `command -v virtualenv` --python=python3 --no-site-packages $(venv3path)
 	$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3
