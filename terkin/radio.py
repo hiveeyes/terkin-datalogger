@@ -6,7 +6,10 @@ import time
 
 import machine
 import usocket as socket
-from network import WLAN
+from network import WLAN, LoRa
+import binascii
+import socket
+import pycom
 
 
 # TODO: What about when coming back from sleep?
@@ -17,9 +20,13 @@ class NetworkManager:
 
     def __init__(self, settings):
         self.settings = settings
+        """ WIFI settings """
         self.stations = self.settings.get('networking.wifi.stations')
         self.stations_available = []
         self.station = None
+
+        """ LoRa settings """
+        self.OTAA_settings = self.settings.get('networking.LoRa.OTAA')
 
     def start_wifi(self):
         """
@@ -143,3 +150,87 @@ class NetworkManager:
             time.sleep(0.25)
             attempts += 1
         print('Networking established')
+
+    def start_lora(self):
+        pycom.rgbled(0x0f0000) # red
+        self.lora = LoRa(mode=LoRa.LORAWAN, region=self.OTAA_settings.region) 
+
+        # create an OTA authentication params
+        self.dev_eui = binascii.unhexlify(self.OTAA_settings.device_eui) # these settings can be found from TTN
+        self.app_eui = binascii.unhexlify(self.OTAA_settings.application_eui) # these settings can be found from TTN
+        self.app_key = binascii.unhexlify(self.OTAA_settings.application_key) # these settings can be found from TTN
+
+        # set the 3 default channels to the same frequency (must be before sending the OTAA join request)
+        self.lora.add_channel(0, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
+        self.lora.add_channel(1, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
+        self.lora.add_channel(2, frequency=config.LORA_FREQUENCY, dr_min=0, dr_max=5)
+
+        self.lora.join(activation=LoRa.OTAA, auth=(self.OTAA_settings.dev_eui, self.OTAA_settings.app_eui, self.OTAA_settings.app_key), timeout=0, dr=self.OTAA_settings.datarate)
+
+
+    def wait_for_lora_join(self, attempts):
+        self.lora_joined = None
+        for i in range(0, attempts):
+            while not self.lora.has_joined():
+                time.sleep(2.5)
+                pycom.rgbled(0x0f0f00) # yellow
+                time.sleep(0.1)
+                print('[LoRA] Not joined yet...')
+                pycom.rgbled(0x000000) # off
+
+        self.lora_joined = self.lora.has_joined()
+
+        if self.lora_joined:
+            print('[LoRA] joined...')
+        else:
+            print('[LoRa] did not join in', attempts,'attempts')
+
+        for i in range(3, 16):
+            self.lora.remove_channel(i)
+
+        return self.lora_joined
+
+    def create_lora_socket(self):
+        # create a LoRa socket
+
+        self.lora_socket = None
+        self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+
+        # set the LoRaWAN data rate
+        self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.OTAA_settings.datarate)
+
+        # make the socket non-blocking
+        self.socket.setblocking(False)
+
+        self.lora_socket = True
+        print('[LoRa] socket created')
+
+        for i in range(0,2):
+            pycom.rgbled(0x000f00) # green
+            time.sleep(0.1)
+            pycom.rgbled(0x000000) # off
+
+        #time.sleep(5.0)
+        return self.lora_socket
+
+    def lora_send(self, payload):
+        payload_send = None
+        self.socket(payload) 
+        payload_send = True
+        for i in range(0,2):
+            pycom.rgbled(0x00000f) # green
+            time.sleep(0.1)
+            pycom.rgbled(0x000000) # off
+
+        return payload_send
+
+    def lora_receive(self):
+        rx, port = self.socket.recvfrom(256)
+        if rx:
+            pycom.rgbled(0x000f00) # green
+            print('Received: {}, on port: {}'.format(rx, port))
+            pycom.rgbled(0x000f00) # green
+        time.sleep(6)
+
+        return rx, port
+

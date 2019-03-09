@@ -37,6 +37,20 @@ class TerkinDevice:
         # Inform about networking status.
         #self.networking.print_status()
 
+        if not self.settings.networking.LoRa.antenna_attached:
+            print("[LoRa] Antenna need to be attached, otherwise device will break")
+            return
+
+        # initiating LoRa device
+        self.networking.start_lora()
+
+        self.networking.wait_for_lora_join()
+
+        if self.networking.lora_joined:
+            create_lora_socket()
+        else:
+            print("[LoRa] could not initiate network")
+
     def start_wdt(self):
         """
         The WDT is used to restart the system when the application crashes and
