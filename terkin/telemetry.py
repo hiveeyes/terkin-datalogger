@@ -12,7 +12,7 @@ import json
 #import urequests
 
 # micropython -m upip install micropython-copy
-from copy import copy
+#from copy import copy
 
 # FIXME: Touch me after using an appropriate "urllib" library.
 # See also: https://forum.pycom.io/topic/4494/libpcre-missing
@@ -288,7 +288,7 @@ class TelemetryNode:
             self.suffixes = topology.suffixes
 
     def format_uri(self, **kwargs):
-        data = copy(self.address)
+        data = self.address
         data.update(kwargs)
         return self.uri_template.format(**data)
 

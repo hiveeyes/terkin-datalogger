@@ -27,15 +27,15 @@ networking = {
         # The maximum time in milliseconds to wait for the connection to succeed.
         'timeout': 15000,
     },
-    'LoRa': {
-        'OTAA': [
+    'lora': {
+        'otaa': {
             {'frequency': 868100000},
             {'region': 'LoRa.EU868'},
             {'datarate': 5},
             {'device_eui':'<GENERATED_FROM_LORA_MAC>'},
             {'application_eui': '<REGISTRATION NEEDED>'},
             {'application_key': '<REGISTRATION NEEDED>'}
-        ],
+        },
         'antenna_attached': False,
     }
 }
