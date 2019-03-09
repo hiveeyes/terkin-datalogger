@@ -1,3 +1,5 @@
 micropython-copy
+micropython-types
+#micropython-collections
 # Will not work on Pycom MicroPython
 #micropython-urllib.parse
