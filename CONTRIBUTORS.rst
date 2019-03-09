@@ -30,6 +30,8 @@ working on the infrastructure the software is leveraging.
   - Robert H. <https://github.com/robert-hh>
   - Anthony Hinsinger <https://github.com/atoy40>
 
+- Paweł Zadrożny <https://github.com/pawelzny> for ``dotty_dict``
+
 Thank you so much for providing such great infrastructure
 components and resources to the community! You know who you are.
 

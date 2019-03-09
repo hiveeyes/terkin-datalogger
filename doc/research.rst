@@ -14,6 +14,13 @@ import sys; sys.exit()
 import machine; machine.reset()
 
 
+- https://github.com/pycom/pydocs/tree/master/firmwareapi/micropython
+- https://github.com/pycom/pydocs/tree/master/firmwareapi/pycom
+
+
+The board advertises itself as ‘wipy-wlan-xxxx’ or ‘sipy-wlan-xxxx’ or something similar where ‘xxxx’
+are four hexadecimal digits. The password for all these networks is ‘www.pycom.io’.
+
 
 
 https://github.com/wendlers/mpfshell
