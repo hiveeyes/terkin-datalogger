@@ -286,3 +286,19 @@ You should just power-cycle your controller, it's probably memory corruption onl
       File "/flash/lib/hiveeyes/sensor_hx711.py", line 43, in select_driver
       File "/flash/lib/hx711_heisenberg.py", line 87
     SyntaxError: invalid syntax
+
+
+USSL not found
+==============
+
+::
+
+    make setup         
+    .venv3/bin/pip --quiet install --requirement requirements-dev.txt
+    INFO: Please install MicroPython for Unix
+    micropython -m upip install -p dist-packages -r requirements-mpy.txt
+    Traceback (most recent call last):
+      File "upip.py", line 109, in <module>
+    ImportError: no module named 'ussl'
+    make: *** [Makefile:17: install-requirements] Fehler 1
+
