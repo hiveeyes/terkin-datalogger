@@ -6,6 +6,8 @@
 # Pycom builtin.
 # Otherwise: micropython -m upip install micropython-json micropython-copy
 import json
+import cayenneLPP
+from terkin.radio import NetworkManager
 
 # Problem: "urequests" does not work with SSL, e.g. https://httpbin.org/ip
 # micropython -m upip install micropython-urequests
@@ -30,10 +32,12 @@ class TelemetryClient:
 
     TRANSPORT_HTTP = 'http'
     TRANSPORT_MQTT = 'mqtt'
+    TRANSPORT_TTN = 'ttn'
 
     FORMAT_URLENCODED   = 'urlencoded'
     FORMAT_JSON         = 'json'
     FORMAT_CSV          = 'csv'
+    FORMAT_CAYENNELPP          = 'cayennelpp'
 
     def __init__(self, uri, format, suffixes=None):
 
@@ -66,6 +70,9 @@ class TelemetryClient:
         elif self.format == TelemetryClient.FORMAT_JSON:
             payload = json.dumps(data)
 
+        elif self.format == TelemetryClient.FORMAT_CAYENNELPP:
+            payload = lpp.dumps(data)
+
         elif self.format == TelemetryClient.FORMAT_CSV:
             raise NotImplementedError('Serialization format "CSV" not implemented yet')
 
@@ -73,6 +80,7 @@ class TelemetryClient:
             raise ValueError('Unknown serialization format "{}"'.format(self.format))
 
         return payload
+
 
     def transmit(self, data, uri=None, serialize=True):
 
@@ -167,6 +175,56 @@ class TelemetryTransportHTTP:
         else:
             raise Exception('HTTP request failed: {} {}'.format(response.status, response.reason))
 
+class TelemetryTransportTTN:
+
+    def __init__(self, size=100):
+
+        from cayenneLPP import cayenneLPP
+
+        # TODO: TTN application needs to be setup accordingly to URI in HTTP
+        #self.application = application
+        self.size = size
+
+        self.connection = NetworkManager.create_lora_socket()
+        self.lpp = cayenneLPP.CayenneLPP(size = 100, sock = self.connection)
+
+    def send(self, request_data):
+
+        for k, v in request_data.items():
+            key = k.split("_")[0]
+            channel = k.split("_")[1]
+            value = v
+
+            if "load" in key:
+                self.lpp.add_load(value, channel)
+            elif "temperatur" in key:
+                self.lpp.add_temperature(value, channel)
+            elif "digital-input" in key:
+                self.lpp.add_digital_input(value, channel)
+            elif "digital_output" in key:
+                self.lpp.add_digital_output(value, channel)
+            elif "analog-input" in key:
+                self.lpp.add_analog_input(value, channel)
+            elif "analog-output" in key:
+                self.lpp.add_analog_output(value, channel)
+            elif "illuminance" in key:
+                self.lpp.add_illuminance(value, channel)
+            elif "presence" in key:
+                self.lpp.add_presence(value, channel)
+            elif "humidity" in key:
+                self.lpp.add_humidity(value, channel)
+            elif "accelerometer" in key:
+                self.lpp.add_accelerometer(value, channel)
+            elif "barometer" in key:
+                self.lpp.add_barometer(value, channel)
+            elif "gyrometer" in key:
+                self.lpp.add_gyrometer(value, channel)
+            elif "gps" in key:
+                self.lpp.add_gps(value, channel)
+            else:
+                print("[CayenneLPP] sensor type not found in cayenneLPP: ", key)
+
+        # TODO raise errorcode if not send
 
 class TelemetryTransportMQTT:
     """
