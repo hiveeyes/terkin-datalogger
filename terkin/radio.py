@@ -28,6 +28,7 @@ class NetworkManager:
 
         """ LoRa settings """
         self.otaa_settings = self.settings.get('networking.lora.otaa')
+        self.generated_device_eui = binascii.hexlify(LoRa().mac())
 
     def start_wifi(self):
         """
@@ -167,8 +168,7 @@ class NetworkManager:
         self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
         self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
 
-        self.lora.join(activation=LoRa.OTAA, auth=(self.otaa_settings['device_eui'], self.otaa_settings['application_eui'], self.otaa_settings['application_key']), timeout=0, dr=self.otaa_settings['datarate'])
-
+        self.lora.join(activation=LoRa.OTAA, auth=(self.dev_eui, self.app_eui, self.app_key), timeout=0, dr=self.otaa_settings['datarate'])
 
     def wait_for_lora_join(self, attempts):
         self.lora_joined = None
@@ -185,7 +185,7 @@ class NetworkManager:
         if self.lora_joined:
             print('[LoRA] joined...')
         else:
-            print('[lora] did not join in', attempts,'attempts')
+            print('[LoRa] did not join in', attempts,'attempts')
 
         for i in range(3, 16):
             self.lora.remove_channel(i)
@@ -205,19 +205,19 @@ class NetworkManager:
         self.socket.setblocking(False)
 
         self.lora_socket = True
-        print('[lora] socket created')
+        print('[LoRa] socket created')
 
         for i in range(0,2):
             pycom.rgbled(0x000f00) # green
             time.sleep(0.1)
             pycom.rgbled(0x000000) # off
 
-        #time.sleep(5.0)
+        time.sleep(4.0)
         return self.lora_socket
 
     def lora_send(self, payload):
         payload_send = None
-        self.socket(payload) 
+        self.socket.send(payload)
         payload_send = True
         for i in range(0,2):
             pycom.rgbled(0x00000f) # green
