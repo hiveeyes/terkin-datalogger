@@ -1,8 +1,10 @@
 import os
 
 import machine
+import time
 from machine import Timer
 from ubinascii import hexlify
+
 
 from terkin.radio import NetworkManager
 

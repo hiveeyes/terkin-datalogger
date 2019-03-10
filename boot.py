@@ -3,6 +3,11 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
+from machine import UART
+import pycom
+import machine
+import os
+
 
 def extend_syspath():
     """
@@ -23,4 +28,7 @@ def extend_syspath():
 
 
 if __name__ == '__main__':
+    pycom.heartbeat(False)
+    uart = UART(0, baudrate=115200)
+    os.dupterm(uart)
     extend_syspath()
