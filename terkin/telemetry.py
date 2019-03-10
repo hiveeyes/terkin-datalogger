@@ -47,6 +47,8 @@ class TelemetryClient:
         self.format = format
         self.suffixes = suffixes or {}
 
+        self.ttn_size = 12
+
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
         if self.scheme in ['http', 'https']:
@@ -62,6 +64,9 @@ class TelemetryClient:
 
         elif self.format == TelemetryClient.FORMAT_JSON:
             payload = json.dumps(data)
+
+        elif self.format == TelemetryClient.FORMAT_CAYENNELPP:
+            payload = data
 
         elif self.format == TelemetryClient.FORMAT_CSV:
             raise NotImplementedError('Serialization format "CSV" not implemented yet')
@@ -86,7 +91,12 @@ class TelemetryClient:
 
         handler = self.get_handler(real_uri)
 
+
         payload = data
+
+        if "TelemetryTransportTTN" in handler:
+            serialize = False
+
         if serialize:
             payload = self.serialize(data)
 
@@ -106,6 +116,9 @@ class TelemetryClient:
 
         elif self.transport == TelemetryClient.TRANSPORT_MQTT:
             handler = TelemetryTransportMQTT(uri, self.format)
+
+        elif self.transport == TelemetryClient.TRANSPORT_TTN:
+            handler = TelemetryTransportTTN(self.ttn_size)
 
         else:
             raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
@@ -160,6 +173,61 @@ class TelemetryTransportHTTP:
             return True
         else:
             raise Exception('HTTP request failed: {} {}'.format(response.status, response.reason))
+
+class TelemetryTransportTTN:
+
+    def __init__(self, size=100):
+
+        from cayenneLPP import cayenneLPP
+
+        # TODO: TTN application needs to be setup accordingly to URI in HTTP
+        # self.application = application
+        self.size = size
+
+        self.connection = NetworkManager.create_lora_socket()
+        self.lpp = cayenneLPP.CayenneLPP(size = 100, sock = self.connection)
+
+    def send(self, request_data):
+
+        for k, v in request_data['payload'].items():
+            key = k.split("_")[0]
+            channel = k.split("_")[1]
+            value = v
+
+            # TODO: Fork cayenneLPP add load to 122 (3322)
+            # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
+            # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
+
+            if "load" in key:
+                self.lpp.add_load(value, channel)
+            elif "temperatur" in key:
+                self.lpp.add_temperature(value, channel)
+            elif "digital-input" in key:
+                self.lpp.add_digital_input(value, channel)
+            elif "digital_output" in key:
+                self.lpp.add_digital_output(value, channel)
+            elif "analog-input" in key:
+                self.lpp.add_analog_input(value, channel)
+            elif "analog-output" in key:
+                self.lpp.add_analog_output(value, channel)
+            elif "illuminance" in key:
+                self.lpp.add_illuminance(value, channel)
+            elif "presence" in key:
+                self.lpp.add_presence(value, channel)
+            elif "humidity" in key:
+                self.lpp.add_humidity(value, channel)
+            elif "accelerometer" in key:
+                self.lpp.add_accelerometer(value, channel)
+            elif "barometer" in key:
+                self.lpp.add_barometer(value, channel)
+            elif "gyrometer" in key:
+                self.lpp.add_gyrometer(value, channel)
+            elif "gps" in key:
+                self.lpp.add_gps(value, channel)
+            else:
+                print("[CayenneLPP] sensor type not found in cayenneLPP: ", key)
+
+        # TODO raise errorcode if not send
 
 
 class TelemetryTransportMQTT:
