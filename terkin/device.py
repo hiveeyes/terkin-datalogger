@@ -38,7 +38,6 @@ class TerkinDevice:
         else:
             print("[LoRa] WARNING: Antenna MUST to be attached, otherwise device will break.")
 
-
         # Start WiFi.
         self.networking.start_wifi()
 
