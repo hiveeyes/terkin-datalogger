@@ -7,6 +7,7 @@ Convenient data logger framework conceived for the Bee Observer (BOB) project.
 https://community.hiveeyes.org/c/bee-observer
 """
 import settings
+import pycom
 from hiveeyes.datalogger import HiveeyesDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 import time
