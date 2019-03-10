@@ -42,10 +42,11 @@ class TerkinDevice:
 
         time.sleep(2.5)
 
-        if self.networking.lora_joined:
-            self.networking.create_lora_socket()
-        else:
-            print("[LoRa] could not initiate network")
+        # creating socket comes on a upper level
+        #if self.networking.lora_joined:
+        #    self.networking.create_lora_socket()
+        #else:
+        #    print("[LoRa] could not initiate network")
 
         # Start WiFi
         self.networking.start_wifi()
