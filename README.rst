@@ -2,6 +2,8 @@
 Hiveeyes MPY data logger
 ########################
 
+Data logging for humans.
+
 
 ************
 Introduction
@@ -33,17 +35,20 @@ Overview
 Architecture
 ============
 - Datalogger and Device
-  Singletons representing the data logger application and your logging device.
+
+  Singleton objects representing the data logger application and your logging device.
 
 - Sensor and HardwareDriver
+
   Sensor components wrap hardware drivers to generalize sensor reading.
 
 - Telemetry and TelemetryTransport
+
   The telemetry subsystem uses different transport adapters for different
   connectivity scenarios. MQTT and HTTP over TCP over WiFi is implemented
-  already and TTN is almost there (thanks, Jan!). We are still waiting for
-  confirmation of LTE `CAT-M1`_ or `NB-IoT`_ connectivity in Germany
-  (thanks, Ron and Jan!).
+  already and TTN over LoRaWAN is almost there (thanks, Jan and Richard!).
+  We are still waiting for confirmation of LTE `CAT-M1`_ or `NB-IoT`_
+  connectivity in Germany (thanks, Ron and Jan!).
 
 .. _CAT-M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
 .. _NB-IoT: https://docs.pycom.io/tutorials/lte/nb-iot.html
@@ -108,7 +113,7 @@ and conceive it in one way or another. You know who you are.
 
 Have fun!
 
-.. _Hiveeyes MPY data logger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/setup.rst
+.. _Hiveeyes MPY data logger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
 .. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 .. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html
