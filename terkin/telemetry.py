@@ -119,23 +119,22 @@ class TelemetryTransportHTTP:
 
     def __init__(self, uri, format):
 
-        # http.client works
-        # micropython -m upip install micropython-http.client micropython-io micropython-time
-        from http.client import HTTPConnection
-
         self.uri = uri
         self.format = format
 
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
-        # Does not work
-        #from http.client import HTTPSConnection
-        ##self.connection = HTTPSConnection(self.netloc)
-
         self.content_type = None
         self.resolve_content_type()
 
+        # Use "http.client" for unencrypted HTTP connections
+        # micropython -m upip install micropython-http.client micropython-io micropython-time
+        from http.client import HTTPConnection
         self.connection = HTTPConnection(self.netloc)
+
+        # TODO: Make HTTPS work
+        #from http.client import HTTPSConnection
+        ##self.connection = HTTPSConnection(self.netloc)
 
     def resolve_content_type(self):
 

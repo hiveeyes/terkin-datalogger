@@ -4,3 +4,4 @@
 *.pyc
 settings.py
 /dist-packages
+.DS_Store
