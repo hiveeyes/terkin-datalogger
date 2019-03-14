@@ -73,6 +73,17 @@ Open
     hiveeyes/fe344422-05bf-40f2-a299-fbf4df5d7e2b/vay55/gateway/status.json {"status": "online", "program": "beradio 0.12.3", "date": "2019-03-07T19:38:28.462900"}
 
 - [o] Reenable WiFi AP mode
+- [o] Publish retained status message to MQTT like ``beradio-python``
+- [o] Use uPy module "urequests"?::
+
+    # Problem: "urequests" does not work with SSL, e.g. https://httpbin.org/ip
+    # micropython -m upip install micropython-urequests
+    #import urequests
+
+- [o] Check out "Firmware over the air update":
+    https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
+
+- [o] Handle "No connection to MQTT broker"
 
 
 Closed
