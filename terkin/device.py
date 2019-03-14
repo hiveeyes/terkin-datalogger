@@ -84,19 +84,26 @@ class TerkinDevice:
     def start_telemetry(self):
         self.tlog('Starting telemetry')
 
+        telemetry_targets = self.settings.get('telemetry.targets')
+        print('Telemetry targets:', telemetry_targets)
+        if len(telemetry_targets) > 1:
+            print('WARNING: Will only use first telemetry target (FIXME)')
+
+        # TODO: Iterate all telemetry targets to submit measurement data to multiple destinations.
+        telemetry_target = telemetry_targets[0]
+        telemetry_address = telemetry_target['address']
+
         # Create a "Node API" telemetry client object
-        # TODO: Use values from configuration settings here.
         from terkin.telemetry import TelemetryNode, TelemetryTopologies
         self.telemetry = TelemetryNode(
-            # "https://swarm.hiveeyes.org/api",
-            # "http://swarm.hiveeyes.org/api-notls",
-            "mqtt://swarm.hiveeyes.org",
+            telemetry_target['endpoint'],
             address={
-                "realm": "hiveeyes",
-                "network": "testdrive",
-                "gateway": "area-23",
-                "node": "node-1",
+                "realm": telemetry_address['realm'],
+                "network": telemetry_address['network'],
+                "gateway": telemetry_address['gateway'],
+                "node": telemetry_address['node'],
             },
+            # TODO: Use topology from configuration settings.
             topology=TelemetryTopologies.KotoriWanTopology
         )
 
