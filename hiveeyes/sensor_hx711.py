@@ -14,7 +14,7 @@ class HX711Sensor:
     using ``self.loadcell.read_median()``.
     """
 
-    def __init__(self, pin_dout=None, pin_pdsck=None, gain=None, scale=None, offset=None):
+    def __init__(self, pin_dout=None, pin_pdsck=None, gain=None, scale=None, offset=None, sensor_number=None):
 
         print('INFO:  Initializing HX711 sensor with '
               'DOUT={}, PD_SCK={}, GAIN={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
@@ -22,6 +22,7 @@ class HX711Sensor:
         # Hardware parameters and configuration settings.
         self.pin_dout = pin_dout
         self.pin_pdsck = pin_pdsck
+        self.number = sensor_number or 0
         self.gain = gain or 128
         self.scale = scale
         self.offset = offset
@@ -71,4 +72,5 @@ class HX711Sensor:
 
         print('INFO:  Acquire reading from HX711')
         value = self.loadcell.read_median()
-        return {'weight': value}
+        ret_key = "load_" + self.number
+        return {ret_key: value}

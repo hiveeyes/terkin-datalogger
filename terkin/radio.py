@@ -224,11 +224,12 @@ class NetworkManager:
             pycom.rgbled(0x000000) # off
 
         time.sleep(4.0)
-        return self.lora_socket
+        return self.socket
 
-    def lora_send(self, payload):
+    def lora_send(self, payload, lora_socket=None):
+        self.lora_socket = lora_socket or self.socket
         payload_send = None
-        self.socket.send(payload)
+        self.lora_socket.send(payload)
         payload_send = True
         for i in range(0,2):
             pycom.rgbled(0x00000f) # green
@@ -237,8 +238,9 @@ class NetworkManager:
 
         return payload_send
 
-    def lora_receive(self):
-        rx, port = self.socket.recvfrom(256)
+    def lora_receive(self, lora_socket=None):
+        self.lora_socket = lora_socket or self.socket
+        rx, port = self.lora_socket.recvfrom(256)
         if rx:
             pycom.rgbled(0x000f00) # green
             print('Received: {}, on port: {}'.format(rx, port))
