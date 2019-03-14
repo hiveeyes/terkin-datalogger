@@ -90,7 +90,6 @@ class BobDatalogger(HiveeyesDatalogger):
                 if success:
                     print("[LoRa] send:", payload)
             time.sleep(1)
-        """
 
 
 def main():
