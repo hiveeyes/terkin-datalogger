@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 # (c) 2017-2019 Andreas Motl <andreas@terkin.org>
 # License: GNU General Public License, Version 3
-# https://github.com/daq-tools/terkin/blob/0.0.2/src/micropython/uterkin/telemetry.py
+"""
+=============================
+Setup on MicroPython for Unix
+=============================
+::
 
-# Pycom builtin.
-# Otherwise: micropython -m upip install micropython-json micropython-copy
+    export MICROPYPATH=`pwd`/dist-packages
+
+    # "json" and "copy" modules
+    micropython -m upip install micropython-json micropython-copy
+
+    # HTTP client modules
+    micropython -m upip install micropython-http.client micropython-io micropython-time
+
+    # MQTT client modules
+    micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
+
+"""
 import json
-
-# Problem: "urequests" does not work with SSL, e.g. https://httpbin.org/ip
-# micropython -m upip install micropython-urequests
-#import urequests
-
-# micropython -m upip install micropython-copy
 from copy import copy
-
-# FIXME: Touch me after using an appropriate "urllib" library.
-# See also: https://forum.pycom.io/topic/4494/libpcre-missing
-# micropython -m upip install micropython-urllib.parse
-try:
-    from urllib.parse import urlsplit, urlencode
-except:
-    print('WARNING: libpcre is not available on this platform. TelemetryClient will talk MQTT only.')
+from urllib.parse import urlsplit, urlencode
 
 
 class TelemetryClient:
@@ -46,17 +47,13 @@ class TelemetryClient:
         self.format = format
         self.suffixes = suffixes or {}
 
-        """
-        # FIXME: Touch me after using an appropriate "urllib" library.
-        # See also: https://forum.pycom.io/topic/4494/libpcre-missing
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
         if self.scheme in ['http', 'https']:
             self.transport = TelemetryClient.TRANSPORT_HTTP
 
         elif self.scheme in ['mqtt']:
-        """
-        self.transport = TelemetryClient.TRANSPORT_MQTT
+            self.transport = TelemetryClient.TRANSPORT_MQTT
 
     def serialize(self, data):
         payload = None
@@ -129,8 +126,6 @@ class TelemetryTransportHTTP:
         self.uri = uri
         self.format = format
 
-        # FIXME: Touch me after using an appropriate "urllib" library.
-        # See also: https://forum.pycom.io/topic/4494/libpcre-missing
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
         # Does not work
@@ -198,9 +193,7 @@ class TelemetryTransportMQTT:
 
     def start(self):
 
-        # FIXME: Touch me after using an appropriate "urllib" library.
-        # See also: https://forum.pycom.io/topic/4494/libpcre-missing
-        # self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
+        self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
         # Load MQTT module.
         # TODO: Create abstract MQTT client factory to account for different implementations.
@@ -215,10 +208,9 @@ class TelemetryTransportMQTT:
         # Connect to MQTT broker.
         # TODO: Try continuous reconnection to MQTT broker.
         try:
-            # TODO: Use MQTT broker value from configuration settings.
             # TODO: Use device identifier here to make the MQTT client id more unique.
             print('INFO: Connecting to MQTT broker')
-            self.connection = MQTTClient("umqtt_client", "swarm.hiveeyes.org")
+            self.connection = MQTTClient("terkin_mqtt_client", self.netloc)
             self.connection.DEBUG = True
             self.connection.connect()
             print('INFO: Connecting to MQTT broker succeeded')
@@ -239,8 +231,9 @@ class TelemetryTransportMQTT:
                 self.defunctness_reported = True
             return False
 
-        # TODO: Use MQTT topic value from configuration settings.
-        topic = "hiveeyes/testdrive/irgendwas/baz/data.json"
+        # Derive MQTT topic string from URI path component.
+        topic = self.path.lstrip('/')
+
         print('MQTT topic:  ', topic)
         print('MQTT payload:', request_data['payload'])
         self.connection.publish(topic, request_data['payload'])

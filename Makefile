@@ -14,7 +14,10 @@ setup-micropython:
 
 install-requirements:
 	@echo "INFO: Please install MicroPython for Unix"
-	micropython -m upip install -p dist-packages -r requirements-mpy.txt
+	export MICROPYPATH=`pwd`/dist-packages; micropython -m upip install -r requirements-mpy.txt
+
+	# Remove some dependencies again which are already shipped as Pycom builtins
+	rm dist-packages/re.py dist-packages/ffilib.py
 
 
 # ==============
