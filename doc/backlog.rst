@@ -40,11 +40,13 @@ Datalogger
 
 Open
 ====
-- [o] Solid configuration system
-- [o] Use pure-Python "urllib" without dependency to "libpcre"
+- [x] Solid configuration system
+- [x] Use pure-Python "urllib" without dependency to "libpcre"
+- [o] Handle "Connection to MQTT broker failed or lost"
+
 - [o] Appropriate logging
 - [o] Periodic servicing tasks
-- [o] Poll/refresh WiFi and reconnect
+- [o] Reconnect to WiFi and MQTT when dropping off, use exp. backoff?
 - [o] Timekeeping, use RTC and NTP
 - [o] Add Watchdog timer
 - [o] Basic telemetry: Battery, Temperature, Hall-Sensor
@@ -82,8 +84,6 @@ Open
 
 - [o] Check out "Firmware over the air update":
     https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
-
-- [o] Handle "No connection to MQTT broker"
 
 
 Closed

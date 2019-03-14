@@ -304,8 +304,8 @@ USSL not found
     make: *** [Makefile:17: install-requirements] Fehler 1
 
 
-No connection to MQTT broker
-============================
+Connection to MQTT broker failed
+================================
 ::
 
     --- loop ---
@@ -315,4 +315,29 @@ No connection to MQTT broker
     Telemetry transport: MQTT over TCP over WiFi
     INFO: Connecting to MQTT broker
     ERROR: Connecting to MQTT broker failed. [Errno 113] ECONNABORTED
+
+
+Connection to MQTT broker lost
+==============================
+::
+
+    --- loop ---
+    [136.7459] BOB loop
+    [136.7558] Terkin loop
+    INFO:  Reading sensor "MemoryFree"
+    MQTT topic:   hiveeyes/testdrive/area-23/fipy-one/data.json
+    MQTT payload: {"memfree": 2459616}
+    Traceback (most recent call last):
+      File "main.py", line 97, in <module>
+      File "main.py", line 92, in main
+      File "/flash/lib/terkin/datalogger.py", line 42, in start
+      File "/flash/lib/terkin/datalogger.py", line 73, in start_mainloop
+      File "main.py", line 86, in loop
+      File "/flash/lib/terkin/datalogger.py", line 102, in loop
+      File "/flash/lib/terkin/telemetry.py", line 298, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 97, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 238, in send
+      File "/flash/lib/mqtt.py", line 114, in publish
+      File "/flash/lib/mqtt.py", line 34, in _send_str
+    OSError: [Errno 113] ECONNABORTED
 

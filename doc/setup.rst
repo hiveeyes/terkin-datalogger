@@ -35,8 +35,8 @@ of these tools.
 
     make setup
 
-Independently from running this command once, you might want to install
-or update the MicroPython module dependencies with::
+Independently from running this command once, you might want to install or update
+the MicroPython module dependencies through populating the ``dist-packages`` folder::
 
     make install-requirements
 
