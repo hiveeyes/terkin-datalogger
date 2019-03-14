@@ -105,7 +105,7 @@ class NetworkManager:
 
         # FIXME: If no known network is found, the program will lockup here.
         # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
-        retries = 5
+        retries = 15
         while not self.station.isconnected() and retries > 0:
             print('WiFi STA: Waiting for network "{}".'.format(network_name))
             time.sleep(1)
