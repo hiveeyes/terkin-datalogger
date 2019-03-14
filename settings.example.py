@@ -45,3 +45,15 @@ telemetry = {
         }
     ],
 }
+
+# Sensor configuration.
+sensors = {
+    'registry': {
+        'hx711': {
+            'pin_dout': 'P0',
+            'pin_pdsck': 'P2',
+            'scale': 11.026667,
+            'offset': 130800.0,
+        },
+    },
+}

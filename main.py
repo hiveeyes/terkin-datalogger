@@ -42,12 +42,13 @@ class BobDatalogger(HiveeyesDatalogger):
         """
 
         # Initialize HX711 sensor component.
-        # TODO: Use values from configuration settings.
+        hx711_settings = self.settings.get('sensors.registry.hx711')
+
         hx711_sensor = HX711Sensor(
-            pin_dout='P0',
-            pin_pdsck='P2',
-            scale=11.026667,
-            offset=130800.0,
+            pin_dout=hx711_settings['pin_dout'],
+            pin_pdsck=hx711_settings['pin_pdsck'],
+            scale=hx711_settings['scale'],
+            offset=hx711_settings['offset'],
         )
 
         # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
