@@ -1,8 +1,10 @@
 import os
 
 import machine
+import time
 from machine import Timer
 from ubinascii import hexlify
+
 
 from terkin.radio import NetworkManager
 
@@ -27,6 +29,23 @@ class TerkinDevice:
         self.tlog('Starting networking')
 
         self.networking = NetworkManager(self.settings)
+
+
+        if not self.settings.get('networking.lora.antenna_attached'):
+            print("[LoRa] Antenna need to be attached, otherwise device will break")
+            return
+
+        # initiating LoRa device
+        self.networking.start_lora()
+
+        self.networking.wait_for_lora_join(42)
+
+        time.sleep(2.5)
+
+        if self.networking.lora_joined:
+            self.networking.create_lora_socket()
+        else:
+            print("[LoRa] could not initiate network")
 
         # Start WiFi
         self.networking.start_wifi()
