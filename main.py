@@ -70,8 +70,17 @@ class BobDatalogger(HiveeyesDatalogger):
         # It's your turn.
         self.device.tlog('BOB loop')
 
+        # TODO: Send real measurement data to TTN.
+        if self.settings.get('networking.lora.antenna_attached'):
+            self.ttn_test()
 
-        # sending to TTN, without taking to much Airtime
+        # Finally, schedule other system tasks.
+        super().loop()
+
+    def ttn_test(self):
+        """
+        Send dummy payload to TTN over LoRaWAN, without taking too much Airtime.
+        """
         for i in range(1, 39):
             j = i % 10
             if j == 0 or i == 1:
@@ -80,9 +89,6 @@ class BobDatalogger(HiveeyesDatalogger):
                 if success:
                     print("[LoRa] send:", payload)
             time.sleep(1)
-
-        # Finally, schedule other system tasks.
-        super().loop()
 
 
 def main():

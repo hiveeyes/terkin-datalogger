@@ -30,24 +30,13 @@ class TerkinDevice:
 
         self.networking = NetworkManager(self.settings)
 
-
-        if not self.settings.get('networking.lora.antenna_attached'):
-            print("[LoRa] Antenna need to be attached, otherwise device will break")
-            return
-
-        # initiating LoRa device
-        self.networking.start_lora()
-
-        self.networking.wait_for_lora_join(42)
-
-        time.sleep(2.5)
-
-        if self.networking.lora_joined:
-            self.networking.create_lora_socket()
+        # Initiating LoRa device.
+        if self.settings.get('networking.lora.antenna_attached'):
+            self.networking.start_lora()
         else:
-            print("[LoRa] could not initiate network")
+            print("[LoRa] WARNING: Antenna MUST to be attached, otherwise device will break.")
 
-        # Start WiFi
+        # Start WiFi.
         self.networking.start_wifi()
 
         # Wait for network interface to come up.

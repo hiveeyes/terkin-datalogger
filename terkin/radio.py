@@ -154,6 +154,17 @@ class NetworkManager:
         print('Networking established')
 
     def start_lora(self):
+        self.start_lora_join()
+        self.wait_for_lora_join(42)
+
+        time.sleep(2.5)
+
+        if self.lora_joined:
+            self.create_lora_socket()
+        else:
+            print("[LoRa] ERROR: Could not join network")
+
+    def start_lora_join(self):
         pycom.rgbled(0x0f0000) # red
         #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
