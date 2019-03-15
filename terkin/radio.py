@@ -82,11 +82,13 @@ class NetworkManager:
                 #    'ifconfig': ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1'),
                 # }
                 network_selected = network_map[network_name]
-                self.wifi_connect_station(network_selected)
+                if self.wifi_connect_station(network_selected):
+                    break
 
             except Exception as ex:
                 print('WiFi STA: Connecting to "{}" failed.'.format(network_name, ex))
 
+        # TODO: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
         print('WiFi: Switching to AP mode. {}'.format(network_name, ex))
         print(WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT)
@@ -120,7 +122,7 @@ class NetworkManager:
             time.sleep(1)
             retries -= 1
             # Save power while waiting
-            #machine.idle()
+            machine.idle()
 
         if not self.station.isconnected():
             raise TimeoutError('Unable to connect to WiFi station "{}"'.format(network_name))
