@@ -85,6 +85,8 @@ Open
 - [o] Check out "Firmware over the air update":
     https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
 
+- [o] Assistant for configuring ``serial_port`` in ``config.mk``. Optionally use environment variable!?
+
 
 Closed
 ======
