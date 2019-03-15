@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # (c) 2017-2019 Andreas Motl <andreas@terkin.org>
+# (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 """
 =============================
@@ -26,7 +27,8 @@ from urllib.parse import urlsplit, urlencode
 
 class TelemetryClient:
     """
-    Telemetry data client: Basic API
+    A flexible telemetry data client wrapping access to
+    different transport adapters and serialization mechanisms.
     """
 
     TRANSPORT_HTTP = 'http'
@@ -47,6 +49,7 @@ class TelemetryClient:
         self.format = format
         self.suffixes = suffixes or {}
 
+        # TODO: Move to TTN Adapter.
         self.ttn_size = 12
 
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
@@ -58,7 +61,8 @@ class TelemetryClient:
             self.transport = TelemetryClient.TRANSPORT_MQTT
 
     def serialize(self, data):
-        payload = None
+
+        # Serialize payload.
         if self.format == TelemetryClient.FORMAT_URLENCODED:
             payload = urlencode(data)
 
@@ -93,9 +97,10 @@ class TelemetryClient:
 
 
         payload = data
-
+        """
         if "TelemetryTransportTTN" in handler:
             serialize = False
+        """
 
         if serialize:
             payload = self.serialize(data)
@@ -173,6 +178,7 @@ class TelemetryTransportHTTP:
             return True
         else:
             raise Exception('HTTP request failed: {} {}'.format(response.status, response.reason))
+
 
 class TelemetryTransportTTN:
 

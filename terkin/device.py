@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
+# (c) 2017-2019 Andreas Motl <andreas@terkin.org>
+# (c) 2019 Richard Pobering <richard@hiveeyes.org>
+# License: GNU General Public License, Version 3
 import os
-
 import machine
-import time
 from machine import Timer
 from ubinascii import hexlify
-
 
 from terkin.radio import NetworkManager
 
@@ -22,6 +23,8 @@ class TerkinDevice:
         self.chrono.start()
 
         self.networking = None
+        self.telemetry = None
+
         self.wdt = None
         self.rtc = None
 
@@ -93,17 +96,27 @@ class TerkinDevice:
     def start_telemetry(self):
         self.tlog('Starting telemetry')
 
+        # Read all designated telemetry targets from configuration settings.
         telemetry_targets = self.settings.get('telemetry.targets')
         print('Telemetry targets:', telemetry_targets)
         if len(telemetry_targets) > 1:
             print('WARNING: Will only use first telemetry target (FIXME)')
 
-        # TODO: Iterate all telemetry targets to submit measurement data to multiple destinations.
-        telemetry_target = telemetry_targets[0]
-        telemetry_address = telemetry_target['address']
+        # Configure enabled telemetry targets.
+        # TODO: Add multiple targets, currently just the first one gets used.
+        telemetry_target = None
+        for candidate in telemetry_targets:
+            if candidate.get('enabled', False):
+                telemetry_target = candidate
+                break
+
+        if telemetry_target is None:
+            print('WARNING: No telemetry target configured.')
+            return
 
         # Create a "Node API" telemetry client object
         from terkin.telemetry import TelemetryNode, TelemetryTopologies
+        telemetry_address = telemetry_target['address']
         self.telemetry = TelemetryNode(
             telemetry_target['endpoint'],
             address={
