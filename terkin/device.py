@@ -128,6 +128,7 @@ class TerkinDevice:
             # TODO: Use topology from configuration settings.
             topology=TelemetryTopologies.KotoriWanTopology,
             format=telemetry_target.get('format'),
+            content_encoding=telemetry_target.get('encode'),
         )
 
         # Setup telemetry object

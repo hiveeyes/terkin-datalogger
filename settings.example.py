@@ -43,16 +43,56 @@ networking = {
 # Telemetry configuration.
 telemetry = {
     'targets': [
+
+        # JSON over MQTT
         {
-            #'endpoint': 'https://daq.example.org/api',
-            #'endpoint': 'http://daq.example.org/api-notls',
+            # Enable/disable this telemetry target.
+            'enabled': True,
+
+            # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://daq.example.org',
             'address': {
                 "realm": "workbench",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-01",
-            }
+                "node": "node-01-mqtt",
+            },
+        },
+
+        # JSON over HTTP
+        {
+            # Enable/disable this telemetry target.
+            'enabled': False,
+
+            # Define telemetry endpoint and address information.
+            'endpoint': 'https://daq.example.org/api',
+            'address': {
+                "realm": "workbench",
+                "network": "testdrive",
+                "gateway": "area-42",
+                "node": "node-01-http",
+            },
+
+            # Use alternative, non-HTTPS endpoint.
+            # 'endpoint': 'http://daq.example.org/api-notls',
+
+        },
+
+        # CayenneLPP over MQTT, Base64 encoded
+        {
+            # Enable/disable this telemetry target.
+            'enabled': False,
+
+            # Define telemetry endpoint and address information.
+            'endpoint': 'mqtt://daq.example.org',
+            'address': {
+                "realm": "workbench",
+                "network": "testdrive",
+                "gateway": "area-42",
+                "node": "node-01-lpp-over-mqtt",
+            },
+            'format': 'lpp',
+            'encode': 'base64',
         }
     ],
 }

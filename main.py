@@ -6,11 +6,10 @@
 Convenient data logger framework conceived for the Bee Observer (BOB) project.
 https://community.hiveeyes.org/c/bee-observer
 """
+import time
 import settings
-import pycom
 from hiveeyes.datalogger import HiveeyesDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
-import time
 
 
 class BobDatalogger(HiveeyesDatalogger):
@@ -76,6 +75,17 @@ class BobDatalogger(HiveeyesDatalogger):
 
         # Finally, schedule other system tasks.
         super().loop()
+
+    def read_sensors(self):
+        # CayenneLPP example
+
+        # Payload Base64: AWf8sABnAag=
+        # Payload Hex:    0167FCB0006701A8
+        data = {
+            'temperature_0': 42.42,
+            'temperature_1': -84.84,
+        }
+        return data
 
     def ttn_test(self):
         """

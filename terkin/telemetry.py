@@ -34,11 +34,15 @@ class TelemetryClient:
     TRANSPORT_HTTP = 'http'
     TRANSPORT_MQTT = 'mqtt'
 
-    FORMAT_URLENCODED   = 'urlencoded'
-    FORMAT_JSON         = 'json'
-    FORMAT_CSV          = 'csv'
+    FORMAT_URLENCODED = 'urlencoded'
+    FORMAT_JSON = 'json'
+    FORMAT_CSV = 'csv'
+    FORMAT_CAYENNELPP = 'lpp'
 
-    def __init__(self, uri, format, suffixes=None):
+    CONTENT_ENCODING_IDENTITY = 'identity'
+    CONTENT_ENCODING_BASE64 = 'base64'
+
+    def __init__(self, uri, format, content_encoding=None, suffixes=None):
 
         print('Starting Terkin TelemetryClient')
         self.uri = uri
@@ -47,6 +51,7 @@ class TelemetryClient:
         self.handlers = {}
 
         self.format = format
+        self.content_encoding = content_encoding
         self.suffixes = suffixes or {}
 
         # TODO: Move to TTN Adapter.
@@ -70,13 +75,20 @@ class TelemetryClient:
             payload = json.dumps(data)
 
         elif self.format == TelemetryClient.FORMAT_CAYENNELPP:
-            payload = data
+            payload = to_cayenne_lpp(data)
 
         elif self.format == TelemetryClient.FORMAT_CSV:
             raise NotImplementedError('Serialization format "CSV" not implemented yet')
 
         else:
             raise ValueError('Unknown serialization format "{}"'.format(self.format))
+
+        # Apply content encoding.
+        if self.content_encoding in (None, self.CONTENT_ENCODING_IDENTITY):
+            pass
+
+        elif self.content_encoding == self.CONTENT_ENCODING_BASE64:
+            payload = to_base64(payload)
 
         return payload
 
@@ -183,57 +195,20 @@ class TelemetryTransportHTTP:
 class TelemetryTransportTTN:
 
     def __init__(self, size=100):
+        raise NotImplementedError('Yadda.')
 
         from cayenneLPP import cayenneLPP
 
-        # TODO: TTN application needs to be setup accordingly to URI in HTTP
+        # TODO: TTN application needs to be setup accordingly to URI in HTTP.
         # self.application = application
         self.size = size
 
         self.connection = NetworkManager.create_lora_socket()
-        self.lpp = cayenneLPP.CayenneLPP(size = 100, sock = self.connection)
+        self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
 
     def send(self, request_data):
-
-        for k, v in request_data['payload'].items():
-            key = k.split("_")[0]
-            channel = k.split("_")[1]
-            value = v
-
-            # TODO: Fork cayenneLPP add load to 122 (3322)
-            # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
-            # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
-
-            if "load" in key:
-                self.lpp.add_load(value, channel)
-            elif "temperatur" in key:
-                self.lpp.add_temperature(value, channel)
-            elif "digital-input" in key:
-                self.lpp.add_digital_input(value, channel)
-            elif "digital_output" in key:
-                self.lpp.add_digital_output(value, channel)
-            elif "analog-input" in key:
-                self.lpp.add_analog_input(value, channel)
-            elif "analog-output" in key:
-                self.lpp.add_analog_output(value, channel)
-            elif "illuminance" in key:
-                self.lpp.add_illuminance(value, channel)
-            elif "presence" in key:
-                self.lpp.add_presence(value, channel)
-            elif "humidity" in key:
-                self.lpp.add_humidity(value, channel)
-            elif "accelerometer" in key:
-                self.lpp.add_accelerometer(value, channel)
-            elif "barometer" in key:
-                self.lpp.add_barometer(value, channel)
-            elif "gyrometer" in key:
-                self.lpp.add_gyrometer(value, channel)
-            elif "gps" in key:
-                self.lpp.add_gps(value, channel)
-            else:
-                print("[CayenneLPP] sensor type not found in cayenneLPP: ", key)
-
-        # TODO raise errorcode if not send
+        # TODO: Raise exception if submission failed.
+        raise NotImplementedError('Yadda.')
 
 
 class TelemetryTransportMQTT:
@@ -365,13 +340,15 @@ class TelemetryNode:
     Telemetry node client: Network participant API
     """
 
-    def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None):
+    def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None, content_encoding=None):
 
         self.base_uri = base_uri
         self.address = address or {}
         self.address['base_uri'] = base_uri
         self.uri_template = uri_template or '{base_uri}'
+        # TODO: Move default value deeper into the framework here?
         self.format = format or TelemetryClient.FORMAT_JSON
+        self.content_encoding = content_encoding
 
         self.suffixes = None
 
@@ -391,7 +368,7 @@ class TelemetryNode:
         self.client = self.client_factory()
 
     def client_factory(self):
-        client = TelemetryClient(self.channel_uri, self.format, suffixes=self.suffixes)
+        client = TelemetryClient(self.channel_uri, format=self.format, content_encoding=self.content_encoding, suffixes=self.suffixes)
         return client
 
     def transmit(self, data):
@@ -413,3 +390,68 @@ class CSVTelemetryNode(TelemetryNode):
         uri = self.format_uri(**kwargs)
         print('Telemetry channel URI for CSV: ', uri)
         return self.client.transmit(data, uri=uri, serialize=False)
+
+
+def to_base64(bytes):
+    """Encode bytes to base64 encoded string"""
+    # TODO: Move to ``util.py``.
+    import base64
+    return base64.encodebytes(bytes).decode().rstrip()
+
+
+def to_cayenne_lpp(data):
+    """
+    Serialize plain data dictionary to binary CayenneLPP format.
+    """
+
+    from cayennelpp import LppFrame
+    frame = LppFrame()
+
+    for key, value in data.items():
+
+        # TODO: Maybe implement different naming conventions.
+        name = key.split("_")[0]
+        try:
+            channel = int(key.split("_")[1])
+        except IndexError:
+            channel = 0
+
+        if "temperature" in name:
+            frame.add_temperature(channel, value)
+        elif "digital-input" in name:
+            frame.add_digital_input(channel, value)
+        elif "digital_output" in name:
+            frame.add_digital_output(channel, value)
+        elif "analog-input" in name:
+            frame.add_analog_input(channel, value)
+        elif "analog-output" in name:
+            frame.add_analog_output(channel, value)
+        elif "illuminance" in name:
+            frame.add_illuminance(channel, value)
+        elif "presence" in name:
+            frame.add_presence(channel, value)
+        elif "humidity" in name:
+            frame.add_humidity(channel, value)
+        elif "accelerometer" in name:
+            frame.add_accelerometer(channel, value)
+        elif "barometer" in name:
+            frame.add_barometer(channel, value)
+        elif "gyrometer" in name:
+            frame.add_gyrometer(channel, value)
+        elif "gps" in name:
+            frame.add_gps(channel, value)
+
+        # TODO: Fork cayenneLPP and implement load cell telemetry.
+        # TODO: Add load encoder as ID 122 (3322)
+        # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
+        # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
+        elif False and "load" in name:
+            frame.add_load(channel, value)
+
+        # TODO: Map memfree and other baseline sensors appropriately.
+
+        else:
+            # TODO: raise Exception here?
+            print("[CayenneLPP] sensor type not found in cayenneLPP: ", name)
+
+    return frame.bytes()
