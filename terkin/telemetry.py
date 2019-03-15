@@ -182,6 +182,7 @@ class TelemetryTransportMQTT:
         print('Telemetry transport: MQTT over TCP over WiFi')
         self.uri = uri
         self.format = format
+        self.connected = False
         self.defunct = False
         self.defunctness_reported = False
 
@@ -207,12 +208,14 @@ class TelemetryTransportMQTT:
         # Connect to MQTT broker.
         # TODO: Try continuous reconnection to MQTT broker.
         try:
-            # TODO: Use device identifier here to make the MQTT client id more unique.
+            # TODO: Use device identifier / hardware serial here
+            #       to make the MQTT client id more unique.
             print('INFO: Connecting to MQTT broker')
-            self.connection = MQTTClient("terkin_mqtt_client", self.netloc)
+            self.connection = MQTTClient("terkin_mqtt_logger", self.netloc)
             self.connection.DEBUG = True
             self.connection.connect()
             print('INFO: Connecting to MQTT broker succeeded')
+            self.connected = True
 
         except Exception as ex:
             print('ERROR: Connecting to MQTT broker failed. {}'.format(ex))
@@ -221,8 +224,13 @@ class TelemetryTransportMQTT:
 
         return True
 
+    def ensure_connection(self):
+        if not self.connected:
+            self.start()
+
     def send(self, request_data):
 
+        # Evaluate and handle defunctness.
         if self.defunct:
             if not self.defunctness_reported:
                 print('ERROR: MQTT transport is defunct, please scan log '
@@ -230,13 +238,31 @@ class TelemetryTransportMQTT:
                 self.defunctness_reported = True
             return False
 
+        # Try to (re-)connect to MQTT broker.
+        self.ensure_connection()
+
         # Derive MQTT topic string from URI path component.
         topic = self.path.lstrip('/')
 
+        # Reporting.
         print('MQTT topic:  ', topic)
         print('MQTT payload:', request_data['payload'])
-        self.connection.publish(topic, request_data['payload'])
-        return True
+
+        try:
+            # TODO: Make qos level configurable.
+            self.connection.publish(topic, request_data['payload'], qos=1)
+            return True
+
+        except OSError as ex:
+            print('ERROR: MQTT publishing failed. {}'.format(ex))
+
+            # Signal connection error in order to reconnect on next submission attempt.
+            # [Errno 104] ECONNRESET
+            # [Errno 113] ECONNABORTED
+            if ex.errno in [104, 113]:
+                self.connected = False
+
+            return False
 
 
 class TelemetryTopologies:
