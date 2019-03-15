@@ -103,12 +103,13 @@ class TerkinDatalogger:
 
         # Evaluate outcome.
         if success:
-            self.device.tlog('Telemetry data successfully transmitted')
+            self.device.tlog('Telemetry transmission: SUCCESS')
         else:
-            self.device.tlog('Telemetry data transmission failed')
+            self.device.tlog('Telemetry transmission: FAILURE')
 
         # Run the garbage collector.
         self.device.run_gc()
 
-        # Sleep a little bit
+        # Sleep until the next measurement cycle.
+        # TODO: Account for deep sleep here.
         utime.sleep(self.settings.get('main.interval'))
