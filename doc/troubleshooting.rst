@@ -341,3 +341,9 @@ Connection to MQTT broker lost
       File "/flash/lib/mqtt.py", line 34, in _send_str
     OSError: [Errno 113] ECONNABORTED
 
+
+MQTT connection establishment fails again
+==========================================
+::
+
+    ERROR: Connecting to MQTT broker failed. -202
