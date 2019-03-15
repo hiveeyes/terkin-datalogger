@@ -16,12 +16,12 @@ networking = {
             {'ssid': 'FooBar', 'password': 'SECRET'},
 
             # Variant 2: Using static IP address.
-            {
-                'ssid': 'FooBar',
-                'password': 'SECRET',
-                # Use static network configuration (ip, subnet_mask, gateway, DNS_server).
-                'ifconfig': ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1'),
-            },
+            #{
+            #    'ssid': 'FooBar',
+            #    'password': 'SECRET',
+            #    # Use static network configuration (ip, subnet_mask, gateway, DNS_server).
+            #    'ifconfig': ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1'),
+            #},
         ],
 
         # The maximum time in milliseconds to wait for the connection to succeed.
