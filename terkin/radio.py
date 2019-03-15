@@ -47,13 +47,14 @@ class NetworkManager:
         # Check WiFi connectivity.
         if self.station.isconnected():
 
-            print("WiFi STA: Already connected")
+            print("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
+            self.print_short_status()
 
             # Give system some breath.
             time.sleep(0.25)
 
             # Inform about networking status.
-            self.print_status()
+            self.print_address_status()
 
             return True
 
@@ -86,7 +87,7 @@ class NetworkManager:
                     break
 
             except Exception as ex:
-                print('WiFi STA: Connecting to "{}" failed.'.format(network_name, ex))
+                print('WiFi STA: Connecting to "{}" failed. {}'.format(network_name, ex))
 
         # TODO: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
@@ -127,20 +128,30 @@ class NetworkManager:
         if not self.station.isconnected():
             raise TimeoutError('Unable to connect to WiFi station "{}"'.format(network_name))
 
-        print('WiFi STA: Connected to "{}" with IP address "{}"'.format(network_name, self.station.ifconfig()[0]))
+        self.print_short_status()
 
         # Inform about networking status.
-        self.print_status()
+        self.print_address_status()
 
         return True
 
-    def print_status(self):
+    def get_ssid(self):
+        return self.station.ssid()
+
+    def get_ip_address(self):
+        try:
+            return self.station.ifconfig()[0]
+        except:
+            pass
+
+    def print_address_status(self):
+        #print(dir(self.station))
         mac_address = self.station.mac()
         ifconfig = self.station.ifconfig()
-        status = None
-        # status = self.station.status()
-        #print(dir(self.station))
-        print('Networking status: mac={}, ifconfig={}, status={}'.format(mac_address, ifconfig, status))
+        print('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
+
+    def print_short_status(self):
+        print('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def wait_for_nic(self, retries=5):
         attempts = 0
