@@ -2,3 +2,4 @@ micropython-copy
 micropython-types
 micropython-collections
 micropython-urllib.parse
+micropython-base64

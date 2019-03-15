@@ -19,6 +19,13 @@ install-requirements:
 	# Remove some dependencies again which are already shipped as Pycom builtins
 	rm dist-packages/re.py dist-packages/ffilib.py
 
+	# Properly clone and install forked pycayennelpp repository
+	rm -rf tmp
+	mkdir -p tmp
+	git clone https://github.com/hiveeyes/pycayennelpp tmp/pycayennelpp/
+	rm -r tmp/pycayennelpp/cayennelpp/tests
+	cp -r tmp/pycayennelpp/cayennelpp dist-packages/
+
 
 # ==============
 # rshell targets
