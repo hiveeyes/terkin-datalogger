@@ -48,10 +48,10 @@ telemetry = {
             #'endpoint': 'http://daq.example.org/api-notls',
             'endpoint': 'mqtt://daq.example.org',
             'address': {
-                "realm": "acme",
+                "realm": "workbench",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-1",
+                "node": "node-01",
             }
         }
     ],
