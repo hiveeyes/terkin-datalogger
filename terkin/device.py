@@ -112,7 +112,8 @@ class TerkinDevice:
                 "node": telemetry_address['node'],
             },
             # TODO: Use topology from configuration settings.
-            topology=TelemetryTopologies.KotoriWanTopology
+            topology=TelemetryTopologies.KotoriWanTopology,
+            format=telemetry_target.get('format'),
         )
 
         # Setup telemetry object
