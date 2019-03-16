@@ -1,6 +1,6 @@
-########################################
-Hiveeyes MPY data logger troubleshooting
-########################################
+###############################################
+Hiveeyes MicroPython Datalogger troubleshooting
+###############################################
 
 We've jumped through some tires that you don't have to.
 

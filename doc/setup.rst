@@ -1,6 +1,6 @@
-##############################
-Hiveeyes MPY data logger setup
-##############################
+#####################################
+Hiveeyes MicroPython Datalogger setup
+#####################################
 
 ************
 Introduction

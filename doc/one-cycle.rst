@@ -53,9 +53,9 @@
     entry 0x400a05f8
     Initializing filesystem as FatFS!
     INFO: Python module search path is: ['', '/flash', '/flash/lib', 'dist-packages']
-    =========================
-    BOB MPY data logger 0.0.0
-    =========================
+    ================================
+    BOB MicroPython Datalogger 0.0.0
+    ================================
     CPU freq     160.0 MHz
     Device id    807d3ac342bc
 

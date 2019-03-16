@@ -1,5 +1,4 @@
-# Install Hiveeyes MPY data logger program
-# to MicroPython target device using "rshell".
+# Install program to MicroPython target device using "rshell".
 
 # Upload application library assets
 rsync ./lib /flash/lib

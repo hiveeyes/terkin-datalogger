@@ -1,6 +1,6 @@
-########################
-Hiveeyes MPY data logger
-########################
+###############################
+Hiveeyes MicroPython Datalogger
+###############################
 
 Data logging for humans.
 
@@ -71,7 +71,7 @@ Setup
 *****
 You mean it. Thanks for listening already and enjoy the ride.
 
-Please follow up at `Hiveeyes MPY data logger setup`_ to read about how to
+Please follow up at `Hiveeyes MicroPython Datalogger setup`_ to read about how to
 install the MicroPython firmware development environment and other software
 components it relies on.
 
@@ -99,7 +99,7 @@ scratch as it will likewise happen in the real world::
 ***************
 Troubleshooting
 ***************
-Please have a look at `Hiveeyes MPY data logger troubleshooting`_.
+Please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
 
 
 ****************
@@ -113,9 +113,9 @@ and conceive it in one way or another. You know who you are.
 
 Have fun!
 
-.. _Hiveeyes MPY data logger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
+.. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
 .. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 .. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html
 .. _getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
-.. _Hiveeyes MPY data logger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst
+.. _Hiveeyes MicroPython Datalogger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst

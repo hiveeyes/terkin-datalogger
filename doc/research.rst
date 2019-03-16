@@ -1,6 +1,6 @@
-#################################
-Hiveeyes MPY data logger research
-#################################
+########################################
+Hiveeyes MicroPython Datalogger research
+########################################
 
 - https://github.com/pycampers/ampy
   https://pypi.org/project/adafruit-ampy/

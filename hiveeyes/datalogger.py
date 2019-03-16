@@ -10,7 +10,7 @@ from terkin.datalogger import TerkinDatalogger
 class HiveeyesDatalogger(TerkinDatalogger):
 
     # Application metadata.
-    name = 'Hiveeyes MPY data logger'
+    name = 'Hiveeyes MicroPython Datalogger'
     version = __version__
 
     def register_sensors(self):

@@ -23,7 +23,7 @@ class BobDatalogger(HiveeyesDatalogger):
     """
 
     # Naming things.
-    name = 'BOB MPY data logger'
+    name = 'BOB MicroPython Datalogger'
 
     def register_sensors(self):
         """
