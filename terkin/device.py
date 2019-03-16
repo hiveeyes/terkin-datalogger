@@ -7,8 +7,6 @@ import machine
 from machine import Timer
 from ubinascii import hexlify
 
-from terkin.radio import NetworkManager
-
 
 class TerkinDevice:
 
@@ -30,6 +28,8 @@ class TerkinDevice:
 
     def start_networking(self):
         self.tlog('Starting networking')
+
+        from terkin.radio import NetworkManager
 
         self.networking = NetworkManager(self.settings)
 
@@ -96,43 +96,47 @@ class TerkinDevice:
     def start_telemetry(self):
         self.tlog('Starting telemetry')
 
+        from terkin.telemetry import TelemetryManager, TelemetryAdapter, TelemetryTopologies
+
+        self.telemetry = TelemetryManager()
+
         # Read all designated telemetry targets from configuration settings.
         telemetry_targets = self.settings.get('telemetry.targets')
-        print('Telemetry targets:', telemetry_targets)
-        if len(telemetry_targets) > 1:
-            print('WARNING: Will only use first telemetry target (FIXME)')
 
-        # Configure enabled telemetry targets.
-        # TODO: Add multiple targets, currently just the first one gets used.
-        telemetry_target = None
-        for candidate in telemetry_targets:
-            if candidate.get('enabled', False):
-                telemetry_target = candidate
-                break
+        # Compute list of all _enabled_ telemetry targets.
+        telemetry_candidates = []
+        for telemetry_target in telemetry_targets:
+            if telemetry_target.get('enabled', False):
+                telemetry_candidates.append(telemetry_target)
 
-        if telemetry_target is None:
+        # Create adapter objects for each enabled telemetry target.
+        for telemetry_target in telemetry_candidates:
+
+            # Shortcut to address information.
+            telemetry_address = telemetry_target['address']
+
+            # Create adapter object.
+            telemetry_adapter = TelemetryAdapter(
+                telemetry_target['endpoint'],
+                address={
+                    "realm": telemetry_address['realm'],
+                    "network": telemetry_address['network'],
+                    "gateway": telemetry_address['gateway'],
+                    "node": telemetry_address['node'],
+                },
+                # TODO: Use topology from configuration settings.
+                topology=TelemetryTopologies.KotoriWanTopology,
+                format=telemetry_target.get('format'),
+                content_encoding=telemetry_target.get('encode'),
+            )
+
+            # Setup telemetry adapter.
+            telemetry_adapter.setup()
+
+            self.telemetry.add_adapter(telemetry_adapter)
+
+        else:
             print('WARNING: No telemetry target configured.')
-            return
-
-        # Create a "Node API" telemetry client object
-        from terkin.telemetry import TelemetryNode, TelemetryTopologies
-        telemetry_address = telemetry_target['address']
-        self.telemetry = TelemetryNode(
-            telemetry_target['endpoint'],
-            address={
-                "realm": telemetry_address['realm'],
-                "network": telemetry_address['network'],
-                "gateway": telemetry_address['gateway'],
-                "node": telemetry_address['node'],
-            },
-            # TODO: Use topology from configuration settings.
-            topology=TelemetryTopologies.KotoriWanTopology,
-            format=telemetry_target.get('format'),
-            content_encoding=telemetry_target.get('encode'),
-        )
-
-        # Setup telemetry object
-        self.telemetry.setup()
 
     def enable_serial(self):
         # Disable these two lines if you don't want serial access.

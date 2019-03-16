@@ -25,6 +25,84 @@ from copy import copy
 from urllib.parse import urlsplit, urlencode
 
 
+class TelemetryManager:
+
+    def __init__(self):
+        self.adapters = []
+
+    def add_adapter(self, adapter):
+        self.adapters.append(adapter)
+
+    def transmit(self, data):
+        outcomes = []
+        for adapter in self.adapters:
+            try:
+                outcome = adapter.transmit(data)
+                outcomes.append(outcome)
+            except Exception as ex:
+                print('ERROR: Telemetry failed for adapter {}/{}. {}'.format(adapter.base_uri, adapter.address, ex))
+
+        # TODO: Improve by returning dictionary of all outcomes.
+        return any(outcomes)
+
+
+class TelemetryAdapter:
+    """
+    Telemetry node client: Network participant API
+    """
+
+    def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None, content_encoding=None):
+
+        self.base_uri = base_uri
+        self.address = address or {}
+        self.address['base_uri'] = base_uri
+        self.uri_template = uri_template or '{base_uri}'
+        # TODO: Move default value deeper into the framework here?
+        self.format = format or TelemetryClient.FORMAT_JSON
+        self.content_encoding = content_encoding
+
+        self.suffixes = None
+
+        if topology:
+            self.uri_template = topology.uri_template
+            self.suffixes = topology.suffixes
+
+    def format_uri(self, **kwargs):
+        data = copy(self.address)
+        data.update(kwargs)
+        return self.uri_template.format(**data)
+
+    def setup(self):
+        self.channel_uri = self.format_uri()
+
+        print('Telemetry channel URI: ', self.channel_uri)
+        self.client = self.client_factory()
+
+    def client_factory(self):
+        client = TelemetryClient(self.channel_uri, format=self.format, content_encoding=self.content_encoding, suffixes=self.suffixes)
+        return client
+
+    def transmit(self, data):
+        return self.client.transmit(data)
+
+
+class CSVTelemetryAdapter(TelemetryAdapter):
+    """
+    Telemetry node client: Network participant API.
+
+    This will make your node talk CSV.
+    """
+
+    def __init__(self, *args, **kwargs):
+        TelemetryAdapter.__init__(self, *args, **kwargs)
+        self.format = TelemetryClient.FORMAT_CSV
+
+    def transmit(self, data, **kwargs):
+        uri = self.format_uri(**kwargs)
+        print('Telemetry channel URI for CSV: ', uri)
+        return self.client.transmit(data, uri=uri, serialize=False)
+
+
 class TelemetryClient:
     """
     A flexible telemetry data client wrapping access to
@@ -222,16 +300,24 @@ class TelemetryTransportMQTT:
 
         micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
 
-    TODO: Try to make this module reasonably compatible again
-          by becoming an adapter for different implementations.
     """
+
+    connections = {}
 
     def __init__(self, uri, format):
 
         print('Telemetry transport: MQTT over TCP over WiFi')
+
+        # Addressing.
         self.uri = uri
         self.format = format
-        self.connected = False
+        self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
+
+        # TODO: Use device identifier / hardware serial here
+        #       to make the MQTT client id more unique.
+        self.client_id = "terkin_mqtt_logger"
+
+        # Status flags.
         self.defunct = False
         self.defunctness_reported = False
 
@@ -241,41 +327,16 @@ class TelemetryTransportMQTT:
         self.start()
 
     def start(self):
+        # Create one MQTTAdapter instance per target host:port.
+        if self.netloc not in self.connections:
+            # TODO: Add more parameters to MQTTAdapter here.
+            try:
+                self.connections[self.netloc] = MQTTAdapter(self.client_id, self.netloc)
+            except Exception:
+                self.defunct = True
 
-        self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
-
-        # Load MQTT module.
-        # TODO: Create abstract MQTT client factory to account for different implementations.
-        try:
-            from mqtt import MQTTClient
-
-        except Exception as ex:
-            print('ERROR: Loading MQTT module failed. {}'.format(ex))
-            self.defunct = True
-            return False
-
-        # Connect to MQTT broker.
-        # TODO: Try continuous reconnection to MQTT broker.
-        try:
-            # TODO: Use device identifier / hardware serial here
-            #       to make the MQTT client id more unique.
-            print('INFO: Connecting to MQTT broker')
-            self.connection = MQTTClient("terkin_mqtt_logger", self.netloc)
-            self.connection.DEBUG = True
-            self.connection.connect()
-            print('INFO: Connecting to MQTT broker succeeded')
-            self.connected = True
-
-        except Exception as ex:
-            print('ERROR: Connecting to MQTT broker failed. {}'.format(ex))
-            self.defunct = True
-            return False
-
-        return True
-
-    def ensure_connection(self):
-        if not self.connected:
-            self.start()
+    def get_connection(self):
+        return self.connections.get(self.netloc)
 
     def send(self, request_data):
 
@@ -287,19 +348,89 @@ class TelemetryTransportMQTT:
                 self.defunctness_reported = True
             return False
 
-        # Try to (re-)connect to MQTT broker.
-        self.ensure_connection()
-
         # Derive MQTT topic string from URI path component.
         topic = self.path.lstrip('/')
 
+        # Use payload from request.
+        payload = request_data['payload']
+
         # Reporting.
-        print('MQTT topic:  ', topic)
-        print('MQTT payload:', request_data['payload'])
+        print('DEBUG: MQTT topic:  ', topic)
+        print('DEBUG: MQTT payload:', payload)
+
+        connection = self.get_connection()
+        connection.publish(topic, payload)
+
+        return True
+
+
+class MQTTAdapter:
+    """
+    MQTT adapter wrapping the lowlevel MQTT driver.
+    Handles a single connection to an MQTT broker.
+
+    TODO: Try to make this module reasonably compatible again
+          by becoming an adapter for different implementations.
+          E.g., what about Paho?
+    """
+
+    def __init__(self, client_id, server, port=0):
+        self.client_id = client_id
+        self.server = server
+        self.port = port
+        # TODO: Add more parameters: user=None, password=None, keepalive=0, ssl=False, ssl_params={}
+
+        # Transport driver.
+        self.driver_class = None
+        self.load_driver()
+
+        # Connection instance.
+        self.connection = None
+
+        # Status flags.
+        self.connected = False
+
+    def load_driver(self):
+        """Load MQTT driver module"""
+
+        # TODO: Create abstract MQTT client factory to account for different implementations.
+        try:
+            from mqtt import MQTTClient
+            self.driver_class = MQTTClient
+
+        except Exception as ex:
+            print('ERROR: Loading MQTT module failed. {}'.format(ex))
+            raise
+
+    def ensure_connection(self):
+        """Conditionally connect to MQTT broker, if not connected already"""
+        if not self.connected:
+            self.connect()
+
+    def connect(self):
+        """Connect to MQTT broker"""
+        try:
+            print('INFO: Connecting to MQTT broker')
+            self.connection = self.driver_class(self.client_id, self.server, port=self.port)
+            self.connection.DEBUG = True
+            self.connection.connect()
+            print('INFO: Connecting to MQTT broker at {} succeeded'.format(self.connection.addr))
+            self.connected = True
+
+        except Exception as ex:
+            print('ERROR: Connecting to MQTT broker at {} failed. {}'.format(self.server, ex))
+            self.connected = False
+
+        return self.connected
+
+    def publish(self, topic, payload, retain=False, qos=1):
+
+        # Try to (re-)connect to MQTT broker.
+        self.ensure_connection()
 
         try:
             # TODO: Make qos level configurable.
-            self.connection.publish(topic, request_data['payload'], qos=1)
+            self.connection.publish(topic, payload, retain=retain, qos=qos)
             return True
 
         except OSError as ex:
@@ -311,7 +442,7 @@ class TelemetryTransportMQTT:
             if ex.errno in [104, 113]:
                 self.connected = False
 
-            return False
+        return False
 
 
 class TelemetryTopologies:
@@ -333,63 +464,6 @@ class TelemetryTopologies:
             TelemetryClient.TRANSPORT_HTTP: '/data',
             TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
         }
-
-
-class TelemetryNode:
-    """
-    Telemetry node client: Network participant API
-    """
-
-    def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None, content_encoding=None):
-
-        self.base_uri = base_uri
-        self.address = address or {}
-        self.address['base_uri'] = base_uri
-        self.uri_template = uri_template or '{base_uri}'
-        # TODO: Move default value deeper into the framework here?
-        self.format = format or TelemetryClient.FORMAT_JSON
-        self.content_encoding = content_encoding
-
-        self.suffixes = None
-
-        if topology:
-            self.uri_template = topology.uri_template
-            self.suffixes = topology.suffixes
-
-    def format_uri(self, **kwargs):
-        data = copy(self.address)
-        data.update(kwargs)
-        return self.uri_template.format(**data)
-
-    def setup(self):
-        self.channel_uri = self.format_uri()
-
-        print('Telemetry channel URI: ', self.channel_uri)
-        self.client = self.client_factory()
-
-    def client_factory(self):
-        client = TelemetryClient(self.channel_uri, format=self.format, content_encoding=self.content_encoding, suffixes=self.suffixes)
-        return client
-
-    def transmit(self, data):
-        return self.client.transmit(data)
-
-
-class CSVTelemetryNode(TelemetryNode):
-    """
-    Telemetry node client: Network participant API.
-
-    This will make your node talk CSV.
-    """
-
-    def __init__(self, *args, **kwargs):
-        TelemetryNode.__init__(self, *args, **kwargs)
-        self.format = TelemetryClient.FORMAT_CSV
-
-    def transmit(self, data, **kwargs):
-        uri = self.format_uri(**kwargs)
-        print('Telemetry channel URI for CSV: ', uri)
-        return self.client.transmit(data, uri=uri, serialize=False)
 
 
 def to_base64(bytes):
