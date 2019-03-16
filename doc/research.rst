@@ -22,6 +22,8 @@ The board advertises itself as ‘wipy-wlan-xxxx’ or ‘sipy-wlan-xxxx’ or s
 are four hexadecimal digits. The password for all these networks is ‘www.pycom.io’.
 
 
+https://micropython.readthedocs.io/en/latest/library/index.html
+
 
 https://github.com/wendlers/mpfshell
 

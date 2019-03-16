@@ -60,6 +60,7 @@ Synopsis
 ::
 
     # Setup the development sandbox. Once.
+    apt install python python3 python-virtualenv
     make setup
 
     # Upload and run the program. Regularly.

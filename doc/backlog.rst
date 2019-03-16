@@ -13,10 +13,18 @@ Prio 1
 - [x] Use pure-Python "urllib" without dependency to "libpcre"
 - [x] Handle "Connection to MQTT broker failed or lost"
 - [x] Multi-network WiFi
+- [o] Fix console crasher when running on Windows
+- [o] Get back to reading real sensors again
+- [o] Status and sensor announcement
+- [o] Sensor data model: Introduce Measurement (single) and Reading (bunch) objects
+- [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
+- [o] Add release tooling
+- [o] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
+- [o] Add software tests
 
 Prio 2
 ======
-- [o] Add improved logging
+- [o] Improve logging
 - [o] Improve logging by adding stacktrace printer
 - [o] Improve tooling by adding file watcher or even delta patching
 - [o] Improve display of "Networking address" by decoding mac address values
@@ -25,10 +33,14 @@ Prio 2
 - [o] Periodic servicing tasks for NetworkManager
 - [o] Add MQTT-based runtime configuration like ``mqtt://daq.example.org/.../settings.json`` or
   ``.../rpc/request`` vs. ``.../rpc/response``
+- [o] Is ``utime`` actually the same as ``time``?
+- [o] Publish sensor configuration at first time telemetry contact
+- [o] Implement access to Switches: https://micropython.readthedocs.io/en/latest/pyboard/tutorial/switch.html
+- [o] Use Timers: https://micropython.readthedocs.io/en/latest/pyboard/tutorial/timer.html
+- [o] Put ``dotty_dict`` into ``dist-packages``
 
 Prio 3
 ======
-- [o] Introduce Measurement (single) and Reading (bunch) objects
 - [o] Timekeeping, use RTC and NTP
 - [o] Add Watchdog timer
 - [o] Basic telemetry: Battery, Temperature, Hall-Sensor
@@ -39,6 +51,11 @@ Prio 3
 - [o] Check driver correctness
     - https://github.com/geda/hx711-lopy/blob/9cc6de8d/hx711.py#L35-L37
     - https://github.com/geda/hx711-lopy/blob/9cc6de8d/hx711.py#L42-L45
+- [o] Use ``asbool`` for having string-based truthy values in configuration settings
+- [o] Check what can be done using ``esptool`` already::
+
+    pip3 install esptool
+
 
 Prio 4
 ======
@@ -102,9 +119,6 @@ General
 - [o] Report about how much this framework weighs in - in terms of
       memory (RAM and flash) and maybe other resources
       {"memfree": 2522016}
-- [o] Add release tooling
-- [o] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
-- [o] Add software tests
 
 
 Upload and reset
@@ -125,3 +139,17 @@ Documentation
 - [o] Add "About", "Authors"
 - [o] Add Sphinx documentation
 - [o] Add doctests to documentation
+- [o] Flash MicroPython from RaspberryPi: https://www.raspberrypi.org/forums/viewtopic.php?t=233367
+- [o] Add topics about
+
+    - Connectivity / Resiliency
+    - Multi-telemetry
+    - Configuration subsystem
+    - User handbook
+    - Developer handbook (Sandbox installation)
+    - Workstation Support: Linux, macOS, Windows
+
+::
+
+    workbench/testdrive/area-38/fipy-amo-02-mqtt-json/data.json {"temperature_0": 42.42, "temperature_1": -84.84}
+    workbench/testdrive/area-38/fipy-amo-02-mqtt-json/data.lpp AGcBqAFn/LA=

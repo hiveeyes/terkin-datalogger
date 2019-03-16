@@ -344,6 +344,23 @@ Connection to MQTT broker lost
 
 MQTT connection establishment fails again
 ==========================================
-::
+Variant A::
 
     ERROR: Connecting to MQTT broker failed. -202
+
+Variant B::
+
+    ERROR: MQTT publishing failed. [Errno -1] ERR_MEM
+
+
+Windows console crasher bug
+===========================
+When running on the Linux subsystem for Windows, outputting binary data on the console might crash it
+and render the runtime environment defunct, so you will have to power-cycle the ESP32.
+
+It might look like this::
+
+    Exception in thread: REPL_serial_to_stdout
+
+Solution: Just don't output binary characters over the Serial interface,
+which is usually implicitly done by just running ``print()``.
