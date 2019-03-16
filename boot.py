@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+#
+# Hiveeyes MicroPython Datalogger
+# https://github.com/hiveeyes/hiveeyes-micropython-firmware
+#
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
-from machine import UART
-import pycom
-import machine
+#
 import os
+import pycom
+from machine import UART
 
 
 def extend_syspath():
