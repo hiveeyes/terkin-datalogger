@@ -20,11 +20,13 @@ install-requirements:
 	rm dist-packages/re.py dist-packages/ffilib.py
 
 	# Properly clone and install forked pycayennelpp repository
-	rm -rf tmp
-	mkdir -p tmp
-	git clone https://github.com/hiveeyes/pycayennelpp tmp/pycayennelpp/
-	rm -r tmp/pycayennelpp/cayennelpp/tests
-	cp -r tmp/pycayennelpp/cayennelpp dist-packages/
+	$(eval tmpdir := ./tmp/pycayennelpp)
+	rm -rf $(tmpdir)
+	mkdir -p $(tmpdir)
+	git clone https://github.com/hiveeyes/pycayennelpp $(tmpdir)
+	rm -r $(tmpdir)/cayennelpp/tests
+	cp -r $(tmpdir)/cayennelpp dist-packages/
+	rm -rf $(tmpdir)
 
 
 # ==============
