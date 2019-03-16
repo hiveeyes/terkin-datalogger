@@ -2,6 +2,7 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import json
 import types
 from dotty_dict import dotty
 
@@ -36,4 +37,8 @@ class TerkinConfiguration:
                 self.store[key] = value
 
     def dump(self):
-        print('INFO:  Configuration:\n', self.store)
+        print('INFO: Configuration settings:')
+        for key, value in self.store.items():
+            if key == 'networking':
+                continue
+            print('Section "{}":'.format(key), json.dumps(value))
