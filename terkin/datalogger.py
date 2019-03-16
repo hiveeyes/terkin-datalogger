@@ -76,6 +76,7 @@ class TerkinDatalogger:
             machine.idle()
 
     def read_sensors(self):
+        """Read sensors"""
         data = {}
         for sensor in self.sensors:
             sensor_name = sensor.__class__.__name__
@@ -88,17 +89,14 @@ class TerkinDatalogger:
                 print('ERROR: Reading sensor "{}" failed: {}'.format(sensor_name, ex))
         return data
 
-    def loop(self):
-        self.device.tlog('Terkin loop')
+    def transmit_readings(self, data):
+        """Transmit data"""
 
-        # Read sensors.
-        data = self.read_sensors()
-
-        # Debugging: Short-circuit telemetry.
-        #print(data); return
-
-        # Transmit data.
         # TODO: Optionally disable telemetry.
+        if self.device.telemetry is None:
+            print('WARNING: Telemetry disabled')
+            return False
+
         success = self.device.telemetry.transmit(data)
 
         # Evaluate outcome.
@@ -106,6 +104,20 @@ class TerkinDatalogger:
             self.device.tlog('Telemetry transmission: SUCCESS')
         else:
             self.device.tlog('Telemetry transmission: FAILURE')
+
+        return success
+
+    def loop(self):
+        self.device.tlog('Terkin loop')
+
+        # Read sensors.
+        data = self.read_sensors()
+
+        # Debugging: Print sensor data before running telemetry.
+        #print(data)
+
+        # Transmit data.
+        self.transmit_readings(data)
 
         # Run the garbage collector.
         self.device.run_gc()
