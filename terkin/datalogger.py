@@ -5,12 +5,18 @@
 import utime
 import machine
 
+from terkin import __version__
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
+from terkin.sensor import MemoryFree
 
 
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
+
+    # Application metadata.
+    name = 'Terkin MicroPython Datalogger'
+    version = __version__
 
     def __init__(self, settings):
         self.settings = TerkinConfiguration()
@@ -42,13 +48,18 @@ class TerkinDatalogger:
         self.start_mainloop()
 
     def register_sensors(self):
-        self.device.tlog('Registering Terkin sensors')
         """
+        Add baseline sensors.
+
         TODO: Add more sensors.
         - Metadata from NetworkManager.station
         - Device stats, see Microhomie
         """
-        pass
+
+        self.device.tlog('Registering Terkin sensors')
+
+        memfree = MemoryFree()
+        self.register_sensor(memfree)
 
     def register_sensor(self, sensor):
         self.sensors.append(sensor)

@@ -4,14 +4,6 @@
 # License: GNU General Public License, Version 3
 
 
-class DummySensor:
-
-    def read(self):
-        # Fake measurement.
-        data = {"temperature": 42.84, "humidity": 83}
-        return data
-
-
 class MemoryFree:
 
     def read(self):

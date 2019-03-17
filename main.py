@@ -3,27 +3,25 @@
 # Hiveeyes MicroPython Datalogger
 # https://github.com/hiveeyes/hiveeyes-micropython-firmware
 #
+# Conceived for the Bee Observer (BOB) project.
+# https://community.hiveeyes.org/c/bee-observer
+#
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
-"""
-Convenient data logger framework conceived for the Bee Observer (BOB) project.
-https://community.hiveeyes.org/c/bee-observer
-"""
-import time
 import settings
-from hiveeyes.datalogger import HiveeyesDatalogger
+from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 
 
-class BobDatalogger(HiveeyesDatalogger):
+class HiveeyesDatalogger(TerkinDatalogger):
     """
     Yet another data logger. This time for MicroPython.
     """
 
     # Naming things.
-    name = 'BOB MicroPython Datalogger'
+    name = 'Hiveeyes MicroPython Datalogger'
 
     def register_sensors(self):
         """
@@ -33,8 +31,8 @@ class BobDatalogger(HiveeyesDatalogger):
         # First, spin up the built-in sensors.
         super().register_sensors()
 
-        # Add some sensors for the Bee Observer (BOB) project.
-        self.device.tlog('Registering BOB sensors')
+        # Add some sensors for the Hiveeyes project.
+        self.device.tlog('Registering Hiveeyes sensors')
 
         # Setup the HX711.
         try:
@@ -72,43 +70,15 @@ class BobDatalogger(HiveeyesDatalogger):
         """
 
         # It's your turn.
-        self.device.tlog('BOB loop')
-
-        # TODO: Send real measurement data to TTN.
-        if self.settings.get('networking.lora.antenna_attached'):
-            self.ttn_test()
+        self.device.tlog('Hiveeyes loop')
 
         # Finally, schedule other system tasks.
         super().loop()
 
-    def read_sensors(self):
-        # CayenneLPP example
-
-        # Payload Base64: AWf8sABnAag=
-        # Payload Hex:    0167FCB0006701A8
-        data = {
-            'temperature_0': 42.42,
-            'temperature_1': -84.84,
-        }
-        return data
-
-    def ttn_test(self):
-        """
-        Send dummy payload to TTN over LoRaWAN, without taking too much Airtime.
-        """
-        for i in range(1, 39):
-            j = i % 10
-            if j == 0 or i == 1:
-                payload = "ff"
-                success = self.device.networking.lora_send(payload)
-                if success:
-                    print("[LoRa] send:", payload)
-            time.sleep(1)
-
 
 def main():
     """Start the data logger application."""
-    datalogger = BobDatalogger(settings)
+    datalogger = HiveeyesDatalogger(settings)
     datalogger.start()
 
 
