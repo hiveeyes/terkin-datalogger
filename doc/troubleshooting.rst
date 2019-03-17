@@ -364,3 +364,51 @@ It might look like this::
 
 Solution: Just don't output binary characters over the Serial interface,
 which is usually implicitly done by just running ``print()``.
+
+
+Connecting to board fails I
+===========================
+Problem
+-------
+::
+
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1249, in connect
+        ip_address = socket.gethostbyname(port)
+    socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File ".venv3/bin/rshell", line 10, in <module>
+        sys.exit(main())
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/command_line.py", line 4, in main
+        rshell.main.main()
+
+    [...]
+
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1453, in remote_eval
+        return eval(self.remote(func, *args, **kwargs))
+      File "<string>", line 0
+
+        ^
+    SyntaxError: unexpected EOF while parsing
+    make: *** [rshell] Error 1
+
+Root cause
+----------
+I caused this by syncing an invalid ``os.__init__.py`` to device.
+
+
+Solution
+--------
+Start device in safe boot to skip execution of ``boot.py`` and ``main.py``,
+see also https://docs.pycom.io/gettingstarted/programming/safeboot.html
+
+::
+
+    make rshell
+    rm -r /flash/dist-packages/os
+
+::
+
+    make reset

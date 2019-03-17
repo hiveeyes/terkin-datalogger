@@ -51,10 +51,12 @@ Prio 3
 - [o] Check driver correctness
     - https://github.com/geda/hx711-lopy/blob/9cc6de8d/hx711.py#L35-L37
     - https://github.com/geda/hx711-lopy/blob/9cc6de8d/hx711.py#L42-L45
+    - Should ``self.pSCK.value(False)`` really run inside the constructor?
 - [o] Use ``asbool`` for having string-based truthy values in configuration settings
 - [o] Check what can be done using ``esptool`` already::
 
     pip3 install esptool
+- [o] Optionally use "mpy-cross" before uploading
 
 
 Prio 4
