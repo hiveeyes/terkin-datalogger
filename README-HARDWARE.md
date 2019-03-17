@@ -8,7 +8,9 @@
 
 ---
 
-## Easy-Hive Pycom-Shield
+## EasyHive Pycom-Shield
+
+<img src="https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg" height="300">
 <img src="http://easyhive.org/landingpage/img/bg-showcase-2.jpg" height="300">
 
 <a href="https://community.hiveeyes.org/uploads/default/original/2X/a/a1d2a90f9b28604446924b1676780b627538f7e5.jpeg"><img src="https://community.hiveeyes.org/uploads/default/optimized/2X/a/a1d2a90f9b28604446924b1676780b627538f7e5_2_666x500.jpeg" height="300"></a>
@@ -18,6 +20,7 @@
 
 ### Links
 - http://easyhive.org/
+- http://blog.easyhive.org/2019/01/28/multi-sensor-shield-fuer-die-bienenstoecke/
 - https://github.com/jacobron/EasyHive_Pycom_Shield
 - https://community.hiveeyes.org/t/hardware-fur-node-im-feld-bob-projekt-phase-2/732/32
 

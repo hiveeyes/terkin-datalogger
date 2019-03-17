@@ -27,7 +27,15 @@ Prerequisites
 To perform the next steps, please install the following software
 packages on your machine::
 
-    apt install make wget git python python3 python-virtualenv
+    apt install make patch wget git python python3 python-virtualenv
+
+
+Acquire source code
+===================
+::
+
+    git clone https://github.com/hiveeyes/hiveeyes-micropython-firmware
+    cd hiveeyes-micropython-firmware
 
 
 Setup development sandbox

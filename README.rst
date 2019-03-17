@@ -12,8 +12,8 @@ This document covers the main features of the MicroPython datalogger firmware
 and walks you through the setup process of the development sandbox environment
 in detail.
 
-This programming environment has been tested successfully on Linux, macOS and
-WSL, the Windows Subsystem for Linux (Win10).
+The programming environment is command line based and has been tested
+successfully on Linux, macOS and WSL, the Windows Subsystem for Linux (Win10).
 
 
 ********
@@ -56,7 +56,7 @@ Architecture
 ****************
 Acknowledgements
 ****************
-This firmware program is an effort of many people. So, thanks to all
+This firmware is an effort of many people. So, thanks to all
 the `contributors`_ who got their hands dirty and helped to co-create
 and conceive it in one way or another. You know who you are.
 
@@ -75,12 +75,14 @@ the Pycom MicroPython implementation.
 
 - `MicroPython documentation`_
 - `MicroPython libraries`_
+- `Pycom MicroPython for ESP32`_
 
 - `General information about the WiPy`_ on the MicroPython documentation pages
 - `Pycom documentation`_
 - `Getting started with Pycom MicroPython`_
 - `Pycom MicroPython Modules`_
 - `Pycom Vendor Modules`_
+- `Pycom Libraries and Examples`_
 
 .. note::
 
@@ -137,23 +139,20 @@ the root directory as well as all files from the ``lib``, ``hiveeyes`` and
 
 Update required packages
 ========================
-This software pulls in some Python packages from different sources. In case
-something will be updated here from upstream, you will likely find some
-packages missing when running your firmware.
+The software pulls in some Python packages from different sources. In case
+something will be updated from upstream which happens when adding new
+packages, you might find some missing when running the firmware.
 
 In order to flush and update the whole set of Python packages both on your
 workstation and on your device, just run::
 
     make refresh-requirements
 
-This will download all required packages to the local ``dist-packages``,
-apply some modifications to this tree and then upload it to the device.
+This will download all required packages to your workstation, apply some
+modifications to this tree and then upload it to the device.
 
-
-***************
-Troubleshooting
-***************
-Please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
+While operating on the respective ``dist-packages`` folders, it will first
+purge the folder completely before populating it again.
 
 
 ******************
@@ -163,16 +162,24 @@ This software has been designed on a `Pycom FiPy`_. However, it might also
 work on MicroPython hardware from different vendors. If not, corresponding
 feature requests are welcome, but pull requests are even better!
 
-.. image:: https://i0.wp.com/pycom.io/wp-content/uploads/2018/08/fipyTop.png?fit=300%2C300&ssl=1
+.. image:: https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg
 
 
-Please followup on the `Reference hardware`_ page for different hardware
+Please follow up on the `Reference hardware`_ page for different hardware
 configurations based on devices like these.
+
+
+***************
+Troubleshooting
+***************
+We have collected some tracebacks with root causes and solutions,
+please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
 
 
 ----
 
 Have fun!
+
 
 .. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
@@ -185,6 +192,9 @@ Have fun!
 .. _Pycom Vendor Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/pycom
 .. _Pycom documentation: https://docs.pycom.io/
 .. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
+
+.. _Pycom MicroPython for ESP32: https://github.com/pycom/pycom-micropython-sigfox
+.. _Pycom Libraries and Examples: https://github.com/pycom/pycom-libraries
 
 .. _Hiveeyes MicroPython Datalogger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst
 .. _Reference hardware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md
