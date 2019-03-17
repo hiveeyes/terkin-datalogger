@@ -74,14 +74,3 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Finally, schedule other system tasks.
         super().loop()
-
-
-def main():
-    """Start the data logger application."""
-    datalogger = HiveeyesDatalogger(settings)
-    datalogger.start()
-
-
-if __name__ == '__main__':
-    """Main application entrypoint."""
-    main()
