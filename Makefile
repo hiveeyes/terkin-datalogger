@@ -52,12 +52,10 @@ upload-requirements:
 	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
 
 
-clean-requirements:
+refresh-requirements:
 	rm -r dist-packages
-	$(rshell) $(rshell_options) rm -r /flash/dist-packages
-
-refresh-requirements: clean-requirements
 	$(MAKE) install-requirements
+	$(rshell) $(rshell_options) rm -r /flash/dist-packages
 	$(MAKE) upload-requirements
 
 
