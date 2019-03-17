@@ -35,7 +35,7 @@ install-requirements:
 	mkdir -p $(target_dir)/dotty_dict
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/__init__.py
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/dotty_dict.py
-	patch --forward dist-packages/dotty_dict/dotty_dict.py tools/dotty_dict-01.patch
+	patch --forward dist-packages/dotty_dict/dotty_dict.py tools/dotty_dict-01.patch || true
 
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
