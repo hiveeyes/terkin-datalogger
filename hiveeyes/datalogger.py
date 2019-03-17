@@ -10,7 +10,6 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
-import settings
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 
@@ -70,7 +69,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         """
 
         # It's your turn.
-        self.device.tlog('Hiveeyes loop')
+        #self.device.tlog('Hiveeyes loop')
 
         # Finally, schedule other system tasks.
         super().loop()
