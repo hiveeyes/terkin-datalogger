@@ -39,6 +39,7 @@ class TerkinConfiguration:
     def dump(self):
         print('INFO: Configuration settings:')
         # FIXME: Disable due to Windows console crasher bug. Can we enable it on Unix or just fix WSL?
+        # FIXME: Investigate why on earth just output from here will be garbled, regardless of the content.
         print('Printing configuration settings currently defunct, sorry.')
         return
         for key, value in self.store.items():

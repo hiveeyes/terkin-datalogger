@@ -163,7 +163,7 @@ class TerkinDevice:
         # TODO: Maybe move to TerkinDatalogger.
 
         # Program name and version.
-        title = '{} {}'.format(self.name, self.version.decode())
+        title = '{} {}'.format(self.name, self.version)
         print('=' * len(title))
         print(title)
         print('=' * len(title))
