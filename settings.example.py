@@ -55,7 +55,7 @@ telemetry = {
                 "realm": "workbench",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-01-mqtt",
+                "node": "node-01-mqtt-json",
             },
         },
 
@@ -70,7 +70,7 @@ telemetry = {
                 "realm": "workbench",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-01-http",
+                "node": "node-01-http-json",
             },
 
             # Use alternative, non-HTTPS endpoint.
@@ -89,7 +89,7 @@ telemetry = {
                 "realm": "workbench",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-01-lpp-over-mqtt",
+                "node": "node-01-mqtt-lpp",
             },
             'format': 'lpp',
             'encode': 'base64',
