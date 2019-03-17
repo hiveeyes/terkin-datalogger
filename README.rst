@@ -13,7 +13,8 @@ and walks you through the setup process of the development sandbox environment
 in detail.
 
 The programming environment is command line based and has been tested
-successfully on Linux, macOS and WSL, the Windows Subsystem for Linux (Win10).
+successfully on **Linux**, **macOS** and WSL, the Windows Subsystem for Linux,
+which is shipped with **Windows 10**.
 
 
 ********
@@ -46,11 +47,9 @@ Architecture
   The telemetry subsystem uses different transport adapters for different
   connectivity scenarios. MQTT and HTTP over TCP over WiFi is implemented
   already and TTN over LoRaWAN is almost there (thanks, Jan and Richard!).
-  We are still waiting for confirmation of LTE `CAT-M1`_ or `NB-IoT`_
+  We are still waiting for confirmation of `LTE Cat M1`_ or `LTE Cat NB1`_
   connectivity in Germany (thanks, Ron and Jan!).
 
-.. _CAT-M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
-.. _NB-IoT: https://docs.pycom.io/tutorials/lte/nb-iot.html
 
 
 ****************
@@ -65,29 +64,17 @@ and conceive it in one way or another. You know who you are.
 Getting started
 ***************
 Before getting started with this, please `upgrade the Pycom firmware`_
-on your device.
+on your device. We are running ``Pycom MicroPython 1.20.0.rc8``.
+
 After that, be prepared to put ``make recycle``, ``CTRL+C``, ``CTRL+D``
 and ``CTRL+X`` into your muscle memory. Otherwise, let's go shopping.
 
-We collected some resources which offer a good start to read more about
-MicroPython development in general as well as the specific details of
-the Pycom MicroPython implementation.
-
-- `MicroPython documentation`_
-- `MicroPython libraries`_
-- `Pycom MicroPython for ESP32`_
-
-- `General information about the WiPy`_ on the MicroPython documentation pages
-- `Pycom documentation`_
-- `Getting started with Pycom MicroPython`_
-- `Pycom MicroPython Modules`_
-- `Pycom Vendor Modules`_
-- `Pycom Libraries and Examples`_
-
 .. note::
 
-    Please recognize this is a work in progress. Many places are just sketched
-    out and many gaps will have to be closed. So, this will be extended over time.
+    Please recognize this is a work in progress. While many things are
+    working already, some places might just have been sketched out.
+    So, this firmware will be extended over time - you are welcome to
+    help closing some gaps.
 
 
 *************
@@ -175,11 +162,67 @@ configurations based on devices like these:
 - `Hiveeyes Buerger`_
 
 
+*********
+Resources
+*********
+We collected some resources which offer a good start to read more about
+MicroPython development in general as well as the specific details of
+the Pycom MicroPython implementation.
+
+- `MicroPython documentation`_
+- `MicroPython libraries`_
+- `Pycom MicroPython for ESP32`_
+
+- `General information about the WiPy`_ on the MicroPython documentation pages
+- `Pycom documentation`_
+- `Getting started with Pycom MicroPython`_
+- `Pycom MicroPython Modules`_
+- `Pycom Vendor Modules`_
+- `Pycom Libraries and Examples`_
+
+
 ***************
 Troubleshooting
 ***************
 We have collected some tracebacks with root causes and solutions,
 please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
+
+
+*******************
+Project information
+*******************
+
+About
+=====
+These links will guide you to the source code of the
+»Hiveeyes MicroPython Datalogger« and its documentation.
+
+- `Hiveeyes MicroPython Datalogger on GitHub <https://github.com/hiveeyes/hiveeyes-micropython-firmware>`_
+
+Contributing
+============
+We are always happy to receive code contributions, ideas, suggestions
+and problem reports from the community.
+
+So, if you'd like to contribute you're most welcome.
+Spend some time taking a look around, locate a bug, design issue or
+spelling mistake and then send us a pull request or create an issue_.
+
+Thanks in advance for your efforts, we really appreciate any help or feedback.
+
+Licenses
+========
+This software is copyright © 2017-2019 The Hiveeyes Developers and contributors. All rights reserved.
+
+It is and will always be **free and open source software**.
+
+Use of the source code included here is governed by the GNU General Public License
+`GNU-GPL-3.0`_ and the European Union Public License `EUPL-1.2`_.
+Please also have a look at the notices about licenses of third-party components.
+
+.. _issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
+.. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
+.. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
 
 
 ----
@@ -209,3 +252,6 @@ Have fun!
 .. _EasyHive Pycom-Shield: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#easyhive-pycom-shield
 .. _Hiverize Funktionsmuster: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiverize-funktionsmuster
 .. _Hiveeyes Buerger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiveeyes-buerger
+
+.. _LTE Cat M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
+.. _LTE Cat NB1: https://docs.pycom.io/tutorials/lte/nb-iot.html
