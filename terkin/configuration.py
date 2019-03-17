@@ -38,7 +38,7 @@ class TerkinConfiguration:
 
     def dump(self):
         print('INFO: Configuration settings:')
+        print('Printing configuration settings currently defunct, sorry.')
+        return
         for key, value in self.store.items():
-            if key == 'networking':
-                continue
             print('Section "{}":'.format(key), json.dumps(value))
