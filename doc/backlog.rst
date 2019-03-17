@@ -13,22 +13,25 @@ Prio 1
 - [x] Use pure-Python "urllib" without dependency to "libpcre"
 - [x] Handle "Connection to MQTT broker failed or lost"
 - [x] Multi-network WiFi
-- [o] Fix console crasher when running on Windows
+- [x] Fix console crasher when running on Windows
 - [o] Get back to reading real sensors again
-- [o] Status and sensor announcement
-- [o] Sensor data model: Introduce Measurement (single) and Reading (bunch) objects
+- [o] Guard against running without (valid?) ``settings.py``
 - [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
 - [o] Add release tooling
 - [o] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
 - [o] Add software tests
+- [o] Improve logging
+- [o] Improve logging by adding stacktrace printer
+- [o] Add some examples
 
 Prio 2
 ======
-- [o] Improve logging
-- [o] Improve logging by adding stacktrace printer
+- [o] Don't upload the "terkin" library each time.
 - [o] Improve tooling by adding file watcher or even delta patching
 - [o] Improve display of "Networking address" by decoding mac address values
 - [o] Add configuration variant based on JSON file
+- [o] Sensor data model: Introduce Measurement (single) and Reading (bunch) objects
+- [o] Status and sensor announcement
 - [o] Reconnect to WiFi and MQTT when dropping off, use exp. backoff?
 - [o] Periodic servicing tasks for NetworkManager
 - [o] Add MQTT-based runtime configuration like ``mqtt://daq.example.org/.../settings.json`` or
@@ -38,6 +41,10 @@ Prio 2
 - [o] Implement access to Switches: https://micropython.readthedocs.io/en/latest/pyboard/tutorial/switch.html
 - [o] Use Timers: https://micropython.readthedocs.io/en/latest/pyboard/tutorial/timer.html
 - [o] Put ``dotty_dict`` into ``dist-packages``
+- [o] Don't submit data when null::
+
+    workbench/testdrive/area-38/fipy-amo-02-mqtt-lpp/data.lpp (null)
+
 
 Prio 3
 ======
