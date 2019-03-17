@@ -1,4 +1,3 @@
-include config.mk
 include tools/core.mk
 
 
@@ -34,21 +33,30 @@ install-requirements:
 # rshell targets
 # ==============
 
-rshell:
+check-serial-port:
+	@if test "${MCU_SERIAL_PORT}" = ""; then \
+		echo "ERROR: Environment variable 'MCU_SERIAL_PORT' not set"; \
+		exit 1; \
+	fi
+
+rshell: check-serial-port
 	$(rshell) $(rshell_options)
 
-repl:
+repl: check-serial-port
 	$(rshell) $(rshell_options) repl
 
-recycle:
+reset: check-serial-port
+	$(rshell) $(rshell_options) --file tools/reset.rshell
+
+recycle: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-requirements.rshell
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 	@#$(MAKE) reset
 
-list-serials:
+list-serials: check-serial-port
 	@$(rshell) $(rshell_options) --list
 
-list-boards:
+list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
 
 

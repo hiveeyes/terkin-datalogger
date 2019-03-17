@@ -24,6 +24,14 @@ setup-virtualenv3:
 setup-environment: setup-virtualenv3
 
 
+# ----------------
+# Serial interface
+# ----------------
+$(eval serial_port     := ${MCU_SERIAL_PORT})
+$(eval serial_bufsize  := 2048)
+$(eval rshell_options  := --port $(serial_port) --buffer-size $(serial_bufsize) --timing)
+
+
 # ----------
 # PlatformIO
 # ----------
