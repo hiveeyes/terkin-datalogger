@@ -2,6 +2,17 @@
 Hiveeyes MicroPython Datalogger releasing
 #########################################
 
+*****************
+Cut a new release
+*****************
+::
+
+    make release bump=minor
+
+
+**************************************
+Build and publish distribution package
+**************************************
 Create .tar.gz and .zip archive at ``dist`` directory, create release on GitHub and upload them::
 
     export GITHUB_TOKEN={redacted}

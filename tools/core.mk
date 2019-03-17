@@ -12,6 +12,7 @@ $(eval pip3         := $(venv3path)/bin/pip)
 $(eval python3      := $(venv3path)/bin/python)
 $(eval ampy         := $(venv3path)/bin/ampy)
 $(eval rshell       := $(venv3path)/bin/rshell)
+$(eval bumpversion  := $(venv3path)/bin/bumpversion)
 
 $(eval github-release := ./bin/github-release)
 
@@ -46,6 +47,25 @@ build-all: install-platformio
 
 build-env: install-platformio
 	@$(platformio) run --environment $(environment)
+
+
+# -------
+# Release
+# -------
+
+# Release this piece of software
+# Synopsis:
+#   make release bump=minor  (major,minor,patch)
+release: bumpversion push
+
+bumpversion: install-releasetools
+	@$(bumpversion) $(bump)
+
+push:
+	git push && git push --tags
+
+install-releasetools: setup-virtualenv3
+	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
 
 
 # --------------
