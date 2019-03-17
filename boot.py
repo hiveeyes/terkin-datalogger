@@ -7,9 +7,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
-import os
 import pycom
-from machine import UART
 
 
 def extend_syspath():
@@ -32,6 +30,9 @@ def extend_syspath():
 
 if __name__ == '__main__':
     pycom.heartbeat(False)
-    uart = UART(0, baudrate=115200)
-    os.dupterm(uart)
+
+    # Done by ``self.device.enable_serial()`` already.
+    # import os; from machine import UART
+    # uart = UART(0, baudrate=115200); os.dupterm(uart)
+
     extend_syspath()
