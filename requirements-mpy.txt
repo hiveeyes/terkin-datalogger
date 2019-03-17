@@ -1,5 +1,7 @@
 micropython-copy
 micropython-types
 micropython-collections
-micropython-urllib.parse
-micropython-base64
+micropython-collections.defaultdict
+# Apply cherrypick-style installation for some packages to ignore dependencies
+#micropython-urllib.parse
+#micropython-base64

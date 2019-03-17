@@ -1,10 +1,7 @@
-# Install program to MicroPython target device using "rshell".
+# Install libraries to MicroPython target device using "rshell".
 
 mkdir /flash/lib/terkin
 rsync terkin /flash/lib/terkin
 
 mkdir /flash/lib/hiveeyes
 rsync hiveeyes /flash/lib/hiveeyes
-
-mkdir /flash/dist-packages
-rsync dist-packages /flash/dist-packages

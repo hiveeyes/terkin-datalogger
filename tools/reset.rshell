@@ -1,0 +1,2 @@
+repl pyboard import machine~
+repl pyboard machine.reset()
