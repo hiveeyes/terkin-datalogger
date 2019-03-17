@@ -3,6 +3,8 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import os
+import sys
+
 import machine
 from machine import Timer
 from ubinascii import hexlify
@@ -176,6 +178,8 @@ class TerkinDevice:
         print()
 
         # TODO: Python runtime information.
+        print('{:8}: {}'.format('Python', sys.version))
+
         """
         >>> import os; os.uname()
         (sysname='FiPy', nodename='FiPy', release='1.20.0.rc7', version='v1.9.4-2833cf5 on 2019-02-08', machine='FiPy with ESP32', lorawan='1.0.2', sigfox='1.0.1')

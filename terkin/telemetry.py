@@ -526,6 +526,6 @@ def to_cayenne_lpp(data):
 
         else:
             # TODO: raise Exception here?
-            print("[CayenneLPP] sensor type not found in cayenneLPP: ", name)
+            print('[CayenneLPP] Sensor type "{}" not found in CayenneLPP'.format(name))
 
     return frame.bytes()
