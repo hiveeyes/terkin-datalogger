@@ -1,1 +1,3 @@
-__version__ = b"0.0.0"
+"""Hiveeyes MicroPython Datalogger: Data logging for humans"""
+__appname__ = 'hiveeyes-micropython-datalogger'
+__version__ = '0.1.0'

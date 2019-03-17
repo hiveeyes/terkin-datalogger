@@ -1,9 +1,9 @@
 include tools/core.mk
 
 
-# ============
-# Main targets
-# ============
+# =====
+# Setup
+# =====
 
 setup: setup-environment install-requirements upload-requirements
 
@@ -59,9 +59,9 @@ refresh-requirements:
 	$(MAKE) upload-requirements
 
 
-# ==============
-# rshell targets
-# ==============
+# =========
+# Utilities
+# =========
 
 check-serial-port:
 	@if test "${MCU_SERIAL_PORT}" = ""; then \
@@ -90,9 +90,9 @@ list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
 
 
-# =====================
-# Miscellaneous targets
-# =====================
+# =============
+# Miscellaneous
+# =============
 
 reset-defunct:
 	$(ampy) --port $(serial_port) --delay 1 reset
@@ -105,3 +105,46 @@ upload-things:
 
 upload-lib:
 	$(rshell) $(rshell_options) rsync ./lib /flash/lib
+
+
+# =========
+# Releasing
+# =========
+check-version:
+	@if test "$(version)" = ""; then \
+		echo "ERROR: Make variable 'version' not set"; \
+		exit 1; \
+	fi
+
+create-release-archives: check-version
+	$(eval name := hiveeyes-micropython-firmware)
+	$(eval releasename := $(name)-$(version))
+	$(eval build_dir := ./build)
+	$(eval work_dir := $(build_dir)/$(releasename))
+	$(eval dist_dir := ./dist)
+
+    # Populate build directory.
+	mkdir -p $(work_dir)
+	cp -r dist-packages hiveeyes terkin lib boot.py main.py settings.example.py $(work_dir)
+
+    # Create .tar.gz and .zip archives.
+	tar -czf $(dist_dir)/$(releasename).tar.gz -C $(build_dir) $(releasename)
+	(cd $(build_dir); zip -r ../$(dist_dir)/$(releasename).zip $(releasename))
+
+publish-release: check-version check-github-release create-release-archives
+	$(eval name := hiveeyes-micropython-firmware)
+	$(eval releasename := $(name)-$(version))
+	$(eval dist_dir := ./dist)
+	$(eval dist_file_tar := $(dist_dir)/$(releasename).tar.gz)
+	$(eval dist_file_zip := $(dist_dir)/$(releasename).zip)
+
+	# Show current releases.
+	$(github-release) info --user hiveeyes --repo hiveeyes-micropython-firmware
+
+    # Create Release.
+	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --draft
+	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
+
+    # Upload release artifacts.
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(dist_file_tar)) --file $(dist_file_tar) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(dist_file_zip)) --file $(dist_file_zip) --replace

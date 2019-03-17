@@ -13,6 +13,8 @@ $(eval python3      := $(venv3path)/bin/python)
 $(eval ampy         := $(venv3path)/bin/ampy)
 $(eval rshell       := $(venv3path)/bin/rshell)
 
+$(eval github-release := ./bin/github-release)
+
 # Setup Python virtualenv
 setup-virtualenv2:
 	@test -e $(python2) || `command -v virtualenv` --python=python2 --no-site-packages $(venv2path)
@@ -44,3 +46,21 @@ build-all: install-platformio
 
 build-env: install-platformio
 	@$(platformio) run --environment $(environment)
+
+
+# --------------
+# github-release
+# --------------
+
+check-github-release:
+	@test -e $(github-release) || (echo 'ERROR: "github-release" not found.\nPlease install "github-release" to "./bin/github-release".\nSee https://github.com/aktau/github-release\n'; exit 1)
+
+install-github-release:
+	# https://github.com/aktau/github-release
+	$(eval url := https://github.com/aktau/github-release/releases/download/v0.7.2/darwin-amd64-github-release.tar.bz2)
+
+	# NotYetImplemented
+	@exit 1
+
+	@#@test -e $(github-release) || cd tmp; wget $(url)
+	@#$(eval github-release := $(tools_dir)tmp/bin/darwin/amd64/github-release)
