@@ -158,15 +158,21 @@ purge the folder completely before populating it again.
 ******************
 Reference hardware
 ******************
-This software has been designed on a `Pycom FiPy`_. However, it might also
-work on MicroPython hardware from different vendors. If not, corresponding
-feature requests are welcome, but pull requests are even better!
+This software has been designed to run primarily on a `Pycom FiPy`_.
+However, it might also work on MicroPython hardware from different vendors.
+If you will find the firmware will not work on your MicroPython device,
+corresponding feature requests are very welcome and pull requests
+are even better!
 
 .. image:: https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg
 
 
 Please follow up on the `Reference hardware`_ page for different hardware
-configurations based on devices like these.
+configurations based on devices like these:
+
+- `EasyHive Pycom-Shield`_
+- `Hiverize Funktionsmuster`_
+- `Hiveeyes Buerger`_
 
 
 ***************
@@ -197,5 +203,9 @@ Have fun!
 .. _Pycom Libraries and Examples: https://github.com/pycom/pycom-libraries
 
 .. _Hiveeyes MicroPython Datalogger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst
-.. _Reference hardware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md
 .. _Pycom FiPy: https://pycom.io/product/fipy/
+
+.. _Reference hardware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md
+.. _EasyHive Pycom-Shield: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#easyhive-pycom-shield
+.. _Hiverize Funktionsmuster: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiverize-funktionsmuster
+.. _Hiveeyes Buerger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiveeyes-buerger

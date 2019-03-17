@@ -10,8 +10,7 @@
 
 ## EasyHive Pycom-Shield
 
-<img src="https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg" height="300">
-<img src="http://easyhive.org/landingpage/img/bg-showcase-2.jpg" height="300">
+<img src="https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg" width="45%"> <img src="http://easyhive.org/landingpage/img/bg-showcase-2.jpg" width="45%">
 
 <a href="https://community.hiveeyes.org/uploads/default/original/2X/a/a1d2a90f9b28604446924b1676780b627538f7e5.jpeg"><img src="https://community.hiveeyes.org/uploads/default/optimized/2X/a/a1d2a90f9b28604446924b1676780b627538f7e5_2_666x500.jpeg" height="300"></a>
 <a href="https://community.hiveeyes.org/uploads/default/original/2X/e/e5d795fe3ffa42018b2078178c704277d220275c.jpeg"><img src="https://community.hiveeyes.org/uploads/default/optimized/2X/e/e5d795fe3ffa42018b2078178c704277d220275c_2_666x500.jpeg" height="300"></a>
