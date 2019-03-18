@@ -83,8 +83,8 @@ recycle: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 	@#$(MAKE) reset
 
-list-serials: check-serial-port
-	@$(rshell) $(rshell_options) --list
+list-serials:
+	@$(rshell) --list
 
 list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
