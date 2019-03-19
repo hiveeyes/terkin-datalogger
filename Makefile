@@ -37,6 +37,13 @@ install-requirements:
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/dotty_dict.py
 	patch --forward dist-packages/dotty_dict/dotty_dict.py tools/dotty_dict-01.patch || true
 
+
+	# Install OneWire and DS18x20 libraries
+	# https://github.com/micropython/micropython/tree/master/drivers
+	mkdir -p $(target_dir)/onewire
+	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/683df1c/drivers/onewire/onewire.py
+	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/a065d78/drivers/onewire/ds18x20.py
+
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
 	rm -rf $(tmpdir)
