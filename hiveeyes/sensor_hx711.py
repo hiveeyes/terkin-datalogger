@@ -3,8 +3,9 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
+from terkin.sensor import AbstractSensor
 
-class HX711Sensor:
+class HX711Sensor(AbstractSensor):
     """
     A generic HX711 sensor component wrapping possibly
     different hardware driver variants.
@@ -20,11 +21,16 @@ class HX711Sensor:
               'DOUT={}, PD_SCK={}, GAIN={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
 
         # Hardware parameters and configuration settings.
+
+
+        # this is done by AbstactSensor
         self.pin_dout = pin_dout
         self.pin_pdsck = pin_pdsck
         self.gain = gain or 128
         self.scale = scale
         self.offset = offset
+
+
 
         # The driver class.
         self.driver_class = None
@@ -53,7 +59,8 @@ class HX711Sensor:
 
         # Initialize the HX711 hardware driver.
         try:
-            self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+            #self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+            self.loadcell = self.driver_class(self.pins['dout'], self.pins['dsck'], self.parameters['gain'])
         except Exception as ex:
             print('ERROR: HX711 hardware driver failed. {}'.format(ex))
             raise

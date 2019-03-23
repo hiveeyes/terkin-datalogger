@@ -8,7 +8,7 @@ import machine
 from terkin import __version__
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
-from terkin.sensor import MemoryFree
+from terkin.sensor import MemoryFree, SensorManager
 
 
 # Maybe refactor to TerkinCore.
@@ -23,7 +23,7 @@ class TerkinDatalogger:
         self.settings.add(settings)
         self.settings.dump()
         self.device = None
-        self.sensors = []
+        self.sensor_manager = SensorManager()
 
     def start(self):
 
@@ -59,10 +59,7 @@ class TerkinDatalogger:
         self.device.tlog('Registering Terkin sensors')
 
         memfree = MemoryFree()
-        self.register_sensor(memfree)
-
-    def register_sensor(self, sensor):
-        self.sensors.append(sensor)
+        self.sensor_manager.register_sensor(memfree)
 
     def start_mainloop(self):
         # TODO: Refactor by using timers.
@@ -89,7 +86,7 @@ class TerkinDatalogger:
     def read_sensors(self):
         """Read sensors"""
         data = {}
-        for sensor in self.sensors:
+        for sensor in self.sensor_manager.sensors:
             sensor_name = sensor.__class__.__name__
             print('INFO:  Reading sensor "{}"'.format(sensor_name))
             try:

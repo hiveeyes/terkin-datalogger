@@ -54,14 +54,20 @@ class HiveeyesDatalogger(TerkinDatalogger):
             offset=hx711_settings['offset'],
         )
 
-        # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
+        hx711_sensor = HX711Sensor()
+        hx711_sensor.register_pin('dout', hx711_settings['pin_dout'])
+        hx711_sensor.register_pin('dsck', hx711_settings['pin_dout'])
+        hx711_sensor.register_parameter('scale', hx711_settings['scale'])
+        hx711_sensor.register_parameter('offset', hx711_settings['offset'])
         hx711_sensor.select_driver('heisenberg')
+
+        # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
 
         # Start sensor.
         hx711_sensor.start()
 
         # Register with framework.
-        self.register_sensor(hx711_sensor)
+        self.sensor_manager.register_sensor(hx711_sensor)
 
     def loop(self):
         """

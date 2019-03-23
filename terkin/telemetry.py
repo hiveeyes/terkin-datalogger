@@ -22,7 +22,10 @@ Setup on MicroPython for Unix
 """
 import json
 from copy import copy
+import sys
+print(sys.path)
 from urllib.parse import urlsplit, urlencode
+
 
 
 class TelemetryManager:
