@@ -23,6 +23,7 @@ install-requirements:
 	# to avoid collision with libraries shipped as Pycom builtins.
 	mkdir -p $(target_dir)/urllib
 	$(fetch) $(target_dir)/urllib https://raw.githubusercontent.com/pfalcon/micropython-lib/5f619c88/urllib.parse/urllib/parse.py
+	touch $(target_dir)/urllib/__init__.py
 
 	# Install "micropython-base64" without 'micropython-binascii', 'micropython-re-pcre', 'micropython-struct'
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pfalcon/micropython-lib/5f619c88/base64/base64.py
@@ -41,6 +42,7 @@ install-requirements:
 	# Install OneWire and DS18x20 libraries
 	# https://github.com/micropython/micropython/tree/master/drivers
 	mkdir -p $(target_dir)/onewire
+	touch $(target_dir)/onewire/__init__.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/683df1c/drivers/onewire/onewire.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/a065d78/drivers/onewire/ds18x20.py
 
@@ -63,6 +65,7 @@ refresh-requirements:
 	rm -r dist-packages
 	$(MAKE) install-requirements
 	$(rshell) $(rshell_options) rm -r /flash/dist-packages
+	$(rshell) $(rshell_options) ls /flash/dist-packages
 	$(MAKE) upload-requirements
 
 
