@@ -35,20 +35,14 @@ class AbstractSensor:
         self.parameter = {}
 
     def start(self):
-        raise NotImplementedError()
+        raise NotImplementedError("Must be implemented in sensor driver")
         pass
 
     def register_pin(self, name, pin):
         self.pins[name] = pin
 
-        raise NotImplementedError()
-        pass
-
     def register_parameter(self, name, parameter):
         self.parameter[name] = parameter
-
-        raise NotImplementedError()
-        pass
 
 
     def power_off(self):
