@@ -13,6 +13,7 @@
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 from hiveeyes.sensor_ds18x20 import DS18X20Sensor
+from terkin.sensor import OneWireBus
 
 
 class HiveeyesDatalogger(TerkinDatalogger):
@@ -33,6 +34,13 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Add some sensors for the Hiveeyes project.
         self.device.tlog('Registering Hiveeyes sensors')
+
+        ds18x20_settings = self.settings.get('sensors.registry.ds18x20')
+        owb = OneWireBus()
+        owb.register_pin("data", ds18x20_settings['pin_data'])
+        owb.start()
+
+        self.register_bus("onewire:0", owb)
 
         # Setup the HX711.
         try:
@@ -78,11 +86,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
         Setup and register the DS18X20  sensor component with your data logger.
         """
 
-        # Initialize HX711 sensor component.
-        ds18x20_settings = self.settings.get('sensors.registry.ds18x20')
-
+        bus = self.sensor_manager.get_bus_by_name('onewire:0')
         ds18x20_sensor = DS18X20Sensor()
-        ds18x20_sensor.register_pin('data', ds18x20_settings['pin_data'])
+        ds18x20_sensor.acquire_bus(bus)
+
 
         # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
 

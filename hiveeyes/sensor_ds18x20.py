@@ -4,9 +4,7 @@
 # License: GNU General Public License, Version 3
 
 import time
-from machine import Pin
 from onewire.onewire import DS18X20
-from onewire.onewire import OneWire
 from binascii import hexlify
 
 from terkin.sensor import AbstractSensor
@@ -36,40 +34,34 @@ class DS18X20Sensor(AbstractSensor):
         self.devices = []
         self.readings = None
         self.sensors = None
+        self.bus = None
 
+
+
+    def acquire_bus(self, bus):
+        self.bus = bus
 
     def start(self):
-
-        # Initialize the OneWire hardware driver.
-        try:
-            self.wire = OneWire(Pin(self.pins['data']))
-        except Exception as ex:
-            print('ERROR: OneWire hardware driver failed. {}'.format(ex))
-            raise
+        if self.bus is None:
+            raise KeyError("Bus missing")
 
         # Initialize the DS18x20 hardware driver.
         try:
-            self.sensors = DS18X20(self.wire)
+            self.sensors = DS18X20(self.bus.adapter)
         except Exception as ex:
             print('ERROR: DS18X20 hardware driver failed. {}'.format(ex))
             raise
 
-        self.scan_devices()
 
-
-    def scan_devices(self):
-        self.devices = [rom for rom in self.wire.scan() if rom[0] == 0x10 or rom[0] == 0x28]
-        print(list(map(hexlify, self.devices)))
 
 
     def read(self):
-
         d = {}
         print('INFO:  Acquire reading from DS18X20')
         self.sensors.start_conversion()
-        time.sleep_ms(750)
         # for loop goes here
         for device in self.devices:
+            time.sleep(1)
             value = self.sensors.read_temp_async(device)
             name = "temperature_" + hexlify(device).decode()
             d[name] = value

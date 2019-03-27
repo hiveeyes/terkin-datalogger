@@ -3,18 +3,46 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
+from onewire.onewire import OneWire
+from machine import Pin
+from binascii import hexlify
 
 class SensorManager:
     def __init__(self):
         self.sensors = []
+        self.busses = {}
         pass
+
+
 
     def register_sensor(self, sensor):
         self.sensors.append(sensor)
 
+    def register_bus(self, name, bus):
+        self.busses[name] = bus
+
+        pass
+
+
+    def get_bus_by_name(selfs, name):
+        return self.busses.get(name)
 
     def get_sensor_by_name(self, name):
        pass
+
+
+class AbstractBus:
+    def __init__(self):
+        """
+        convention <type>:<index>
+        """
+        self.name = None
+        self.adapter = None
+        self.devices = []
+        self.pins = {}
+
+    def register_pin(self, name, pin):
+        self.pins[name] = pin
 
 
 class AbstractSensor:
@@ -31,8 +59,8 @@ class AbstractSensor:
         """
         self.address = None
         self.bus = None
-        self.pins = {}
         self.parameter = {}
+        self.pins = {}
 
     def start(self):
         raise NotImplementedError("Must be implemented in sensor driver")
@@ -55,6 +83,24 @@ class AbstractSensor:
     def read(self):
         raise NotImplementedError()
         pass
+
+
+class OneWireBus(AbstractBus):
+    # Initialize the OneWire hardware driver.
+
+    def start(self):
+        try:
+            self.adapter = OneWire(Pin(self.pins['data']))
+            self.scan_devices()
+        except Exception as ex:
+            print('ERROR: OneWire hardware driver failed. {}'.format(ex))
+            raise
+
+
+    def scan_devices(self):
+        self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
+        print(list(map(hexlify, self.devices)))
+
 
 
 
