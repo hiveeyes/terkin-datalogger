@@ -240,15 +240,13 @@ class NetworkManager:
         return self.lora_socket
 
     def lora_send(self, payload):
-        payload_send = None
-        self.socket.send(payload)
-        payload_send = True
+        success = self.socket.send(payload)
         for i in range(0,2):
             pycom.rgbled(0x00000f) # green
             time.sleep(0.1)
             pycom.rgbled(0x000000) # off
 
-        return payload_send
+        return success
 
     def lora_receive(self):
         rx, port = self.socket.recvfrom(256)
