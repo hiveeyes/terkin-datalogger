@@ -24,7 +24,7 @@ class SensorManager:
         pass
 
 
-    def get_bus_by_name(selfs, name):
+    def get_bus_by_name(self, name):
         return self.busses.get(name)
 
     def get_sensor_by_name(self, name):

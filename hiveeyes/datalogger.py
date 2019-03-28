@@ -40,7 +40,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         owb.register_pin("data", ds18x20_settings['pin_data'])
         owb.start()
 
-        self.register_bus("onewire:0", owb)
+        self.sensor_manager.register_bus("onewire:0", owb)
 
         # Setup the HX711.
         try:

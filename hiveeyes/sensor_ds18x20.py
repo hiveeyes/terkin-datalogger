@@ -31,7 +31,6 @@ class DS18X20Sensor(AbstractSensor):
 
         # The driver instance.
         self.wire = None
-        self.devices = []
         self.readings = None
         self.sensors = None
         self.bus = None
@@ -53,14 +52,12 @@ class DS18X20Sensor(AbstractSensor):
             raise
 
 
-
-
     def read(self):
         d = {}
         print('INFO:  Acquire reading from DS18X20')
         self.sensors.start_conversion()
         # for loop goes here
-        for device in self.devices:
+        for device in self.bus.devices:
             time.sleep(1)
             value = self.sensors.read_temp_async(device)
             name = "temperature_" + hexlify(device).decode()
