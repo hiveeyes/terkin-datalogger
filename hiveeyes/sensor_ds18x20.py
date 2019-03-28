@@ -55,12 +55,19 @@ class DS18X20Sensor(AbstractSensor):
     def read(self):
         d = {}
         print('INFO:  Acquire reading from DS18X20')
-        self.sensors.start_conversion()
         # for loop goes here
         for device in self.bus.devices:
-            time.sleep(1)
+            self.sensors.start_conversion(device)
+            time.sleep(0.750)
             value = self.sensors.read_temp_async(device)
-            name = "temperature_" + hexlify(device).decode()
-            d[name] = value
+            if value is not None:
+                name = "temperature_" + hexlify(device).decode()
+                d[name] = value
+            else:
+                print("WARNING: device {} has no value".format(hexlify(device).decode()))
+
+            time.sleep(0.750)
+
+
 
         return d

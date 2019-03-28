@@ -6,6 +6,7 @@
 from onewire.onewire import OneWire
 from machine import Pin
 from binascii import hexlify
+import time
 
 class SensorManager:
     def __init__(self):
@@ -98,8 +99,16 @@ class OneWireBus(AbstractBus):
 
 
     def scan_devices(self):
+        """
+        resetting the OneWire device in case of leftovers
+        """
+        self.adapter.reset()
+        time.sleep(0.750)
+        """
+        Scanning for OneWire devices and populate `devices`
+        """
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
-        print(list(map(hexlify, self.devices)))
+        print("INFO:  Found {} OneWire (DS18x20) devices: {}.".format(len(list(map(hexlify, self.devices))), list(map(hexlify, self.devices))))
 
 
 
