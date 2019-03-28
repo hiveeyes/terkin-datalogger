@@ -66,6 +66,7 @@ class TerkinDevice:
         # Enable it with a specified timeout.
         # TODO: Use values from configuration settings here.
         self.wdt = WDT(timeout=5000)
+
         self.wdt.feed()
 
     def feed_wdt(self):

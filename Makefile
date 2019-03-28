@@ -43,7 +43,7 @@ install-requirements:
 	# https://github.com/micropython/micropython/tree/master/drivers
 	mkdir -p $(target_dir)/onewire
 	touch $(target_dir)/onewire/__init__.py
-	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/683df1c/drivers/onewire/onewire.py
+	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/aacafd62/examples/DS18X20/onewire.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/a065d78/drivers/onewire/ds18x20.py
 
 	# Install PyCayenneLPP from Git repository.

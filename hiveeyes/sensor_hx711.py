@@ -3,8 +3,9 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
+from terkin.sensor import AbstractSensor
 
-class HX711Sensor:
+class HX711Sensor(AbstractSensor):
     """
     A generic HX711 sensor component wrapping possibly
     different hardware driver variants.
@@ -14,18 +15,15 @@ class HX711Sensor:
     using ``self.loadcell.read_median()``.
     """
 
-    def __init__(self, pin_dout=None, pin_pdsck=None, gain=None, scale=None, offset=None):
+    def __init__(self):
 
-        print('INFO:  Initializing HX711 sensor with '
-              'DOUT={}, PD_SCK={}, GAIN={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
+        # print('INFO:  Initializing HX711 sensor with '
+        #      'DOUT={}, PD_SCK={}, GAIN={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
+
 
         # Hardware parameters and configuration settings.
-        self.pin_dout = pin_dout
-        self.pin_pdsck = pin_pdsck
-        self.gain = gain or 128
-        self.scale = scale
-        self.offset = offset
 
+        super().__init__()
         # The driver class.
         self.driver_class = None
 
@@ -53,16 +51,17 @@ class HX711Sensor:
 
         # Initialize the HX711 hardware driver.
         try:
-            self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+            #self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
+            self.loadcell = self.driver_class(self.pins['dout'], self.pins['dsck'], self.parameter.get('gain', 128))
         except Exception as ex:
             print('ERROR: HX711 hardware driver failed. {}'.format(ex))
             raise
 
         # Configure the HX711 driver.
-        if self.scale is not None:
-            self.loadcell.set_scale(self.scale)
-        if self.offset is not None:
-            self.loadcell.set_offset(self.offset)
+        if self.parameter['scale'] is not None:
+            self.loadcell.set_scale(self.parameter['scale'])
+        if self.parameter['offset'] is not None:
+            self.loadcell.set_offset(self.parameter['offset'])
 
     def read(self):
         if self.loadcell is None:

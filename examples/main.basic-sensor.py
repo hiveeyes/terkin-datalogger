@@ -9,6 +9,7 @@
 #
 import settings
 from terkin.datalogger import TerkinDatalogger
+from terkin.sensor import register_sensor
 
 
 class DummySensor:
@@ -40,7 +41,7 @@ class ExampleDatalogger(TerkinDatalogger):
 
         # Add a new sensor. This is just an example sensor.
         sensor = DummySensor()
-        self.register_sensor(sensor)
+        register_sensor(self.sensors, sensor)
 
 
 def main():
