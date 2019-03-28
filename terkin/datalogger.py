@@ -9,7 +9,7 @@ from terkin import __version__
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.sensor import MemoryFree, SensorManager
-
+from terkin.sensor import OneWireBus, I2CBus
 
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
@@ -43,9 +43,33 @@ class TerkinDatalogger:
         # Signal readyness by publishing information about the device (Microhomie).
         # self.device.publish_properties()
 
+        self.register_busses()
         self.register_sensors()
 
         self.start_mainloop()
+
+    def register_busses(self):
+        bus_settings = self.settings.get('sensors.busses')
+        print("INFO: starting all busses: {}".format(bus_settings))
+        for bus in bus_settings:
+            if not bus.get("enabled", False):
+                continue
+            if bus['family'] == 'onewire':
+                owb = OneWireBus(bus["number"])
+                owb.register_pin("data", bus['pin_data'])
+                owb.start()
+                name = bus["family"] + ":" + str(bus["number"])
+                self.sensor_manager.register_bus(name, owb)
+
+            elif bus['family'] == 'i2c':
+                i2c = I2CBus(bus["number"])
+                i2c.register_pin("sda", bus['pin_sda'])
+                i2c.register_pin("scl", bus['pin_scl'])
+                i2c.start()
+                name = bus["family"] + ":" + str(bus["number"])
+                self.sensor_manager.register_bus(name, i2c)
+            else:
+                print("WARNING: invalid bus definition: {}".format(bus))
 
     def register_sensors(self):
         """

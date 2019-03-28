@@ -13,7 +13,6 @@
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 from hiveeyes.sensor_ds18x20 import DS18X20Sensor
-from terkin.sensor import OneWireBus
 
 
 class HiveeyesDatalogger(TerkinDatalogger):
@@ -23,7 +22,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
     # Naming things.
     name = 'Hiveeyes MicroPython Datalogger'
-
     def register_sensors(self):
         """
         Add your sensors here.
@@ -35,12 +33,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Add some sensors for the Hiveeyes project.
         self.device.tlog('Registering Hiveeyes sensors')
 
-        ds18x20_settings = self.settings.get('sensors.registry.ds18x20')
-        owb = OneWireBus()
-        owb.register_pin("data", ds18x20_settings['pin_data'])
-        owb.start()
-
-        self.sensor_manager.register_bus("onewire:0", owb)
 
         # Setup the HX711.
         try:

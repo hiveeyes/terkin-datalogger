@@ -5,6 +5,7 @@
 
 from onewire.onewire import OneWire
 from machine import Pin
+from machine import I2C
 from binascii import hexlify
 import time
 
@@ -15,15 +16,13 @@ class SensorManager:
         pass
 
 
-
     def register_sensor(self, sensor):
         self.sensors.append(sensor)
 
-    def register_bus(self, name, bus):
+    def register_bus(self,  name, bus):
+        print("INFO: registering bus: {}".format(name))
         self.busses[name] = bus
-
         pass
-
 
     def get_bus_by_name(self, name):
         return self.busses.get(name)
@@ -33,7 +32,7 @@ class SensorManager:
 
 
 class AbstractBus:
-    def __init__(self):
+    def __init__(self, bus_number):
         """
         convention <type>:<index>
         """
@@ -41,6 +40,7 @@ class AbstractBus:
         self.adapter = None
         self.devices = []
         self.pins = {}
+        self.bus_number = bus_number
 
     def register_pin(self, name, pin):
         self.pins[name] = pin
@@ -111,6 +111,14 @@ class OneWireBus(AbstractBus):
         print("INFO:  Found {} OneWire (DS18x20) devices: {}.".format(len(list(map(hexlify, self.devices))), list(map(hexlify, self.devices))))
 
 
+class I2CBus(AbstractBus):
+
+    def start(self):
+        try:
+            self.adapter = I2C(self.bus_number, I2C.MASTER, baudrate=100000)
+        except Exception as ex:
+            print('ERROR: I2C hardware driver failed. {}'.format(ex))
+            raise
 
 
 class MemoryFree:
