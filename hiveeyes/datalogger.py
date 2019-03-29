@@ -24,6 +24,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
     # Naming things.
     name = 'Hiveeyes MicroPython Datalogger'
+
     def register_sensors(self):
         """
         Add your sensors here.
@@ -41,14 +42,12 @@ class HiveeyesDatalogger(TerkinDatalogger):
             self.add_hx711_sensor()
         except Exception as ex:
             print('INFO:  Skipping HX711 sensor. {}'.format(ex))
-            raise
 
         # Setup the DS18X20.
         try:
             self.add_ds18x20_sensor()
         except Exception as ex:
             print('INFO:  Skipping DS18x20 sensor. {}'.format(ex))
-            raise
 
         # Setup the BME280.
         try:
