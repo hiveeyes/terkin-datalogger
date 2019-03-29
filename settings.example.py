@@ -111,6 +111,8 @@ sensors = {
         },
         'bme280': {
             'bus': 'i2c:0',
+            # TODO: make sensor be initialized with address
+            # 'address': 0x77,
         },
         #'pytrack': {
         #    'bus': 'i2c:1',

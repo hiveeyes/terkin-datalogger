@@ -29,7 +29,8 @@ class BME280Sensor(AbstractSensor):
         self.readings = None
         self.sensor = None
         self.bus = None
-        self.address = 0x76
+        TODO: get sensors i2c bus address from settings
+        self.address = 0x77
 
     def start(self):
         """
