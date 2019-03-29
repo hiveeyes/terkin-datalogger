@@ -25,6 +25,7 @@ class BME280Sensor(AbstractSensor):
     def __init__(self):
         super().__init__()
 
+        # TODO: Settings are needed here!
         # The driver instance.
         self.readings = None
         self.sensor = None
@@ -60,9 +61,14 @@ class BME280Sensor(AbstractSensor):
             hi = h // 1024
             hd = h * 100 // 1024 - hi * 100
 
-            data["temperature"] = t / 100
-            data["humidity"] = float("{}.{:02d}".format(hi, hd))
-            data["pressure"] = float("{}.{:02d}".format(pi, pd))
+            # TODO: add bus identifier DYNAMICLY into <SENSOR_NAME> as well. e.g. temperature_i2c:0:0x77
+            temp_name = "temperature_i2c:0:" + str(self.address)
+            hum_name = "humidity_i2c:0:" + str(self.address)
+            pres_name = "pressure_i2c:0:" + str(self.address)
+            data[temp_name] = t / 100
+            data[hum_name] = float("{}.{:02d}".format(hi, hd))
+            data[pres_name] = float("{}.{:02d}".format(pi, pd))
+
         else:
             print("WARNING: device {} has no value".format(data))
 
