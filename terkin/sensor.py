@@ -71,6 +71,8 @@ class AbstractSensor:
     def register_parameter(self, name, parameter):
         self.parameter[name] = parameter
 
+    def acquire_bus(self, bus):
+        self.bus = bus
 
     def power_off(self):
         pass

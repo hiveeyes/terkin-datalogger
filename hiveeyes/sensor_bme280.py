@@ -31,9 +31,6 @@ class BME280Sensor(AbstractSensor):
         self.bus = None
         self.address = 0x76
 
-    def acquire_bus(self, bus):
-        self.bus = bus
-
     def start(self):
         """
         Getting the bus
@@ -47,7 +44,6 @@ class BME280Sensor(AbstractSensor):
         except Exception as ex:
             print('ERROR: BME280 hardware driver failed. {}'.format(ex))
             raise
-
 
     def read(self):
         data = {}
@@ -68,7 +64,6 @@ class BME280Sensor(AbstractSensor):
             data["pressure"] = float("{}.{:02d}".format(pi, pd))
         else:
             print("WARNING: device {} has no value".format(data))
-
 
         print("I2C data: {}".format(data))
 
