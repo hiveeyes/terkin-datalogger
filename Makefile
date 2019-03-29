@@ -114,6 +114,10 @@ ratrack: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
 	@#$(MAKE) reset
 
+terkin: check-serial-port
+	@#$(rshell) $(rshell_options) --file tools/upload-requirements.rshell
+	$(rshell) $(rshell_options) --file tools/upload-terkin.rshell
+
 list-serials:
 	@$(rshell) --list
 

@@ -11,6 +11,7 @@ from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_bme280 import BME280Sensor
 from hiveeyes.sensor_pytrack import PytrackSensor
 from ratrack import convert
+from ratrack.sensor_adc import MoistureSensor, WaterlevelSensor
 import time
 
 
@@ -39,9 +40,27 @@ class RatrackDatalogger(TerkinDatalogger):
 
         # Setup the BME280.
         try:
+            self.add_bme280_1_sensor()
+        except Exception as ex:
+            print('INFO:  Skipping bme280 sensor. {}'.format(ex))
+
+        # Setup the BME280.
+        try:
             self.add_bme280_sensor()
         except Exception as ex:
             print('INFO:  Skipping bme280 sensor. {}'.format(ex))
+
+        # Setup the Moisture Sensor.
+        try:
+            self.add_moisture_sensor()
+        except Exception as ex:
+            print('INFO:  Skipping Moisture sensor. {}'.format(ex))
+
+        # Setup the Waterlevel Sensor.
+        try:
+            self.add_waterlevel_sensor()
+        except Exception as ex:
+            print('INFO:  Skipping Waterlevel sensor. {}'.format(ex))
 
         # Setup the Pytrack.
         try:
@@ -50,6 +69,23 @@ class RatrackDatalogger(TerkinDatalogger):
             print('INFO:  Skipping Pytrack sensor. {}'.format(ex))
 
     def add_bme280_sensor(self):
+        """
+        Setup and register the DS18X20  sensor component with your data logger.
+        """
+
+        settings = self.settings.get('sensors.registry.bme280')
+        bus = self.sensor_manager.get_bus_by_name(settings['bus'])
+
+        sensor = BME280Sensor()
+        sensor.acquire_bus(bus)
+
+        # Start sensor.
+        sensor.start()
+
+        # Register with framework.
+        self.sensor_manager.register_sensor(sensor)
+
+    def add_bme280_1_sensor(self):
         """
         Setup and register the DS18X20  sensor component with your data logger.
         """
@@ -76,6 +112,41 @@ class RatrackDatalogger(TerkinDatalogger):
 
         sensor = PytrackSensor()
         sensor.acquire_bus(bus)
+
+        # Start sensor.
+        sensor.start()
+
+        # Register with framework.
+        self.sensor_manager.register_sensor(sensor)
+
+    def add_moisture_sensor(self):
+        """
+        Setup and register the Moisture sensor component with your data logger.
+        """
+
+        # Initialize Moisture sensor component.
+        settings = self.settings.get('sensors.registry.moisture')
+
+        sensor = MoistureSensor()
+        sensor.register_pin('adc_in', settings['pin_adc_in'])
+        sensor.register_parameter('scaling', settings['scaling'])
+
+        # Start sensor.
+        sensor.start()
+
+        # Register with framework.
+        self.sensor_manager.register_sensor(sensor)
+
+    def add_waterlevel_sensor(self):
+        """
+        Setup and register the Waterlevel sensor component with your data logger.
+        """
+
+        # Initialize waterlevel sensor component.
+        settings = self.settings.get('sensors.registry.waterlevel')
+
+        sensor = WaterlevelSensor()
+        sensor.register_pin('adc_in', settings['pin_adc_in'])
 
         # Start sensor.
         sensor.start()
