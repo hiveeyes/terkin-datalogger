@@ -114,9 +114,19 @@ sensors = {
             # TODO: make sensor be initialized with address
             # 'address': 0x77,
         },
-        #'pytrack': {
-        #    'bus': 'i2c:1',
-        #},
+        'bme280_1': {
+            'bus': 'i2c:1',
+        },
+        'pytrack': {
+            'bus': 'i2c:1',
+        },
+        'moisture': {
+            'pin_adc_in': 'P15',
+            'scaling': 4.096,
+        },
+        'waterlevel': {
+            'pin_adc_in': 'P18'
+        },
     },
     'busses': [
         {
