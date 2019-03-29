@@ -31,6 +31,21 @@ install-requirements:
 	# Install Pycom "mqtt.py"
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/6544105e/lib/mqtt/mqtt.py
 
+	# Install Pycoproc Libary
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/681302a4/lib/pycoproc/pycoproc.py
+
+	#Install quectel L76 GNSS library (Pytrack Board)
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/andrethemac/L76GLNSV4/b68b3402/L76GNSV4.py
+
+	#Install Pytrack Board Libary
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/ce0cfa5/pytrack/lib/LIS2HH12.py
+
+	#Install Pytrack Board Libary
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/0f123c7/pytrack/lib/pytrack.py
+
+	#Install BME280 Libary
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
+
 	# Install and patch "dotty_dict"
 	# https://github.com/pawelzny/dotty_dict
 	mkdir -p $(target_dir)/dotty_dict
@@ -45,6 +60,10 @@ install-requirements:
 	touch $(target_dir)/onewire/__init__.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/aacafd62/examples/DS18X20/onewire.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/a065d78/drivers/onewire/ds18x20.py
+
+
+
+
 
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
