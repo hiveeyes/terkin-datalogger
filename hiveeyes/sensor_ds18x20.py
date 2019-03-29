@@ -2,11 +2,8 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
 import time
-from onewire.onewire import DS18X20
 from binascii import hexlify
-
 from terkin.sensor import AbstractSensor
 
 """
@@ -25,7 +22,6 @@ class DS18X20Sensor(AbstractSensor):
     A generic DS18B20 sensor component.
     """
 
-
     def __init__(self):
         super().__init__()
 
@@ -33,8 +29,6 @@ class DS18X20Sensor(AbstractSensor):
         self.readings = None
         self.sensors = None
         self.bus = None
-
-
 
     def acquire_bus(self, bus):
         self.bus = bus
@@ -45,11 +39,10 @@ class DS18X20Sensor(AbstractSensor):
 
         # Initialize the DS18x20 hardware driver.
         try:
+            from onewire.onewire import DS18X20
             self.sensors = DS18X20(self.bus.adapter)
         except Exception as ex:
             print('ERROR: DS18X20 hardware driver failed. {}'.format(ex))
-            raise
-
 
     def read(self):
         d = {}
@@ -66,7 +59,5 @@ class DS18X20Sensor(AbstractSensor):
                 print("WARNING: device {} has no value".format(hexlify(device).decode()))
 
             time.sleep(0.750)
-
-
 
         return d

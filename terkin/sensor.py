@@ -2,12 +2,10 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
-from onewire.onewire import OneWire
+import time
+from binascii import hexlify
 from machine import Pin
 from machine import I2C
-from binascii import hexlify
-import time
 
 class SensorManager:
     def __init__(self):
@@ -91,11 +89,11 @@ class OneWireBus(AbstractBus):
 
     def start(self):
         try:
+            from onewire.onewire import OneWire
             self.adapter = OneWire(Pin(self.pins['data']))
             self.scan_devices()
         except Exception as ex:
             print('ERROR: OneWire hardware driver failed. {}'.format(ex))
-            raise
 
 
     def scan_devices(self):
