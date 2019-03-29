@@ -115,11 +115,10 @@ class I2CBus(AbstractBus):
 
     def start(self):
         try:
-            self.adapter = I2C(self.bus_number, I2C.MASTER, baudrate=100000)
+            self.adapter = I2C(self.bus_number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
             self.scan_devices()
         except Exception as ex:
             print('ERROR: I2C hardware driver failed. {}'.format(ex))
-            raise
 
     def scan_devices(self):
         self.devices = self.adapter.scan()
