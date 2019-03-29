@@ -112,6 +112,9 @@ sensors = {
         'bme280': {
             'bus': 'i2c:0',
         },
+        #'pytrack': {
+        #    'bus': 'i2c:1',
+        #},
     },
     'busses': [
         {
@@ -125,8 +128,8 @@ sensors = {
             "family": "i2c",
             "number": 1,
             "enabled": False,
-            "pin_sda": "P21",
-            "pin_scl": "P22",
+            "pin_sda": "P22",
+            "pin_scl": "P21",
         },
         {
             "family": "onewire",

@@ -37,5 +37,8 @@ class PytrackSensor(AbstractSensor):
         data = {}
         print('INFO:  Acquire reading from Pytrack')
         data['battery_voltage'] = float(self.sensor.read_battery_voltage())
+
+        # TODO: Add more data here.
+
         print("Pytrack data: {}".format(data))
         return data

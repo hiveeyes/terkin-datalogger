@@ -55,12 +55,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
         except Exception as ex:
             print('INFO:  Skipping bme280 sensor. {}'.format(ex))
 
-        # Setup the Pytrack.
-        try:
-            self.add_pytrack_sensor()
-        except Exception as ex:
-            print('INFO:  Skipping Pytrack sensor. {}'.format(ex))
-
     def add_hx711_sensor(self):
         """
         Setup and register the HX711 sensor component with your data logger.
@@ -84,7 +78,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Register with framework.
         self.sensor_manager.register_sensor(hx711_sensor)
-
 
     def add_ds18x20_sensor(self):
         """
@@ -112,23 +105,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
 
         sensor = BME280Sensor()
-        sensor.acquire_bus(bus)
-
-        # Start sensor.
-        sensor.start()
-
-        # Register with framework.
-        self.sensor_manager.register_sensor(sensor)
-
-    def add_pytrack_sensor(self):
-        """
-        Setup and register the Pytrack sensor component with your data logger.
-        """
-
-        settings = self.settings.get('sensors.registry.pytrack')
-        bus = self.sensor_manager.get_bus_by_name(settings['bus'])
-
-        sensor = PytrackSensor()
         sensor.acquire_bus(bus)
 
         # Start sensor.
