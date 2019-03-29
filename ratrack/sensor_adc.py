@@ -2,8 +2,11 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
+from terkin import logging
 from terkin.sensor import AbstractSensor
+
+log = logging.getLogger(__name__)
+
 
 class ADCSensor(AbstractSensor):
 
@@ -26,7 +29,7 @@ class ADCSensor(AbstractSensor):
             #p_out = Pin('P9', mode=Pin.OUT, pull=Pin.PULL_DOWN)
 
         except Exception as ex:
-            print('ERROR: APC hardware driver failed. {}'.format(ex))
+            log.exception('ADC hardware driver failed')
             raise
 
     def read_value(self):
@@ -34,10 +37,11 @@ class ADCSensor(AbstractSensor):
             # TODO: Return Sensor.DISABLED
             return
 
-        print('INFO:  Acquire reading from ADC')
+        log.info('Acquire reading from ADC')
         value = self.channel.value()
 
         return value
+
 
 class MoistureSensor(ADCSensor):
 
@@ -48,6 +52,7 @@ class MoistureSensor(ADCSensor):
             "moisture_volt": value / self.parameter.get('scaling', 4.096),
         }
         return data
+
 
 class WaterlevelSensor(ADCSensor):
 

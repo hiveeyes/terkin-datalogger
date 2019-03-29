@@ -51,7 +51,7 @@ def getLogger(name=None, level=logging.INFO):
         sh = StreamHandler()
 
         #log_format = '[%(tdelta)s] %(levelname)s %(message)s'
-        log_format = '%(tdelta)10.4f [%(name)-21s] %(levelname)-7s: %(message)s'
+        log_format = '%(tdelta)10.4f [%(name)-25s] %(levelname)-7s: %(message)s'
 
         sh.setFormatter(Formatter(log_format, style='%'))
 

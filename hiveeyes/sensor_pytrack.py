@@ -5,7 +5,6 @@
 from terkin import logging
 from terkin.sensor import AbstractSensor
 
-
 log = logging.getLogger(__name__)
 
 
