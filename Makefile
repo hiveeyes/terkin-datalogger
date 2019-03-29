@@ -53,17 +53,11 @@ install-requirements:
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/dotty_dict.py
 	patch --forward dist-packages/dotty_dict/dotty_dict.py tools/dotty_dict-01.patch || true
 
-
 	# Install OneWire and DS18x20 libraries
 	# https://github.com/micropython/micropython/tree/master/drivers
 	mkdir -p $(target_dir)/onewire
 	touch $(target_dir)/onewire/__init__.py
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/aacafd62/examples/DS18X20/onewire.py
-	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/micropython/micropython/a065d78/drivers/onewire/ds18x20.py
-
-
-
-
 
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
@@ -74,11 +68,9 @@ install-requirements:
 	cp -r $(tmpdir)/cayennelpp $(target_dir)/
 	rm -rf $(tmpdir)
 
-
 upload-requirements:
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages
 	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
-
 
 refresh-requirements:
 	rm -r dist-packages
@@ -117,7 +109,6 @@ list-serials:
 
 list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
-
 
 # =============
 # Miscellaneous
