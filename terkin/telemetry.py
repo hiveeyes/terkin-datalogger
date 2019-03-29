@@ -22,10 +22,10 @@ Setup on MicroPython for Unix
 """
 import json
 from copy import copy
-import sys
-print(sys.path)
+from terkin import logging
 from urllib.parse import urlsplit, urlencode
 
+log = logging.getLogger(__name__)
 
 
 class TelemetryManager:
@@ -43,7 +43,7 @@ class TelemetryManager:
                 outcome = adapter.transmit(data)
                 outcomes.append(outcome)
             except Exception as ex:
-                print('ERROR: Telemetry failed for adapter {}/{}. {}'.format(adapter.base_uri, adapter.address, ex))
+                log.exception('Telemetry failed for adapter {}/{}'.format(adapter.base_uri, adapter.address))
 
         # TODO: Improve by returning dictionary of all outcomes.
         return any(outcomes)
@@ -78,7 +78,7 @@ class TelemetryAdapter:
     def setup(self):
         self.channel_uri = self.format_uri()
 
-        print('Telemetry channel URI: ', self.channel_uri)
+        log.info('Telemetry channel URI: %s', self.channel_uri)
         self.client = self.client_factory()
 
     def client_factory(self):
@@ -102,7 +102,7 @@ class CSVTelemetryAdapter(TelemetryAdapter):
 
     def transmit(self, data, **kwargs):
         uri = self.format_uri(**kwargs)
-        print('Telemetry channel URI for CSV: ', uri)
+        log.info('Telemetry channel URI for CSV: %s', uri)
         return self.client.transmit(data, uri=uri, serialize=False)
 
 
@@ -125,7 +125,7 @@ class TelemetryClient:
 
     def __init__(self, uri, format, content_encoding=None, suffixes=None):
 
-        print('Starting Terkin TelemetryClient')
+        log.info('Starting Terkin TelemetryClient')
         self.uri = uri
 
         self.transport = None
@@ -263,8 +263,8 @@ class TelemetryTransportHTTP:
 
     def send(self, request_data):
         # Submit telemetry data using HTTP POST request
-        print('HTTP Path:   ', self.path)
-        print('Payload:     ', request_data['payload'])
+        log.ingo('HTTP Path:   %s', self.path)
+        log.info('Payload:     %s', request_data['payload'])
         self.connection.request("POST", self.path, body=request_data['payload'], headers={'Content-Type': self.content_type})
         response = self.connection.getresponse()
         if response.status == 200:
@@ -309,7 +309,7 @@ class TelemetryTransportMQTT:
 
     def __init__(self, uri, format):
 
-        print('Telemetry transport: MQTT over TCP over WiFi')
+        log.info('Telemetry transport: MQTT over TCP over WiFi')
 
         # Addressing.
         self.uri = uri
@@ -346,8 +346,8 @@ class TelemetryTransportMQTT:
         # Evaluate and handle defunctness.
         if self.defunct:
             if not self.defunctness_reported:
-                print('ERROR: MQTT transport is defunct, please scan log '
-                      'output for previous error messages.')
+                log.error('MQTT transport is defunct, please scan log '
+                          'output for previous error messages.')
                 self.defunctness_reported = True
             return False
 
@@ -358,8 +358,8 @@ class TelemetryTransportMQTT:
         payload = request_data['payload']
 
         # Reporting.
-        print('DEBUG: MQTT topic:  ', topic)
-        print('DEBUG: MQTT payload:', payload)
+        log.debug('MQTT topic:  ', topic)
+        log.debug('MQTT payload:', payload)
 
         connection = self.get_connection()
         connection.publish(topic, payload)
@@ -402,7 +402,7 @@ class MQTTAdapter:
             self.driver_class = MQTTClient
 
         except Exception as ex:
-            print('ERROR: Loading MQTT module failed. {}'.format(ex))
+            log.exception('Loading MQTT module failed')
             raise
 
     def ensure_connection(self):
@@ -413,15 +413,15 @@ class MQTTAdapter:
     def connect(self):
         """Connect to MQTT broker"""
         try:
-            print('INFO: Connecting to MQTT broker')
+            log.info('Connecting to MQTT broker')
             self.connection = self.driver_class(self.client_id, self.server, port=self.port)
             self.connection.DEBUG = True
             self.connection.connect()
-            print('INFO: Connecting to MQTT broker at {} succeeded'.format(self.connection.addr))
+            log.info('Connecting to MQTT broker at %s succeeded', self.connection.addr)
             self.connected = True
 
         except Exception as ex:
-            print('ERROR: Connecting to MQTT broker at {} failed. {}'.format(self.server, ex))
+            log.exception('Connecting to MQTT broker at %s failed'.format(self.server))
             self.connected = False
 
         return self.connected
@@ -437,7 +437,7 @@ class MQTTAdapter:
             return True
 
         except OSError as ex:
-            print('ERROR: MQTT publishing failed. {}'.format(ex))
+            log.exception('MQTT publishing failed')
 
             # Signal connection error in order to reconnect on next submission attempt.
             # [Errno 104] ECONNRESET
@@ -529,6 +529,6 @@ def to_cayenne_lpp(data):
 
         else:
             # TODO: raise Exception here?
-            print('[CayenneLPP] Sensor type "{}" not found in CayenneLPP'.format(name))
+            log.info('[CayenneLPP] Sensor type "{}" not found in CayenneLPP'.format(name))
 
     return frame.bytes()

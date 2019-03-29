@@ -8,8 +8,11 @@
 # License: GNU General Public License, Version 3
 #
 import settings
+from terkin import logging
 from terkin.datalogger import TerkinDatalogger
 from terkin.sensor import register_sensor
+
+log = logging.getLogger(__name__)
 
 
 class DummySensor:
@@ -37,7 +40,7 @@ class ExampleDatalogger(TerkinDatalogger):
         super().register_sensors()
 
         # Add some sensors.
-        self.device.tlog('Registering custom sensors')
+        log.info('Registering custom sensors')
 
         # Add a new sensor. This is just an example sensor.
         sensor = DummySensor()
@@ -50,7 +53,7 @@ class ExampleDatalogger(TerkinDatalogger):
 
         # It's your turn.
         print()
-        self.device.tlog('Custom loop')
+        log.info('Custom loop')
 
         # Finally, schedule all system tasks.
         super().loop()

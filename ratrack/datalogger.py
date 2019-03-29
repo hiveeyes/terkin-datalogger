@@ -7,12 +7,15 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
+from terkin import logging
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_bme280 import BME280Sensor
 from hiveeyes.sensor_pytrack import PytrackSensor
 from ratrack import convert
 from ratrack.sensor_adc import MoistureSensor, WaterlevelSensor
 import time
+
+log = logging.getLogger(__name__)
 
 
 class RatrackDatalogger(TerkinDatalogger):
@@ -36,7 +39,7 @@ class RatrackDatalogger(TerkinDatalogger):
         super().register_sensors()
 
         # Add some project-specific sensors.
-        self.device.tlog('Registering Ratrack sensors')
+        log.info('Registering Ratrack sensors')
 
         # Setup the BME280.
         try:
@@ -48,7 +51,7 @@ class RatrackDatalogger(TerkinDatalogger):
         try:
             self.add_bme280_sensor()
         except Exception as ex:
-            print('INFO:  Skipping bme280 sensor. {}'.format(ex))
+            log.exception('Skipping bme280 sensor')
 
         # Setup the Moisture Sensor.
         try:
@@ -66,7 +69,7 @@ class RatrackDatalogger(TerkinDatalogger):
         try:
             self.add_pytrack_sensor()
         except Exception as ex:
-            print('INFO:  Skipping Pytrack sensor. {}'.format(ex))
+            log.exception('Skipping Pytrack sensor')
 
     def add_bme280_sensor(self):
         """
@@ -162,6 +165,9 @@ class RatrackDatalogger(TerkinDatalogger):
         """
         Loop function. Do what I mean.
         """
+
+        # It's your turn.
+        #log.info('Ratrack loop')
 
         # Finally, schedule other system tasks.
         super().loop()

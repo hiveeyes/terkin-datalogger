@@ -8,12 +8,35 @@
 # License: GNU General Public License, Version 3
 #
 import settings
-from ratrack.datalogger import RatrackDatalogger
+from terkin import logging
+from hiveeyes.datalogger import HiveeyesDatalogger
+
+log = logging.getLogger(__name__)
+
+
+class BobDatalogger(HiveeyesDatalogger):
+    """
+    The BOB MicroPython Datalogger.
+    """
+
+    # Naming things.
+    name = 'BOB MicroPython Datalogger'
+
+    def loop(self):
+        """
+        Loop function. Do what I mean.
+        """
+
+        # It's your turn.
+        #log.info('BOB loop')
+
+        # Finally, schedule other system tasks.
+        super().loop()
 
 
 def main():
     """Start the data logger application."""
-    datalogger = RatrackDatalogger(settings)
+    datalogger = BobDatalogger(settings)
     datalogger.start()
 
 

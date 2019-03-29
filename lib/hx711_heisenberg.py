@@ -31,7 +31,11 @@ Notes
     - Use 0.9 to get more responsive values, 0.1 (default) means more filtered.
 
 """
+
 from hx711 import HX711
+from terkin import logging
+
+log = logging.getLogger(__name__)
 
 
 class HX711Heisenberg(HX711):
@@ -60,7 +64,7 @@ class HX711Heisenberg(HX711):
             sum += self.read()
         self.filtered = sum / 3
 
-        print('Gain & initial value set')
+        log.info('Gain & initial value set')
 
     def read_median(self, times=8):
         """
@@ -92,7 +96,7 @@ class HX711Heisenberg(HX711):
     def tare(self, times=15):
         sum = self.read_average(times)
         self.set_offset(sum)
-        print('OFFSET = ' + str(sum))
+        log.debug('OFFSET = ' + str(sum))
 
     def set_scale(self, scale=None):
         if scale is None:

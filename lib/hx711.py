@@ -2,7 +2,10 @@
 # (c) 2017-2018 David Gerber <https://github.com/geda>
 # HX711 library for the LoPy.
 # https://github.com/geda/hx711-lopy
+from terkin import logging
 from machine import Pin, enable_irq, disable_irq, idle
+
+log = logging.getLogger(__name__)
 
 
 class HX711:
@@ -37,7 +40,7 @@ class HX711:
     def initialize(self):
         """To initialize the chip, perform an initial reading once"""
         if not self.initialized:
-            print('INFO:  HX711 initialization started')
+            log.info('HX711 initialization started')
             if self.is_ready():
                 self.initialized = True
 
@@ -47,10 +50,10 @@ class HX711:
                 self.read()
                 self.filtered = self.read()
 
-                print('INFO:  HX711 initialization succeeded')
+                log.info('HX711 initialization succeeded')
                 return True
             else:
-                print('ERROR: HX711 not found, skipping initialization')
+                log.error('HX711 not found, skipping initialization')
                 return False
 
     def read(self):

@@ -9,7 +9,10 @@
 #
 import time
 import settings
+from terkin import logging
 from terkin.datalogger import TerkinDatalogger
+
+log = logging.getLogger(__name__)
 
 
 class ExampleDatalogger(TerkinDatalogger):
@@ -26,7 +29,7 @@ class ExampleDatalogger(TerkinDatalogger):
         """
 
         # It's your turn.
-        self.device.tlog('Custom loop')
+        log.info('Custom loop')
 
         # Send dummy payload to TTN over LoRaWAN.
         # TODO: Send real measurement data.

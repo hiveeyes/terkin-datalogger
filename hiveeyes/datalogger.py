@@ -10,11 +10,13 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
+from terkin import logging
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 from hiveeyes.sensor_ds18x20 import DS18X20Sensor
 from hiveeyes.sensor_bme280 import BME280Sensor
-from hiveeyes.sensor_pytrack import PytrackSensor
+
+log = logging.getLogger(__name__)
 
 
 class HiveeyesDatalogger(TerkinDatalogger):
@@ -34,26 +36,26 @@ class HiveeyesDatalogger(TerkinDatalogger):
         super().register_sensors()
 
         # Add some sensors for the Hiveeyes project.
-        self.device.tlog('Registering Hiveeyes sensors')
+        log.info('Registering Hiveeyes sensors')
 
 
         # Setup the HX711.
         try:
             self.add_hx711_sensor()
         except Exception as ex:
-            print('INFO:  Skipping HX711 sensor. {}'.format(ex))
+            log.exception('Skipping HX711 sensor')
 
         # Setup the DS18X20.
         try:
             self.add_ds18x20_sensor()
         except Exception as ex:
-            print('INFO:  Skipping DS18x20 sensor. {}'.format(ex))
+            log.exception('Skipping DS18x20 sensor')
 
         # Setup the BME280.
         try:
             self.add_bme280_sensor()
         except Exception as ex:
-            print('INFO:  Skipping bme280 sensor. {}'.format(ex))
+            log.exception('Skipping bme280 sensor')
 
     def add_hx711_sensor(self):
         """
@@ -119,7 +121,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         """
 
         # It's your turn.
-        #self.device.tlog('Hiveeyes loop')
+        #log.info('Hiveeyes loop')
 
         # Finally, schedule other system tasks.
         super().loop()

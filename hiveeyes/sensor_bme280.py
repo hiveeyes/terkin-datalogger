@@ -2,57 +2,56 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
+from terkin import logging
 from terkin.sensor import AbstractSensor
 from bme280 import BME280
 
-"""
-# DS18B20 data line connected to pin P10
+log = logging.getLogger(__name__)
 
-while True:
-    print(temp.read_temp_async())
-    time.sleep(1)
-    temp.start_conversion()
-    time.sleep(1)
-
-"""
 
 class BME280Sensor(AbstractSensor):
     """
-    A generic DS18B20 sensor component.
+    A generic BME280 sensor component.
     """
 
     def __init__(self):
         super().__init__()
 
-        # TODO: Settings are needed here!
         # The driver instance.
-        self.readings = None
-        self.sensor = None
         self.bus = None
-        # TODO: get sensors i2c bus address from settings
+
+        # TODO: Get sensors i2c bus address from settings.
         self.address = 0x76
+
+        self.driver = None
 
     def start(self):
         """
         Getting the bus
         """
         if self.bus is None:
-            raise KeyError("Bus missing")
+            raise KeyError("Bus missing for BME280Sensor")
 
         # Initialize the hardware driver.
         try:
-            self.sensor = BME280(address=self.address, i2c=self.bus.adapter)
+            self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+            return True
+
         except Exception as ex:
-            print('ERROR: BME280 hardware driver failed. {}'.format(ex))
-            raise
+            log.exception('BME280 hardware driver failed')
 
     def read(self):
-        data = {}
-        print('INFO:  Acquire reading from BME280')
 
-        t, p, h = self.sensor.read_compensated_data()
-        if  t and p and h:
+        if self.bus is None or self.driver is None:
+            return self.SENSOR_NOT_INITIALIZED
+
+        data = {}
+        log.info('Acquire reading from BME280')
+
+        t, p, h = self.driver.read_compensated_data()
+
+        # TODO: Review this.
+        if t and p and h:
 
             p = p // 256
             pi = p // 100
@@ -61,7 +60,7 @@ class BME280Sensor(AbstractSensor):
             hi = h // 1024
             hd = h * 100 // 1024 - hi * 100
 
-	    data["temperature"] = t / 100
+            data["temperature"] = t / 100
             data["humidity"] = float("{}.{:02d}".format(hi, hd))
             data["pressure"] = float("{}.{:02d}".format(pi, pd))
 
@@ -74,11 +73,8 @@ class BME280Sensor(AbstractSensor):
             #data[pres_name] = float("{}.{:02d}".format(pi, pd))
 
         else:
-            print("WARNING: device {} has no value".format(data))
+            log.warning("I2C device {} has no value".format(data))
 
-        print("I2C data: {}".format(data))
+        log.debug("I2C data: {}".format(data))
 
         return data
-
-
-

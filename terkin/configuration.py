@@ -5,6 +5,9 @@
 import json
 import types
 from dotty_dict import dotty
+from terkin import logging
+
+log = logging.getLogger(__name__)
 
 
 class TerkinConfiguration:
@@ -26,7 +29,7 @@ class TerkinConfiguration:
         try:
             self.add_real(data)
         except Exception as ex:
-            print('ERROR: Reading configuration failed. {}'.format(ex))
+            log.exception('Reading configuration settings failed')
 
     def add_real(self, data):
         if isinstance(data, types.ModuleType):
@@ -37,10 +40,6 @@ class TerkinConfiguration:
                 self.store[key] = value
 
     def dump(self):
-        print('INFO: Configuration settings:')
-        # FIXME: Disable due to Windows console crasher bug. Can we enable it on Unix or just fix WSL?
-        # FIXME: Investigate why on earth just output from here will be garbled, regardless of the content.
-        print('Printing configuration settings currently defunct, sorry.')
-        return
+        log.info('Configuration settings:')
         for key, value in self.store.items():
-            print('Section "{}":'.format(key), json.dumps(value))
+            log.info('Section "{}": {}'.format(key, json.dumps(value)))

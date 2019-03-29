@@ -5,11 +5,14 @@
 import utime
 import machine
 
-from terkin import __version__
+from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
-from terkin.sensor import MemoryFree, SensorManager
+from terkin.sensor import MemoryFree, SensorManager, AbstractSensor
 from terkin.sensor import OneWireBus, I2CBus
+
+log = logging.getLogger(__name__)
+
 
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
@@ -25,7 +28,13 @@ class TerkinDatalogger:
         self.device = None
         self.sensor_manager = SensorManager()
 
+    @property
+    def appname(self):
+        return '{} {}'.format(self.name, self.version)
+
     def start(self):
+
+        log.info('Starting %s', self.appname)
 
         # Main application object.
         self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
@@ -50,7 +59,7 @@ class TerkinDatalogger:
 
     def register_busses(self):
         bus_settings = self.settings.get('sensors.busses')
-        print("INFO: starting all busses: {}".format(bus_settings))
+        log.info("Starting all busses %s", bus_settings)
         for bus in bus_settings:
             if not bus.get("enabled", False):
                 continue
@@ -68,8 +77,9 @@ class TerkinDatalogger:
                 i2c.start()
                 name = bus["family"] + ":" + str(bus["number"])
                 self.sensor_manager.register_bus(name, i2c)
+
             else:
-                print("WARNING: invalid bus definition: {}".format(bus))
+                log.warning("Invalid bus configuration: %s", bus)
 
     def register_sensors(self):
         """
@@ -80,7 +90,7 @@ class TerkinDatalogger:
         - Device stats, see Microhomie
         """
 
-        self.device.tlog('Registering Terkin sensors')
+        log.info('Registering Terkin sensors')
 
         memfree = MemoryFree()
         self.sensor_manager.register_sensor(memfree)
@@ -99,7 +109,7 @@ class TerkinDatalogger:
 
             # Indicate activity.
             # TODO: Optionally disable this output.
-            print('--- loop ---')
+            log.info('--- loop ---')
 
             # Run downstream mainloop handlers.
             self.loop()
@@ -111,15 +121,18 @@ class TerkinDatalogger:
         """Read sensors"""
         data = {}
         for sensor in self.sensor_manager.sensors:
+
             sensor_name = sensor.__class__.__name__
-            print('INFO:  Reading sensor "{}"'.format(sensor_name))
+            log.info('Reading sensor "%s"', sensor_name)
+
             try:
                 reading = sensor.read()
-                if reading is not None:
-                    data.update(reading)
-            except Exception as ex:
-                print('ERROR: Reading sensor "{}" failed: {}'.format(sensor_name, ex))
-                #raise
+                if reading is None or reading is AbstractSensor.SENSOR_NOT_INITIALIZED:
+                    continue
+                data.update(reading)
+
+            except:
+                log.exception('Reading sensor "%s" failed', sensor_name)
 
         return data
 
@@ -128,27 +141,27 @@ class TerkinDatalogger:
 
         # TODO: Optionally disable telemetry.
         if self.device.telemetry is None:
-            print('WARNING: Telemetry disabled')
+            log.warning('Telemetry disabled')
             return False
 
         success = self.device.telemetry.transmit(data)
 
         # Evaluate outcome.
         if success:
-            self.device.tlog('Telemetry transmission: SUCCESS')
+            log.info('Telemetry transmission: SUCCESS')
         else:
-            self.device.tlog('Telemetry transmission: FAILURE')
+            log.info('Telemetry transmission: FAILURE')
 
         return success
 
     def loop(self):
-        self.device.tlog('Terkin loop')
+        log.info('Terkin loop')
 
         # Read sensors.
         data = self.read_sensors()
 
         # Debugging: Print sensor data before running telemetry.
-        #print(data)
+        #log.debug(data)
 
         # Transmit data.
         self.transmit_readings(data)

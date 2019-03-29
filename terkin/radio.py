@@ -3,19 +3,21 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-
-import machine
-import usocket as socket
-from network import WLAN
-import binascii
 import socket
-import pycom
+import binascii
+import machine
+from network import WLAN
+from terkin import logging
 
 
 # TODO: What about when coming back from sleep?
 # Needed to avoid losing connection after a soft reboot
 # if True or machine.reset_cause() != machine.SOFT_RESET:
 import pycom
+
+
+log = logging.getLogger(__name__)
+
 
 class NetworkManager:
 
@@ -54,7 +56,7 @@ class NetworkManager:
         # Check WiFi connectivity.
         if self.station.isconnected():
 
-            print("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
+            log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
             self.print_short_status()
 
             # Give system some breath.
@@ -69,14 +71,14 @@ class NetworkManager:
         network_map = {station['ssid']: station for station in self.stations}
         networks_known = frozenset(network_map.keys())
 
-        print("WiFi STA: Starting connection")
+        log.info("WiFi STA: Starting connection")
         self.station.mode(WLAN.STA)
 
         # Names/SSIDs of networks found.
-        print("WiFi STA: Scanning for networks")
+        log.info("WiFi STA: Scanning for networks")
         self.stations_available = self.station.scan()
         networks_found = frozenset([e.ssid for e in self.stations_available])
-        print("WiFi STA: Available networks: {}".format(networks_found))
+        log.info("WiFi STA: Available networks: %s", networks_found)
 
         # Compute set of effective networks by intersecting known with found ones.
         network_candidates = list(networks_found & networks_known)
@@ -94,12 +96,12 @@ class NetworkManager:
                     break
 
             except Exception as ex:
-                print('WiFi STA: Connecting to "{}" failed. {}'.format(network_name, ex))
+                log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
 
         # TODO: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
-        print('WiFi: Switching to AP mode. {}'.format(network_name, ex))
-        print(WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT)
+        log.info('WiFi: Switching to AP mode')
+        # WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT
         # TOOD: Make default channel configurable
         self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
         """
@@ -108,25 +110,36 @@ class NetworkManager:
 
         network_name = network['ssid']
 
-        print('WiFi STA: Attempting to connect to network "{}"'.format(network_name))
+        log.info('WiFi STA: Attempting to connect to network "{}"'.format(network_name))
 
         auth_mode = [e.sec for e in self.stations_available if e.ssid == network_name][0]
         password = network['password']
 
+        # TODO: Optionally, configure hostname.
+        # https://docs.micropython.org/en/latest/library/network.WLAN.html
+        # https://github.com/pycom/pycom-micropython-sigfox/pull/165
+        # https://forum.pycom.io/topic/3326/new-firmware-release-v1-18-0
+        if 'dhcp_hostname' in network:
+            if hasattr(self.station, 'config'):
+                log.ingo('WiFi STA: Using dhcp_hostname "{}"'.format(network['dhcp_hostname']))
+                self.station.config(dhcp_hostname=network['dhcp_hostname'])
+            else:
+                log.error('Could not set hostname on older MicroPython')
+
         # Optionally, configure static IP address.
         if 'ifconfig' in network:
-            print('WiFi STA: Using static network configuration "{}"'.format(network_name))
+            log.info('WiFi STA: Using static network configuration "{}"'.format(network_name))
             self.station.ifconfig(config=network['ifconfig'])
 
         # Connect to WiFi station.
-        print('WiFi STA: Connecting to "{}"'.format(network_name))
+        log.info('WiFi STA: Connecting to "{}"'.format(network_name))
         self.station.connect(network_name, (auth_mode, password), timeout=self.settings.get('networking.wifi.timeout'))
 
         # FIXME: If no known network is found, the program will lockup here.
         # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
         retries = 15
         while not self.station.isconnected() and retries > 0:
-            print('WiFi STA: Waiting for network "{}".'.format(network_name))
+            log.info('WiFi STA: Waiting for network "{}".'.format(network_name))
             time.sleep(1)
             retries -= 1
             # Save power while waiting
@@ -152,13 +165,12 @@ class NetworkManager:
             pass
 
     def print_address_status(self):
-        #print(dir(self.station))
         mac_address = self.station.mac()
         ifconfig = self.station.ifconfig()
-        print('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
+        log.info('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
 
     def print_short_status(self):
-        print('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
+        log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def wait_for_nic(self, retries=5):
         attempts = 0
@@ -167,11 +179,11 @@ class NetworkManager:
                 socket.getaddrinfo("localhost", 333)
                 break
             except OSError as ex:
-                print(ex)
-            print('Waiting for networking')
+                log.warning('Networking not available. %s', ex)
+            log.info('Waiting for networking')
             time.sleep(0.25)
             attempts += 1
-        print('Networking established')
+        log.info('Networking established')
 
     def start_lora(self):
         self.start_lora_join()
@@ -182,7 +194,7 @@ class NetworkManager:
         if self.lora_joined:
             self.create_lora_socket()
         else:
-            print("[LoRa] ERROR: Could not join network")
+            log.error("[LoRa] Could not join network")
 
     def start_lora_join(self):
 
@@ -211,15 +223,15 @@ class NetworkManager:
                 time.sleep(2.5)
                 #pycom.rgbled(0x0f0f00) # yellow
                 time.sleep(0.1)
-                print('[LoRA] Not joined yet...')
+                log.info('[LoRA] Not joined yet...')
                 #pycom.rgbled(0x000000) # off
 
         self.lora_joined = self.lora.has_joined()
 
         if self.lora_joined:
-            print('[LoRA] joined...')
+            log.info('[LoRA] joined...')
         else:
-            print('[LoRa] did not join in', attempts,'attempts')
+            log.info('[LoRa] did not join in %s attempts', attempts)
 
         #for i in range(3, 16):
         #    self.lora.remove_channel(i)
@@ -239,7 +251,7 @@ class NetworkManager:
         self.socket.setblocking(False)
 
         self.lora_socket = True
-        print('[LoRa] socket created')
+        log.info('[LoRa] socket created')
 
         for i in range(0,2):
             #pycom.rgbled(0x000f00) # green
@@ -262,9 +274,8 @@ class NetworkManager:
         rx, port = self.socket.recvfrom(256)
         if rx:
             #pycom.rgbled(0x000f00) # green
-            print('Received: {}, on port: {}'.format(rx, port))
+            log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
             #pycom.rgbled(0x000f00) # green
         time.sleep(6)
 
         return rx, port
-

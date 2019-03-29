@@ -2,7 +2,11 @@
 # (c) 2019 Jan Hoffmann <jan.hoffmann@bergamsee.de>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+from terkin import logging
 from terkin.sensor import AbstractSensor
+
+
+log = logging.getLogger(__name__)
 
 
 class PytrackSensor(AbstractSensor):
@@ -32,28 +36,29 @@ class PytrackSensor(AbstractSensor):
         try:
             from pytrack import Pytrack
             self.sensor = Pytrack(i2c=self.bus.adapter)
-        except Exception as ex:
-            print('ERROR: Pytrack hardware driver failed. {}'.format(ex))
+        except:
+            log.exception('Pytrack hardware driver failed')
             raise
 
         # Initialize the L76GNS sensor driver.
         try:
             from L76GNSV4 import L76GNSS
             self.l76 = L76GNSS(pytrack=self.sensor, timeout=5)
-        except Exception as ex:
-            print('ERROR: Pytrack L76GNSS hardware driver failed. {}'.format(ex))
+        except:
+            log.exception('Pytrack L76GNSS hardware driver failed')
             raise
+
         # Initialize the LIS2HH12 sensor driver.
         try:
             from LIS2HH12 import LIS2HH12
             self.lis2hh12 = LIS2HH12(pysense=self.sensor)
-        except Exception as ex:
-            print('ERROR: Pytrack LIS2HH12 hardware driver failed. {}'.format(ex))
+        except:
+            log.exception('Pytrack LIS2HH12 hardware driver failed')
             raise
 
     def read(self):
         data = {}
-        print('INFO:  Acquire reading from Pytrack')
+        log.info('Acquire reading from Pytrack')
         data['battery_voltage'] = float(self.sensor.read_battery_voltage())
 
         # TODO: Add more data here.
@@ -62,7 +67,7 @@ class PytrackSensor(AbstractSensor):
         lis2hh12_data = self.read_lis2hh12()
         data.update(lis2hh12_data)
 
-        print("Pytrack data: {}".format(data))
+        log.info("Pytrack data: {}".format(data))
         return data
 
     def read_lis2hh12(self):
@@ -81,11 +86,12 @@ class PytrackSensor(AbstractSensor):
 
         data = {}
 
-        # Call this to start the machinery and get a fix actually.
+        # Call this to start the machinery and actually get a fix.
         try:
             self.l76.coordinates()
         except Exception as e:
-            print("Could not read Coords. Error:", e)
+            log.exception("Could not read coordinates")
+            raise
 
         # Only read values when having a fix.
         if not self.l76.fixed():
@@ -97,18 +103,19 @@ class PytrackSensor(AbstractSensor):
             data['speed'] = float(speed.get('speed'))
             data['cog'] = float(speed.get('COG'))
         except Exception as e:
-            print("Could not read Speed. Error:", e)
+            log.warning("Could not read Speed. Error:", e)
 
         # Read position.
         try:
             location = self.l76.get_location(MSL=True)
         except Exception as e:
-            print("Could not read Location. Error:", e)
+            log.exception("Could not read location from L76 GNSS")
+
         try:
             data['longitude'] = float(location.get('longitude'))
             data['latitude'] = float(location.get('latitude'))
             data['altitude'] = float(location.get('altitude'))
         except Exception as e:
-            print('No GPS Data:', e)
+            log.warning('No GPS Data')
 
         return data

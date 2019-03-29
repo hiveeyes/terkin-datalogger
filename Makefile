@@ -28,6 +28,12 @@ install-requirements:
 	# Install "micropython-base64" without 'micropython-binascii', 'micropython-re-pcre', 'micropython-struct'
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pfalcon/micropython-lib/5f619c88/base64/base64.py
 
+	# Install "micropython-logging" without "micropython-os"
+	# to avoid collision with libraries shipped as Pycom builtins.
+	mkdir -p $(target_dir)/logging
+	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/micropython-lib/5f619c88/logging/logging/__init__.py
+	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/micropython-lib/5f619c88/logging/logging/handlers.py
+
 	# Install Pycom "mqtt.py"
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/6544105e/lib/mqtt/mqtt.py
 

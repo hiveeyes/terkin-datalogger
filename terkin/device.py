@@ -9,6 +9,10 @@ import machine
 from machine import Timer
 from ubinascii import hexlify
 
+from terkin import logging
+
+log = logging.getLogger(__name__)
+
 
 class TerkinDevice:
 
@@ -18,18 +22,18 @@ class TerkinDevice:
         self.version = version
         self.settings = settings
 
-        # Keep track of time since boot.
-        self.chrono = Timer.Chrono()
-        self.chrono.start()
-
         self.networking = None
         self.telemetry = None
 
         self.wdt = None
         self.rtc = None
 
+    @property
+    def appname(self):
+        return '{} {}'.format(self.name, self.version)
+
     def start_networking(self):
-        self.tlog('Starting networking')
+        log.info('Starting networking')
 
         from terkin.radio import NetworkManager
 
@@ -39,8 +43,8 @@ class TerkinDevice:
         if self.settings.get('networking.lora.antenna_attached'):
             self.networking.start_lora()
         else:
-            print("[LoRa] Disabling LoRa interface as no antenna has been attached. "
-                  "ATTENTION: Running LoRa without antenna will wreck your device.")
+            log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
+                     "ATTENTION: Running LoRa without antenna will wreck your device.")
 
         # Start WiFi.
         self.networking.start_wifi()
@@ -60,7 +64,7 @@ class TerkinDevice:
         """
         # https://docs.pycom.io/firmwareapi/pycom/machine/wdt.html
 
-        print('INFO: Starting the watchdog timer (WDT)')
+        log.info('Starting the watchdog timer (WDT)')
 
         from machine import WDT
         # Enable it with a specified timeout.
@@ -86,7 +90,7 @@ class TerkinDevice:
         self.rtc.ntp_sync("pool.ntp.org", 360)
         while not self.rtc.synced():
             time.sleep_ms(50)
-        print(self.rtc.now())
+        log.info('RTC: %s', self.rtc.now())
 
     def run_gc(self):
         """
@@ -97,7 +101,7 @@ class TerkinDevice:
         gc.collect()
 
     def start_telemetry(self):
-        self.tlog('Starting telemetry')
+        log.info('Starting telemetry')
 
         from terkin.telemetry import TelemetryManager, TelemetryAdapter, TelemetryTopologies
 
@@ -138,20 +142,10 @@ class TerkinDevice:
 
             self.telemetry.add_adapter(telemetry_adapter)
 
-        else:
-            print('WARNING: No telemetry target configured.')
-
     def enable_serial(self):
         # Disable these two lines if you don't want serial access.
         uart = machine.UART(0, 115200)
         os.dupterm(uart)
-
-    def elapsed(self):
-        return self.chrono.read()
-
-    def tlog(self, message):
-        now = self.elapsed()
-        print('[{}] {}'.format(now, message))
 
     def print_bootscreen(self):
         """
@@ -162,24 +156,32 @@ class TerkinDevice:
         """
 
         # TODO: Maybe move to TerkinDatalogger.
+        from uio import StringIO
+        buffer = StringIO()
+
+        def add(item=''):
+            buffer.write(item)
+            buffer.write('\n')
 
         # Program name and version.
         title = '{} {}'.format(self.name, self.version)
-        print('=' * len(title))
-        print(title)
-        print('=' * len(title))
+
+        add()
+        add('=' * len(title))
+        add(title)
+        add('=' * len(title))
 
         # Machine runtime information.
-        print('CPU freq     {} MHz'.format(machine.freq() / 1000000))
-        print('Device id    {}'.format(hexlify(machine.unique_id()).decode()))
-        print()
+        add('CPU freq     {} MHz'.format(machine.freq() / 1000000))
+        add('Device id    {}'.format(hexlify(machine.unique_id()).decode()))
+        add()
 
         # System memory info (in bytes)
         machine.info()
-        print()
+        add()
 
         # TODO: Python runtime information.
-        print('{:8}: {}'.format('Python', sys.version))
+        add('{:8}: {}'.format('Python', sys.version))
 
         """
         >>> import os; os.uname()
@@ -190,7 +192,11 @@ class TerkinDevice:
             if key == '__class__':
                 continue
             value = getattr(runtime_info, key)
-            print('{:8}: {}'.format(key, value))
-        print()
+            print('value:', value)
+            add('{:8}: {}'.format(key, value))
+        add()
+        add()
 
         # TODO: Program authors, contributors and credits.
+
+        log.info(buffer.getvalue())

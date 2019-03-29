@@ -4,18 +4,12 @@
 # License: GNU General Public License, Version 3
 import time
 from binascii import hexlify
+
+from terkin import logging
 from terkin.sensor import AbstractSensor
 
-"""
-# DS18B20 data line connected to pin P10
+log = logging.getLogger(__name__)
 
-while True:
-    print(temp.read_temp_async())
-    time.sleep(1)
-    temp.start_conversion()
-    time.sleep(1)
-
-"""
 
 class DS18X20Sensor(AbstractSensor):
     """
@@ -26,37 +20,42 @@ class DS18X20Sensor(AbstractSensor):
         super().__init__()
 
         # The driver instance.
-        self.readings = None
-        self.sensors = None
         self.bus = None
+        self.driver = None
 
     def acquire_bus(self, bus):
         self.bus = bus
 
     def start(self):
         if self.bus is None:
-            raise KeyError("Bus missing")
+            raise KeyError("Bus missing for DS18X20Sensor")
 
         # Initialize the DS18x20 hardware driver.
         try:
             from onewire.onewire import DS18X20
-            self.sensors = DS18X20(self.bus.adapter)
+            self.driver = DS18X20(self.bus.adapter)
+            return True
+
         except Exception as ex:
-            print('ERROR: DS18X20 hardware driver failed. {}'.format(ex))
+            log.exception('DS18X20 hardware driver failed')
 
     def read(self):
+
+        if self.bus is None or self.driver is None:
+            return self.SENSOR_NOT_INITIALIZED
+
         d = {}
-        print('INFO:  Acquire reading from DS18X20')
+        log.info('Acquire reading from DS18X20')
         # for loop goes here
         for device in self.bus.devices:
-            self.sensors.start_conversion(device)
+            self.driver.start_conversion(device)
             time.sleep(0.750)
-            value = self.sensors.read_temp_async(device)
+            value = self.driver.read_temp_async(device)
             if value is not None:
                 name = "temperature_" + hexlify(device).decode()
                 d[name] = value
             else:
-                print("WARNING: device {} has no value".format(hexlify(device).decode()))
+                log.warning("DS18X20 device {} has no value".format(hexlify(device).decode()))
 
             time.sleep(0.750)
 
