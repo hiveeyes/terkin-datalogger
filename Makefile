@@ -130,6 +130,11 @@ list-serials:
 list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
 
+purge-device: check-serial-port
+	$(rshell) $(rshell_options) --file tools/clean.rshell
+
+
+
 # =============
 # Miscellaneous
 # =============

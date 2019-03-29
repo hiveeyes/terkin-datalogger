@@ -1,0 +1,7 @@
+# Remove firmware from device
+
+rm -r /flash/dist-packages
+rm -r /flash/lib
+
+rm -r /flash/boot.py
+rm -r /flash/main.py
