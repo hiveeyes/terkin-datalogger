@@ -104,6 +104,16 @@ recycle: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 	@#$(MAKE) reset
 
+sketch: check-serial-port
+	# $(rshell) $(rshell_options) --file tools/upload-requirements.rshell
+	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
+	@#$(MAKE) reset
+
+ratrack: check-serial-port
+	# $(rshell) $(rshell_options) --file tools/upload-requirements.rshell
+	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
+	@#$(MAKE) reset
+
 list-serials:
 	@$(rshell) --list
 

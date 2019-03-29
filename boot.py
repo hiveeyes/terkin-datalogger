@@ -29,7 +29,7 @@ def extend_syspath():
 
 
 if __name__ == '__main__':
-    pycom.heartbeat(False)
+    pycom.heartbeat(True)
 
     # Done by ``self.device.enable_serial()`` already.
     # import os; from machine import UART

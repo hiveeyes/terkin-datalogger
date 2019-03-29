@@ -10,6 +10,8 @@
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_bme280 import BME280Sensor
 from hiveeyes.sensor_pytrack import PytrackSensor
+from ratrack import convert
+import time
 
 
 class RatrackDatalogger(TerkinDatalogger):
@@ -19,6 +21,10 @@ class RatrackDatalogger(TerkinDatalogger):
 
     # Naming things.
     name = 'Ratrack MicroPython Datalogger'
+
+    def __init__(self, settings):
+        self.data = None
+        super().__init__(settings)
 
     def register_sensors(self):
         """
@@ -77,13 +83,50 @@ class RatrackDatalogger(TerkinDatalogger):
         # Register with framework.
         self.sensor_manager.register_sensor(sensor)
 
+    def read_sensors(self):
+        self.data = super().read_sensors()
+        return self.data
+
     def loop(self):
         """
         Loop function. Do what I mean.
         """
 
-        # It's your turn.
-        #self.device.tlog('Ratrack loop')
-
         # Finally, schedule other system tasks.
         super().loop()
+        print('SelfData:', self.data)
+
+        # It's your turn.
+        #self.device.tlog('Ratrack loop')
+        # Send dummy payload to TTN over LoRaWAN.
+        # TODO: Send real measurement data.
+        if self.settings.get('networking.lora.antenna_attached'):
+            self.lorapayload()
+
+    def lorapayload(self):
+        if self.data is None:
+            return
+        if 'longitude' not in self.data:
+            self.data['longitude'] = 0.0
+            self.data['latitude'] = 0.0
+            self.data['speed'] = 0.0
+            self.data['cog'] = 0.0
+            # Create Byte Payload for LoRA
+            # payload = create_payload(lat,lon,alt,roll,pitch,bat,float(speedkmh),cog)
+        payload = convert.create_payload(self.data)
+        lora_received = self.device.networking.lora_send(payload)
+        print(lora_received)
+
+    def ttn_test(self):
+        return
+        """
+        Send dummy payload to TTN over LoRaWAN, without taking too much Airtime.
+        """
+        for i in range(1, 39):
+            j = i % 10
+            if j == 0 or i == 1:
+                payload = "ff"
+                success = self.device.networking.lora_send(payload)
+                if success:
+                    print("[LoRa] send:", payload)
+            time.sleep(1)

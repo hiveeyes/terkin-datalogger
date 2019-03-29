@@ -31,7 +31,7 @@ class TerkinDatalogger:
         self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
         # Disable this if you don't want serial access.
-        self.device.enable_serial()
+        #self.device.enable_serial()
 
         # Hello world.
         self.device.print_bootscreen()

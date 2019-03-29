@@ -33,7 +33,7 @@ setup-environment: setup-virtualenv3
 $(eval serial_port     := ${MCU_SERIAL_PORT})
 $(eval serial_bufsize  := 2048)
 $(eval rshell_options  := --port $(serial_port) --buffer-size $(serial_bufsize) --timing)
-
+#$(eval rshell_options  := --port $(serial_port) --user micro --password python)
 
 # ----------
 # PlatformIO

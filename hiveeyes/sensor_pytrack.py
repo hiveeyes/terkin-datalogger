@@ -19,6 +19,7 @@ class PytrackSensor(AbstractSensor):
 
         self.sensor = None
         self.l76 = None
+        self.lis2hh12 = None
 
     def start(self):
         """
@@ -40,7 +41,14 @@ class PytrackSensor(AbstractSensor):
             from L76GNSV4 import L76GNSS
             self.l76 = L76GNSS(pytrack=self.sensor, timeout=5)
         except Exception as ex:
-            print('ERROR: Pytrack hardware driver failed. {}'.format(ex))
+            print('ERROR: Pytrack L76GNSS hardware driver failed. {}'.format(ex))
+            raise
+        # Initialize the LIS2HH12 sensor driver.
+        try:
+            from LIS2HH12 import LIS2HH12
+            self.lis2hh12 = LIS2HH12(pysense=self.sensor)
+        except Exception as ex:
+            print('ERROR: Pytrack LIS2HH12 hardware driver failed. {}'.format(ex))
             raise
 
     def read(self):
@@ -51,8 +59,22 @@ class PytrackSensor(AbstractSensor):
         # TODO: Add more data here.
         l76_data = self.read_l76gns()
         data.update(l76_data)
+        lis2hh12_data = self.read_lis2hh12()
+        data.update(lis2hh12_data)
 
         print("Pytrack data: {}".format(data))
+        return data
+
+    def read_lis2hh12(self):
+
+        data = {}
+
+        try:
+            data['roll'] = float(self.lis2hh12.roll())
+            data['pitch'] = float(self.lis2hh12.pitch())
+        except Exception as e:
+            print('No Roll/Pitch Data:', e)
+
         return data
 
     def read_l76gns(self):

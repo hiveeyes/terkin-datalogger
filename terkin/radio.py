@@ -37,6 +37,13 @@ class NetworkManager:
         """
         self.station = WLAN()
 
+        #if machine.reset_cause() == machine.SOFT_RESET:
+        #   print("WiFi STA: Network connection after SOFT_RESET.")
+        #    self.print_short_status()
+        #    # Inform about networking status.
+        #    self.print_address_status()
+        #    return True
+
         # Save the default ssid and auth for restoring AP mode later
         original_ssid = self.station.ssid()
         original_auth = self.station.auth()
@@ -177,32 +184,46 @@ class NetworkManager:
         else:
             print("[LoRa] ERROR: Could not join network")
 
+    def init_lora_wan(lora, timeout):
+        app_eui = ubinascii.unhexlify('70B3D57ED00168CF')
+        app_key = ubinascii.unhexlify('A57B2832C1DAB04FEAE6C56A5208BA32')
+        # #join a network using OTAA (Over the Air Activation)
+        lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
+        while not lora.has_joined():
+            time.sleep(2.5)
+            print('Not joined LoRa.OTAA yet ...')
+        # #create a LoRa socket
+        lorasocket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+        # set the LoRaWAN data rate
+        lorasocket.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
+        return lorasocket
+
     def start_lora_join(self):
-        pycom.rgbled(0x0f0000) # red
+        #pycom.rgbled(0x0f0000) # red
         #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
         # create an OTA authentication params
-        self.dev_eui = binascii.unhexlify(self.otaa_settings['device_eui']) # these settings can be found from TTN
+        #self.dev_eui = binascii.unhexlify(self.otaa_settings['device_eui']) # these settings can be found from TTN
         self.app_eui = binascii.unhexlify(self.otaa_settings['application_eui']) # these settings can be found from TTN
         self.app_key = binascii.unhexlify(self.otaa_settings['application_key']) # these settings can be found from TTN
 
         # set the 3 default channels to the same frequency (must be before sending the otaa join request)
-        self.lora.add_channel(0, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
-        self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
-        self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
+        #self.lora.add_channel(0, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
+        #self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
+        #self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
 
-        self.lora.join(activation=LoRa.OTAA, auth=(self.dev_eui, self.app_eui, self.app_key), timeout=0, dr=self.otaa_settings['datarate'])
+        self.lora.join(activation=LoRa.OTAA, auth=(self.app_eui, self.app_key), timeout=0)
 
     def wait_for_lora_join(self, attempts):
         self.lora_joined = None
         for i in range(0, attempts):
             while not self.lora.has_joined():
                 time.sleep(2.5)
-                pycom.rgbled(0x0f0f00) # yellow
+                #pycom.rgbled(0x0f0f00) # yellow
                 time.sleep(0.1)
                 print('[LoRA] Not joined yet...')
-                pycom.rgbled(0x000000) # off
+                #pycom.rgbled(0x000000) # off
 
         self.lora_joined = self.lora.has_joined()
 
@@ -211,8 +232,8 @@ class NetworkManager:
         else:
             print('[LoRa] did not join in', attempts,'attempts')
 
-        for i in range(3, 16):
-            self.lora.remove_channel(i)
+        #for i in range(3, 16):
+        #    self.lora.remove_channel(i)
 
         return self.lora_joined
 
@@ -223,8 +244,8 @@ class NetworkManager:
         self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
         # set the LoRaWAN data rate
+        #self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
         self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
-
         # make the socket non-blocking
         self.socket.setblocking(False)
 
@@ -232,9 +253,9 @@ class NetworkManager:
         print('[LoRa] socket created')
 
         for i in range(0,2):
-            pycom.rgbled(0x000f00) # green
+            #pycom.rgbled(0x000f00) # green
             time.sleep(0.1)
-            pycom.rgbled(0x000000) # off
+            #pycom.rgbled(0x000000) # off
 
         time.sleep(4.0)
         return self.lora_socket
@@ -242,18 +263,18 @@ class NetworkManager:
     def lora_send(self, payload):
         success = self.socket.send(payload)
         for i in range(0,2):
-            pycom.rgbled(0x00000f) # green
+            #pycom.rgbled(0x00000f) # green
             time.sleep(0.1)
-            pycom.rgbled(0x000000) # off
+            #pycom.rgbled(0x000000) # off
 
         return success
 
     def lora_receive(self):
         rx, port = self.socket.recvfrom(256)
         if rx:
-            pycom.rgbled(0x000f00) # green
+            #pycom.rgbled(0x000f00) # green
             print('Received: {}, on port: {}'.format(rx, port))
-            pycom.rgbled(0x000f00) # green
+            #pycom.rgbled(0x000f00) # green
         time.sleep(6)
 
         return rx, port
