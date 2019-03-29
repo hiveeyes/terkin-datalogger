@@ -41,7 +41,10 @@ class TerkinDevice:
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
-            self.networking.start_lora()
+            try:
+                self.networking.start_lora()
+            except:
+                log.exception('Unable to start LoRa subsystem')
         else:
             log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                      "ATTENTION: Running LoRa without antenna will wreck your device.")
@@ -192,7 +195,7 @@ class TerkinDevice:
             if key == '__class__':
                 continue
             value = getattr(runtime_info, key)
-            print('value:', value)
+            #print('value:', value)
             add('{:8}: {}'.format(key, value))
         add()
         add()

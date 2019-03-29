@@ -204,17 +204,21 @@ class NetworkManager:
         #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
-        # create an OTA authentication params
-        #self.dev_eui = binascii.unhexlify(self.otaa_settings['device_eui']) # these settings can be found from TTN
-        self.app_eui = binascii.unhexlify(self.otaa_settings['application_eui']) # these settings can be found from TTN
-        self.app_key = binascii.unhexlify(self.otaa_settings['application_key']) # these settings can be found from TTN
+        # Create LoRaWAN OTAA connection to TTN.
+        app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
+        app_key = binascii.unhexlify(self.otaa_settings['application_key'])
 
-        # set the 3 default channels to the same frequency (must be before sending the otaa join request)
+        # Remark: For Pycom Nanogateway.
+        # Set the 3 default channels to the same frequency (must be before sending the otaa join request)
         #self.lora.add_channel(0, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
         #self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
         #self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
 
-        self.lora.join(activation=LoRa.OTAA, auth=(self.app_eui, self.app_key), timeout=0)
+        if self.otaa_settings.get('device_eui') is None:
+            self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
+        else:
+            dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
+            self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
 
     def wait_for_lora_join(self, attempts):
         self.lora_joined = None

@@ -1,8 +1,19 @@
 import array
 
+mandatory_fields = [
+    'latitude', 'longitude', 'roll', 'pitch', 'speed', 'cog',
+    'temperature', 'pressure', 'humidity', 'battery_voltage',
+]
+
 
 def create_payload(data):
     #print('DATA:', data)
+
+    # Sanity checks
+    for field in mandatory_fields:
+        if field not in data or data[field] is None:
+            raise KeyError('Mandatory field "{}" required'.format(field))
+
     lat, lon = convert_latlon(data.get('latitude'), data.get('longitude'))
     roll, pitch, bat = convert_pytrack_sensors(data.get('roll'), data.get('pitch'), data.get('battery_voltage'))
     speedkmh, cog = convert_speed(data.get('speed'),data.get('cog'))

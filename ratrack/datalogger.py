@@ -166,44 +166,38 @@ class RatrackDatalogger(TerkinDatalogger):
         Loop function. Do what I mean.
         """
 
-        # It's your turn.
-        #log.info('Ratrack loop')
-
         # Finally, schedule other system tasks.
         super().loop()
         print('SelfData:', self.data)
 
         # It's your turn.
-        #self.device.tlog('Ratrack loop')
-        # Send dummy payload to TTN over LoRaWAN.
-        # TODO: Send real measurement data.
         if self.settings.get('networking.lora.antenna_attached'):
-            self.lorapayload()
+            if self.serialize_and_send():
+                log.info('[LoRa] Success')
 
-    def lorapayload(self):
+    def serialize_and_send(self):
         if self.data is None:
             return
+
         if 'longitude' not in self.data:
             self.data['longitude'] = 0.0
             self.data['latitude'] = 0.0
             self.data['speed'] = 0.0
             self.data['cog'] = 0.0
-            # Create Byte Payload for LoRA
-            # payload = create_payload(lat,lon,alt,roll,pitch,bat,float(speedkmh),cog)
-        payload = convert.create_payload(self.data)
-        lora_received = self.device.networking.lora_send(payload)
-        print(lora_received)
 
-    def ttn_test(self):
-        return
-        """
-        Send dummy payload to TTN over LoRaWAN, without taking too much Airtime.
-        """
-        for i in range(1, 39):
-            j = i % 10
-            if j == 0 or i == 1:
-                payload = "ff"
-                success = self.device.networking.lora_send(payload)
-                if success:
-                    print("[LoRa] send:", payload)
-            time.sleep(1)
+        # Create Byte Payload for LoRa.
+        try:
+            payload = convert.create_payload(self.data)
+        except:
+            log.exception('[LoRa] Serialization failed')
+            return False
+
+        # Send to the wire.
+        try:
+            lora_received = self.device.networking.lora_send(payload)
+            print(lora_received)
+        except:
+            log.exception('[LoRa] Transmission failed')
+            return False
+
+        return True
