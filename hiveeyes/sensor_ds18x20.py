@@ -30,7 +30,6 @@ class DS18X20Sensor(AbstractSensor):
         super().__init__()
 
         # The driver instance.
-        self.wire = None
         self.readings = None
         self.sensors = None
         self.bus = None

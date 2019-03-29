@@ -13,7 +13,7 @@
 from terkin.datalogger import TerkinDatalogger
 from hiveeyes.sensor_hx711 import HX711Sensor
 from hiveeyes.sensor_ds18x20 import DS18X20Sensor
-from terkin.sensor import OneWireBus
+from hiveeyes.sensor_bme280 import BME280Sensor
 
 
 class HiveeyesDatalogger(TerkinDatalogger):
@@ -23,7 +23,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
     # Naming things.
     name = 'Hiveeyes MicroPython Datalogger'
-
     def register_sensors(self):
         """
         Add your sensors here.
@@ -35,12 +34,6 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Add some sensors for the Hiveeyes project.
         self.device.tlog('Registering Hiveeyes sensors')
 
-        ds18x20_settings = self.settings.get('sensors.registry.ds18x20')
-        owb = OneWireBus()
-        owb.register_pin("data", ds18x20_settings['pin_data'])
-        owb.start()
-
-        self.sensor_manager.register_bus("onewire:0", owb)
 
         # Setup the HX711.
         try:
@@ -49,11 +42,18 @@ class HiveeyesDatalogger(TerkinDatalogger):
             print('INFO:  Skipping HX711 sensor. {}'.format(ex))
             raise
 
-        # Setup the HX711.
+        # Setup the DS18X20.
         try:
             self.add_ds18x20_sensor()
         except Exception as ex:
             print('INFO:  Skipping DS18x20 sensor. {}'.format(ex))
+            raise
+
+        # Setup the BME280.
+        try:
+            self.add_bme280_sensor()
+        except Exception as ex:
+            print('INFO:  Skipping bme280 sensor. {}'.format(ex))
             raise
 
     def add_hx711_sensor(self):
@@ -62,14 +62,14 @@ class HiveeyesDatalogger(TerkinDatalogger):
         """
 
         # Initialize HX711 sensor component.
-        hx711_settings = self.settings.get('sensors.registry.hx711')
+        settings = self.settings.get('sensors.registry.hx711')
 
         hx711_sensor = HX711Sensor()
-        hx711_sensor.register_pin('dout', hx711_settings['pin_dout'])
-        hx711_sensor.register_pin('dsck', hx711_settings['pin_dout'])
-        hx711_sensor.register_parameter('scale', hx711_settings['scale'])
-        hx711_sensor.register_parameter('offset', hx711_settings['offset'])
-        hx711_sensor.register_parameter('gain', hx711_settings.get('gain', 128))
+        hx711_sensor.register_pin('dout', settings['pin_dout'])
+        hx711_sensor.register_pin('dsck', settings['pin_dout'])
+        hx711_sensor.register_parameter('scale', settings['scale'])
+        hx711_sensor.register_parameter('offset', settings['offset'])
+        hx711_sensor.register_parameter('gain', settings.get('gain', 128))
         hx711_sensor.select_driver('heisenberg')
 
         # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
@@ -86,20 +86,34 @@ class HiveeyesDatalogger(TerkinDatalogger):
         Setup and register the DS18X20  sensor component with your data logger.
         """
 
-        bus = self.sensor_manager.get_bus_by_name('onewire:0')
-        ds18x20_sensor = DS18X20Sensor()
-        ds18x20_sensor.acquire_bus(bus)
+        settings = self.settings.get('sensors.registry.ds18x20')
 
-
-        # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
+        bus = self.sensor_manager.get_bus_by_name(settings['bus'])
+        sensor = DS18X20Sensor()
+        sensor.acquire_bus(bus)
 
         # Start sensor.
-        ds18x20_sensor.start()
+        sensor.start()
 
         # Register with framework.
-        self.sensor_manager.register_sensor(ds18x20_sensor)
+        self.sensor_manager.register_sensor(sensor)
 
+    def add_bme280_sensor(self):
+        """
+        Setup and register the DS18X20  sensor component with your data logger.
+        """
 
+        settings = self.settings.get('sensors.registry.bme280')
+        bus = self.sensor_manager.get_bus_by_name(settings['bus'])
+
+        sensor = BME280Sensor()
+        sensor.acquire_bus(bus)
+
+        # Start sensor.
+        sensor.start()
+
+        # Register with framework.
+        self.sensor_manager.register_sensor(sensor)
 
     def loop(self):
         """
