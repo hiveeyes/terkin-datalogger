@@ -15,8 +15,10 @@ class PytrackSensor(AbstractSensor):
 
         # The driver instance.
         self.readings = None
-        self.sensor = None
         self.bus = None
+
+        self.sensor = None
+        self.l76 = None
 
     def start(self):
         """
@@ -33,12 +35,58 @@ class PytrackSensor(AbstractSensor):
             print('ERROR: Pytrack hardware driver failed. {}'.format(ex))
             raise
 
+        # Initialize the L76GNS sensor driver.
+        try:
+            from L76GNSV4 import L76GNSS
+            self.l76 = L76GNSS(pytrack=self.sensor, timeout=5)
+        except Exception as ex:
+            print('ERROR: Pytrack hardware driver failed. {}'.format(ex))
+            raise
+
     def read(self):
         data = {}
         print('INFO:  Acquire reading from Pytrack')
         data['battery_voltage'] = float(self.sensor.read_battery_voltage())
 
         # TODO: Add more data here.
+        l76_data = self.read_l76gns()
+        data.update(l76_data)
 
         print("Pytrack data: {}".format(data))
+        return data
+
+    def read_l76gns(self):
+
+        data = {}
+
+        # Call this to start the machinery and get a fix actually.
+        try:
+            self.l76.coordinates()
+        except Exception as e:
+            print("Could not read Coords. Error:", e)
+
+        # Only read values when having a fix.
+        if not self.l76.fixed():
+            return data
+
+        # Read speed and orientation.
+        try:
+            speed = self.l76.get_speed()
+            data['speed'] = float(speed.get('speed'))
+            data['cog'] = float(speed.get('COG'))
+        except Exception as e:
+            print("Could not read Speed. Error:", e)
+
+        # Read position.
+        try:
+            location = self.l76.get_location(MSL=True)
+        except Exception as e:
+            print("Could not read Location. Error:", e)
+        try:
+            data['longitude'] = float(location.get('longitude'))
+            data['latitude'] = float(location.get('latitude'))
+            data['altitude'] = float(location.get('altitude'))
+        except Exception as e:
+            print('No GPS Data:', e)
+
         return data
