@@ -108,7 +108,7 @@ class OneWireBus(AbstractBus):
         Scanning for OneWire devices and populate `devices`
         """
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
-        print("INFO:  Found {} OneWire (DS18x20) devices: {}.".format(len(list(map(hexlify, self.devices))), list(map(hexlify, self.devices))))
+        print("INFO:  Found {} OneWire (DS18x20) devices: {}.".format(len(self.devices), list(map(hexlify, self.devices))))
 
 
 class I2CBus(AbstractBus):
@@ -116,9 +116,17 @@ class I2CBus(AbstractBus):
     def start(self):
         try:
             self.adapter = I2C(self.bus_number, I2C.MASTER, baudrate=100000)
+            self.scan_devices()
         except Exception as ex:
             print('ERROR: I2C hardware driver failed. {}'.format(ex))
             raise
+
+    def scan_devices(self):
+        self.devices = self.adapter.scan()
+        print("INFO:  Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+
+    # print(i2c.scan())
+    # print(i2c.readfrom(0x76, 5))
 
 
 class MemoryFree:

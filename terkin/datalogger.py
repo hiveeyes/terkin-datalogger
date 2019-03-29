@@ -119,6 +119,8 @@ class TerkinDatalogger:
                     data.update(reading)
             except Exception as ex:
                 print('ERROR: Reading sensor "{}" failed: {}'.format(sensor_name, ex))
+                raise
+
         return data
 
     def transmit_readings(self, data):

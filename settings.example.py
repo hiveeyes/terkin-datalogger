@@ -101,10 +101,39 @@ telemetry = {
 sensors = {
     'registry': {
         'hx711': {
-            'pin_dout': 'P0',
-            'pin_pdsck': 'P2',
+            'pin_dout': 'P21',
+            'pin_pdsck': 'P22',
             'scale': 11.026667,
             'offset': 130800.0,
         },
+        'ds18x20': {
+            'bus': 'onewire:0',
+        },
+        'bme280': {
+            'bus': 'i2c:0',
+        },
     },
+    'busses': [
+        {
+            "family": "i2c",
+            "number": 0,
+            "enabled": True,
+            "pin_sda": "P9",
+            "pin_scl": "P10",
+        },
+        {
+            "family": "i2c",
+            "number": 1,
+            "enabled": False,
+            "pin_sda": "P21",
+            "pin_scl": "P22",
+        },
+        {
+            "family": "onewire",
+            "number": 0,
+            "enabled": True,
+            "pin_data": "P11",
+        },
+    ]
 }
+
