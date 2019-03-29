@@ -52,7 +52,7 @@ class HX711Sensor(AbstractSensor):
         # Initialize the HX711 hardware driver.
         try:
             #self.loadcell = self.driver_class(self.pin_dout, self.pin_pdsck, self.gain)
-            self.loadcell = self.driver_class(self.pins['dout'], self.pins['dsck'], self.parameter.get('gain', 128))
+            self.loadcell = self.driver_class(self.pins['dout'], self.pins['pdsck'], self.parameter.get('gain', 128))
         except Exception as ex:
             print('ERROR: HX711 hardware driver failed. {}'.format(ex))
             raise
