@@ -24,6 +24,13 @@ Prio 1
 - [o] Improve logging by adding stacktrace printer
 - [o] Add some examples
 
+
+Prio 1.5
+========
+- [o] Better BME/BMP libraries
+- [o] Bli, bla, blubb
+
+
 Prio 2
 ======
 - [o] Don't upload the "terkin" library each time.

@@ -412,3 +412,20 @@ see also https://docs.pycom.io/gettingstarted/programming/safeboot.html
 ::
 
     make reset
+
+
+"logging" package missing
+=========================
+::
+
+    Traceback (most recent call last):
+      File "main.py", line 11, in <module>
+      File "/flash/lib/ratrack/datalogger.py", line 10, in <module>
+      File "/flash/lib/terkin/logging.py", line 5, in <module>
+    ImportError: no module named 'logging'
+
+Solution
+--------
+::
+
+    make setup
