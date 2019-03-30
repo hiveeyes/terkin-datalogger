@@ -8,7 +8,7 @@ import machine
 from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
-from terkin.sensor import MemoryFree, SensorManager, AbstractSensor
+from terkin.sensor import MemoryFree, SensorManager, AbstractSensor, BusType
 from terkin.sensor import OneWireBus, I2CBus
 
 log = logging.getLogger(__name__)
@@ -63,20 +63,18 @@ class TerkinDatalogger:
         for bus in bus_settings:
             if not bus.get("enabled", False):
                 continue
-            if bus['family'] == 'onewire':
+            if bus['family'] == BusType.OneWire:
                 owb = OneWireBus(bus["number"])
                 owb.register_pin("data", bus['pin_data'])
                 owb.start()
-                name = bus["family"] + ":" + str(bus["number"])
-                self.sensor_manager.register_bus(name, owb)
+                self.sensor_manager.register_bus(owb)
 
-            elif bus['family'] == 'i2c':
+            elif bus['family'] == BusType.I2C:
                 i2c = I2CBus(bus["number"])
                 i2c.register_pin("sda", bus['pin_sda'])
                 i2c.register_pin("scl", bus['pin_scl'])
                 i2c.start()
-                name = bus["family"] + ":" + str(bus["number"])
-                self.sensor_manager.register_bus(name, i2c)
+                self.sensor_manager.register_bus(i2c)
 
             else:
                 log.warning("Invalid bus configuration: %s", bus)

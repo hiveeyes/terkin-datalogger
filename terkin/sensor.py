@@ -20,30 +20,19 @@ class SensorManager:
     def register_sensor(self, sensor):
         self.sensors.append(sensor)
 
-    def register_bus(self,  name, bus):
-        log.info('Registering bus "%s"', name)
-        self.busses[name] = bus
+    def register_bus(self,  bus):
+        bus_name = bus.name
+        log.info('Registering bus "%s"', bus_name)
+        self.busses[bus_name] = bus
 
     def get_bus_by_name(self, name):
-        return self.busses.get(name)
+        log.info('Trying to find bus by name "%s"', name)
+        bus = self.busses.get(name)
+        log.info('Found bus by name "%s": %s', name, bus)
+        return bus
 
     def get_sensor_by_name(self, name):
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
-
-
-class AbstractBus:
-    def __init__(self, bus_number):
-        """
-        convention <type>:<index>
-        """
-        self.name = None
-        self.adapter = None
-        self.devices = []
-        self.pins = {}
-        self.bus_number = bus_number
-
-    def register_pin(self, name, pin):
-        self.pins[name] = pin
 
 
 class AbstractSensor:
@@ -59,7 +48,7 @@ class AbstractSensor:
         self.driver = None
 
         """
-        e.g. multiple onewire sensors are address indexed on a bus.
+        e.g. Multiple onewire sensors are address indexed on a bus.
         """
         self.address = None
         self.bus = None
@@ -68,6 +57,9 @@ class AbstractSensor:
 
     def start(self):
         raise NotImplementedError("Must be implemented in sensor driver")
+
+    def set_address(self, address):
+        self.address = address
 
     def register_pin(self, name, pin):
         self.pins[name] = pin
@@ -89,8 +81,37 @@ class AbstractSensor:
         pass
 
 
+class BusType:
+
+    I2C = 'i2c'
+    OneWire = 'onewire'
+
+
+class AbstractBus:
+
+    type = None
+
+    def __init__(self, bus_number):
+        """
+        convention <type>:<index>
+        """
+        self.adapter = None
+        self.devices = []
+        self.pins = {}
+        self.bus_number = bus_number
+
+    @property
+    def name(self):
+        return str(self.type) + ":" + str(self.bus_number)
+
+    def register_pin(self, name, pin):
+        self.pins[name] = pin
+
+
 class OneWireBus(AbstractBus):
     # Initialize the OneWire hardware driver.
+
+    type = BusType.OneWire
 
     def start(self):
         # TODO: Improve error handling.
@@ -113,6 +134,8 @@ class OneWireBus(AbstractBus):
 
 
 class I2CBus(AbstractBus):
+
+    type = BusType.I2C
 
     def start(self):
         # TODO: Improve error handling.

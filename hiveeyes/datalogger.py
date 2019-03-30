@@ -107,6 +107,8 @@ class HiveeyesDatalogger(TerkinDatalogger):
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
 
         sensor = BME280Sensor()
+        if 'address' in settings:
+            sensor.set_address(settings['address'])
         sensor.acquire_bus(bus)
 
         # Start sensor.
