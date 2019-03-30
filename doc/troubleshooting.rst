@@ -429,3 +429,41 @@ Solution
 ::
 
     make setup
+
+ImportError: no module named 'urllib.parse'
+===========================================
+
+
+Problem
+-------
+::
+
+    Traceback (most recent call last):
+      File "main.py", line 45, in <module>
+      File "main.py", line 40, in main
+      File "/flash/lib/terkin/datalogger.py", line 41, in start
+      File "/flash/lib/terkin/device.py", line 101, in start_telemetry
+      File "/flash/lib/terkin/telemetry.py", line 25, in <module>
+    ImportError: no module named 'urllib.parse'
+
+
+Solution
+--------
+Uploading the ``dist-packages`` folder probably failed.
+::
+
+    make upload-requirements
+
+
+Missing _onewire package
+========================
+::
+
+    Traceback (most recent call last):
+      File "main.py", line 14, in <module>
+      File "/flash/lib/hiveeyes/datalogger.py", line 13, in <module>
+      File "/flash/lib/terkin/datalogger.py", line 11, in <module>
+      File "/flash/lib/terkin/sensor.py", line 6, in <module>
+      File "dist-packages/onewire/onewire.py", line 5, in <module>
+    ImportError: no module named '_onewire'
+    Pycom MicroPython 1.18.1.r10 [v1.8.6-849-d53c7f3] on 2019-01-10; FiPy with ESP32
