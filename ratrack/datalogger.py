@@ -93,7 +93,7 @@ class RatrackDatalogger(TerkinDatalogger):
         Setup and register the DS18X20  sensor component with your data logger.
         """
 
-        settings = self.settings.get('sensors.registry.bme280')
+        settings = self.settings.get('sensors.registry.bme280_1')
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
 
         sensor = BME280Sensor()

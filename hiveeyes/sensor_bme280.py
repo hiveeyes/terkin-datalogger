@@ -2,6 +2,7 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+from binascii import hexlify
 from terkin import logging
 from terkin.sensor import AbstractSensor
 from bme280 import BME280
@@ -20,7 +21,7 @@ class BME280Sensor(AbstractSensor):
         # The driver instance.
         self.bus = None
 
-        # TODO: Get sensors i2c bus address from settings.
+        # Can be overwritten by ``.set_address()``.
         self.address = 0x76
 
         self.driver = None
@@ -45,36 +46,40 @@ class BME280Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        data = {}
         log.info('Acquire reading from BME280')
+
+        data = {}
 
         t, p, h = self.driver.read_compensated_data()
 
-        # TODO: Review this.
-        if t and p and h:
+        # Prepare readings.
+        values = {}
+        if t:
+            values["temperature"] = t / 100
 
+        if p:
             p = p // 256
             pi = p // 100
             pd = p - pi * 100
+            values["pressure"] = float("{}.{:02d}".format(pi, pd))
 
+        if h:
             hi = h // 1024
             hd = h * 100 // 1024 - hi * 100
+            values["humidity"] = float("{}.{:02d}".format(hi, hd))
 
-            data["temperature"] = t / 100
-            data["humidity"] = float("{}.{:02d}".format(hi, hd))
-            data["pressure"] = float("{}.{:02d}".format(pi, pd))
+        # Build telemetry payload.
+        fieldnames = values.keys()
+        for name in fieldnames:
+            #print('self.bus', self.bus)
+            #print('dir self.bus', dir(self.bus))
+            fieldname = '{name}.{bus}.{address}'.format(name=name, bus=self.bus.name, address=hex(self.address))
+            value = values[name]
+            data[fieldname] = value
 
-            # TODO: add bus identifier DYNAMICLY into <SENSOR_NAME> as well. e.g. temperature_i2c:0:0x77
-            #temp_name = "temperature_i2c:0:" + str(self.address)
-            #hum_name = "humidity_i2c:0:" + str(self.address)
-            #pres_name = "pressure_i2c:0:" + str(self.address)
-            #data[temp_name] = t / 100
-            #data[hum_name] = float("{}.{:02d}".format(hi, hd))
-            #data[pres_name] = float("{}.{:02d}".format(pi, pd))
+        if not data:
+            log.warning("I2C device {} has no value: {}".format(self.address, data))
 
-        else:
-            log.warning("I2C device {} has no value".format(data))
-
-        log.debug("I2C data: {}".format(data))
+        log.info("I2C data: {}".format(data))
 
         return data
