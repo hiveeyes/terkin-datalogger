@@ -46,7 +46,7 @@ class BME280Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        log.info('Acquire reading from BME280')
+        #log.info('Acquire reading from BME280')
 
         data = {}
 
@@ -67,6 +67,7 @@ class BME280Sensor(AbstractSensor):
             hi = h // 1024
             hd = h * 100 // 1024 - hi * 100
             values["humidity"] = float("{}.{:02d}".format(hi, hd))
+
 
         # Build telemetry payload.
         fieldnames = values.keys()

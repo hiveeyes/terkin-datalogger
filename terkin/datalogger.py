@@ -121,7 +121,7 @@ class TerkinDatalogger:
         for sensor in self.sensor_manager.sensors:
 
             sensor_name = sensor.__class__.__name__
-            log.info('Reading sensor "%s"', sensor_name)
+            #log.debug('Reading sensor "%s"', sensor_name)
 
             try:
                 reading = sensor.read()

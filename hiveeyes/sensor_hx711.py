@@ -71,6 +71,6 @@ class HX711Sensor(AbstractSensor):
         if self.loadcell is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        log.info('Acquire reading from HX711')
+        #log.info('Acquire reading from HX711')
         value = self.loadcell.read_median()
         return {'weight': value}

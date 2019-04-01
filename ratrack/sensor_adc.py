@@ -37,7 +37,7 @@ class ADCSensor(AbstractSensor):
             # TODO: Return Sensor.DISABLED
             return
 
-        log.info('Acquire reading from ADC')
+        #log.info('Acquire reading from ADC')
         value = self.channel.value()
 
         return value

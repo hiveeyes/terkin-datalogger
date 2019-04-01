@@ -45,7 +45,7 @@ class DS18X20Sensor(AbstractSensor):
             return self.SENSOR_NOT_INITIALIZED
 
         d = {}
-        log.info('Acquire reading from DS18X20')
+        #log.info('Acquire reading from DS18X20')
         # for loop goes here
         for device in self.bus.devices:
             self.driver.start_conversion(device)
