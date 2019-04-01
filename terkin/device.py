@@ -39,6 +39,12 @@ class TerkinDevice:
 
         self.networking = NetworkManager(self.settings)
 
+        # Start WiFi.
+        self.networking.start_wifi()
+
+        # Wait for network interface to come up.
+        self.networking.wait_for_nic()
+
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
             try:
@@ -48,12 +54,6 @@ class TerkinDevice:
         else:
             log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                      "ATTENTION: Running LoRa without antenna will wreck your device.")
-
-        # Start WiFi.
-        self.networking.start_wifi()
-
-        # Wait for network interface to come up.
-        self.networking.wait_for_nic()
 
         # Inform about networking status.
         #self.networking.print_status()
