@@ -9,6 +9,7 @@
 #
 from terkin import logging
 from terkin.datalogger import TerkinDatalogger
+from terkin.telemetry import to_cayenne_lpp
 from hiveeyes.sensor_bme280 import BME280Sensor
 from hiveeyes.sensor_pytrack import PytrackSensor
 from ratrack import convert
@@ -172,8 +173,31 @@ class RatrackDatalogger(TerkinDatalogger):
 
         # It's your turn.
         if self.settings.get('networking.lora.antenna_attached'):
-            if self.serialize_and_send():
+            #if self.serialize_and_send():
+            if self.to_cayenne_lpp_and_send():
                 log.info('[LoRa] Success')
+
+
+    def to_cayenne_lpp_and_send(self):
+        if self.data is None:
+            return
+
+            # Create Byte Payload for LoRa.
+        try:
+            payload = self.to_cayenne_lpp_ratrack()
+        except:
+            log.exception('[LoRa] Serialization failed')
+            return False
+
+            # Send to the wire.
+        try:
+            lora_received = self.device.networking.lora_send(payload)
+            print(lora_received)
+        except:
+            log.exception('[LoRa] Transmission failed')
+            return False
+
+        return True
 
     def serialize_and_send(self):
         if self.data is None:
@@ -201,3 +225,83 @@ class RatrackDatalogger(TerkinDatalogger):
             return False
 
         return True
+
+    def to_cayenne_lpp_ratrack(self):
+        """
+        Serialize plain data dictionary to binary CayenneLPP format.
+        """
+        data = self.data
+
+        from cayennelpp import LppFrame
+        # create empty frame
+        frame = LppFrame()
+
+
+        channel = 1
+        # add some sensor data
+        if 'temperature' in data:
+            try:
+                frame.add_temperature(channel, data.get('temperature'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        #if 'humidity' in data:
+        #    try:
+        #        frame.add_humitidy(channel, data.get('add_humidity'))
+        #    except:
+        #        log.exception('[Cayenne] Serialization failed')
+
+        if 'pressure' in data:
+            try:
+                frame.add_barometer(channel, data.get('pressure'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        if 'speed' in data and 'roll' in data and 'pitch' in data:
+            try:
+                frame.add_gyrometer(channel, data.get('speed'), data.get('roll'), data.get('pitch'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        if 'battery_voltage' in data:
+            try:
+                frame.add_analog_input(channel, data.get('battery_voltage'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        if 'latitude' in data and 'longitude' in data and 'altitude' in data:
+            try:
+                log.info('GPS to Cayenne')
+                frame.add_gps(channel, data.get('latitude'), data.get('longitude'), data.get('altitude'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        #channel = 2
+        #if 'cog' in data:
+        #    try:
+        #        frame.add_analog_input(channel, data.get('cog'))
+        #    except:
+        #        log.exception('[Cayenne] Serialization failed')
+
+        channel = 3
+        if 'memfree' in data:
+            try:
+                frame.add_analog_input(channel, data.get('memfree'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        channel = 4
+        if 'waterlevel_volt' in data:
+            try:
+                frame.add_analog_input(channel, data.get('waterlevel_volt'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        channel = 5
+        if 'moisture_volt' in data:
+            try:
+                frame.add_analog_input(channel, data.get('moisture_volt'))
+            except:
+                log.exception('[Cayenne] Serialization failed')
+
+        return frame.bytes()
