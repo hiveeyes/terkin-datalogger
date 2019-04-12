@@ -11,7 +11,3 @@ cp settings.py /flash
 
 # Just drop into REPL after upload
 # repl
-
-# Reset machine after upload
-repl pyboard import machine~
-repl pyboard machine.reset()

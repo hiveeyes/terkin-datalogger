@@ -51,21 +51,12 @@ of these tools.
 
 We consider these tools essential for efficient MicroPython development.
 
-
 Pre-flight checks
 =================
-Check serial interface connectivity::
+Check serial interface connectivity. Example::
 
     make list-serials
-
-::
-
     USB Serial Device 04d8:ef98 with vendor 'Pycom' serial 'Pye090a1' found @/dev/cu.usbmodemPye090a1
-
-
-*******************
-Board configuration
-*******************
 
 Configure serial port
 =====================
@@ -77,34 +68,57 @@ Example::
 
     export MCU_SERIAL_PORT=/dev/cu.usbmodemPye090a1
 
-Pre-flight checks
-=================
-Check board connectivity::
+Check board and device
+======================
+As pre-flight checks, you might want to execute::
 
     make list-boards
-
-When board communication could be established, this should yield in the end::
-
     pyboard @ pyboard connected Epoch: 1970 Dirs: /flash /pyboard/flash
+
+::
+
+    make device-info
+
+    Pycom MicroPython 1.20.0.rc8 [v1.9.4-7b83c6d] on 2019-03-06; FiPy with ESP32
+    Type "help()" for more information.
+    >>>
+    >>> import os ; os.uname()
+    (sysname='FiPy', nodename='FiPy', release='1.20.0.rc8', version='v1.9.4-7b83c6d on 2019-03-06', machine='FiPy with ESP32', lorawan='1.0.2', sigfox='1.0.1')
+    >>> took 1.104 seconds
 
 
 ******************
 Board provisioning
 ******************
-The MicroPython firmware requires some packages from the MicroPython standard
+You might want to run these command after each successful ``git pull``,
+as this might bring in adjustments to the package dependency list.
+
+Install required packages
+=========================
+The MicroPython firmware pulls in some packages from the MicroPython standard
 library and beyond. These steps will acquire the required packages and upload
 them to the device.
-
-Acquire packages::
+::
 
     make install-requirements
 
-Upload packages::
+This will download all required packages listed in ``requirements-mpy.txt``
+and ``Makefile`` to your workstation, apply some modifications to this tree
+and then upload it to the device using ``rshell rsync``.
 
-    make upload-requirements
+Install framework
+=================
+This will install the Terkin datalogger framework by uploading all files
+from the ``terkin`` and ``hiveeyes`` folders::
 
-After the dependency definitions in the file ``requirements-mpy.txt``
-have been updated, it might become necessary to re-run this command again.
+    make install-framework
+
+Install sketch
+==============
+Upload the files ``boot.py``, ``main.py`` and ``settings.py`` from
+the root directory::
+
+    make install-sketch
 
 
 ******************
@@ -129,6 +143,20 @@ Connect to the REPL shell on the device::
 
     # List built-in modules
     >>> help('modules')
+
+
+Reset the device
+================
+::
+
+    make reset-device
+
+Format ``/flash``
+=================
+This will reformat the ``/flash`` filesystem, thus destroying all data there::
+
+    make purge-device
+
 
 MicroPython control commands
 ============================

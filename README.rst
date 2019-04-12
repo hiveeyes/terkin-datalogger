@@ -128,26 +128,28 @@ likewise happen in the real world::
 
     make recycle
 
-This will upload the files ``boot.py``, ``main.py`` and ``settings.py`` from
-the root directory as well as all files from the ``lib``, ``hiveeyes`` and
-``terkin`` folders.
+This will
 
-Update required packages
+1. Upload the framework and sketch files to the device.
+
+2. Reset device using ``machine.reset()``.
+
+3. Drop you into the program execution flow through a REPL shell.
+   Use ``CTRL+C`` to interrupt the program and ``CTRL+X`` to detach from the environment.
+
+Attach to serial console
 ========================
-The software pulls in some Python packages from different sources. In case
-something will be updated from upstream which happens when adding new
-packages, you might find some missing when running the firmware.
+In order to connect to a device which is already running, just execute::
 
-In order to flush and update the whole set of Python packages both on your
-workstation and on your device, just run::
+    make console
 
-    make refresh-requirements
+To detach from the ``miniterm`` environment, just type ``CTRL+]``.
 
-This will download all required packages to your workstation, apply some
-modifications to this tree and then upload it to the device.
+Reset the device
+================
+In order to run a ``machine.reset()`` on the device, just execute::
 
-While operating on the respective ``dist-packages`` folders, it will first
-purge the folder completely before populating it again.
+    make reset-device
 
 
 ******************

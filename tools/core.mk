@@ -12,6 +12,8 @@ $(eval pip3         := $(venv3path)/bin/pip)
 $(eval python3      := $(venv3path)/bin/python)
 $(eval ampy         := $(venv3path)/bin/ampy)
 $(eval rshell       := $(venv3path)/bin/rshell)
+$(eval miniterm     := $(venv3path)/bin/miniterm.py)
+
 $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 
 $(eval github-release := ./bin/github-release)

@@ -5,9 +5,11 @@ include tools/core.mk
 # Setup
 # =====
 
-setup: setup-environment install-requirements upload-requirements
+setup: setup-environment install-requirements
 
-install-requirements:
+install-requirements: download-requirements upload-requirements
+
+download-requirements:
 
     # Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
@@ -74,21 +76,14 @@ install-requirements:
 	cp -r $(tmpdir)/cayennelpp $(target_dir)/
 	rm -rf $(tmpdir)
 
-upload-requirements:
-	$(rshell) $(rshell_options) mkdir /flash/dist-packages
-	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
-
-refresh-requirements:
-	rm -r dist-packages
-	$(MAKE) install-requirements
-	$(rshell) $(rshell_options) rm -r /flash/dist-packages
-	$(rshell) $(rshell_options) ls /flash/dist-packages
-	$(MAKE) upload-requirements
 
 
-# =========
-# Utilities
-# =========
+# ================
+# Action utilities
+# ================
+
+list-serials:
+	@$(rshell) --list
 
 check-serial-port:
 	@if test "${MCU_SERIAL_PORT}" = ""; then \
@@ -102,54 +97,77 @@ rshell: check-serial-port
 repl: check-serial-port
 	$(rshell) $(rshell_options) repl
 
-reset: check-serial-port
-	$(rshell) $(rshell_options) --file tools/reset.rshell
-
-recycle: check-serial-port
-	$(rshell) $(rshell_options) --file tools/upload-requirements.rshell
-	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
-	@#$(MAKE) reset
-
-sketch: check-serial-port
-	# $(rshell) $(rshell_options) --file tools/upload-requirements.rshell
-	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
-	@#$(MAKE) reset
-
-ratrack: check-serial-port
-	# $(rshell) $(rshell_options) --file tools/upload-requirements.rshell
-	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
-	@#$(MAKE) reset
-
-terkin: check-serial-port
-	@#$(rshell) $(rshell_options) --file tools/upload-requirements.rshell
-	$(rshell) $(rshell_options) --file tools/upload-terkin.rshell
-
-list-serials:
-	@$(rshell) --list
+console: check-serial-port
+	$(miniterm) ${MCU_SERIAL_PORT} 115200
 
 list-boards: check-serial-port
 	@$(rshell) $(rshell_options) boards
 
-purge-device: check-serial-port
-	$(rshell) $(rshell_options) --file tools/clean.rshell
+device-info: check-serial-port
+	@$(rshell) $(rshell_options) --quiet repl pyboard 'import os ~ os.uname() ~'
 
+reset-device: check-serial-port
+	@$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset() ~'
 
+reset-device-attached: check-serial-port
+	@$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset()'
 
-# =============
-# Miscellaneous
-# =============
-
-reset-defunct:
+reset-ampy:
 	$(ampy) --port $(serial_port) --delay 1 reset
 
-upload-things:
-	@echo "Uploading main application: main.py and settings.py"
-	$(rshell) $(rshell_options) cp boot.py /flash
-	$(rshell) $(rshell_options) cp main.py /flash
-	$(rshell) $(rshell_options) cp settings.py /flash
 
-upload-lib:
-	$(rshell) $(rshell_options) rsync ./lib /flash/lib
+# =======================
+# File transfer & Execute
+# =======================
+
+recycle: install-framework install-sketch reset-device-attached
+
+sketch-and-run: install-sketch reset-device-attached
+
+
+# =============
+# File transfer
+# =============
+
+install-framework: check-serial-port
+	$(rshell) $(rshell_options) --file tools/upload-framework.rshell
+
+install-sketch: check-serial-port
+	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
+
+upload-requirements: check-serial-port
+	$(rshell) $(rshell_options) mkdir /flash/dist-packages
+	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
+
+refresh-requirements:
+	rm -r dist-packages
+	$(MAKE) download-requirements
+	$(rshell) $(rshell_options) rm -r /flash/dist-packages
+	$(rshell) $(rshell_options) ls /flash/dist-packages
+	$(MAKE) upload-requirements
+
+purge-device: check-serial-port
+	#$(rshell) $(rshell_options) --file tools/clean.rshell
+	$(eval retval := $(shell bash -c 'read -s -p "Format /flash on the device? This will delete your program. [y/n]? " outcome; echo $$outcome'))
+	@if test "$(retval)" = "y"; then \
+		$(rshell) $(rshell_options) repl pyboard 'import os ~ os.fsformat("/flash") ~'; \
+	fi
+
+
+# --------------------
+# Application specific
+# --------------------
+terkin: install-terkin
+ratrack: install-ratrack
+
+terkin: check-serial-port
+	@#$(rshell) $(rshell_options) --file tools/upload-framework.rshell
+	$(rshell) $(rshell_options) --file tools/upload-terkin.rshell
+
+ratrack: check-serial-port
+	# $(rshell) $(rshell_options) --file tools/upload-framework.rshell
+	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
+
 
 
 # =========
