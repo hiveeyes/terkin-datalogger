@@ -20,11 +20,6 @@ class HX711Sensor(AbstractSensor):
 
     def __init__(self):
 
-        # log.info('Initializing HX711 sensor with '
-        #          'DOUT={}, PD_SCK={}, GAIN={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
-
-        # Hardware parameters and configuration settings.
-
         super().__init__()
 
         # The driver class.
@@ -52,9 +47,19 @@ class HX711Sensor(AbstractSensor):
 
     def start(self):
 
+        # Hardware parameters and configuration settings.
+        pin_dout = self.pins['dout']
+        pin_pdsck = self.pins['pdsck']
+        gain = self.parameter.get('gain', 128)
+        scale = self.parameter['scale']
+        offset = self.parameter['offset']
+
         # Initialize the HX711 hardware driver.
+        log.info('Initializing HX711 sensor with '
+                 'pin_dout={}, pin_pdsck={}, gain={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
+
         try:
-            self.loadcell = self.driver_class(self.pins['dout'], self.pins['pdsck'], self.parameter.get('gain', 128))
+            self.loadcell = self.driver_class(pin_dout, pin_pdsck, gain)
 
             # Configure the HX711 driver.
             if self.parameter['scale'] is not None:

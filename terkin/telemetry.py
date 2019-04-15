@@ -43,7 +43,7 @@ class TelemetryManager:
                 outcome = adapter.transmit(data)
                 outcomes.append(outcome)
             except Exception as ex:
-                log.exception('Telemetry failed for adapter {}/{}'.format(adapter.base_uri, adapter.address))
+                log.exception('Telemetry failed for adapter {} with address {}'.format(adapter.base_uri, adapter.address))
 
         # TODO: Improve by returning dictionary of all outcomes.
         return any(outcomes)
@@ -333,6 +333,7 @@ class TelemetryTransportMQTT:
         # Create one MQTTAdapter instance per target host:port.
         if self.netloc not in self.connections:
             # TODO: Add more parameters to MQTTAdapter here.
+            log.info('Starting connection to MQTT broker. client_id=%s, netloc=%s', self.client_id, self.netloc)
             try:
                 self.connections[self.netloc] = MQTTAdapter(self.client_id, self.netloc)
             except Exception:
@@ -421,7 +422,7 @@ class MQTTAdapter:
             self.connected = True
 
         except Exception as ex:
-            log.exception('Connecting to MQTT broker at %s failed'.format(self.server))
+            log.exception('Connecting to MQTT broker at %s failed', self.server)
             self.connected = False
 
         return self.connected

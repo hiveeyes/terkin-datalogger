@@ -4,6 +4,7 @@
 # License: GNU General Public License, Version 3
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 # Keep track of time since boot.
 _chrono = None

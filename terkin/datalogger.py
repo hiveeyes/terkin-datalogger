@@ -148,12 +148,12 @@ class TerkinDatalogger:
         if success:
             log.info('Telemetry transmission: SUCCESS')
         else:
-            log.info('Telemetry transmission: FAILURE')
+            log.warning('Telemetry transmission: FAILURE')
 
         return success
 
     def loop(self):
-        log.info('Terkin loop')
+        #log.info('Terkin loop')
 
         # Read sensors.
         data = self.read_sensors()
