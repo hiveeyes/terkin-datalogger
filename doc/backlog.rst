@@ -23,6 +23,8 @@ Prio 1
 - [o] Improve logging
 - [o] Improve logging by adding stacktrace printer
 - [o] Add some examples
+- [o] Control the board through https://github.com/dhylands/rshell/blob/master/rshell/pyboard.py
+- [o] Makefile: Check for "wget"
 
 
 Prio 1.5

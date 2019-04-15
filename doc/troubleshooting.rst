@@ -467,3 +467,82 @@ Missing _onewire package
       File "dist-packages/onewire/onewire.py", line 5, in <module>
     ImportError: no module named '_onewire'
     Pycom MicroPython 1.18.1.r10 [v1.8.6-849-d53c7f3] on 2019-01-10; FiPy with ESP32
+
+
+Error on lora_send
+==================
+::
+
+    Traceback (most recent call last):
+      File "main.py", line 22, in <module>
+      File "main.py", line 17, in main
+      File "/flash/lib/terkin/datalogger.py", line 58, in start
+      File "/flash/lib/terkin/datalogger.py", line 115, in start_mainloop
+      File "/flash/lib/ratrack/datalogger.py", line 181, in loop
+      File "/flash/lib/ratrack/datalogger.py", line 194, in lorapayload
+      File "/flash/lib/terkin/radio.py", line 265, in lora_send
+    OSError: [Errno 11] EAGAIN
+
+
+rshell error
+============
+Issue when running things like ``rshell cat settings.py``::
+
+    Traceback (most recent call last):
+      File ".venv3/bin/rshell", line 10, in <module>
+        sys.exit(main())
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 652, in cp
+        filesize, xfer_func=recv_file_from_remote)
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1435, in remote
+        xfer_func(self, *args, **kwargs)
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1050, in recv_file_from_remote
+        dst_file.write(binascii.unhexlify(write_buf[0:read_size]))
+    binascii.Error: Non-hexadecimal digit found
+    make: *** [rshell] Error 1
+
+
+Connecting to MQTT broker fails
+===============================
+::
+
+    28.3149 [terkin.telemetry         ] ERROR  : Connecting to MQTT broker at swarm.hiveeyes.org failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 417, in connect
+      File "dist-packages/mqtt.py", line 16, in __init__
+    OSError: [Errno 202] EAI_FAIL
+
+::
+
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 421, in connect
+      File "dist-packages/mqtt.py", line 85, in connect
+    IndexError: bytes index out of range
+
+~~Issue could be resolved by bouncing the WiFi router.~~
+
+FiPy might be broken.
+
+
+Publishing to MQTT fails
+========================
+::
+
+      531.1269 [terkin.datalogger        ] INFO   : Telemetry data: {'memfree': 2428656, 'temperature.28ff641d8fd7c022.onewire:0': 24.0, 'pressure.0x77.i2c:0': 1019.1, 'temperature.0x77.i2c:0': 22.33, 'humidity.0x77.i2c:0': 33.97}
+      937.0599 [terkin.telemetry         ] ERROR  : MQTT publishing failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 438, in publish
+      File "dist-packages/mqtt.py", line 121, in publish
+      File "dist-packages/mqtt.py", line 161, in wait_msg
+    OSError: [Errno -1] ERR_MEM
+
+      939.9525 [terkin.telemetry         ] ERROR  : MQTT publishing failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 438, in publish
+      File "dist-packages/mqtt.py", line 111, in publish
+    OSError: [Errno 113] ECONNABORTED
+
+Will get resumed automatically. No need to worry about. Might be suppressed in the future.
+
+
+
+
