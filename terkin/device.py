@@ -35,6 +35,11 @@ class TerkinDevice:
         self.wdt = None
         self.rtc = None
 
+        self.sleep = None
+        self.sleeping_time = None
+        self.wake_reason = None
+        self.interrupt_pins = None
+
     @property
     def appname(self):
         return '{} {}'.format(self.name, self.version)
@@ -101,6 +106,72 @@ class TerkinDevice:
         while not self.rtc.synced():
             time.sleep_ms(50)
         log.info('RTC: %s', self.rtc.now())
+
+    def enable_sleep(self):
+
+        from deepsleep import DeepSleep
+
+        self.sleep = DeepSleep()
+
+        interrupt_pins = self.settings.get('main.wake_up_pins')
+
+        if isinstance(interrupt_pins, list):
+            self.interrupt_pins = interrupt_pins
+            self.sleep.enable_pullups(self.interrupt_pins)
+            log.info("Sleep: interrupt pins: {}".format(self.interrupt_pins))
+        else:
+            log.info("Sleep: interrupt pins are not defined")
+
+        self.sleeping_time = self.settings.get('main.sleeping_time')
+
+        if self.sleeping_time >> 0:
+            log.info("Sleep: sleep would last {} seconds".format(self.sleeping_time))
+        else:
+            log.info("Sleep: sleep is disabled; sleeping_time: {}".format(self.sleeping_time))
+
+
+
+
+    def start_sleep(self, seconds=None):
+
+        if not self.sleep:
+            log.warning('Sleep was not initiated')
+            pass
+
+        if not seconds and self.sleeping_time:
+            s = self.sleeping_time
+        elif seconds:
+            s = seconds
+
+        if s >> 0:
+            log.info('Tired, sleeping for {} seconds, now'.format(s))
+            self.sleep.go_to_sleep(s)
+        else:
+            log.info('Tired now, but sleeping_time is set to zero')
+
+
+    def get_wake_reason(self):
+
+        self.wake_reason = None
+
+        import deepsleep
+        wake_reason = self.sleep.get_wake_status()
+
+        if wake_reason['wake'] == deepsleep.PIN_WAKE:
+            self.wake_reason = "pin"
+            log.info("Sleep: pin woke up")
+        elif wake_reason['wake'] == deepsleep.TIMER_WAKE:
+            self.wake_reason = "timer"
+            log.info("Sleep: timer woke up")
+        elif wake_reason['wake'] == deepsleep.POWER_ON_WAKE:
+            self.wake_reason = "reset"
+            log.info("Sleep: interrupt by device reset")
+        else:
+            self.wake_reason = "undefined"
+            log.info("Sleep: undefined reason for interruption")
+
+        return self.wake_reason
+
 
     def run_gc(self):
         """

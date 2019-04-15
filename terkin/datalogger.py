@@ -27,6 +27,7 @@ class TerkinDatalogger:
         self.settings.dump()
         self.device = None
         self.sensor_manager = SensorManager()
+        self.loop_count = None
 
     @property
     def appname(self):
@@ -54,6 +55,8 @@ class TerkinDatalogger:
 
         self.register_busses()
         self.register_sensors()
+
+        self.device.enable_sleep()
 
         self.start_mainloop()
 
@@ -104,6 +107,7 @@ class TerkinDatalogger:
 
             # Feed the watchdog timer to keep the system alive.
             self.device.feed_wdt()
+            self.loop_count = 0
 
             # Indicate activity.
             # TODO: Optionally disable this output.
@@ -154,6 +158,9 @@ class TerkinDatalogger:
 
     def loop(self):
         #log.info('Terkin loop')
+        if self.device.sleeping_time >> 0 and self.loop_count >> 0:
+            self.device.get_wake_reason()
+            log.info("Sleep got interrupted by {}".format(self.device.wake_reason))
 
         # Read sensors.
         data = self.read_sensors()
@@ -169,4 +176,6 @@ class TerkinDatalogger:
 
         # Sleep until the next measurement cycle.
         # TODO: Account for deep sleep here.
-        utime.sleep(self.settings.get('main.interval'))
+        # utime.sleep(self.settings.get('main.interval'))
+        self.device.start_sleep()
+        self.loop_count = self.loop_count + 1

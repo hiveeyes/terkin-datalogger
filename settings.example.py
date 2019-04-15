@@ -6,6 +6,8 @@ main = {
     # TODO: Please note this is not the _real thing_ yet at it will just use
     #       this value to apply to ``time.sleep()`` after each duty cycle.
     'interval': 1.0,
+    'sleeping_time': 1,
+    #'wake_up_pins': ['P99', 'P77']
 }
 
 # Networking configuration.

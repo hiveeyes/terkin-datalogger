@@ -51,6 +51,9 @@ download-requirements:
 	#Install Pytrack Board Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/0f123c7/pytrack/lib/pytrack.py
 
+	#Install Pycom Deepsleep Library
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/1fbc177/deepsleep/deepsleep.py 
+
 	#Install BME280 Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
 
