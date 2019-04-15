@@ -61,25 +61,6 @@ telemetry = {
             },
         },
 
-        # JSON over HTTP
-        {
-            # Enable/disable this telemetry target.
-            'enabled': False,
-
-            # Define telemetry endpoint and address information.
-            'endpoint': 'https://daq.example.org/api',
-            'address': {
-                "realm": "workbench",
-                "network": "testdrive",
-                "gateway": "area-42",
-                "node": "node-01-http-json",
-            },
-
-            # Use alternative, non-HTTPS endpoint.
-            # 'endpoint': 'http://daq.example.org/api-notls',
-
-        },
-
         # CayenneLPP over MQTT, Base64 encoded
         {
             # Enable/disable this telemetry target.
@@ -105,12 +86,22 @@ sensors = {
         'ds18x20': {
             'bus': 'onewire:0',
         },
-        'bme280_1': {
+        'bme280': {
             'bus': 'i2c:0',
+            #'address': 0x77,
         },
-        'bme280_2': {
+        'bme280_1': {
             'bus': 'i2c:1',
-            'address': 0x77,
+        },
+        'pytrack': {
+            'bus': 'i2c:1',
+        },
+        'moisture': {
+            'pin_adc_in': 'P15',
+            'scaling': 4.096,
+        },
+        'waterlevel': {
+            'pin_adc_in': 'P18'
         },
     },
     'busses': [
