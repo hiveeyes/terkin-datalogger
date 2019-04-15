@@ -129,18 +129,10 @@ class TerkinDevice:
         # Create adapter objects for each enabled telemetry target.
         for telemetry_target in telemetry_candidates:
 
-            # Shortcut to address information.
-            telemetry_address = telemetry_target['address']
-
             # Create adapter object.
             telemetry_adapter = TelemetryAdapter(
                 telemetry_target['endpoint'],
-                address={
-                    "realm": telemetry_address['realm'],
-                    "network": telemetry_address['network'],
-                    "gateway": telemetry_address['gateway'],
-                    "node": telemetry_address['node'],
-                },
+                address=telemetry_target['address'],
                 # TODO: Use topology from configuration settings.
                 topology=TelemetryTopologies.KotoriWanTopology,
                 format=telemetry_target.get('format'),

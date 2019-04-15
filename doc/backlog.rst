@@ -9,20 +9,14 @@ Datalogger
 
 Prio 1
 ======
-- [x] Solid configuration system
-- [x] Use pure-Python "urllib" without dependency to "libpcre"
-- [x] Handle "Connection to MQTT broker failed or lost"
-- [x] Multi-network WiFi
-- [x] Fix console crasher when running on Windows
-- [o] Get back to reading real sensors again
+- [o] Looks like the HX711 does not grok the ``offset`` parameter?
+- [o] Appropriate control for turning on DEBUG logging
+
+Prio 1.3
+========
 - [o] Guard against running without (valid?) ``settings.py``
 - [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
-- [o] Add release tooling
-- [o] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
 - [o] Add software tests
-- [o] Improve logging
-- [o] Improve logging by adding stacktrace printer
-- [o] Add some examples
 - [o] Control the board through https://github.com/dhylands/rshell/blob/master/rshell/pyboard.py
 - [o] Makefile: Check for "wget"
 
@@ -109,6 +103,19 @@ Prio 4
 
     'antenna', 'ap_sta_list', 'auth', 'bandwidth', 'bssid', 'callback', 'channel', 'connect', 'country', 'ctrl_pkt_filter', 'deinit', 'disconnect', 'events', 'hostname', 'ifconfig', 'init', 'isconnected', 'joined_ap_info', 'mac', 'max_tx_power', 'mode', 'promiscuous', 'scan', 'send_raw', 'ssid', 'wifi_packet', 'wifi_protocol']
 
+Done
+====
+- [x] Solid configuration system
+- [x] Use pure-Python "urllib" without dependency to "libpcre"
+- [x] Handle "Connection to MQTT broker failed or lost"
+- [x] Multi-network WiFi
+- [x] Fix console crasher when running on Windows
+- [x] Real sensors already
+- [x] Add release tooling
+- [x] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
+- [x] Add appropriate logging
+- [x] Improve logging by adding stacktrace printer
+- [x] Add some examples
 
 
 Closed
