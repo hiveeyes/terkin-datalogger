@@ -364,9 +364,7 @@ class TelemetryTransportMQTT:
         log.debug('MQTT payload:', payload)
 
         connection = self.get_connection()
-        connection.publish(topic, payload)
-
-        return True
+        return connection.publish(topic, payload)
 
 
 class MQTTAdapter:
