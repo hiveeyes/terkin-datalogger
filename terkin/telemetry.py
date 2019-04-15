@@ -23,6 +23,7 @@ Setup on MicroPython for Unix
 import json
 from copy import copy
 from terkin import logging
+from terkin.device import get_device_id
 from urllib.parse import urlsplit, urlencode
 
 log = logging.getLogger(__name__)
@@ -318,7 +319,7 @@ class TelemetryTransportMQTT:
 
         # TODO: Use device identifier / hardware serial here
         #       to make the MQTT client id more unique.
-        self.client_id = "terkin_mqtt_logger"
+        self.client_id = 'terkin.{}'.format(get_device_id())
 
         # Status flags.
         self.defunct = False

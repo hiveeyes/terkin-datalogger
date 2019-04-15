@@ -14,6 +14,11 @@ from terkin import logging
 log = logging.getLogger(__name__)
 
 
+def get_device_id():
+    import machine
+    return hexlify(machine.unique_id()).decode()
+
+
 class TerkinDevice:
 
     def __init__(self, name=None, version=None, settings=None):
@@ -21,6 +26,8 @@ class TerkinDevice:
         self.name = name
         self.version = version
         self.settings = settings
+
+        self.device_id = get_device_id()
 
         self.networking = None
         self.telemetry = None
@@ -176,7 +183,7 @@ class TerkinDevice:
 
         # Machine runtime information.
         add('CPU freq     {} MHz'.format(machine.freq() / 1000000))
-        add('Device id    {}'.format(hexlify(machine.unique_id()).decode()))
+        add('Device id    {}'.format(self.device_id))
         add()
 
         # System memory info (in bytes)
