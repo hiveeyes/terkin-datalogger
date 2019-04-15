@@ -44,19 +44,25 @@ class DS18X20Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        d = {}
+        data = {}
         #log.info('Acquire reading from DS18X20')
         # for loop goes here
         for device in self.bus.devices:
+            address = hexlify(device).decode()
             self.driver.start_conversion(device)
             time.sleep(0.750)
             value = self.driver.read_temp_async(device)
             if value is not None:
-                name = "temperature_" + hexlify(device).decode()
-                d[name] = value
+                fieldname = self.format_fieldname('temperature', address)
+                data[fieldname] = value
             else:
-                log.warning("DS18X20 device {} has no value".format(hexlify(device).decode()))
+                log.warning("Reading DS18X20 device {} failed".format(address))
 
             time.sleep(0.750)
 
-        return d
+        if not data:
+            log.warning("No data from any DS18X20 devices on bus {}".format(self.bus.name))
+
+        log.debug("Onewire data: {}".format(data))
+
+        return data

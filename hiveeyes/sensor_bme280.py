@@ -72,15 +72,13 @@ class BME280Sensor(AbstractSensor):
         # Build telemetry payload.
         fieldnames = values.keys()
         for name in fieldnames:
-            #print('self.bus', self.bus)
-            #print('dir self.bus', dir(self.bus))
-            fieldname = '{name}.{bus}.{address}'.format(name=name, bus=self.bus.name, address=hex(self.address))
+            fieldname = self.format_fieldname(name, hex(self.address))
             value = values[name]
             data[fieldname] = value
 
         if not data:
             log.warning("I2C device {} has no value: {}".format(self.address, data))
 
-        log.info("I2C data: {}".format(data))
+        log.debug("I2C data:     {}".format(data))
 
         return data

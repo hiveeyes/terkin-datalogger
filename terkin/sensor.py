@@ -80,6 +80,10 @@ class AbstractSensor:
         raise NotImplementedError()
         pass
 
+    def format_fieldname(self, name, address):
+        fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
+        return fieldname
+
 
 class BusType:
 

@@ -159,7 +159,7 @@ class TerkinDatalogger:
         data = self.read_sensors()
 
         # Debugging: Print sensor data before running telemetry.
-        #log.debug(data)
+        log.info('Sensor data:  %s', data)
 
         # Transmit data.
         self.transmit_readings(data)
