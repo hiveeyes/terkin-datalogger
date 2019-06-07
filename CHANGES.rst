@@ -11,6 +11,7 @@ Development
 - Switch to LittleFS
 - Add deep sleep
 - Improve Makefile targets
+- Add more wakeup reasons
 
 
 2019-06-07 0.3.0

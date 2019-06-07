@@ -8,6 +8,12 @@ log = logging.getLogger(__name__)
 
 
 class MachineResetCause:
+    """
+    Machine reset cause and wakeup reason definitions.
+
+    Works on Pycom MicroPython 1.20.0.rc11, YMMV.
+    Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
+    """
 
     reset_causes = {
         machine.PWRON_RESET: 'PWRON',
@@ -19,9 +25,11 @@ class MachineResetCause:
     }
 
     wakeup_reasons = {
-        #machine.WLAN_WAKE: 'WLAN',
         machine.PIN_WAKE: 'PIN',
+        machine.PWRON_WAKE: 'PWRON',
         machine.RTC_WAKE: 'RTC',
+        machine.ULP_WAKE: 'ULP',
+        # machine.WLAN_WAKE: 'WLAN',
     }
 
     @classmethod
