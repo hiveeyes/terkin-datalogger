@@ -12,6 +12,8 @@ Development
 - Add deep sleep
 - Improve Makefile targets
 - Add more wakeup reasons
+- Add missing configuration section for HX711 to settings example.
+  Thanks, @ClemensGruber.
 
 
 2019-06-07 0.3.0

@@ -107,6 +107,12 @@ telemetry = {
 # Sensor configuration.
 sensors = {
     'registry': {
+        'hx711': {
+            'pin_dout': 'P22',
+            'pin_pdsck': 'P21',
+            'scale': 4.424242,
+            'offset': -73000.0,
+        },
         'ds18x20': {
             'bus': 'onewire:0',
         },
