@@ -14,6 +14,7 @@ Prio 1
 
 Prio 1.3
 ========
+- [o] Report about which telemetry eumels did actually work when submitting data (True / False)
 - [o] Guard against running without (valid?) ``settings.py``
 - [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
 - [o] Add software tests
@@ -102,6 +103,13 @@ Prio 4
 - [o] Use more information from WiFi station::
 
     'antenna', 'ap_sta_list', 'auth', 'bandwidth', 'bssid', 'callback', 'channel', 'connect', 'country', 'ctrl_pkt_filter', 'deinit', 'disconnect', 'events', 'hostname', 'ifconfig', 'init', 'isconnected', 'joined_ap_info', 'mac', 'max_tx_power', 'mode', 'promiscuous', 'scan', 'send_raw', 'ssid', 'wifi_packet', 'wifi_protocol']
+
+
+User interface
+==============
+- https://blog.koley.in/2019/339-bytes-of-responsive-css
+  https://news.ycombinator.com/item?id=19622786
+
 
 Done
 ====

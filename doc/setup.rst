@@ -45,7 +45,7 @@ listed in ``requirements-dev.txt``, e.g. the ``rshell`` utility::
 
     make setup-environment
 
-The programming environment driven through different ``make`` targets
+The programming environment is driven through different ``make`` targets
 and the accompanying documentation is based on a successful installation
 of these tools.
 
