@@ -26,19 +26,17 @@ class TelemetryManager:
         self.adapters.append(adapter)
 
     def transmit(self, data):
-        outcomes = []
+        outcomes = {}
         for adapter in self.adapters:
 
-            if adapter.is_offline():
-                message = 'Adapter is offline, skipping telemetry to '.format(adapter.channel_uri)
-                log.warning(message)
-                continue
-
+            # Dispatch transmission to telemetry adapter.
             outcome = adapter.transmit(data)
-            outcomes.append(outcome)
 
-        # TODO: Improve by returning dictionary of all outcomes.
-        return any(outcomes)
+            # Todo: Propagate last error message into outcome and obtain here.
+            channel = adapter.channel_uri
+            outcomes[channel] = outcome
+
+        return outcomes
 
 
 class TelemetryAdapter:
@@ -87,6 +85,13 @@ class TelemetryAdapter:
         return client
 
     def transmit(self, data):
+
+        if not self.is_online():
+            # Todo: Suppress this message after a while or reduce interval.
+            message = 'Adapter is offline, skipping telemetry to {}'.format(self.channel_uri)
+            log.warning(message)
+            return False
+
         try:
             outcome = self.client.transmit(data)
             self.reset_errors()
@@ -100,8 +105,10 @@ class TelemetryAdapter:
             else:
                 log.exception(message)
 
-    def is_offline(self):
-        return self.failure_count >= self.MAX_FAILURES
+        return False
+
+    def is_online(self):
+        return self.failure_count < self.MAX_FAILURES
 
     def record_error(self):
         self.failure_count += 1
@@ -383,12 +390,15 @@ class TelemetryTransportMQTT:
         log.debug('MQTT topic:  ', topic)
         log.debug('MQTT payload:', payload)
 
-        connection = self.get_connection()
         try:
+            connection = self.get_connection()
             connection.publish(topic, payload)
 
         except TelemetryAdapterError as ex:
-            raise TelemetryTransportError('Protocol adapter not connected')
+            message = 'Protocol adapter not connected: {}'.format(format_exception(ex))
+            raise TelemetryTransportError(message)
+
+        return True
 
 
 class MQTTAdapter:

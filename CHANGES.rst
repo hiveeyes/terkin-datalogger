@@ -64,6 +64,7 @@ Development
   and convenience for WiFi and MQTT connectivity
 - Improve logging
 - Update documentation
+- Improve reporting about which telemetry targets succeeded
 
 
 2019-03-23 0.2.1

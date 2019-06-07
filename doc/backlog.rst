@@ -9,7 +9,7 @@ Datalogger
 
 Prio 1
 ======
-- [x] Report about which telemetry eumels did actually work when submitting data (True / False)
+- [x] Report about which telemetry targets did actually work when submitting data (True / False)
 - [o] Add Deep Sleep
 - [o] Measure and transmit voltage
 - [o] Gracefully set time using NTP
