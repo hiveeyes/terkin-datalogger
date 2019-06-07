@@ -1,0 +1,60 @@
+########################################################
+Getting started with the Hiveeyes MicroPython Datalogger
+########################################################
+
+.. note::
+
+    Please recognize this is a work in progress. While many things are
+    working already, some places might just have been sketched out.
+    So, this firmware will be extended over time - you are dearly welcome
+    to help closing some gaps.
+
+.. todo::
+
+    Fold and/or refactor parts of README.rst, setup.rst, pycom-getting-started.rst
+    and pycom-firmware-upgrade.rst into this document or link appropriately.
+
+
+********
+Unboxing
+********
+Check that's everything with your kit that
+will be needed to assemble it successfully.
+
+You will make it.
+
+
+*************
+Setup sandbox
+*************
+
+.. todo:: Refactor from or link to ``setup.rst``.
+
+
+***************
+Setup your mind
+***************
+After that, be prepared to put ``make recycle``, ``CTRL+C``, ``CTRL+D``
+and ``CTRL+X`` into your muscle memory. Otherwise, let's go shopping.
+
+
+**************
+Prepare device
+**************
+
+Upgrade firmware
+================
+Before uploading the user-space MicroPython program, please `upgrade the Pycom firmware`_
+on your device. At the time of this writing, we are running
+``Pycom MicroPython 1.20.0.rc11`` on the FiPy without any flaws yet.
+
+
+
+**************
+Upload program
+**************
+::
+
+    make setup
+    make sketch-and-run
+

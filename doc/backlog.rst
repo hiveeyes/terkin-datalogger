@@ -9,18 +9,31 @@ Datalogger
 
 Prio 1
 ======
-- [o] Add Deep Sleep
-- [o] Measure and transmit voltage
+- [o] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
+- [o] Switch to LittleFS
+- [o] Log filesystem type
+- [o] Log wakeup type
+- [o] Add deep sleep
+- [o] Measure and transmit WiFi RSSI, and Board voltage
 - [o] Gracefully set time using NTP
 - [o] Store-and-forward when no connectivity
 - [o] Add AP mode and webserver
 - [o] Improve logging: Report about available telemetry targets upfront
-- [o] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
 - [o] Telemetry payload v2
 - [o] First MQTT downlink message
+- [o] Add Vinzent und Diren
 - [o] Report about to how many telemetry targets data will be sent
 - [o] Properly calculate sleep time from interval and duty cycle duration
 - [o] Add duty cycle counter
+- [o] Connect to Beep
+- [o] Add
+    - 140mm and
+    - https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
+
+v2:
+    - meta: version, time, device=807d3ac342bc
+    - system: rssi, cycles
+    - observations: all the data
 
 Prio 1.3
 ========

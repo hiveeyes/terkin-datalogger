@@ -71,18 +71,7 @@ and conceive it in one way or another. You know who you are.
 ***************
 Getting started
 ***************
-Before getting started with this, please `upgrade the Pycom firmware`_
-on your device. At the time of this writing, we are running
-``Pycom MicroPython 1.20.0.rc8`` without any flaws yet.
-After that, be prepared to put ``make recycle``, ``CTRL+C``, ``CTRL+D``
-and ``CTRL+X`` into your muscle memory. Otherwise, let's go shopping.
-
-.. note::
-
-    Please recognize this is a work in progress. While many things are
-    working already, some places might just have been sketched out.
-    So, this firmware will be extended over time - you are dearly welcome
-    to help closing some gaps.
+See ``doc/getting-started.rst``.
 
 
 *************
