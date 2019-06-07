@@ -10,6 +10,7 @@ from machine import Timer
 from ubinascii import hexlify
 
 from terkin import logging
+from terkin.radio import WiFiException
 
 log = logging.getLogger(__name__)
 
@@ -47,10 +48,13 @@ class TerkinDevice:
         self.networking = NetworkManager(self.settings)
 
         # Start WiFi.
-        self.networking.start_wifi()
+        try:
+            self.networking.start_wifi()
 
-        # Wait for network interface to come up.
-        self.networking.wait_for_nic()
+            # Wait for network interface to come up.
+            self.networking.wait_for_nic()
+        except WiFiException:
+            log.error('Network connectivity not available, WiFi failed')
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):

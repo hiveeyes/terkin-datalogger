@@ -19,6 +19,10 @@ import pycom
 log = logging.getLogger(__name__)
 
 
+class WiFiException(Exception):
+    pass
+
+
 class NetworkManager:
 
     def __init__(self, settings):
@@ -71,17 +75,20 @@ class NetworkManager:
         network_map = {station['ssid']: station for station in self.stations}
         networks_known = frozenset(network_map.keys())
 
-        log.info("WiFi STA: Starting connection")
+        log.info("WiFi STA: Networks configured: %s", list(networks_known))
+
+        log.info("WiFi STA: Starting interface")
         self.station.mode(WLAN.STA)
 
         # Names/SSIDs of networks found.
         log.info("WiFi STA: Scanning for networks")
         self.stations_available = self.station.scan()
         networks_found = frozenset([e.ssid for e in self.stations_available])
-        log.info("WiFi STA: Available networks: %s", networks_found)
+        log.info("WiFi STA: Networks available: %s", list(networks_found))
 
         # Compute set of effective networks by intersecting known with found ones.
         network_candidates = list(networks_found & networks_known)
+        log.info("WiFi STA: Network candidates: %s", network_candidates)
 
         for network_name in network_candidates:
             try:
@@ -95,8 +102,17 @@ class NetworkManager:
                 if self.wifi_connect_station(network_selected):
                     break
 
-            except Exception as ex:
+            except WiFiException:
                 log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
+
+        if not self.station.isconnected():
+            message = 'WiFi STA: Connecting to any network candidate failed'
+            description = 'Please check your WiFi configuration for one of the ' \
+                          '{} station candidates in your neighbourhood.'.format(len(network_candidates))
+            log.error('{}. {}'.format(message, description))
+            log.warning('Todo: We might want to switch to AP mode here or alternatively '
+                        'buffer telemetry data to flash to be scheduled for transmission later.')
+            raise WiFiException(message)
 
         # TODO: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
@@ -137,7 +153,7 @@ class NetworkManager:
 
         # FIXME: If no known network is found, the program will lockup here.
         # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
-        retries = 15
+        retries = 30
         while not self.station.isconnected() and retries > 0:
             log.info('WiFi STA: Waiting for network "{}".'.format(network_name))
             time.sleep(1)
@@ -146,7 +162,7 @@ class NetworkManager:
             machine.idle()
 
         if not self.station.isconnected():
-            raise TimeoutError('Unable to connect to WiFi station "{}"'.format(network_name))
+            raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
 
         self.print_short_status()
 

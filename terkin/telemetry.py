@@ -30,9 +30,14 @@ log = logging.getLogger(__name__)
 
 
 class TelemetryManager:
+    """
+    Manage a number of telemetry adapters.
+    """
 
     def __init__(self):
         self.adapters = []
+        self.errors_seen = {}
+        self.failure_count = {}
 
     def add_adapter(self, adapter):
         self.adapters.append(adapter)
@@ -40,11 +45,14 @@ class TelemetryManager:
     def transmit(self, data):
         outcomes = []
         for adapter in self.adapters:
-            try:
-                outcome = adapter.transmit(data)
-                outcomes.append(outcome)
-            except Exception as ex:
-                log.exception('Telemetry failed for adapter {} with address {}'.format(adapter.base_uri, adapter.address))
+
+            if adapter.is_offline():
+                message = 'Adapter is offline, skipping telemetry to '.format(adapter.channel_uri)
+                log.warning(message)
+                continue
+
+            outcome = adapter.transmit(data)
+            outcomes.append(outcome)
 
         # TODO: Improve by returning dictionary of all outcomes.
         return any(outcomes)
@@ -53,7 +61,10 @@ class TelemetryManager:
 class TelemetryAdapter:
     """
     Telemetry node client: Network participant API
+    Todo: Implement exponential backoff instead of MAX_FAILURES.
     """
+
+    MAX_FAILURES = 3
 
     def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None, content_encoding=None):
 
@@ -66,6 +77,12 @@ class TelemetryAdapter:
         self.content_encoding = content_encoding
 
         self.suffixes = None
+
+        self.channel_uri = None
+        self.client = None
+
+        self.offline = False
+        self.failure_count = 0
 
         if topology:
             self.uri_template = topology.uri_template
@@ -87,7 +104,27 @@ class TelemetryAdapter:
         return client
 
     def transmit(self, data):
-        return self.client.transmit(data)
+        try:
+            outcome = self.client.transmit(data)
+            self.reset_errors()
+            return outcome
+
+        except Exception as ex:
+            self.record_error()
+            message = 'Telemetry to {} failed'.format(self.channel_uri)
+            if self.offline:
+                log.warning(message)
+            else:
+                log.exception(message)
+
+    def is_offline(self):
+        return self.failure_count >= self.MAX_FAILURES
+
+    def record_error(self):
+        self.failure_count += 1
+
+    def reset_errors(self):
+        self.failure_count = 0
 
 
 class CSVTelemetryAdapter(TelemetryAdapter):
@@ -364,7 +401,11 @@ class TelemetryTransportMQTT:
         log.debug('MQTT payload:', payload)
 
         connection = self.get_connection()
-        return connection.publish(topic, payload)
+        try:
+            connection.publish(topic, payload)
+
+        except TelemetryAdapterError as ex:
+            raise TelemetryTransportError('Protocol adapter not connected')
 
 
 class MQTTAdapter:
@@ -413,31 +454,42 @@ class MQTTAdapter:
     def connect(self):
         """Connect to MQTT broker"""
         try:
-            log.info('Connecting to MQTT broker')
+            log.info('Connecting to MQTT broker at %s', self.server)
             self.connection = self.driver_class(self.client_id, self.server, port=self.port)
             self.connection.DEBUG = True
             self.connection.connect()
-            log.info('Connecting to MQTT broker at %s succeeded', self.connection.addr)
             self.connected = True
+            log.info('Connecting to MQTT broker at %s succeeded', self.connection.addr)
 
         except Exception as ex:
-            log.exception('Connecting to MQTT broker at %s failed', self.server)
             self.connected = False
+            message = 'Connecting to MQTT broker at {} failed: {}'.format(self.server, self.decipherex(ex))
+            log.exception(message)
+            raise TelemetryAdapterError(message)
 
         return self.connected
+
+    def decipherex(self, ex):
+        return '{}: {}'.format(ex.__class__.__name__, ex)
 
     def publish(self, topic, payload, retain=False, qos=1):
 
         # Try to (re-)connect to MQTT broker.
         self.ensure_connection()
 
+        if not self.connected:
+            message = 'No MQTT connectivity, skipping telemetry'
+            log.warning(message)
+            raise TelemetryAdapterError(message)
+
         try:
             # TODO: Make qos level configurable.
             self.connection.publish(topic, payload, retain=retain, qos=qos)
-            return True
 
         except OSError as ex:
-            log.exception('MQTT publishing failed')
+
+            message = 'MQTT publishing failed'
+            log.exception(message)
 
             # Signal connection error in order to reconnect on next submission attempt.
             # [Errno 104] ECONNRESET
@@ -445,7 +497,8 @@ class MQTTAdapter:
             if ex.errno in [104, 113]:
                 self.connected = False
 
-        return False
+            message = '{}: {}'.format(message, ex)
+            raise TelemetryAdapterError(message)
 
 
 class TelemetryTopologies:
@@ -467,6 +520,14 @@ class TelemetryTopologies:
             TelemetryClient.TRANSPORT_HTTP: '/data',
             TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
         }
+
+
+class TelemetryTransportError(Exception):
+    pass
+
+
+class TelemetryAdapterError(Exception):
+    pass
 
 
 def to_base64(bytes):
