@@ -63,6 +63,7 @@ Development
 - Improve network/telemetry error handling, robustness
   and convenience for WiFi and MQTT connectivity
 - Improve logging
+- Update documentation
 
 
 2019-03-23 0.2.1

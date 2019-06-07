@@ -9,24 +9,31 @@ Datalogger
 
 Prio 1
 ======
-- [o] Looks like the HX711 does not grok the ``offset`` parameter?
-- [o] Appropriate control for turning on DEBUG logging
+- [x] Report about which telemetry eumels did actually work when submitting data (True / False)
+- [o] Add Deep Sleep
+- [o] Measure and transmit voltage
+- [o] Gracefully set time using NTP
+- [o] Store-and-forward when no connectivity
+- [o] Add AP mode and webserver
 
 Prio 1.3
 ========
-- [o] Report about which telemetry eumels did actually work when submitting data (True / False)
+- [o] Looks like the HX711 does not grok the ``offset`` parameter?
+- [o] Appropriate control for turning on DEBUG logging
 - [o] Guard against running without (valid?) ``settings.py``
 - [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
 - [o] Add software tests
 - [o] Control the board through https://github.com/dhylands/rshell/blob/master/rshell/pyboard.py
 - [o] Makefile: Check for "wget"
-
+- [o] Migrate settings.py to settings.json
+- [o] Add webserver to framework
 
 Prio 1.5
 ========
 - [o] Better BME/BMP libraries
 - [o] Bli, bla, blubb
-
+- [o] Propagate last error message from telemetry subsystem
+      into intermediary status outcome and display to user.
 
 Prio 2
 ======

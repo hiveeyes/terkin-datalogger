@@ -8,11 +8,16 @@ Introduction
 ************
 By default, the Pycom FiPy arrived with::
 
-    Pycom MicroPython 1.18.2.r3 [v1.8.6-849-a1641ca] on 2019-02-28; FiPy with ESP32
+    Pycom MicroPython 1.18.2.r3 [v1.8.6-849-a1641ca] on 2019-02-28; FiPy with ESP32, published on 15 Mar 2019
 
 This document outlines the upgrade to::
 
-    Pycom MicroPython 1.20.0.rc8 [v1.9.4-7b83c6d] on 2019-03-06; FiPy with ESP32
+    Pycom MicroPython 1.20.0.rc8 [v1.9.4-7b83c6d] on 2019-03-06; FiPy with ESP32, published on 07 Mar 2019
+
+The most current firmwares as of 07 Jun 2019 are::
+
+    Pycom MicroPython 1.18.2.r7, published on 14 May 2019
+    Pycom MicroPython 1.20.0.rc11, published on 14 May 2019
 
 .. note::
 
@@ -23,6 +28,17 @@ This document outlines the upgrade to::
     with your device.
 
 
+**********************
+Upstream documentation
+**********************
+See also:
+
+- https://pycom.io/downloads/
+- https://docs.pycom.io/gettingstarted/installation/firmwaretool.html
+- https://github.com/pycom/pycom-documentation/blob/master/advanced-topics/cli.md
+- https://docs.pycom.io/advance/downgrade.html
+
+
 *********************************
 Install and acquire prerequisites
 *********************************
@@ -30,13 +46,8 @@ Install and acquire prerequisites
 Pycom Updater application
 =========================
 Install the Pycom Updater application for your platform.
-See also:
 
-- https://pycom.io/downloads/
-- https://docs.pycom.io/gettingstarted/installation/firmwaretool.html
-- https://github.com/pycom/pycom-documentation/blob/master/advanced-topics/cli.md
-
-.. todo: Add command for ArchLinux et al.
+.. Todo: Add command for ArchLinux and beyond.
 
 
 Download firmware
@@ -44,7 +55,7 @@ Download firmware
 Acquire recent Pycom MicroPython firmware binaries::
 
     # https://software.pycom.io/downloads/FiPy.html
-    wget https://software.pycom.io/downloads/FiPy-1.20.0.rc8.tar.gz
+    wget https://software.pycom.io/downloads/FiPy-1.20.0.rc11.tar.gz
 
 
 *******************
@@ -88,6 +99,3 @@ You can reset the device either by
 
     # List built-in modules
     >>> help('modules')
-
-
-See also: https://docs.pycom.io/advance/downgrade.html
