@@ -6,37 +6,60 @@ Pycom firmware upgrade
 ************
 Introduction
 ************
-By default, the Pycom FiPy arrived with::
+As the Pycom firmware is continuously evolving, you might
+also like to run their most recent release on your device.
 
-    Pycom MicroPython 1.18.2.r3 [v1.8.6-849-a1641ca] on 2019-02-28; FiPy with ESP32, published on 15 Mar 2019
-
-This document outlines the upgrade to::
+We have been running this firmware successfully with::
 
     Pycom MicroPython 1.20.0.rc8 [v1.9.4-7b83c6d] on 2019-03-06; FiPy with ESP32, published on 07 Mar 2019
+    Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
 
 The most current firmwares as of 07 Jun 2019 are::
 
     Pycom MicroPython 1.18.2.r7, published on 14 May 2019
     Pycom MicroPython 1.20.0.rc11, published on 14 May 2019
 
+Originally, the Pycom FiPy arrived with::
+
+    Pycom MicroPython 1.18.2.r3 [v1.8.6-849-a1641ca] on 2019-02-28; FiPy with ESP32, published on 15 Mar 2019
+
 .. note::
 
     Please take into consideration that we are outlining our best practices here.
-    While in this context we are only using official firmware releases from Pycom,
-    there's always a chance that things might go south.
-    Saying that, please don't hold us accountable for anything that might go wrong
-    with your device.
+
+    - We always try to run the most recent release available from the Pycom
+      firmware download page.
+    - While in this context we are only using official firmware releases
+      from Pycom, there's always a chance that things might go south.
+    - Saying that, you must not hold us accountable for anything that might go
+      wrong with your device in any way when following these recommendations.
 
 
-**********************
-Upstream documentation
-**********************
-See also:
+******************
+Upstream resources
+******************
 
+Documentation
+=============
 - https://pycom.io/downloads/
 - https://docs.pycom.io/gettingstarted/installation/firmwaretool.html
 - https://github.com/pycom/pycom-documentation/blob/master/advanced-topics/cli.md
 - https://docs.pycom.io/advance/downgrade.html
+
+Firmware downloads
+==================
+- https://software.pycom.io/downloads/WiPy.html
+- https://software.pycom.io/downloads/LoPy.html
+- https://software.pycom.io/downloads/FiPy.html
+
+Development branches
+====================
+If you feel you want to follow Pycom's development more closely, you
+might find these pointers convenient.
+
+- 1.20.x: https://github.com/pycom/pycom-micropython-sigfox/commits/release-candidate
+- 1.19.x: https://github.com/pycom/pycom-micropython-sigfox/commits/development
+- 1.18.x: https://github.com/pycom/pycom-micropython-sigfox/commits/master
 
 
 *********************************
@@ -79,7 +102,7 @@ Upload firmware
 ***************
 1. Upload firmware::
 
-    pycom-fwtool-cli --verbose --port /dev/tty.usbmodemPye090a1 flash --tar FiPy-1.20.0.rc8.tar.gz
+    pycom-fwtool-cli --verbose --port /dev/cu.usbmodemPye090a1 flash --tar FiPy-1.20.0.rc11.tar.gz
 
 2. Reset device
 
@@ -92,7 +115,7 @@ You can reset the device either by
 3. Connect to REPL shell on device::
 
     make repl
-    Pycom MicroPython 1.20.0.rc8 [v1.9.4-7b83c6d] on 2019-03-06; FiPy with ESP32
+    Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32
 
     # General help
     >>> help()

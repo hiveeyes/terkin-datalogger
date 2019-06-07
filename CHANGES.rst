@@ -5,6 +5,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+- Upgrade to ``Pycom MicroPython 1.20.0.rc11``
 
 
 2019-06-07 0.3.0
