@@ -234,7 +234,6 @@ the Pycom MicroPython implementation.
 .. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
 
-.. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 .. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html
 .. _MicroPython documentation: https://micropython.readthedocs.io/
 .. _MicroPython libraries: https://micropython.readthedocs.io/en/latest/library/

@@ -22,9 +22,12 @@ Prio 1
 - [o] Properly calculate sleep time from interval and duty cycle duration
 - [o] Connect to Beep
 - [o] Follow up with
-    - 140mm and
+    - https://community.hiveeyes.org/t/terkin-for-micropython/233/10
     - https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
-- [o] Documentation 140mm. Getting started, Pictures, Sphinx
+- [o] Documentation 140mm. Getting started, Pictures, Sphinx.
+- [o] Write about Terkin Telemetry.
+- [o] New target ``make format-flash``.
+- [o] Bundle and upload package to GitHub always when invoking ``make release``?
 
 Prio 1.3
 ========
@@ -194,6 +197,11 @@ Documentation
     - User handbook
     - Developer handbook (Sandbox installation)
     - Workstation Support: Linux, macOS, Windows
+
+- [o] Deep Sleep
+    - https://www.instructables.com/id/ESP32-Deep-Sleep-Tutorial/
+    - https://randomnerdtutorials.com/esp32-deep-sleep-arduino-ide-wake-up-sources/
+    - https://forum.micropython.org/viewtopic.php?t=1198
 
 ::
 

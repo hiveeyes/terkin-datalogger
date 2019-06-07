@@ -31,11 +31,6 @@ Setup sandbox
 .. todo:: Refactor from or link to ``setup.rst``.
 
 
-***************
-Setup your mind
-***************
-After that, be prepared to put ``make recycle``, ``CTRL+C``, ``CTRL+D``
-and ``CTRL+X`` into your muscle memory. Otherwise, let's go shopping.
 
 
 **************
@@ -69,7 +64,7 @@ Background information:
     The option to use LittleFS instead of FAT as the primary filesystem of the internal flash
     will prevent data corruption even in the case of power loss during write operations.
 
-    -- https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057/3
+    -- See also `Filesystem corruption on FiPy's FatFS in brownout conditions`_
 
 
 **************
@@ -77,6 +72,19 @@ Upload program
 **************
 ::
 
+    # Get most recent development sources
+    git pull
+
+    # Setup sandbox environment
     make setup
+
+    # Upload framework and program to device
+    make install
+
+    # Upload program sketch and invoke hard reset
     make sketch-and-run
 
+
+
+.. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
+.. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
