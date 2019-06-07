@@ -5,9 +5,7 @@ include tools/core.mk
 # Setup
 # =====
 
-setup: setup-environment install-requirements
-
-install-requirements: download-requirements upload-requirements
+setup: setup-environment download-requirements
 
 download-requirements:
 
@@ -129,28 +127,42 @@ sketch-and-run: install-sketch reset-device-attached
 # File transfer
 # =============
 
+install: install-requirements install-framework install-sketch
+
+install-requirements: check-serial-port
+	$(rshell) $(rshell_options) mkdir /flash/dist-packages
+	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
+
 install-framework: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-framework.rshell
 
 install-sketch: check-serial-port
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 
-upload-requirements: check-serial-port
-	$(rshell) $(rshell_options) mkdir /flash/dist-packages
-	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
-
 refresh-requirements:
 	rm -r dist-packages
 	$(MAKE) download-requirements
 	$(rshell) $(rshell_options) rm -r /flash/dist-packages
 	$(rshell) $(rshell_options) ls /flash/dist-packages
-	$(MAKE) upload-requirements
+	$(MAKE) install-requirements
 
-purge-device: check-serial-port
-	#$(rshell) $(rshell_options) --file tools/clean.rshell
-	$(eval retval := $(shell bash -c 'read -s -p "Format /flash on the device? This will delete your program. [y/n]? " outcome; echo $$outcome'))
+format-flash: check-serial-port
+
+	@# Old version
+	@# $(rshell) $(rshell_options) --file tools/clean.rshell
+
+	$(eval retval := $(shell bash -c 'read -s -p "Format /flash on the device with LittleFS? This will delete your program. [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
-		$(rshell) $(rshell_options) repl pyboard 'import os ~ os.fsformat("/flash") ~'; \
+		echo; \
+		\
+		echo Creating LittleFS filesystem; \
+		$(rshell) $(rshell_options) --quiet repl pyboard 'import pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~'; \
+		\
+		echo Formatting filesystem; \
+		$(rshell) $(rshell_options) --quiet repl pyboard 'import os ~ os.fsformat(\"/flash\") ~'; \
+		\
+		echo Resetting device; \
+    	$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset() ~'; \
 	fi
 
 

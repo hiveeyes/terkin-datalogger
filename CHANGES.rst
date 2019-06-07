@@ -10,6 +10,7 @@ Development
 - Improve documentation
 - Switch to LittleFS
 - Add deep sleep
+- Improve Makefile targets
 
 
 2019-06-07 0.3.0
