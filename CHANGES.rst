@@ -5,6 +5,13 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+
+
+2019-06-07 0.3.0
+================
+
+**Yaks all the way down.**
+
 - Add ds18x20 lib
 - Implement DS and HX sensors using ``AbstractSensor``
 - ds18x20: Add reading multiple sensors
