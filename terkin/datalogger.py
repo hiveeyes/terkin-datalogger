@@ -8,6 +8,7 @@ import machine
 from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
+from terkin.pycom import MachineResetCause
 from terkin.sensor import MemoryFree, SensorManager, AbstractSensor, BusType
 from terkin.sensor import OneWireBus, I2CBus
 
@@ -33,6 +34,9 @@ class TerkinDatalogger:
         return '{} {}'.format(self.name, self.version)
 
     def start(self):
+
+        # Report about wakeup reason and run wakeup tasks.
+        self.resume()
 
         log.info('Starting %s', self.appname)
 
@@ -162,6 +166,9 @@ class TerkinDatalogger:
         return success
 
     def loop(self):
+        """
+        Main duty cycle loop.
+        """
 
         #log.info('Terkin loop')
 
@@ -174,6 +181,34 @@ class TerkinDatalogger:
         # Run the garbage collector.
         self.device.run_gc()
 
-        # Sleep until the next measurement cycle.
-        # Todo: Account for deep sleep here.
-        time.sleep(self.settings.get('main.interval'))
+        # Sleep how ever.
+        self.hibernate()
+
+    def hibernate(self):
+        """
+        Shut down until the next measurement cycle.
+        """
+        interval = self.settings.get('main.interval')
+
+        try:
+            if self.settings.get('main.deepsleep', False):
+                # https://docs.micropython.org/en/latest/library/machine.html#machine.deepsleep
+                log.info('Entering deep sleep for {} seconds'.format(interval))
+                machine.deepsleep(int(interval * 1000))
+            else:
+                # https://docs.micropython.org/en/latest/library/machine.html#machine.sleep
+                # https://docs.micropython.org/en/latest/library/machine.html#machine.lightsleep
+                log.info('Entering light sleep for {} seconds'.format(interval))
+
+                # "machine.sleep" seems to be a noop on Pycom MicroPython,
+                # so just use regular "time.sleep".
+                #machine.sleep(int(interval * 1000))
+                time.sleep(interval)
+
+        except:
+            # When everything above fails, fall back to "time.sleep".
+            log.info('Waiting for {} seconds'.format(interval))
+            time.sleep(interval)
+
+    def resume(self):
+        log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())

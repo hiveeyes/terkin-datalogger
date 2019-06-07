@@ -2,6 +2,7 @@
 Running the Hiveeyes MicroPython Datalogger
 ###########################################
 
+
 ************
 Introduction
 ************
@@ -9,19 +10,24 @@ To get a better idea about how running this firmware will feel like
 when watching its log output, we regularly update essentials from
 different parts of the runtime lifecycle here.
 
-************
-Boot process
-************
+
+*****************
+Measurement cycle
+*****************
+
+Screenshot from a typical measurement cycle with deep sleep.
+
 ::
 
     Initializing filesystem as LittleFS!
     [boot.py] INFO: Python module search path is: ['', '/flash', '/flash/lib', 'dist-packages']
 
-        4.5007 [terkin.configuration     ] INFO   : Section "main": {"interval": 1.0}
         4.5124 [terkin.configuration     ] INFO   : Configuration settings:
         4.5417 [terkin.configuration     ] INFO   : Section "telemetry": {"targets": [{"enabled": true, "endpoint": "mqtt://swarm.hiveeyes.org", "address": {"network": "testdrive", "gateway": "area-38", "node": "fipy-workbench-01", "realm": "hiveeyes"}}, {"enabled": true, "endpoint": "mqtt://weather.hiveeyes.org", "address": {"network": "testdrive", "gateway": "area-38", "node": "fipy-workbench-01", "realm": "workbench"}}, {"enabled": false, "endpoint": "https://weather.hiveeyes.org/api", "address": {"network": "testdrive", "gateway": "area-38", "node": "fipy-amo-02-http-json", "realm": "workbench"}}, {"encode": "base64", "format": "lpp", "address": {"network": "testdrive", "gateway": "area-38", "node": "fipy-amo-02-mqtt-lpp", "realm": "workbench"}, "enabled": false, "endpoint": "mqtt://weather.hiveeyes.org"}]}
         4.6267 [terkin.configuration     ] INFO   : Section "sensors": {"registry": {"bme280": {"bus": "i2c:0", "address": 119}, "ds18x20": {"bus": "onewire:0"}, "hx711": {"offset": -73000.0, "scale": 4.424242, "pin_pdsck": "P21", "pin_dout": "P22"}}, "busses": [{"number": 0, "family": "i2c", "pin_sda": "P9", "enabled": true, "pin_scl": "P10"}, {"enabled": true, "pin_data": "P11", "number": 0, "family": "onewire"}]}
+        4.6667 [terkin.configuration     ] INFO   : Section "main": {"interval": 5.0, "deepsleep": true}
         4.6876 [terkin.configuration     ] INFO   : Section "networking": {"wifi": {"stations": [{"ssid": "GartenNetzwerk", "password": "## redacted ##"}], "timeout": 15000}, "lora": {"otaa": {"region": "LoRa.EU868", "frequency": 868100000, "application_key": "## redacted ##", "datarate": 5, "application_eui": "## redacted ##"}, "antenna_attached": false}}
+        4.7042 [terkin.datalogger        ] INFO   : Reset cause and wakeup reason: {'reset_cause': {'code': 3, 'message': 'DEEPSLEEP'}, 'wakeup_reason': {'code': 2, 'message': 'RTC'}}
         4.7190 [terkin.datalogger        ] INFO   : Starting BOB MicroPython Datalogger 0.3.0
     ---------------------------------------------
     System memory info (in bytes)
@@ -103,15 +109,4 @@ Boot process
        27.2752 [terkin.telemetry         ] INFO   : Connecting to MQTT broker at weather.hiveeyes.org
        27.4034 [terkin.telemetry         ] INFO   : Connecting to MQTT broker at ('46.4.251.67', 1883) succeeded
        27.5273 [terkin.datalogger        ] INFO   : Telemetry status: SUCCESS
-       32.6952 [terkin.datalogger        ] INFO   : --- loop ---
-       32.7064 [terkin.datalogger        ] INFO   : Reading 4 sensor ports
-       38.0680 [terkin.datalogger        ] INFO   : Sensor data:  {'temperature.0x77.i2c:0': 26.75, 'temperature.28ff641d8fc3944f.onewire:0': 24.75, 'pressure.0x77.i2c:0': 1006.06, 'memfree': 2422512, 'temperature.28ff641d8fdf18c1.onewire:0': 25.8125, 'humidity.0x77.i2c:0': 38.39, 'weight': 85526.49}
-       38.3436 [terkin.datalogger        ] INFO   : Telemetry status: SUCCESS
-       43.5101 [terkin.datalogger        ] INFO   : --- loop ---
-       43.5211 [terkin.datalogger        ] INFO   : Reading 4 sensor ports
-       48.9117 [terkin.datalogger        ] INFO   : Sensor data:  {'temperature.0x77.i2c:0': 26.76, 'temperature.28ff641d8fc3944f.onewire:0': 24.75, 'pressure.0x77.i2c:0': 1006.01, 'memfree': 2422064, 'temperature.28ff641d8fdf18c1.onewire:0': 25.8125, 'humidity.0x77.i2c:0': 38.31, 'weight': 85553.67}
-       49.1873 [terkin.datalogger        ] INFO   : Telemetry status: SUCCESS
-       54.3541 [terkin.datalogger        ] INFO   : --- loop ---
-       54.3651 [terkin.datalogger        ] INFO   : Reading 4 sensor ports
-       59.7557 [terkin.datalogger        ] INFO   : Sensor data:  {'temperature.0x77.i2c:0': 26.7, 'temperature.28ff641d8fc3944f.onewire:0': 24.75, 'pressure.0x77.i2c:0': 1005.93, 'memfree': 2422080, 'temperature.28ff641d8fdf18c1.onewire:0': 25.875, 'humidity.0x77.i2c:0': 38.41, 'weight': 85574.0}
-       60.0387 [terkin.datalogger        ] INFO   : Telemetry status: SUCCESS
+       27.7685 [terkin.datalogger        ] INFO   : Entering deep sleep for 5.0 seconds

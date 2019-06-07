@@ -9,6 +9,7 @@ Development
 - Stop leaking sensible information into settings output
 - Improve documentation
 - Switch to LittleFS
+- Add deep sleep
 
 
 2019-06-07 0.3.0
