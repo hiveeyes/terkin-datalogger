@@ -545,4 +545,40 @@ Will get resumed automatically. No need to worry about. Might be suppressed in t
 
 
 
+Spurious "syntax error" / Filesystem corruption
+===============================================
 
+Background
+----------
+https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
+
+Solution
+--------
+Use LittleFS, see https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
+
+
+Network stack overload
+======================
+
+STGTFO
+------
+::
+
+       35.9258 [terkin.telemetry         ] ERROR  : MQTT publishing failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 477, in publish
+      File "dist-packages/mqtt.py", line 110, in publish
+    OSError: [Errno 118] EHOSTUNREACH
+
+       35.9677 [terkin.telemetry         ] ERROR  : Telemetry to mqtt://weather.hiveeyes.org/workbench/testdrive/area-38/fipy-workbench-01 failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 96, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 233, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 399, in send
+      File "/flash/lib/terkin/telemetry.py", line 399, in send
+    TelemetryTransportError: Protocol adapter not connected: TelemetryAdapterError: MQTT publishing failed: [Errno 118] EHOSTUNREACH
+
+Observation
+-----------
+We found this to happen if the sleep time between cycles is too short or even zero,
+so the program is just looping too fast and seems to overload the network or socket stack.

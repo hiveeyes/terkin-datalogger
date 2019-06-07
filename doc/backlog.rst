@@ -9,31 +9,22 @@ Datalogger
 
 Prio 1
 ======
-- [o] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
-- [o] Switch to LittleFS
 - [o] Log filesystem type
-- [o] Log wakeup type
-- [o] Add deep sleep
 - [o] Measure and transmit WiFi RSSI, and Board voltage
+- [o] Add duty cycle counter
 - [o] Gracefully set time using NTP
-- [o] Store-and-forward when no connectivity
-- [o] Add AP mode and webserver
 - [o] Improve logging: Report about available telemetry targets upfront
 - [o] Telemetry payload v2
-- [o] First MQTT downlink message
-- [o] Add Vinzent und Diren
-- [o] Report about to how many telemetry targets data will be sent
-- [o] Properly calculate sleep time from interval and duty cycle duration
-- [o] Add duty cycle counter
-- [o] Connect to Beep
-- [o] Add
-    - 140mm and
-    - https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
-
-v2:
     - meta: version, time, device=807d3ac342bc
     - system: rssi, cycles
     - observations: all the data
+- [o] Report about to how many telemetry targets data will be sent
+- [o] Properly calculate sleep time from interval and duty cycle duration
+- [o] Connect to Beep
+- [o] Follow up with
+    - 140mm and
+    - https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
+- [o] Documentation 140mm. Getting started, Pictures, Sphinx
 
 Prio 1.3
 ========
@@ -46,9 +37,12 @@ Prio 1.3
 - [o] Makefile: Check for "wget"
 - [o] Migrate settings.py to settings.json
 - [o] Add webserver to framework
+- [o] First MQTT downlink message
 
 Prio 1.5
 ========
+- [o] Store-and-forward when no connectivity
+- [o] Add AP mode and webserver
 - [o] Better BME/BMP libraries
 - [o] Bli, bla, blubb
 - [o] Propagate last error message from telemetry subsystem
@@ -97,6 +91,7 @@ Prio 3
 
 Prio 4
 ======
+- [o] Unlock frozen modules: Upload .mby code through mby-cross
 - [o] Upload watcher
 - [o] Add deepsleep
 - [o] Add DS18B20: https://github.com/pycom/pycom-libraries/tree/master/examples/DS18X20
@@ -131,30 +126,10 @@ Prio 4
     'antenna', 'ap_sta_list', 'auth', 'bandwidth', 'bssid', 'callback', 'channel', 'connect', 'country', 'ctrl_pkt_filter', 'deinit', 'disconnect', 'events', 'hostname', 'ifconfig', 'init', 'isconnected', 'joined_ap_info', 'mac', 'max_tx_power', 'mode', 'promiscuous', 'scan', 'send_raw', 'ssid', 'wifi_packet', 'wifi_protocol']
 
 
-User interface
-==============
-- https://blog.koley.in/2019/339-bytes-of-responsive-css
-  https://news.ycombinator.com/item?id=19622786
-
 
 Done
 ====
 - [x] Solid configuration system
-- [x] Use pure-Python "urllib" without dependency to "libpcre"
-- [x] Handle "Connection to MQTT broker failed or lost"
-- [x] Multi-network WiFi
-- [x] Fix console crasher when running on Windows
-- [x] Real sensors already
-- [x] Add release tooling
-- [x] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
-- [x] Add appropriate logging
-- [x] Improve logging by adding stacktrace printer
-- [x] Add some examples
-- [x] Report about which telemetry targets did actually work when submitting data (True / False)
-
-
-Closed
-======
 - [/] Unlock NVRAM storage::
 
     > Set the value of the specified key in the NVRAM memory area of the external flash.
@@ -164,21 +139,28 @@ Closed
   - https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/pycom.md#pycomnvs_setkey-value
   - https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/storage/nvs_flash.html
 - [/] class NvsStore: https://forum.pycom.io/topic/2775/keeping-state-when-awaking-from-sleep
+- [x] Use pure-Python "urllib" without dependency to "libpcre"
+- [x] Handle "Connection to MQTT broker failed or lost"
+- [x] Multi-network WiFi
+- [x] Fix console crasher when running on Windows
+- [x] Release version 0.1.0
+- [x] Real sensors already
+- [x] Add release tooling
+- [x] Add snapshot of ``dist-packages`` folder as asset to each release on GitHub
+- [x] Add appropriate logging
+- [x] Improve logging by adding stacktrace printer
+- [x] Add some examples
+- [x] Report about which telemetry targets did actually work when submitting data (True / False)
+- [x] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
+- [x] Switch to LittleFS
+- [x] Add deep sleep
+- [x] Log wakeup type
+
 
 
 *******************
 Sandbox environment
 *******************
-
-General
-=======
-- [x] Release version 0.1.0
-- [o] Upload .mby code through mby-cross
-- [o] Docs, docs, docs
-- [o] Report about how much this framework weighs in - in terms of
-      memory (RAM and flash) and maybe other resources
-      {"memfree": 2522016}
-
 
 Upload and reset
 ================
@@ -193,6 +175,11 @@ Upload and reset
 *************
 Documentation
 *************
+- [o] Docs, docs, docs
+- [o] Report about how much this framework weighs in - in terms of
+      memory (RAM and flash) and maybe other resources
+      {"memfree": 2522016}
+
 - [o] Add guidelines for Python2, Python3, MicroPython and other
   programs required to setup the programming environment
 - [o] Add "About", "Authors"
@@ -212,3 +199,10 @@ Documentation
 
     workbench/testdrive/area-38/fipy-amo-02-mqtt-json/data.json {"temperature_0": 42.42, "temperature_1": -84.84}
     workbench/testdrive/area-38/fipy-amo-02-mqtt-json/data.lpp AGcBqAFn/LA=
+
+
+**************
+User interface
+**************
+- https://blog.koley.in/2019/339-bytes-of-responsive-css
+  https://news.ycombinator.com/item?id=19622786

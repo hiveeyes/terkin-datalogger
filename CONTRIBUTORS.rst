@@ -12,6 +12,8 @@ program in one way or another, in the order of appearance.
 * Richard Pobering <richard@hiveeyes.org>
 * Andreas Motl <andreas@hiveeyes.org>
 * Diedrich Lamken <didi@hiverize.org>
+* Vincent Kuhlen <vkuhlen@uni-bremen.de>
+* Diren Senger <diren@uni-bremen.de>
 
 Thanks a bunch!
 
