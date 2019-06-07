@@ -203,6 +203,6 @@ class TerkinDevice:
         add()
         add()
 
-        # TODO: Program authors, contributors and credits.
+        # Todo: Add program authors, contributors and credits.
 
-        log.info(buffer.getvalue())
+        log.info('\n' + buffer.getvalue())

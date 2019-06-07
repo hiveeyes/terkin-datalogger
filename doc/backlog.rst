@@ -9,7 +9,6 @@ Datalogger
 
 Prio 1
 ======
-- [x] Report about which telemetry targets did actually work when submitting data (True / False)
 - [o] Add Deep Sleep
 - [o] Measure and transmit voltage
 - [o] Gracefully set time using NTP
@@ -17,6 +16,11 @@ Prio 1
 - [o] Add AP mode and webserver
 - [o] Improve logging: Report about available telemetry targets upfront
 - [o] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
+- [o] Telemetry payload v2
+- [o] First MQTT downlink message
+- [o] Report about to how many telemetry targets data will be sent
+- [o] Properly calculate sleep time from interval and duty cycle duration
+- [o] Add duty cycle counter
 
 Prio 1.3
 ========
@@ -133,6 +137,7 @@ Done
 - [x] Add appropriate logging
 - [x] Improve logging by adding stacktrace printer
 - [x] Add some examples
+- [x] Report about which telemetry targets did actually work when submitting data (True / False)
 
 
 Closed
