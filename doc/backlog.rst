@@ -15,6 +15,8 @@ Prio 1
 - [o] Gracefully set time using NTP
 - [o] Store-and-forward when no connectivity
 - [o] Add AP mode and webserver
+- [o] Improve logging: Report about available telemetry targets upfront
+- [o] Improve logging: Suppress logging of sensible information like password, application_key, application_eui, mac or ifconfig
 
 Prio 1.3
 ========
