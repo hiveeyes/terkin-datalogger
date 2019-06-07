@@ -8,6 +8,7 @@ Development
 - Upgrade to ``Pycom MicroPython 1.20.0.rc11``
 - Stop leaking sensible information into settings output
 - Improve documentation
+- Switch to LittleFS
 
 
 2019-06-07 0.3.0

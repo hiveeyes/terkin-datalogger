@@ -14,7 +14,7 @@ Boot process
 ************
 ::
 
-    Initializing filesystem as FatFS!
+    Initializing filesystem as LittleFS!
     [boot.py] INFO: Python module search path is: ['', '/flash', '/flash/lib', 'dist-packages']
 
         4.5007 [terkin.configuration     ] INFO   : Section "main": {"interval": 1.0}
