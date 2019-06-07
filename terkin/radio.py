@@ -15,6 +15,7 @@ from terkin import logging
 # if True or machine.reset_cause() != machine.SOFT_RESET:
 import pycom
 
+from terkin.util import format_exception
 
 log = logging.getLogger(__name__)
 
@@ -153,20 +154,19 @@ class NetworkManager:
 
         # FIXME: If no known network is found, the program will lockup here.
         # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
-        retries = 30
-        while not self.station.isconnected() and retries > 0:
+        nic_retries = 15
+        while not self.station.isconnected() and nic_retries > 0:
             log.info('WiFi STA: Waiting for network "{}".'.format(network_name))
             time.sleep(1)
-            retries -= 1
+            nic_retries -= 1
             # Save power while waiting
             machine.idle()
 
         if not self.station.isconnected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
 
-        self.print_short_status()
-
         # Inform about networking status.
+        self.print_short_status()
         self.print_address_status()
 
         return True
@@ -195,11 +195,11 @@ class NetworkManager:
                 socket.getaddrinfo("localhost", 333)
                 break
             except OSError as ex:
-                log.warning('Networking not available. %s', ex)
-            log.info('Waiting for networking')
+                log.warning('Network interface not available: %s', format_exception(ex))
+            log.info('Waiting for network interface')
             time.sleep(0.25)
             attempts += 1
-        log.info('Networking established')
+        log.info('Network interface ready')
 
     def start_lora(self):
         self.start_lora_join()

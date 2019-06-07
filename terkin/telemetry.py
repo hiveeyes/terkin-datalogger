@@ -2,28 +2,11 @@
 # (c) 2017-2019 Andreas Motl <andreas@terkin.org>
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
-"""
-=============================
-Setup on MicroPython for Unix
-=============================
-::
-
-    export MICROPYPATH=`pwd`/dist-packages
-
-    # "json" and "copy" modules
-    micropython -m upip install micropython-json micropython-copy
-
-    # HTTP client modules
-    micropython -m upip install micropython-http.client micropython-io micropython-time
-
-    # MQTT client modules
-    micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
-
-"""
 import json
 from copy import copy
 from terkin import logging
 from terkin.device import get_device_id
+from terkin.util import to_base64, format_exception
 from urllib.parse import urlsplit, urlencode
 
 log = logging.getLogger(__name__)
@@ -463,14 +446,11 @@ class MQTTAdapter:
 
         except Exception as ex:
             self.connected = False
-            message = 'Connecting to MQTT broker at {} failed: {}'.format(self.server, self.decipherex(ex))
+            message = 'Connecting to MQTT broker at {} failed: {}'.format(self.server, format_exception(ex))
             log.exception(message)
             raise TelemetryAdapterError(message)
 
         return self.connected
-
-    def decipherex(self, ex):
-        return '{}: {}'.format(ex.__class__.__name__, ex)
 
     def publish(self, topic, payload, retain=False, qos=1):
 
@@ -528,13 +508,6 @@ class TelemetryTransportError(Exception):
 
 class TelemetryAdapterError(Exception):
     pass
-
-
-def to_base64(bytes):
-    """Encode bytes to base64 encoded string"""
-    # TODO: Move to ``util.py``.
-    import base64
-    return base64.encodebytes(bytes).decode().rstrip()
 
 
 def to_cayenne_lpp(data):

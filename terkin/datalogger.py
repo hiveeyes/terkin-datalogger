@@ -2,7 +2,7 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import utime
+import time
 import machine
 
 from terkin import __version__, logging
@@ -118,10 +118,12 @@ class TerkinDatalogger:
     def read_sensors(self):
         """Read sensors"""
         data = {}
-        for sensor in self.sensor_manager.sensors:
+        sensors = self.sensor_manager.sensors
+        log.info('Reading %s sensor ports', len(sensors))
+        for sensor in sensors:
 
             sensor_name = sensor.__class__.__name__
-            #log.debug('Reading sensor "%s"', sensor_name)
+            log.debug('Reading sensor "%s"', sensor_name)
 
             try:
                 reading = sensor.read()
@@ -131,6 +133,9 @@ class TerkinDatalogger:
 
             except:
                 log.exception('Reading sensor "%s" failed', sensor_name)
+
+        # Debugging: Print sensor data before running telemetry.
+        log.info('Sensor data:  %s', data)
 
         return data
 
@@ -153,20 +158,18 @@ class TerkinDatalogger:
         return success
 
     def loop(self):
+
         #log.info('Terkin loop')
 
         # Read sensors.
-        data = self.read_sensors()
-
-        # Debugging: Print sensor data before running telemetry.
-        log.info('Sensor data:  %s', data)
+        readings = self.read_sensors()
 
         # Transmit data.
-        self.transmit_readings(data)
+        self.transmit_readings(readings)
 
         # Run the garbage collector.
         self.device.run_gc()
 
         # Sleep until the next measurement cycle.
-        # TODO: Account for deep sleep here.
-        utime.sleep(self.settings.get('main.interval'))
+        # Todo: Account for deep sleep here.
+        time.sleep(self.settings.get('main.interval'))

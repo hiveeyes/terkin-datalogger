@@ -62,6 +62,7 @@ Development
 - Cleanup
 - Improve network/telemetry error handling, robustness
   and convenience for WiFi and MQTT connectivity
+- Improve logging
 
 
 2019-03-23 0.2.1
