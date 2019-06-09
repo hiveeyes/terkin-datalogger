@@ -269,6 +269,28 @@ class SystemBatteryLevel:
         log.info('Turning off ADC')
         self.adc.deinit()
 
+
+class SystemUptime:
+    """
+    Return system time and uptime in seconds.
+
+    https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
+    """
+
+    start_time = time.time()
+
+    def read(self):
+        now = time.time()
+        uptime = time.ticks_ms() / 1000.0
+        runtime = now - self.start_time
+        reading = {
+            'system.time': now,
+            'system.uptime': uptime,
+            'system.runtime': runtime,
+        }
+        return reading
+
+
 class SystemHallSensor:
     """
     - https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2

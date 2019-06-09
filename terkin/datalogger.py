@@ -10,7 +10,7 @@ from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.radio import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
-from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel
+from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
 
 log = logging.getLogger(__name__)
 
@@ -141,6 +141,7 @@ class TerkinDatalogger:
             SystemMemoryFree,
             SystemTemperature,
             SystemBatteryLevel,
+            SystemUptime,
         ]
 
         for sensor_factory in system_sensors:
