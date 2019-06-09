@@ -205,6 +205,9 @@ class NetworkManager:
         ifconfig = self.station.ifconfig()
         log.info('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
 
+    def print_station_statistics(self):
+        stats = SystemWiFiMetrics(self.station).read()
+        print('stats:', stats)
 
     def wait_for_nic(self, retries=5):
         attempts = 0
@@ -317,3 +320,34 @@ class NetworkManager:
         time.sleep(6)
 
         return rx, port
+
+
+class SystemWiFiMetrics:
+
+    def __init__(self, station):
+        self.station = station
+
+    def read(self):
+
+        if self.station is None:
+            return
+
+        stats = {
+            'system.wifi.bandwidth': self.station.bandwidth(),
+            'system.wifi.channel': self.station.channel(),
+            #'system.wifi.protocol': self.station.wifi_protocol(),
+            'system.wifi.max_tx_power': self.station.max_tx_power(),
+            #'system.wifi.joined_ap_info': self.station.joined_ap_info(),
+        }
+
+        try:
+            stats['system.wifi.country'] = self.station.country().country
+        except:
+            pass
+
+        try:
+            stats['system.wifi.rssi'] = self.station.joined_ap_info().rssi
+        except:
+            pass
+
+        return stats

@@ -16,6 +16,7 @@ Development
   Thanks, @ClemensGruber.
 - Add basic device-interval sensors ``SystemTemperature`` and ``SystemBatteryLevel``
 - Explicitly shut down all peripherals having implicitly been turned on
+- Add ``SystemWiFiMetrics`` sensor
 
 2019-06-07 0.3.0
 ================

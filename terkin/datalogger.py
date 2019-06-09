@@ -8,6 +8,7 @@ import machine
 from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
+from terkin.radio import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel
 
@@ -145,6 +146,9 @@ class TerkinDatalogger:
         for sensor_factory in system_sensors:
             sensor = sensor_factory()
             self.sensor_manager.register_sensor(sensor)
+
+        # Add WiFi metadata.
+        self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.station))
 
     def read_sensors(self):
         """Read sensors"""
