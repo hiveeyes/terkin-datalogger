@@ -9,6 +9,15 @@ Datalogger
 
 Prio 1
 ======
+- [o] Check appropriate interrupt handling of lowlevel sensor drivers
+- [o] Unlock NVRAM storage as ConfigurationSettings overlay
+- [o] AP mode
+- [o] Make retry intervals configurable
+- [o] Sensor enabled/disabled for configuration settings
+
+
+Prio 1.1
+========
 - [o] Is ``LTE.deinit()`` required?
     - https://community.hiveeyes.org/t/deep-sleep-with-fipy-esp32-on-micropython/1792/10
 - [o] Debug level!
@@ -39,6 +48,11 @@ Prio 1
   https://docs.pycom.io/firmwareapi/pycom/machine/#interrupt-functions
 - [o] Measure battery level
   https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
+- [o] Improve accuracy for ``system.uptime``
+- [o] How would we work through a predefined schedule when starting with WiFi off?
+- [o] MQTT Hello Beacon
+- [o] Debug/trace mode should send all kinds of information through
+      the Hello Beacon or alongside each reading.
 
 Prio 1.3
 ========
@@ -62,6 +76,13 @@ Prio 1.5
 - [o] Bli, bla, blubb
 - [o] Propagate last error message from telemetry subsystem
       into intermediary status outcome and display to user.
+- [o] Save from ``radio.py``::
+
+    # Todo: What about when coming back from sleep?
+    # Needed to avoid losing connection after a soft reboot
+    # if True or machine.reset_cause() != machine.SOFT_RESET:
+    import pycom
+
 
 Prio 2
 ======
@@ -219,6 +240,8 @@ Documentation
     - https://www.instructables.com/id/ESP32-Deep-Sleep-Tutorial/
     - https://randomnerdtutorials.com/esp32-deep-sleep-arduino-ide-wake-up-sources/
     - https://forum.micropython.org/viewtopic.php?t=1198
+
+- https://github.com/microhomie
 
 ::
 

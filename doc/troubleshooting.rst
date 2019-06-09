@@ -582,3 +582,26 @@ Observation
 -----------
 We found this to happen if the sleep time between cycles is too short or even zero,
 so the program is just looping too fast and seems to overload the network or socket stack.
+
+
+Access ADC after shutting down
+==============================
+After shutting down the ADC used for measuring the battery level,
+the system might attempt to read it again. This might happen if
+all peripherals has been shut down in order to prepare for
+deepsleep but the device won't actually go to deepsleep then,
+e.g. caused by downstream errors like ``ERROR: Failed to special-sleep``.
+
+::
+
+     1752.4836 [terkin.datalogger        ] ERROR  : Reading sensor "SystemBatteryLevel" failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/datalogger.py", line 167, in read_sensors
+      File "/flash/lib/terkin/sensor.py", line 260, in read
+    OSError: the requested operation is not possible
+
+Solution
+--------
+Just initialize it again, like::
+
+    adc.init()
