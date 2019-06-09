@@ -7,20 +7,32 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 #
-import pycom
+"""
+-----
+Setup
+-----
+
+Just run::
+
+    make setup
+    make install-requirements install-framework
+
+to bring everything into shape.
+
+Then, invoke::
+
+    make sketch-and-run
+
+to upload the program and reset the ESP32.
+"""
 
 
 def extend_syspath():
     """
     Extend Python module search path.
     Dependency modules are shipped through the "dist-packages" folder.
-    Please populate this folder appropriately before expecting anything to work.
-
-    Just run:
-
-        make install-requirements
-
-    to bring everything into shape.
+    Please populate this folder appropriately as shown above before
+    expecting anything to work.
     """
     import sys
     sys.path.append('dist-packages')
@@ -29,10 +41,18 @@ def extend_syspath():
 
 
 if __name__ == '__main__':
-    pycom.heartbeat(True)
 
-    # Done by ``self.device.enable_serial()`` already.
+    # Enable heartbeat LED.
+    try:
+        import pycom
+        pycom.heartbeat(True)
+    except:
+        pass
+
+    # Enable serial interface.
+    # Note: Might be done by ``self.device.enable_serial()`` later.
     # import os; from machine import UART
     # uart = UART(0, baudrate=115200); os.dupterm(uart)
 
+    # Extend module search path.
     extend_syspath()

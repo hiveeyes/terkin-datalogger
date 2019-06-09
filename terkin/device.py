@@ -4,12 +4,14 @@
 # License: GNU General Public License, Version 3
 import os
 import sys
+import time
 
 import machine
 from machine import Timer
 from ubinascii import hexlify
 
 from terkin import logging
+from terkin.pycom import MachineResetCause
 from terkin.radio import WiFiException
 
 log = logging.getLogger(__name__)
@@ -206,3 +208,65 @@ class TerkinDevice:
         # Todo: Add program authors, contributors and credits.
 
         log.info('\n' + buffer.getvalue())
+    def hibernate(self, interval, deep=False):
+
+        if deep:
+
+            # Prepare and invoke deep sleep.
+            # https://docs.micropython.org/en/latest/library/machine.html#machine.deepsleep
+
+            log.info('Preparing deep sleep')
+
+            # Set wake up mode.
+            self.set_wakeup_mode()
+
+            # Invoke deep sleep.
+            log.info('Entering deep sleep for {} seconds'.format(interval))
+            machine.deepsleep(int(interval * 1000))
+
+        else:
+
+            log.info('Entering light sleep for {} seconds'.format(interval))
+
+            # Invoke light sleep.
+            # https://docs.micropython.org/en/latest/library/machine.html#machine.sleep
+            # https://docs.micropython.org/en/latest/library/machine.html#machine.lightsleep
+            #
+            # As "machine.sleep" seems to be a noop on Pycom MicroPython,
+            # we will just use the regular "time.sleep" here.
+            # machine.sleep(int(interval * 1000))
+            time.sleep(interval)
+
+    def resume(self):
+        log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
+
+    def set_wakeup_mode(self):
+
+        # Set wake up parameters.
+        """
+        The arguments are:
+
+        - pins: a list or tuple containing the GPIO to setup for deepsleep wakeup.
+
+        - mode: selects the way the configured GPIOs can wake up the module.
+          The possible values are: machine.WAKEUP_ALL_LOW and machine.WAKEUP_ANY_HIGH.
+
+        - enable_pull: if set to True keeps the pull up or pull down resistors enabled
+          during deep sleep. If this variable is set to True, then ULP or capacitive touch
+          wakeup cannot be used in combination with GPIO wakeup.
+
+        -- https://community.hiveeyes.org/t/deep-sleep-with-fipy-esp32-on-micropython/1792/12
+
+        This will yield a wake up reason like::
+
+            'wakeup_reason': {'code': 1, 'message': 'PIN'}
+
+        """
+
+        # Todo: ``enable_pull`` or not?
+
+        # From documentation.
+        # machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=True)
+
+        # Let's try.
+        machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=False)

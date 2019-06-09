@@ -8,13 +8,6 @@ import binascii
 import machine
 from network import WLAN
 from terkin import logging
-
-
-# TODO: What about when coming back from sleep?
-# Needed to avoid losing connection after a soft reboot
-# if True or machine.reset_cause() != machine.SOFT_RESET:
-import pycom
-
 from terkin.util import format_exception
 
 log = logging.getLogger(__name__)
@@ -180,13 +173,14 @@ class NetworkManager:
         except:
             pass
 
+    def print_short_status(self):
+        log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
+
     def print_address_status(self):
         mac_address = self.station.mac()
         ifconfig = self.station.ifconfig()
         log.info('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
 
-    def print_short_status(self):
-        log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def wait_for_nic(self, retries=5):
         attempts = 0

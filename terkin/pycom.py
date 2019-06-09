@@ -11,6 +11,11 @@ class MachineResetCause:
     """
     Machine reset cause and wakeup reason definitions.
 
+    Will produce nice log messages like::
+
+        3.3362 [terkin.device] INFO   : Reset cause and wakeup reason:
+        {'reset_cause': {'code': 3, 'message': 'DEEPSLEEP'}, 'wakeup_reason': {'code': 1, 'message': 'PIN'}}
+
     Works on Pycom MicroPython 1.20.0.rc11, YMMV.
     Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
     """

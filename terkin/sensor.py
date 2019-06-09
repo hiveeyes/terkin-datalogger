@@ -5,6 +5,7 @@
 import time
 from binascii import hexlify
 from machine import Pin
+from machine import ADC
 from machine import I2C
 from terkin import logging
 
@@ -33,6 +34,30 @@ class SensorManager:
 
     def get_sensor_by_name(self, name):
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
+
+    def register_busses(self, bus_settings):
+        """
+        Register configured I2C, OneWire and SPI busses.
+        """
+        log.info("Starting all busses %s", bus_settings)
+        for bus in bus_settings:
+            if not bus.get("enabled", False):
+                continue
+            if bus['family'] == BusType.OneWire:
+                owb = OneWireBus(bus["number"])
+                owb.register_pin("data", bus['pin_data'])
+                owb.start()
+                self.register_bus(owb)
+
+            elif bus['family'] == BusType.I2C:
+                i2c = I2CBus(bus["number"])
+                i2c.register_pin("sda", bus['pin_sda'])
+                i2c.register_pin("scl", bus['pin_scl'])
+                i2c.start()
+                self.register_bus(i2c)
+
+            else:
+                log.warning("Invalid bus configuration: %s", bus)
 
 
 class AbstractSensor:
@@ -162,7 +187,8 @@ class SystemMemoryFree:
 
     def read(self):
         import gc
-        return {'system.memfree': gc.mem_free()}
+        value = gc.mem_free()
+        return {'system.memfree': value}
 
 
 class SystemTemperature:
@@ -179,17 +205,18 @@ class SystemTemperature:
 
     def read(self):
         import machine
-        temperature = machine.temperature()
+
+        rawvalue = machine.temperature()
 
         # Fahrenheit
         # 'system.temperature': 57.77778
-        #temperature = (temperature - 32) / 1.8
+        #temperature = (rawvalue - 32) / 1.8
 
         # Magic
         # 'system.temperature': 41.30435
-        temperature = temperature * (44/23) + (-5034/23)
+        value = rawvalue * (44/23) + (-5034/23)
 
-        reading = {'system.temperature': temperature}
+        reading = {'system.temperature': value}
         return reading
 
 
@@ -202,10 +229,11 @@ class SystemBatteryLevel:
     - https://docs.pycom.io/tutorials/all/adc
     - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
     """
+    def __init__(self):
+        self.adc = ADC()
+
     def read(self):
-        from machine import ADC
-        adc = ADC()
-        adc_channel = adc.channel(pin='P16', attn=ADC.ATTN_11DB)
+        adc_channel = self.adc.channel(pin='P16', attn=ADC.ATTN_11DB)
 
         # Reads the channels value and converts it into a voltage (in millivolts).
         value = adc_channel.voltage() / 1000.0

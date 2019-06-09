@@ -8,10 +8,8 @@ import machine
 from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
-from terkin.pycom import MachineResetCause
-from terkin.sensor import SensorManager, AbstractSensor, BusType
+from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel
-from terkin.sensor import OneWireBus, I2CBus
 
 log = logging.getLogger(__name__)
 
@@ -27,8 +25,9 @@ class TerkinDatalogger:
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
         self.settings.dump()
-        self.device = None
+
         self.sensor_manager = SensorManager()
+        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
     @property
     def appname(self):
@@ -36,13 +35,10 @@ class TerkinDatalogger:
 
     def start(self):
 
-        # Report about wakeup reason and run wakeup tasks.
-        self.resume()
-
         log.info('Starting %s', self.appname)
 
-        # Main application object.
-        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
+        # Report about wakeup reason and run wakeup tasks.
+        self.device.resume()
 
         # Disable this if you don't want serial access.
         #self.device.enable_serial()
@@ -57,52 +53,11 @@ class TerkinDatalogger:
         # Signal readyness by publishing information about the device (Microhomie).
         # self.device.publish_properties()
 
-        self.register_busses()
+        bus_settings = self.settings.get('sensors.busses')
+        self.sensor_manager.register_busses(bus_settings)
         self.register_sensors()
 
         self.start_mainloop()
-
-    def register_busses(self):
-        bus_settings = self.settings.get('sensors.busses')
-        log.info("Starting all busses %s", bus_settings)
-        for bus in bus_settings:
-            if not bus.get("enabled", False):
-                continue
-            if bus['family'] == BusType.OneWire:
-                owb = OneWireBus(bus["number"])
-                owb.register_pin("data", bus['pin_data'])
-                owb.start()
-                self.sensor_manager.register_bus(owb)
-
-            elif bus['family'] == BusType.I2C:
-                i2c = I2CBus(bus["number"])
-                i2c.register_pin("sda", bus['pin_sda'])
-                i2c.register_pin("scl", bus['pin_scl'])
-                i2c.start()
-                self.sensor_manager.register_bus(i2c)
-
-            else:
-                log.warning("Invalid bus configuration: %s", bus)
-
-    def register_sensors(self):
-        """
-        Add baseline sensors.
-
-        TODO: Add more sensors.
-        - Metadata from NetworkManager.station
-        - Device stats, see Microhomie
-        """
-
-        log.info('Registering Terkin sensors')
-
-        memfree = SystemMemoryFree()
-        self.sensor_manager.register_sensor(memfree)
-
-        device_temperature = SystemTemperature()
-        self.sensor_manager.register_sensor(device_temperature)
-
-        device_battery = SystemBatteryLevel()
-        self.sensor_manager.register_sensor(device_battery)
 
     def start_mainloop(self):
         # TODO: Refactor by using timers.
@@ -125,6 +80,63 @@ class TerkinDatalogger:
 
             # Yup.
             machine.idle()
+
+    def loop(self):
+        """
+        Main duty cycle loop.
+        """
+
+        #log.info('Terkin loop')
+
+        # Read sensors.
+        readings = self.read_sensors()
+
+        # Transmit data.
+        self.transmit_readings(readings)
+
+        # Run the garbage collector.
+        self.device.run_gc()
+
+        # Sleep how ever.
+        self.sleep()
+
+    def sleep(self):
+        """
+        Sleep until the next measurement cycle.
+        """
+        interval = self.settings.get('main.interval')
+        #print(dir(machine))
+
+        # Use deep sleep if requested.
+        try:
+            deep = self.settings.get('main.deepsleep', False)
+            self.device.hibernate(interval, deep=deep)
+
+        # When hibernation fails, fall back to regular "time.sleep".
+        except:
+            log.exception('Failed to special-sleep')
+            log.info('Waiting for {} seconds'.format(interval))
+            time.sleep(interval)
+
+    def register_sensors(self):
+        """
+        Add system sensors.
+
+        TODO: Add more sensors.
+        - Metadata from NetworkManager.station
+        """
+
+        log.info('Registering Terkin sensors')
+
+        system_sensors = [
+            SystemMemoryFree,
+            SystemTemperature,
+            SystemBatteryLevel,
+        ]
+
+        for sensor_factory in system_sensors:
+            sensor = sensor_factory()
+            self.sensor_manager.register_sensor(sensor)
 
     def read_sensors(self):
         """Read sensors"""
@@ -171,51 +183,3 @@ class TerkinDatalogger:
                         'Status: {}'.format(count_failed, count_total, telemetry_status))
 
         return success
-
-    def loop(self):
-        """
-        Main duty cycle loop.
-        """
-
-        #log.info('Terkin loop')
-
-        # Read sensors.
-        readings = self.read_sensors()
-
-        # Transmit data.
-        self.transmit_readings(readings)
-
-        # Run the garbage collector.
-        self.device.run_gc()
-
-        # Sleep how ever.
-        self.hibernate()
-
-    def hibernate(self):
-        """
-        Shut down until the next measurement cycle.
-        """
-        interval = self.settings.get('main.interval')
-
-        try:
-            if self.settings.get('main.deepsleep', False):
-                # https://docs.micropython.org/en/latest/library/machine.html#machine.deepsleep
-                log.info('Entering deep sleep for {} seconds'.format(interval))
-                machine.deepsleep(int(interval * 1000))
-            else:
-                # https://docs.micropython.org/en/latest/library/machine.html#machine.sleep
-                # https://docs.micropython.org/en/latest/library/machine.html#machine.lightsleep
-                log.info('Entering light sleep for {} seconds'.format(interval))
-
-                # "machine.sleep" seems to be a noop on Pycom MicroPython,
-                # so just use regular "time.sleep".
-                #machine.sleep(int(interval * 1000))
-                time.sleep(interval)
-
-        except:
-            # When everything above fails, fall back to "time.sleep".
-            log.info('Waiting for {} seconds'.format(interval))
-            time.sleep(interval)
-
-    def resume(self):
-        log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
