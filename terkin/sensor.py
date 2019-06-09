@@ -59,6 +59,15 @@ class SensorManager:
             else:
                 log.warning("Invalid bus configuration: %s", bus)
 
+    def power_off(self):
+        for sensor in self.sensors:
+            if hasattr(sensor, 'power_off'):
+                sensor.power_off()
+
+        for busname, bus in self.busses.items():
+            if hasattr(bus, 'power_off'):
+                bus.power_off()
+
 
 class AbstractSensor:
     """
@@ -95,10 +104,10 @@ class AbstractSensor:
     def acquire_bus(self, bus):
         self.bus = bus
 
-    def power_off(self):
+    def power_on(self):
         pass
 
-    def power_on(self):
+    def power_off(self):
         pass
 
     def read(self):
@@ -135,6 +144,12 @@ class AbstractBus:
 
     def register_pin(self, name, pin):
         self.pins[name] = pin
+
+    def power_on(self):
+        pass
+
+    def power_off(self):
+        pass
 
 
 class OneWireBus(AbstractBus):
@@ -178,6 +193,15 @@ class I2CBus(AbstractBus):
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+
+    def power_off(self):
+        """
+        Turn off the I2C peripheral.
+
+        https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
+        """
+        log.info('Turning off I2C bus {}'.format(self.name))
+        self.adapter.deinit()
 
 
 class SystemMemoryFree:
@@ -241,6 +265,9 @@ class SystemBatteryLevel:
         reading = {'system.voltage': value}
         return reading
 
+    def power_off(self):
+        log.info('Turning off ADC')
+        self.adc.deinit()
 
 class SystemHallSensor:
     """

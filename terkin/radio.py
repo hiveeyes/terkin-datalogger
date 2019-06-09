@@ -30,6 +30,30 @@ class NetworkManager:
         self.otaa_settings = self.settings.get('networking.lora.otaa')
         #self.generated_device_eui = binascii.hexlify(LoRa().mac())
 
+    def power_off(self):
+        """
+        Power off all radio peripherals.
+
+        - https://forum.pycom.io/topic/563/disabling-wifi-on-lopy
+        - https://github.com/Hiverize/FiPy/commit/b6b15677
+        """
+
+        # WiFi
+        if self.station:
+            try:
+                log.info('Turning off WiFi')
+                self.station.deinit()
+            except:
+                log.exception('Turning off WiFi failed')
+
+        # We don't use LTE yet.
+        try:
+            log.info('Turning off LTE modem on boot')
+            import pycom
+            pycom.lte_modem_en_on_boot(False)
+        except:
+            log.exception('Shutting down LTE modem failed')
+
     def start_wifi(self):
         """
         https://docs.pycom.io/tutorials/all/wlan.html

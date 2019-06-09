@@ -79,3 +79,11 @@ class HX711Sensor(AbstractSensor):
         #log.info('Acquire reading from HX711')
         value = self.loadcell.read_median()
         return {'weight': value}
+
+    def power_on(self):
+        log.info('Powering on HX711')
+        self.loadcell.power_up()
+
+    def power_off(self):
+        log.info('Turning off HX711')
+        self.loadcell.power_down()

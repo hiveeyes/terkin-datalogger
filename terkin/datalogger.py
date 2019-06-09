@@ -110,6 +110,14 @@ class TerkinDatalogger:
         # Use deep sleep if requested.
         try:
             deep = self.settings.get('main.deepsleep', False)
+            if deep:
+
+                # Shut down sensor peripherals.
+                self.sensor_manager.power_off()
+
+                # Shut down device peripherals.
+                self.device.power_off()
+
             self.device.hibernate(interval, deep=deep)
 
         # When hibernation fails, fall back to regular "time.sleep".

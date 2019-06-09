@@ -208,6 +208,10 @@ class TerkinDevice:
         # Todo: Add program authors, contributors and credits.
 
         log.info('\n' + buffer.getvalue())
+
+    def power_off(self):
+        self.networking.power_off()
+
     def hibernate(self, interval, deep=False):
 
         if deep:
