@@ -9,8 +9,14 @@ Datalogger
 
 Prio 1
 ======
+- [o] Is ``LTE.deinit()`` required?
+    - https://community.hiveeyes.org/t/deep-sleep-with-fipy-esp32-on-micropython/1792/10
+- [o] Debug level!
+- [o] Deactivate all peripherals
+- [o] Deactivate LDO
+    - https://community.hiveeyes.org/t/low-power-esp32-hardware-and-software/538/9
 - [o] Log filesystem type
-- [o] Measure and transmit WiFi RSSI, and Board voltage
+- [o] Measure and transmit WiFi RSSI, and voltage from ADC
 - [o] Add duty cycle counter
 - [o] Gracefully set time using NTP
 - [o] Improve logging: Report about available telemetry targets upfront
@@ -28,6 +34,11 @@ Prio 1
 - [o] Write about Terkin Telemetry.
 - [o] New target ``make format-flash``.
 - [o] Bundle and upload package to GitHub always when invoking ``make release``?
+- [o] Selectively enable/disable logging per module from configuration settings
+- [o] Disable interrupts when reading sensors
+  https://docs.pycom.io/firmwareapi/pycom/machine/#interrupt-functions
+- [o] Measure battery level
+  https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
 
 Prio 1.3
 ========
@@ -41,6 +52,7 @@ Prio 1.3
 - [o] Migrate settings.py to settings.json
 - [o] Add webserver to framework
 - [o] First MQTT downlink message
+- [o] https://community.grafana.com/t/mqtt-data-in-html-panel/14120
 
 Prio 1.5
 ========
@@ -90,13 +102,13 @@ Prio 3
 - [o] Check what can be done using ``esptool`` already.
   See also https://randomnerdtutorials.com/flashing-micropython-firmware-esptool-py-esp32-esp8266/
 - [o] Optionally use "mpy-cross" before uploading
+- [o] Wired Ethernet? https://github.com/micropython/micropython-esp32/pull/187
 
 
 Prio 4
 ======
 - [o] Unlock frozen modules: Upload .mby code through mby-cross
 - [o] Upload watcher
-- [o] Add deepsleep
 - [o] Add DS18B20: https://github.com/pycom/pycom-libraries/tree/master/examples/DS18X20
 - [o] WiFi soft reset re. ``if machine.reset_cause() != machine.SOFT_RESET:``
 - [o] Improve the AP mode::
@@ -179,6 +191,11 @@ Upload and reset
 Documentation
 *************
 - [o] Docs, docs, docs
+- [o] Add links to
+    - https://docs.pycom.io/datasheets/development/fipy.html
+    - https://docs.pycom.io/.gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf
+    - https://docs.pycom.io/.gitbook/assets/fipy-pinout.pdf
+    - https://pycom.io/wp-content/uploads/2018/08/fipySpecsheetAugust2017n2-1.pdf
 - [o] Report about how much this framework weighs in - in terms of
       memory (RAM and flash) and maybe other resources
       {"memfree": 2522016}

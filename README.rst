@@ -228,7 +228,8 @@ the Pycom MicroPython implementation.
 - `Pycom Vendor Modules`_
 - `Pycom Libraries and Examples`_
 
-
+- `Quick reference for the ESP32`_
+- `ESP32 Datasheet`_
 
 
 .. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
@@ -255,3 +256,6 @@ the Pycom MicroPython implementation.
 
 .. _LTE Cat M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
 .. _LTE Cat NB1: https://docs.pycom.io/tutorials/lte/nb-iot.html
+
+.. _Quick reference for the ESP32: https://docs.micropython.org/en/latest/esp32/quickref.html
+.. _ESP32 Datasheet: https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
