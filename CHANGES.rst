@@ -18,6 +18,7 @@ Development
 - Explicitly shut down all peripherals having implicitly been turned on
 - Add ``SystemWiFiMetrics`` sensor
 - Add ``SystemUptime`` sensor
+- Fix: Better explicitly initialize the ADC before reading it
 
 2019-06-07 0.3.0
 ================

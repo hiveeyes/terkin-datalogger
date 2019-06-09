@@ -257,6 +257,7 @@ class SystemBatteryLevel:
         self.adc = ADC()
 
     def read(self):
+        self.adc.init()
         adc_channel = self.adc.channel(pin='P16', attn=ADC.ATTN_11DB)
 
         # Reads the channels value and converts it into a voltage (in millivolts).
