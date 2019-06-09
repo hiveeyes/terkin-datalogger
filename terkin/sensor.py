@@ -155,8 +155,90 @@ class I2CBus(AbstractBus):
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
 
 
-class MemoryFree:
+class SystemMemoryFree:
+    """
+    Read free memory in bytes.
+    """
 
     def read(self):
         import gc
-        return {'memfree': gc.mem_free()}
+        return {'system.memfree': gc.mem_free()}
+
+
+class SystemTemperature:
+    """
+    Read the internal temperature of the MCU.
+
+    - https://docs.micropython.org/en/latest/esp32/quickref.html#general-board-control
+    - https://github.com/micropython/micropython-esp32/issues/33
+    - https://github.com/micropython/micropython/pull/3933
+    - https://github.com/micropython/micropython-esp32/pull/192
+    - https://github.com/espressif/esp-idf/issues/146
+    - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
+    """
+
+    def read(self):
+        import machine
+        temperature = machine.temperature()
+
+        # Fahrenheit
+        # 'system.temperature': 57.77778
+        #temperature = (temperature - 32) / 1.8
+
+        # Magic
+        # 'system.temperature': 41.30435
+        temperature = temperature * (44/23) + (-5034/23)
+
+        reading = {'system.temperature': temperature}
+        return reading
+
+
+class SystemBatteryLevel:
+    """
+    Read the battery level by reading the ADC on a pin connected
+    to a voltage divider, which is pin 16 on the expansion board.
+
+    - https://docs.pycom.io/firmwareapi/pycom/machine/adc
+    - https://docs.pycom.io/tutorials/all/adc
+    - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
+    """
+    def read(self):
+        from machine import ADC
+        adc = ADC()
+        adc_channel = adc.channel(pin='P16', attn=ADC.ATTN_11DB)
+
+        # Reads the channels value and converts it into a voltage (in millivolts).
+        value = adc_channel.voltage() / 1000.0
+
+        reading = {'system.voltage': value}
+        return reading
+
+
+class SystemHallSensor:
+    """
+    - https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
+    - https://github.com/micropython/micropython-esp32/pull/211
+    - https://www.esp32.com/viewtopic.php?t=481
+    """
+    pass
+
+
+class SystemMemoryPeeker:
+    """
+    ``machine.mem32[]``
+    - https://github.com/micropython/micropython-esp32/pull/192#issuecomment-334631994
+    """
+    pass
+
+
+class ADC2:
+    """
+    ::
+
+        adc = machine.ADC(machine.Pin(35))
+        adc.atten(machine.ADC.ATTN_11DB)
+
+    - https://github.com/micropython/micropython-esp32/issues/33
+    - https://www.esp32.com/viewtopic.php?t=955
+    """
+    pass

@@ -9,7 +9,8 @@ from terkin import __version__, logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.pycom import MachineResetCause
-from terkin.sensor import MemoryFree, SensorManager, AbstractSensor, BusType
+from terkin.sensor import SensorManager, AbstractSensor, BusType
+from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel
 from terkin.sensor import OneWireBus, I2CBus
 
 log = logging.getLogger(__name__)
@@ -94,8 +95,14 @@ class TerkinDatalogger:
 
         log.info('Registering Terkin sensors')
 
-        memfree = MemoryFree()
+        memfree = SystemMemoryFree()
         self.sensor_manager.register_sensor(memfree)
+
+        device_temperature = SystemTemperature()
+        self.sensor_manager.register_sensor(device_temperature)
+
+        device_battery = SystemBatteryLevel()
+        self.sensor_manager.register_sensor(device_battery)
 
     def start_mainloop(self):
         # TODO: Refactor by using timers.
