@@ -1,8 +1,8 @@
 ############
 Contributors
 ############
-This is a list of the people who directly contributed to this
-program in one way or another, in the order of appearance.
+This is a list of the people who contributed to this program in
+one way or another, in the order of contributions received.
 
 * Clemens Gruber <clemens@hiveeyes.org>
 * Ron Jacob <ron.jacob@easyhive.org>
@@ -14,6 +14,7 @@ program in one way or another, in the order of appearance.
 * Diedrich Lamken <didi@hiverize.org>
 * Vincent Kuhlen <vkuhlen@uni-bremen.de>
 * Diren Senger <diren@uni-bremen.de>
+* Dominik Kapusta <https://github.com/ayoy>
 
 Thanks a bunch!
 

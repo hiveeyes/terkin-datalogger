@@ -19,6 +19,8 @@ Development
 - Add ``SystemWiFiMetrics`` sensor
 - Add ``SystemUptime`` sensor
 - Fix: Better explicitly initialize the ADC before reading it
+- Improve ``SystemBatteryLevel`` sensor. Thanks, `Dominik <https://github.com/ayoy>`_!
+
 
 2019-06-07 0.3.0
 ================
