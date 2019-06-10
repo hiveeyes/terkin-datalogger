@@ -152,8 +152,11 @@ class TerkinDevice:
 
     def enable_serial(self):
         # Disable these two lines if you don't want serial access.
-        uart = machine.UART(0, 115200)
-        os.dupterm(uart)
+        # The Pycom forum tells us that this is already incorporated into
+        # more recent firmwares, so this is probably a thing of the past.
+        #uart = machine.UART(0, 115200)
+        #os.dupterm(uart)
+        pass
 
     def print_bootscreen(self):
         """

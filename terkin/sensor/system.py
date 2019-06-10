@@ -9,9 +9,8 @@ from terkin import logging
 
 log = logging.getLogger(__name__)
 
+# Todo: Make this configurable.
 log.setLevel(logging.DEBUG)
-
-print('ADC:', dir(ADC))
 
 
 class SystemMemoryFree:

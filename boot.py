@@ -49,10 +49,5 @@ if __name__ == '__main__':
     except:
         pass
 
-    # Enable serial interface.
-    # Note: Might be done by ``self.device.enable_serial()`` later.
-    # import os; from machine import UART
-    # uart = UART(0, baudrate=115200); os.dupterm(uart)
-
     # Extend module search path.
     extend_syspath()
