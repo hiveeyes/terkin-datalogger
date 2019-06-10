@@ -11,6 +11,8 @@ from urllib.parse import urlsplit, urlencode
 
 log = logging.getLogger(__name__)
 
+log.setLevel(logging.DEBUG)
+
 
 class TelemetryManager:
     """
@@ -266,15 +268,6 @@ class TelemetryTransportHTTP:
         self.content_type = None
         self.resolve_content_type()
 
-        # Use "http.client" for unencrypted HTTP connections
-        # micropython -m upip install micropython-http.client micropython-io micropython-time
-        from http.client import HTTPConnection
-        self.connection = HTTPConnection(self.netloc)
-
-        # TODO: Make HTTPS work
-        #from http.client import HTTPSConnection
-        ##self.connection = HTTPSConnection(self.netloc)
-
     def resolve_content_type(self):
 
         if self.format == TelemetryClient.FORMAT_URLENCODED:
@@ -287,18 +280,22 @@ class TelemetryTransportHTTP:
             self.content_type = 'text/csv'
 
         else:
-            raise ValueError('Unknown serialization format "{}"'.format(format))
+            raise ValueError('Unknown serialization format for TelemetryTransportHTTP: {}'.format(format))
 
     def send(self, request_data):
-        # Submit telemetry data using HTTP POST request
-        log.ingo('HTTP Path:   %s', self.path)
-        log.info('Payload:     %s', request_data['payload'])
-        self.connection.request("POST", self.path, body=request_data['payload'], headers={'Content-Type': self.content_type})
-        response = self.connection.getresponse()
-        if response.status == 200:
+        """
+        Submit telemetry data using HTTP POST request
+        """
+        import urequests
+        log.debug('HTTP Path:   %s', self.path)
+        log.debug('Payload:     %s', request_data['payload'])
+        log.debug('Sending HTTP request to %s', self.uri)
+        response = urequests.post(self.uri, data=request_data['payload'], headers={'Content-Type': self.content_type})
+        if response.status_code == 200:
             return True
         else:
-            raise Exception('HTTP request failed: {} {}'.format(response.status, response.reason))
+            message = 'HTTP request failed: {} {}\n{}'.format(response.status_code, response.reason, response.content)
+            raise TelemetryTransportError(message)
 
 
 class TelemetryTransportTTN:
