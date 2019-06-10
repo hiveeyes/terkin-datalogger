@@ -14,10 +14,16 @@ Prio 1
 - [o] AP mode
 - [o] Make retry intervals configurable
 - [o] Sensor enabled/disabled for configuration settings
-
+- [o] Named fields based on NVRAM overlay
+- [o] Aggregate errors and submit using MQTT
+- [o] Reactivate Watchdog Timer
 
 Prio 1.1
 ========
+- [o] Generic "median" function
+- [o] BT-OFF and BT-Proximity
+- [o] Set DNS servers: https://forum.pycom.io/topic/4361/new-stable-firmware-release-v1-18-2
+- [o] https://appelsiini.net/2017/wipy-esp32-firmware-cli/
 - [o] Is ``LTE.deinit()`` required?
     - https://community.hiveeyes.org/t/deep-sleep-with-fipy-esp32-on-micropython/1792/10
 - [o] Debug level!
@@ -28,6 +34,7 @@ Prio 1.1
 - [o] Measure and transmit WiFi RSSI, and voltage from ADC
 - [o] Add duty cycle counter
 - [o] Gracefully set time using NTP
+  https://docs.pycom.io/firmwareapi/micropython/utime.html#maintaining-actual-calendar-datetime
 - [o] Improve logging: Report about available telemetry targets upfront
 - [o] Telemetry payload v2
     - meta: version, time, device=807d3ac342bc
@@ -53,6 +60,15 @@ Prio 1.1
 - [o] MQTT Hello Beacon
 - [o] Debug/trace mode should send all kinds of information through
       the Hello Beacon or alongside each reading.
+- [o] Go to https://github.com/ayoy/upython-aq-monitor/blob/lora/main.py for more cherry picking.
+    - Asynchronous measurements
+    - Add PMS5003 sensor
+    - Add ``alive_timer`` based on ``Timer.Chrono()``
+    - Battery low warning & shutdown: if voltage < 4.0 / < 3.7 (normal: 4.3)
+    - MOSFET gate
+- [o] ESP32 Mock for testing
+- [o] Scan Bluetooth neighbourhood for proximity applications
+  https://docs.pycom.io/firmwareapi/pycom/network/bluetooth/
 
 Prio 1.3
 ========
@@ -241,8 +257,19 @@ Documentation
     - https://randomnerdtutorials.com/esp32-deep-sleep-arduino-ide-wake-up-sources/
     - https://forum.micropython.org/viewtopic.php?t=1198
 
-- https://github.com/microhomie
+- [o] https://atom.io/packages/pymakr
 
+
+Other projects
+==============
+- https://github.com/microhomie
+  https://microhomie.readthedocs.io/
+- https://kapusta.cc/2017/12/02/home-made-air-quality-monitoring-using-wipy/
+  https://kapusta.cc/2018/02/02/air-quality-monitor-revisited/
+  https://github.com/ayoy/upython-aq-monitor/tree/lora
+
+Misc
+====
 ::
 
     workbench/testdrive/area-38/fipy-amo-02-mqtt-json/data.json {"temperature_0": 42.42, "temperature_1": -84.84}

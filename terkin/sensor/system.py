@@ -63,6 +63,10 @@ class SystemBatteryLevel:
     ==============
     Written by Dominik Kapusta <https://github.com/ayoy>. Thanks!
 
+    The MIT License (MIT)
+
+    Copyright (c) 2018 Dominik Kapusta
+
     - https://kapusta.cc/2018/02/02/air-quality-monitor-revisited/
     - https://github.com/ayoy/upython-aq-monitor/blob/lora/lib/adc.py
 

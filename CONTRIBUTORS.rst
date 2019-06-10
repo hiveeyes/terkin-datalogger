@@ -1,20 +1,20 @@
 ############
 Contributors
 ############
-This is a list of the people who contributed to this program in
-one way or another, in the order of contributions received.
 
+Here is an alphabetically-ordered list of the people who
+contributed to this software in one way or another.
+
+* Andreas Motl <andreas@hiveeyes.org>
+* Carolin Johannsen <caro@hiverize.org>
 * Clemens Gruber <clemens@hiveeyes.org>
-* Ron Jacob <ron.jacob@easyhive.org>
+* Diedrich Lamken <didi@hiverize.org>
+* Diren Senger <diren@uni-bremen.de>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
 * Ralf Lindlein <https://github.com/walterheisenberg>
-* Carolin Johannsen <caro@hiverize.org>
 * Richard Pobering <richard@hiveeyes.org>
-* Andreas Motl <andreas@hiveeyes.org>
-* Diedrich Lamken <didi@hiverize.org>
+* Ron Jacob <ron.jacob@easyhive.org>
 * Vincent Kuhlen <vkuhlen@uni-bremen.de>
-* Diren Senger <diren@uni-bremen.de>
-* Dominik Kapusta <https://github.com/ayoy>
 
 Thanks a bunch!
 
@@ -33,6 +33,8 @@ people are doing on the foundation infrastructure the software is leveraging.
   Anthony Hinsinger <https://github.com/atoy40> for the HX711 driver.
 - Paweł Zadrożny <https://github.com/pawelzny> for the ``dotty_dict`` package.
 - Sebastian Meiling <https://github.com/smlng> for the ``PyCayenneLPP`` package.
+- Dominik Kapusta <https://github.com/ayoy> for many inspirations
+  from the `upython-aq-monitor`_.
 
 Thank you so much for providing such great infrastructure
 components and resources to the community! You know who you are.
@@ -41,6 +43,7 @@ components and resources to the community! You know who you are.
 .. _micropython-lib: - https://github.com/micropython/micropython-lib
 .. _pycom-micropython-sigfox: https://github.com/pycom/pycom-micropython-sigfox
 .. _pycom-libraries: https://github.com/pycom/pycom-libraries
+.. _upython-aq-monitor: https://github.com/ayoy/upython-aq-monitor
 
 
 **********
