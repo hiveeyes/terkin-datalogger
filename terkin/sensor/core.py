@@ -4,12 +4,13 @@
 # License: GNU General Public License, Version 3
 import time
 from binascii import hexlify
-from machine import Pin
-from machine import ADC
-from machine import I2C
+from machine import Pin, I2C
+
 from terkin import logging
 
 log = logging.getLogger(__name__)
+
+log.setLevel(logging.DEBUG)
 
 
 class SensorManager:
@@ -62,7 +63,10 @@ class SensorManager:
     def power_off(self):
         for sensor in self.sensors:
             if hasattr(sensor, 'power_off'):
-                sensor.power_off()
+                try:
+                    sensor.power_off()
+                except:
+                    log.exception('Turning off sensor failed')
 
         for busname, bus in self.busses.items():
             if hasattr(bus, 'power_off'):
@@ -202,121 +206,3 @@ class I2CBus(AbstractBus):
         """
         log.info('Turning off I2C bus {}'.format(self.name))
         self.adapter.deinit()
-
-
-class SystemMemoryFree:
-    """
-    Read free memory in bytes.
-    """
-
-    def read(self):
-        import gc
-        value = gc.mem_free()
-        return {'system.memfree': value}
-
-
-class SystemTemperature:
-    """
-    Read the internal temperature of the MCU.
-
-    - https://docs.micropython.org/en/latest/esp32/quickref.html#general-board-control
-    - https://github.com/micropython/micropython-esp32/issues/33
-    - https://github.com/micropython/micropython/pull/3933
-    - https://github.com/micropython/micropython-esp32/pull/192
-    - https://github.com/espressif/esp-idf/issues/146
-    - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
-    """
-
-    def read(self):
-        import machine
-
-        rawvalue = machine.temperature()
-
-        # Fahrenheit
-        # 'system.temperature': 57.77778
-        #temperature = (rawvalue - 32) / 1.8
-
-        # Magic
-        # 'system.temperature': 41.30435
-        value = rawvalue * (44/23) + (-5034/23)
-
-        reading = {'system.temperature': value}
-        return reading
-
-
-class SystemBatteryLevel:
-    """
-    Read the battery level by reading the ADC on a pin connected
-    to a voltage divider, which is pin 16 on the expansion board.
-
-    - https://docs.pycom.io/firmwareapi/pycom/machine/adc
-    - https://docs.pycom.io/tutorials/all/adc
-    - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
-    """
-    def __init__(self):
-        self.adc = ADC()
-
-    def read(self):
-        self.adc.init()
-        adc_channel = self.adc.channel(pin='P16', attn=ADC.ATTN_11DB)
-
-        # Reads the channels value and converts it into a voltage (in millivolts).
-        value = adc_channel.voltage() / 1000.0
-
-        reading = {'system.voltage': value}
-        return reading
-
-    def power_off(self):
-        log.info('Turning off ADC')
-        self.adc.deinit()
-
-
-class SystemUptime:
-    """
-    Return system time and uptime in seconds.
-
-    https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
-    """
-
-    start_time = time.time()
-
-    def read(self):
-        now = time.time()
-        uptime = time.ticks_ms() / 1000.0
-        runtime = now - self.start_time
-        reading = {
-            'system.time': now,
-            'system.uptime': uptime,
-            'system.runtime': runtime,
-        }
-        return reading
-
-
-class SystemHallSensor:
-    """
-    - https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
-    - https://github.com/micropython/micropython-esp32/pull/211
-    - https://www.esp32.com/viewtopic.php?t=481
-    """
-    pass
-
-
-class SystemMemoryPeeker:
-    """
-    ``machine.mem32[]``
-    - https://github.com/micropython/micropython-esp32/pull/192#issuecomment-334631994
-    """
-    pass
-
-
-class ADC2:
-    """
-    ::
-
-        adc = machine.ADC(machine.Pin(35))
-        adc.atten(machine.ADC.ATTN_11DB)
-
-    - https://github.com/micropython/micropython-esp32/issues/33
-    - https://www.esp32.com/viewtopic.php?t=955
-    """
-    pass

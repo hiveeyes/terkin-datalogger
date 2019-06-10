@@ -10,7 +10,7 @@ from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.radio import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
-from terkin.sensor import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
+from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
 
 log = logging.getLogger(__name__)
 
@@ -119,12 +119,14 @@ class TerkinDatalogger:
                 # Shut down device peripherals.
                 self.device.power_off()
 
+            # Send device to deep sleep.
             self.device.hibernate(interval, deep=deep)
 
         # When hibernation fails, fall back to regular "time.sleep".
         except:
-            log.exception('Failed to special-sleep')
-            log.info('Waiting for {} seconds'.format(interval))
+            log.exception('Failed to hibernate, falling back to regular sleep')
+            # Todo: Emit error message here.
+            log.info('Sleeping for {} seconds'.format(interval))
             time.sleep(interval)
 
     def register_sensors(self):

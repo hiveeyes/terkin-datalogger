@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class HX711:
+
     def __init__(self, dout, pd_sck, gain=128):
 
         self.pSCK = Pin(pd_sck, mode=Pin.OUT)
@@ -60,8 +61,7 @@ class HX711:
 
         # Initialize the hardware once.
         if self.initialize() is False:
-            # TODO: HardwareNotFoundError
-            raise KeyError('HX711 not available')
+            raise DeviceNotFound('HX711 not available')
 
         # wait for the device being ready
         while not self.is_ready():
@@ -123,3 +123,7 @@ class HX711:
 
     def power_up(self):
         self.pSCK.value(False)
+
+
+class DeviceNotFound(Exception):
+    pass
