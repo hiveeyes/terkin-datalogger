@@ -4,10 +4,9 @@
 # License: GNU General Public License, Version 3
 import json
 from copy import copy
-from terkin import logging
-from terkin.device import get_device_id
-from terkin.util import to_base64, format_exception
 from urllib.parse import urlsplit, urlencode
+from terkin import logging
+from terkin.util import to_base64, format_exception, get_device_id
 
 log = logging.getLogger(__name__)
 
@@ -341,8 +340,7 @@ class TelemetryTransportMQTT:
         self.format = format
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
-        # TODO: Use device identifier / hardware serial here
-        #       to make the MQTT client id more unique.
+        # Todo: Refactor `get_device_id` somehow better.
         self.client_id = 'terkin.{}'.format(get_device_id())
 
         # Status flags.
@@ -384,8 +382,8 @@ class TelemetryTransportMQTT:
         payload = request_data['payload']
 
         # Reporting.
-        log.debug('MQTT topic:  ', topic)
-        log.debug('MQTT payload:', payload)
+        log.debug('MQTT topic:   %s', topic)
+        log.debug('MQTT payload: %s', payload)
 
         try:
             connection = self.get_connection()

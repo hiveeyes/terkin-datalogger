@@ -13,3 +13,9 @@ def to_base64(bytes):
 
 def format_exception(ex):
     return '{}: {}'.format(ex.__class__.__name__, ex)
+
+
+def get_device_id():
+    import machine
+    from ubinascii import hexlify
+    return hexlify(machine.unique_id()).decode()

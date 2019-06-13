@@ -7,19 +7,14 @@ import sys
 import time
 
 import machine
-from machine import Timer
-from ubinascii import hexlify
 
 from terkin import logging
 from terkin.pycom import MachineResetCause
 from terkin.radio import WiFiException
+from terkin.telemetry import TelemetryManager, TelemetryAdapter
+from terkin.util import get_device_id
 
 log = logging.getLogger(__name__)
-
-
-def get_device_id():
-    import machine
-    return hexlify(machine.unique_id()).decode()
 
 
 class TerkinDevice:
