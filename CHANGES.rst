@@ -22,6 +22,7 @@ Development
 - Improve ``SystemBatteryLevel`` sensor. Thanks, `Dominik <https://github.com/ayoy>`_!
 - Make ``TelemetryTransportHTTP`` work again
 - Improve telemetry subsystem re. multi-protocol and -topology. Enable HTTP telemetry.
+- Add configuration example for BEEP-BOB ``settings.example-bob.py``
 
 
 2019-06-07 0.3.0
