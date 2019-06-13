@@ -114,8 +114,6 @@ class TerkinDevice:
     def start_telemetry(self):
         log.info('Starting telemetry')
 
-        from terkin.telemetry import TelemetryManager, TelemetryAdapter, TelemetryTopologies
-
         self.telemetry = TelemetryManager()
 
         # Read all designated telemetry targets from configuration settings.
@@ -129,21 +127,27 @@ class TerkinDevice:
 
         # Create adapter objects for each enabled telemetry target.
         for telemetry_target in telemetry_candidates:
+            try:
+                self.create_telemetry_adapter(telemetry_target)
+            except:
+                log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
 
-            # Create adapter object.
-            telemetry_adapter = TelemetryAdapter(
-                telemetry_target['endpoint'],
-                address=telemetry_target['address'],
-                # TODO: Use topology from configuration settings.
-                topology=TelemetryTopologies.KotoriWanTopology,
-                format=telemetry_target.get('format'),
-                content_encoding=telemetry_target.get('encode'),
-            )
+    def create_telemetry_adapter(self, telemetry_target):
+        # Create adapter object.
+        telemetry_adapter = TelemetryAdapter(
+            device=self,
+            endpoint=telemetry_target['endpoint'],
+            address=telemetry_target.get('address'),
+            data=telemetry_target.get('data'),
+            topology=telemetry_target.get('topology'),
+            format=telemetry_target.get('format'),
+            content_encoding=telemetry_target.get('encode'),
+        )
 
-            # Setup telemetry adapter.
-            telemetry_adapter.setup()
+        # Setup telemetry adapter.
+        telemetry_adapter.setup()
 
-            self.telemetry.add_adapter(telemetry_adapter)
+        self.telemetry.add_adapter(telemetry_adapter)
 
     def enable_serial(self):
         # Disable these two lines if you don't want serial access.

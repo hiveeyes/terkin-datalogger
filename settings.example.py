@@ -6,7 +6,7 @@ main = {
     # Measurement interval in seconds.
     # TODO: Please note this is not the _real thing_ yet at it will just use
     #       this value to apply to ``time.sleep()`` after each duty cycle.
-    'interval': 1.0,
+    'interval': 5.0,
 
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': False,
@@ -51,7 +51,7 @@ networking = {
 telemetry = {
     'targets': [
 
-        # JSON over MQTT
+        # JSON over MQTT: Kotori/MQTTKit
         {
             # Enable/disable this telemetry target.
             'enabled': True,
@@ -66,7 +66,7 @@ telemetry = {
             },
         },
 
-        # JSON over HTTP
+        # JSON over HTTP: Kotori/MQTTKit
         {
             # Enable/disable this telemetry target.
             'enabled': False,
@@ -83,6 +83,20 @@ telemetry = {
             # Use alternative, non-HTTPS endpoint.
             # 'endpoint': 'http://daq.example.org/api-notls',
 
+        },
+
+        # JSON over HTTP: Basic
+        {
+            # Enable/disable this telemetry target.
+            'enabled': False,
+
+            # Define telemetry endpoint and address information.
+            # https://beeceptor.com/
+            # https://requestbin.fullcontact.com/
+            'endpoint': 'https://test.free.beeceptor.com/api/sensors',
+            'data': {
+                'key': '## API_KEY ##',
+            },
         },
 
         # CayenneLPP over MQTT, Base64 encoded

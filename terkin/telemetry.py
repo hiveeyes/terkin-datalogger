@@ -48,42 +48,54 @@ class TelemetryAdapter:
 
     MAX_FAILURES = 3
 
-    def __init__(self, base_uri, address=None, uri_template=None, topology=None, format=None, content_encoding=None):
+    def __init__(self, device=None, endpoint=None, address=None, data=None, topology=None, format=None, content_encoding=None):
 
-        self.base_uri = base_uri
+        self.device = device
+        self.base_uri = endpoint
         self.address = address or {}
-        self.address['base_uri'] = base_uri
-        self.uri_template = uri_template or '{base_uri}'
+        self.address['base_uri'] = endpoint
+        self.data_more = data or {}
+
         # TODO: Move default value deeper into the framework here?
         self.format = format or TelemetryClient.FORMAT_JSON
         self.content_encoding = content_encoding
 
-        self.suffixes = None
-
         self.channel_uri = None
         self.client = None
+
+        self.topology_name = topology
+        self.topology = None
 
         self.offline = False
         self.failure_count = 0
 
-        if topology:
-            self.uri_template = topology.uri_template
-            self.suffixes = topology.suffixes
+    def setup(self):
+
+        # Resolve designated topology.
+        self.topology = self.topology_factory()
+        log.info('Telemetry channel topology: %s', self.topology.name)
+
+        # Compute telemetry channel URI.
+        self.channel_uri = self.format_uri()
+        log.info('Telemetry channel URI: %s', self.channel_uri)
+
+        # Resolve designated telemetry client.
+        self.client = self.client_factory()
+
+    def client_factory(self):
+        client = TelemetryClient(self.channel_uri,
+                                 format=self.format,
+                                 content_encoding=self.content_encoding,
+                                 uri_suffixes=self.topology.uri_suffixes)
+        return client
+
+    def topology_factory(self):
+        return TelemetryTopologyFactory(name=self.topology_name, adapter=self).create()
 
     def format_uri(self, **kwargs):
         data = copy(self.address)
         data.update(kwargs)
-        return self.uri_template.format(**data)
-
-    def setup(self):
-        self.channel_uri = self.format_uri()
-
-        log.info('Telemetry channel URI: %s', self.channel_uri)
-        self.client = self.client_factory()
-
-    def client_factory(self):
-        client = TelemetryClient(self.channel_uri, format=self.format, content_encoding=self.content_encoding, suffixes=self.suffixes)
-        return client
+        return self.topology.uri_template.format(**data)
 
     def transmit(self, data):
 
@@ -91,6 +103,14 @@ class TelemetryAdapter:
             # Todo: Suppress this message after a while or reduce interval.
             message = 'Adapter is offline, skipping telemetry to {}'.format(self.channel_uri)
             log.warning(message)
+            return False
+
+        # Transform into egress telemetry payload
+        # using the designated encoder.
+        try:
+            data = self.transform(data)
+        except:
+            log.exception('Transmission transform for topology "%s" failed', self.topology_name)
             return False
 
         try:
@@ -107,6 +127,23 @@ class TelemetryAdapter:
                 log.exception(message)
 
         return False
+
+    def transform(self, data):
+
+        # Add predefined "data_more" to telemetry message.
+        data.update(self.data_more)
+
+        if not hasattr(self.topology, 'encode'):
+            return data
+
+        # Run data through designated encoder, if given.
+        encoder = self.topology.encode
+        if encoder is None:
+            return data
+        else:
+            data = encoder(data)
+
+        return data
 
     def is_online(self):
         return self.failure_count < self.MAX_FAILURES
@@ -147,12 +184,13 @@ class TelemetryClient:
     FORMAT_URLENCODED = 'urlencoded'
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
+
     FORMAT_CAYENNELPP = 'lpp'
 
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
 
-    def __init__(self, uri, format, content_encoding=None, suffixes=None):
+    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None):
 
         log.info('Starting Terkin TelemetryClient')
         self.uri = uri
@@ -162,7 +200,7 @@ class TelemetryClient:
 
         self.format = format
         self.content_encoding = content_encoding
-        self.suffixes = suffixes or {}
+        self.uri_suffixes = uri_suffixes or {}
 
         # TODO: Move to TTN Adapter.
         self.ttn_size = 12
@@ -212,7 +250,7 @@ class TelemetryClient:
         else:
             real_uri = self.uri
 
-        suffix = self.suffixes.get(self.transport, '').format(**self.__dict__)
+        suffix = self.uri_suffixes.get(self.transport, '').format(**self.__dict__)
         real_uri = real_uri + suffix
 
         handler = self.get_handler(real_uri)
@@ -285,12 +323,12 @@ class TelemetryTransportHTTP:
         """
         Submit telemetry data using HTTP POST request
         """
-        import urequests
-        log.debug('HTTP Path:   %s', self.path)
+        log.info('Sending HTTP request to %s', self.uri)
         log.debug('Payload:     %s', request_data['payload'])
-        log.debug('Sending HTTP request to %s', self.uri)
+
+        import urequests
         response = urequests.post(self.uri, data=request_data['payload'], headers={'Content-Type': self.content_type})
-        if response.status_code == 200:
+        if response.status_code in [200, 201]:
             return True
         else:
             message = 'HTTP request failed: {} {}\n{}'.format(response.status_code, response.reason, response.content)
@@ -486,25 +524,125 @@ class MQTTAdapter:
             raise TelemetryAdapterError(message)
 
 
-class TelemetryTopologies:
+class TelemetryTopology:
     """
     Define **how** to communicate using Telemetry.
     """
 
-    class KotoriWanTopology:
-        """
-        This defines how to communicate in WAN scenarios having a decent
-        number of devices rolled out. While this would cover even earth-scale
-        addressing scenarios, it will also give you peace of mind in smaller
-        setups, even in multi-project or multi-tenant environments.
+    NULL = 'null'
+    MQTTKIT = 'mqttkit'
+    BEEP_BOB = 'beep-bob'
 
-        Just trust us and keep it as a default setting for your journey ;].
+
+class TelemetryTopologyFactory:
+
+    def __init__(self, name=None, adapter=None):
+        self.name = name
+        self.adapter = adapter
+
+    def create(self):
+
+        if self.name is None or self.name == TelemetryTopology.NULL:
+            return IdentityTopology()
+
+        elif self.name == TelemetryTopology.BEEP_BOB:
+            return BeepBobTopology(adapter=self.adapter)
+
+        elif self.name == TelemetryTopology.MQTTKIT:
+            return MqttKitTopology()
+
+        else:
+            raise KeyError('Configured topology "{}" unknown'.format(self.name))
+
+
+class IdentityTopology:
+    """
+    Apply no kind of transformation to telemetry payload
+    and provide Base for derivatives of me.
+    """
+    uri_template = u'{base_uri}'
+    uri_suffixes = None
+
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    def encode(self, data):
+        return data
+
+
+class BeepBobTopology(IdentityTopology):
+    """
+    Define how to communicate with BEEP for BOB.
+
+    https://en.wikipedia.org/wiki/Bebop
+
+    - https://beep.nl/
+    - https://github.com/beepnl/BEEP
+    - https://hiverize.org/
+    - https://bee-observer.org/
+
+    """
+    uri_template = u'{base_uri}'
+    uri_suffixes = None
+
+    def __init__(self, adapter=None):
+        self.adapter = adapter
+        self.settings = self.adapter.device.settings
+
+    def encode(self, data):
         """
-        uri_template = u'{base_uri}/{realm}/{network}/{gateway}/{node}'
-        suffixes = {
-            TelemetryClient.TRANSPORT_HTTP: '/data',
-            TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
-        }
+        Encode telemetry data matching the BEEP-BOB interface.
+
+        https://gist.github.com/vkuhlen/51f7968266659f37d076bd66d57cdbbd
+        https://github.com/Hiverize/FiPy/blob/master/logger/beep.py
+
+        Example::
+
+            {
+                't': 22.66734,
+                'h': 52.41612,
+                'p': 1002.334,
+                'weight': 10.0,
+                't_i_1': 23.1875,
+                't_i_2': 23.125,
+                't_i_3': 23.125,
+                't_i_4': 23.1875
+            }
+
+        """
+
+        # Rename all fields to designated BEEP-BOB fields.
+        egress_data = {}
+        mapping = self.settings.get('sensor_telemetry_map')
+        mapping['key'] = 'key'
+        for sensor_field, telemetry_field in mapping.items():
+            if sensor_field in data:
+                egress_data[telemetry_field] = data[sensor_field]
+
+        return egress_data
+
+
+class MqttKitTopology(IdentityTopology):
+    """
+    This defines how to communicate in WAN scenarios having a decent
+    number of devices rolled out. While this would cover even earth-scale
+    addressing scenarios, it will also give you peace of mind in smaller
+    setups like multi-project or multi-tenant scenarios. Even for single
+    users, the infinite number of available channels is very convenient
+    for ad hoc operation scenarios.
+
+    - https://getkotori.org/
+    - https://getkotori.org/docs/applications/mqttkit.html
+
+    - https://hiveeyes.org/
+    - https://hiveeyes.org/docs/system/acquisition/
+    """
+    uri_template = u'{base_uri}/{realm}/{network}/{gateway}/{node}'
+    uri_suffixes = {
+        TelemetryClient.TRANSPORT_HTTP: '/data',
+        TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
+    }
 
 
 class TelemetryTransportError(Exception):

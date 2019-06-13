@@ -102,7 +102,11 @@ Upload firmware
 ***************
 1. Upload firmware::
 
-    pycom-fwtool-cli --verbose --port /dev/cu.usbmodemPye090a1 flash --tar FiPy-1.20.0.rc11.tar.gz
+    # Define serial port.
+    export MCU_SERIAL_PORT=/dev/cu.usbmodemPye090a1
+
+    # Upload Pycom firmware.
+    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT flash --tar FiPy-1.20.0.rc11.tar.gz
 
 2. Reset device
 
