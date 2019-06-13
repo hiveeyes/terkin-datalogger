@@ -232,7 +232,7 @@ the Pycom MicroPython implementation.
 - `ESP32 Datasheet`_
 
 
-.. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup.rst
+.. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup-sandbox.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
 
 .. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html

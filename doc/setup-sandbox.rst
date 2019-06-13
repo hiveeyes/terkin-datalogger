@@ -41,6 +41,12 @@ packages on your machine::
     apt install make patch wget git python python3 python-virtualenv
 
 
+Depending on your operating system, set add your user to the group in order to allow access to Serial. On debian:
+
+    addgroup $USER dialout
+    # relogin or run
+    # su - $USER
+
 Acquire source code
 ===================
 ::
