@@ -23,6 +23,7 @@ Development
 - Make ``TelemetryTransportHTTP`` work again
 - Improve telemetry subsystem re. multi-protocol and -topology. Enable HTTP telemetry.
 - Add configuration example for BEEP-BOB ``settings.example-bob.py``
+- Honor "scale" and "offset" parameters when reading the HX711. Fix #6.
 
 
 2019-06-07 0.3.0

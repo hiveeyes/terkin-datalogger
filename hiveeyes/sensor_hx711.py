@@ -77,7 +77,7 @@ class HX711Sensor(AbstractSensor):
             return self.SENSOR_NOT_INITIALIZED
 
         #log.info('Acquire reading from HX711')
-        value = self.loadcell.read_median()
+        value = self.loadcell.get_medkg()
         return {'weight': value}
 
     def power_on(self):
