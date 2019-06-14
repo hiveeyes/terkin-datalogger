@@ -79,6 +79,12 @@ class SystemBatteryLevel:
     # How many times to sample the ADC for making a reading.
     adc_sample_count = const(1000)
 
+    # Sum of resistor values.
+    resistor_sum = 115
+
+    # Resistor between input pin and ground.
+    resistor_pin = 56
+
     def __init__(self):
         """
         Initialized ADC unit.
@@ -96,7 +102,7 @@ class SystemBatteryLevel:
         log.debug('Reading battery level')
 
         # Sample ADC a few times.
-        adc_channel = self.adc.channel(attn=ADC.ATTN_2_5DB, pin='P16')
+        adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin='P16')
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
         i = 0
@@ -124,7 +130,7 @@ class SystemBatteryLevel:
         log.debug("SystemBatteryLevel: Variance of ADC readings = %15.13f" % adc_variance)
         log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
-        voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * 147 / 47
+        voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * self.resistor_sum / self.resistor_pin
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.
