@@ -77,8 +77,22 @@ class HX711Sensor(AbstractSensor):
             return self.SENSOR_NOT_INITIALIZED
 
         #log.info('Acquire reading from HX711')
-        value = self.loadcell.get_medkg()
-        return {'weight': value}
+        reading = self.loadcell.get_reading()
+
+        address = self.address
+
+        # Propagate main kg value.
+        key = 'weight.{}'.format(address)
+        effective_data = {
+            key: reading.kg
+        }
+
+        # Propagate _all_ values from HX711 (raw, scale, offset, whatever).
+        data = reading.get_data()
+        for key, value in data.items():
+            effective_key = 'scale.{}.{}'.format(address, key)
+            effective_data[effective_key] = value
+        return effective_data
 
     def power_on(self):
         log.info('Powering on HX711')

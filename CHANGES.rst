@@ -24,6 +24,8 @@ Development
 - Improve telemetry subsystem re. multi-protocol and -topology. Enable HTTP telemetry.
 - Add configuration example for BEEP-BOB ``settings.example-bob.py``
 - Honor "scale" and "offset" parameters when reading the HX711. Fix #6.
+- Improve reading the HX711 re. wrong kg scaling.
+  Transmit all raw values and settings of HX711.
 
 
 2019-06-07 0.3.0

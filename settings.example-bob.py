@@ -75,6 +75,7 @@ telemetry = {
 sensors = {
     'registry': {
         'hx711': {
+            'address': 0x00,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
             'scale': 4.424242,

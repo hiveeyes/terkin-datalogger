@@ -84,14 +84,16 @@ class HX711Heisenberg(HX711):
             return (sortedLst[index] + sortedLst[index + 1])/2.0
 
     def get_avgkg(self, times=3):
-        return round(self.get_value(times) / self.SCALE / 1000, 3)
+        return round(self.get_value(times) / self.SCALE, 3)
 
     def get_lpkg(self):
         self.filtered += self.time_constant * (self.read() - self.filtered)
-        return round((self.filtered - self.OFFSET) / self.SCALE / 1000, 3)
+        return round((self.filtered - self.OFFSET) / self.SCALE, 3)
 
-    def get_medkg(self):
-        return round((self.read_median() - self.OFFSET) / self.SCALE / 1000, 3)
+    def get_reading(self):
+        value = self.read_median()
+        reading = WeightReading(value, self.OFFSET, self.SCALE)
+        return reading
 
     def tare(self, times=15):
         sum = self.read_average(times)
@@ -107,3 +109,24 @@ class HX711Heisenberg(HX711):
         if offset is None:
             return self.OFFSET
         self.OFFSET = offset
+
+
+class WeightReading:
+
+    def __init__(self, rawvalue, offset, scale):
+        self.raw = rawvalue
+        self.offset = offset
+        self.scale = scale
+        #self.raw_short = None
+        self.kg = None
+        self.compute()
+
+    def compute(self):
+        #self.raw_short = self.raw
+        try:
+            self.kg = round((self.raw - self.offset) / self.scale, 3)
+        except:
+            log.exception('Computing kg value failed')
+
+    def get_data(self):
+        return self.__dict__
