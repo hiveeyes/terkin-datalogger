@@ -47,6 +47,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://swarm.hiveeyes.org',
+            'topology': 'mqttkit',
             'address': {
                 "realm": "hiveeyes",
                 "network": "testdrive",

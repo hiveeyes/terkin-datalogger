@@ -58,6 +58,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://daq.example.org',
+            'topology': 'mqttkit',
             'address': {
                 "realm": "workbench",
                 "network": "testdrive",
@@ -73,6 +74,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'https://daq.example.org/api',
+            'topology': 'mqttkit',
             'address': {
                 "realm": "workbench",
                 "network": "testdrive",
