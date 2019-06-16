@@ -49,7 +49,10 @@ class TerkinDatalogger:
 
         # Bootstrap infrastructure.
         self.device.start_networking()
-        self.device.start_telemetry()
+
+        # Conditionally start telemetry if networking is available.
+        if self.device.status.networking:
+            self.device.start_telemetry()
 
         # Signal readyness by publishing information about the device (Microhomie).
         # self.device.publish_properties()

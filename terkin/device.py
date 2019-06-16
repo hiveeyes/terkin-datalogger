@@ -17,6 +17,14 @@ from terkin.util import get_device_id
 log = logging.getLogger(__name__)
 
 
+class DeviceStatus:
+    """
+    Object holding device status information.
+    """
+    def __init__(self):
+        self.networking = False
+
+
 class TerkinDevice:
 
     def __init__(self, name=None, version=None, settings=None):
@@ -32,6 +40,8 @@ class TerkinDevice:
 
         self.wdt = None
         self.rtc = None
+
+        self.status = DeviceStatus()
 
     @property
     def appname(self):
@@ -50,8 +60,12 @@ class TerkinDevice:
 
             # Wait for network interface to come up.
             self.networking.wait_for_nic()
+
+            self.status.networking = True
+
         except WiFiException:
             log.error('Network connectivity not available, WiFi failed')
+            self.status.networking = False
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):

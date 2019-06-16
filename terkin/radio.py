@@ -120,7 +120,7 @@ class NetworkManager:
                 if self.wifi_connect_station(network_selected):
                     break
 
-            except WiFiException:
+            except Exception:
                 log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
 
         if not self.station.isconnected():
@@ -169,15 +169,19 @@ class NetworkManager:
         log.info('WiFi STA: Connecting to "{}"'.format(network_name))
         self.station.connect(network_name, (auth_mode, password), timeout=self.settings.get('networking.wifi.timeout'))
 
-        # FIXME: If no known network is found, the program will lockup here.
+        # Wait for station network to arrive.
         # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
-        nic_retries = 15
-        while not self.station.isconnected() and nic_retries > 0:
+        retries = 15
+        while not self.station.isconnected() and retries > 0:
+
             log.info('WiFi STA: Waiting for network "{}".'.format(network_name))
-            time.sleep(1)
-            nic_retries -= 1
-            # Save power while waiting
+            retries -= 1
+
+            # Save power while waiting.
             machine.idle()
+
+            # Don't busy-wait.
+            time.sleep(1)
 
         if not self.station.isconnected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))

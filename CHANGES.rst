@@ -30,6 +30,7 @@ Development
 - Add missing "topology" configuration settings attribute
   for MQTT telemetry to example configurations
 - Fix deep sleep
+- Conditionally start telemetry subsystem just if networking is available
 
 
 2019-06-07 0.3.0
