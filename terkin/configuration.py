@@ -21,7 +21,17 @@ class TerkinConfiguration:
     # Todo: Should more things be optionally added here? E.g.
     # - Settings: ssid, endpoint, address
     # - Log: Device id, Networks (available|candidates), mac, ifconfig, Telemetry channel URI, MQTT broker
-    protected_settings = ['password', 'application_key', 'application_eui']
+    protected_settings = [
+
+        # WiFi
+        'password',
+
+        # LoRa
+        'application_key', 'application_eui'
+        
+        # BEEP-BOB telemetry
+        'key',
+    ]
 
     def __init__(self):
         self.store = dotty()

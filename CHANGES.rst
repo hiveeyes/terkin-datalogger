@@ -34,6 +34,7 @@ Development
 - Improve robustness wrt. WiFi connectivity
 - Improve log messages
 - Bump version to 0.4.0dev
+- Improve purging of sensible configuration settings
 
 
 2019-06-07 0.3.0
