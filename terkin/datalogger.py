@@ -189,14 +189,14 @@ class TerkinDatalogger:
             return False
 
         telemetry_status = self.device.telemetry.transmit(data)
+        count_total = len(telemetry_status)
         success = all(telemetry_status.values())
 
         # Evaluate telemetry status outcome.
         if success:
-            log.info('Telemetry status: SUCCESS')
+            log.info('Telemetry status: SUCCESS ({}/{})'.format(count_total, count_total))
         else:
-            count_total = len(telemetry_status)
-            count_failed = len([item for item in telemetry_status.values() if item is False])
+            count_failed = len([item for item in telemetry_status.values() if item is not True])
             log.warning('Telemetry status: FAILURE. {} out of {} targets failed. '
                         'Status: {}'.format(count_failed, count_total, telemetry_status))
 

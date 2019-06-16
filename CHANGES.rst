@@ -32,6 +32,7 @@ Development
 - Fix deep sleep
 - Conditionally start telemetry subsystem just if networking is available
 - Improve robustness wrt. WiFi connectivity
+- Improve log messages
 
 
 2019-06-07 0.3.0

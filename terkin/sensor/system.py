@@ -136,7 +136,7 @@ class SystemBatteryLevel:
         # Shut down ADC channel.
         adc_channel.deinit()
 
-        log.debug('Finished reading battery level: %d', voltage_volt)
+        log.debug('Battery level: {}'.format(voltage_volt))
 
         reading = {'system.voltage': voltage_volt}
         return reading
