@@ -33,6 +33,7 @@ Development
 - Conditionally start telemetry subsystem just if networking is available
 - Improve robustness wrt. WiFi connectivity
 - Improve log messages
+- Bump version to 0.4.0dev
 
 
 2019-06-07 0.3.0
