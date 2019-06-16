@@ -19,8 +19,15 @@ networking = {
         # WiFi stations to connect to in STA mode.
         'stations': [
 
-            # Variant 1: Using DHCP.
+            # Variant 1: Use DHCP.
+
+            # Variant 1a: Straight forward.
             {'ssid': 'FooBar', 'password': 'SECRET'},
+
+            # Variant 1b: Configure timeout (default: 15 seconds).
+            # Configure this to decrease or increase the maximum time in
+            # seconds to wait for the connection to succeed.
+            #{'ssid': 'FooBar', 'password': 'SECRET', 'timeout': 5.0},
 
             # Variant 2: Using static IP address.
             #{
@@ -30,9 +37,6 @@ networking = {
             #    'ifconfig': ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1'),
             #},
         ],
-
-        # The maximum time in milliseconds to wait for the connection to succeed.
-        'timeout': 15000,
     },
     'lora': {
         'otaa': {

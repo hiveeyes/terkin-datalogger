@@ -165,13 +165,19 @@ class NetworkManager:
             log.info('WiFi STA: Using static network configuration "{}"'.format(network_name))
             self.station.ifconfig(config=network['ifconfig'])
 
+        # Obtain timeout value.
+        network_timeout = network.get('timeout', 15.0)
+
+        # Set interval how often to poll for WiFi connectivity.
+        network_poll_interval = 1.0
+
         # Connect to WiFi station.
-        log.info('WiFi STA: Connecting to "{}"'.format(network_name))
-        self.station.connect(network_name, (auth_mode, password), timeout=self.settings.get('networking.wifi.timeout'))
+        log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name, network_timeout))
+        self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
 
         # Wait for station network to arrive.
-        # ``isconnected()`` returns True when connected to a WiFi access point and having a valid IP address.
-        retries = 15
+        # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
+        retries = int(network_timeout * network_poll_interval)
         while not self.station.isconnected() and retries > 0:
 
             log.info('WiFi STA: Waiting for network "{}".'.format(network_name))
@@ -181,7 +187,7 @@ class NetworkManager:
             machine.idle()
 
             # Don't busy-wait.
-            time.sleep(1)
+            time.sleep(network_poll_interval)
 
         if not self.station.isconnected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
