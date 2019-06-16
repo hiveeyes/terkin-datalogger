@@ -10,13 +10,17 @@ Datalogger
 Prio 1
 ======
 - [o] Check appropriate interrupt handling of lowlevel sensor drivers
+- [o] Gracefully set time using NTP
+  https://docs.pycom.io/firmwareapi/micropython/utime.html#maintaining-actual-calendar-datetime
 - [o] Unlock NVRAM storage as ConfigurationSettings overlay
+- [o] Add named fields based on NVRAM overlay
 - [o] AP mode
-- [o] Make retry intervals configurable
+- [o] Make retry interval / WiFi timeout configurable
 - [o] Sensor enabled/disabled for configuration settings
-- [o] Named fields based on NVRAM overlay
 - [o] Aggregate errors and submit using MQTT
 - [o] Reactivate Watchdog Timer
+- [o] Enable/disable sensors
+- [o] Transmit system states via MQTT
 
 Prio 1.1
 ========
@@ -33,8 +37,6 @@ Prio 1.1
 - [o] Log filesystem type
 - [o] Measure and transmit WiFi RSSI, and voltage from ADC
 - [o] Add duty cycle counter
-- [o] Gracefully set time using NTP
-  https://docs.pycom.io/firmwareapi/micropython/utime.html#maintaining-actual-calendar-datetime
 - [o] Improve logging: Report about available telemetry targets upfront
 - [o] Telemetry payload v2
     - meta: version, time, device=807d3ac342bc
@@ -69,6 +71,15 @@ Prio 1.1
 - [o] ESP32 Mock for testing
 - [o] Scan Bluetooth neighbourhood for proximity applications
   https://docs.pycom.io/firmwareapi/pycom/network/bluetooth/
+- [o] Add Device ID as HTTP header
+- [o] Why does HX711 not yield an error when not connected?
+- [o] Inquire modem firmware version
+  https://forum.pycom.io/topic/4727/how-to-determine-modem-firmware-version
+- [o] https://forum.pycom.io/topic/4818/efficient-firmware-app-update
+- [o] Not connecting a HX711 yields ``"weight": 0.0``
+- Power: {'reset_cause': {'code': 0, 'message': 'PWRON'}, 'wakeup_reason': {'code': 0, 'message': 'PWRON'}}
+- Reset: {'reset_cause': {'code': 0, 'message': 'PWRON'}, 'wakeup_reason': {'code': 0, 'message': 'PWRON'}}
+
 
 Prio 1.3
 ========

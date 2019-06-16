@@ -607,50 +607,5 @@ Just initialize it again, like::
     adc.init()
 
 
-Initializing the HX711 fails
-============================
-::
-
-       17.1484 [terkin.datalogger        ] INFO   : Registering Terkin sensors
-    ADC: ['__class__', '__name__', 'ATTN_0DB', 'ATTN_11DB', 'ATTN_2_5DB', 'ATTN_6DB', 'channel', 'deinit', 'init', 'vref', 'vref_to_pin']
-       17.1801 [hiveeyes.datalogger      ] INFO   : Registering Hiveeyes sensors
-       17.6451 [hiveeyes.sensor_hx711    ] INFO   : Selected HX711 hardware driver "heisenberg"
-       17.6632 [hiveeyes.sensor_hx711    ] INFO   : Initializing HX711 sensor with pin_dout=P22, pin_pdsck=P21, gain=128, scale=4.424242, offset=-73000.0
-       17.6751 [hx711                    ] INFO   : HX711 initialization started
-       17.6860 [hx711                    ] ERROR  : HX711 not found, skipping initialization
-       17.7032 [hiveeyes.sensor_hx711    ] ERROR  : HX711 hardware driver failed
-    Traceback (most recent call last):
-      File "/flash/lib/hiveeyes/sensor_hx711.py", line 62, in start
-      File "/flash/lib/hx711_heisenberg.py", line 44, in __init__
-      File "/flash/lib/hx711.py", line 27, in __init__
-      File "/flash/lib/hx711_heisenberg.py", line 64, in set_gain
-      File "/flash/lib/hx711.py", line 64, in read
-    KeyError: HX711 not available
-
-
-Turning off HX711 fails
-=======================
-::
-
-     1528.5191 [hiveeyes.sensor_hx711    ] INFO   : Turning off HX711
-     1528.5349 [terkin.datalogger        ] ERROR  : Failed to special-sleep
-    Traceback (most recent call last):
-      File "/flash/lib/terkin/datalogger.py", line 117, in sleep
-      File "/flash/lib/terkin/sensor/core.py", line 66, in power_off
-      File "/flash/lib/hiveeyes/sensor_hx711.py", line 89, in power_off
-    AttributeError: 'NoneType' object has no attribute 'power_down'
-
-
-Datalogger freezes after a while
-================================
-This happened after turning off the HX711 failed. See above.
-
-::
-
-    1533.5798 [terkin.datalogger        ] INFO   : --- loop ---
-    1533.5912 [terkin.datalogger        ] INFO   : Reading 8 sensor ports
-    1536.8852 [terkin.datalogger        ] INFO   : Sensor data:  {'pressure.0x77.i2c:0': 1013.28, 'system.wifi.max_tx_power': 78, 'system.voltage.naive': 1.382, 'temperature.28ff641d8fc3944f.onewire:0': 23.5, 'system.temperature': 41.30435, 'system.uptime': 21674.64, 'system.wifi.country': 'DE', 'system.wifi.bandwidth': 2, 'humidity.0x77.i2c:0': 32.18, 'temperature.28ff641d8fdf18c1.onewire:0': 24.9375, 'system.runtime': 1531, 'temperature.0x77.i2c:0': 25.9, 'system.wifi.rssi': -57, 'system.wifi.channel': 3, 'system.time': 10907, 'system.memfree': 2412528}
-
-- 'system.uptime': 21674.64
-- 'system.time': 10907
-- 'system.runtime': 1531
+- https://forum.pycom.io/topic/4493/trouble-uploading-to-fipy
+- https://forum.pycom.io/topic/4479/fipy-upload-failed

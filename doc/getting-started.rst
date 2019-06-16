@@ -9,10 +9,10 @@ Getting started with the Hiveeyes MicroPython Datalogger
     So, this firmware will be extended over time - you are dearly welcome
     to help closing some gaps.
 
-.. todo::
+.. note::
 
-    Fold and/or refactor parts of README.rst, setup.rst, pycom-getting-started.rst
-    and pycom-firmware-upgrade.rst into this document or link appropriately.
+    Todo: Fold and/or refactor parts of ``README.rst``, ``setup.rst``, ``pycom-getting-started.rst``
+    and ``pycom-firmware-upgrade.rst`` into this document or link appropriately.
 
 
 ********
@@ -28,9 +28,13 @@ You will make it.
 Setup sandbox
 *************
 
-.. todo:: Refactor from or link to ``setup.rst``.
+As a general introduction, you might want to read the `Pycom Quickstart Guide`_.
 
-
+- When you are running Linux, the documentation at ``doc/getting-started.rst``
+  might be the right place to follow up for details.
+- If you are using Windows, the documentation about how to
+`Install and configure the Hiveeyes Datalogger development sandbox on Windows`_
+might be of interest.
 
 
 **************
@@ -51,8 +55,8 @@ filesystem corruption in brownout conditions.
 
 .. attention::
 
-    When switching between LittleFS and FatFS, the flash file system
-    will be re-formatted thus erasing all content.
+    **When switching between LittleFS and FatFS, the flash file system
+    will be re-formatted thus erasing all content.**
 
 Switch to LittleFS::
 
@@ -75,10 +79,10 @@ Upload program
     # Get most recent development sources
     git pull
 
-    # Setup sandbox environment
+    # Setup the sandbox environment on your workstation
     make setup
 
-    # Upload framework and program to device
+    # Upload framework and datalogger to the device
     make install
 
     # Upload program sketch and invoke hard reset
@@ -86,5 +90,7 @@ Upload program
 
 
 
+.. _Pycom Quickstart Guide: https://github.com/pycom/pycom-micropython-sigfox/blob/master/docs/pycom_esp32/getstarted.rst
+.. _Install and configure the Hiveeyes Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
 .. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 .. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057

@@ -126,3 +126,35 @@ You can reset the device either by
 
     # List built-in modules
     >>> help('modules')
+
+
+*****************
+Board information
+*****************
+In order to get board information, you might want to check out some commands like::
+
+    # Read chip identifier
+    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT chip_id
+    ESP32D0WDQ6 (revision (unknown 0xa))
+
+    # Read MAC address of WiFi NIC
+    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT wmac
+    WMAC=807D3AC2DE44
+
+    # Read SMAC
+    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT smac
+    SMAC=70B3D54992DBE31D
+
+By watching the preamble, you might be able to deduce the
+firmware version of the expansion board.
+
+::
+
+    Running in PIC mode
+    Product ID: 152 HW Version: 7 FW Version: 0.0.11
+    Connecting....
+    Uploading stub...
+    Running stub...
+    Stub running...
+    Changing baud rate to 921600
+    Changed.
