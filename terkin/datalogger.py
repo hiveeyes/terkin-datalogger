@@ -135,9 +135,6 @@ class TerkinDatalogger:
     def register_sensors(self):
         """
         Add system sensors.
-
-        TODO: Add more sensors.
-        - Metadata from NetworkManager.station
         """
 
         log.info('Registering Terkin sensors')
@@ -149,8 +146,11 @@ class TerkinDatalogger:
             SystemUptime,
         ]
 
+        # Create sensor adapters.
         for sensor_factory in system_sensors:
             sensor = sensor_factory()
+            if hasattr(sensor, 'setup') and callable(sensor.setup):
+                sensor.setup(self.settings)
             self.sensor_manager.register_sensor(sensor)
 
         # Add WiFi metadata.

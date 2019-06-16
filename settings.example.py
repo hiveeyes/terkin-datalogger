@@ -126,6 +126,20 @@ telemetry = {
 
 # Sensor configuration.
 sensors = {
+    'system': {
+
+        # Adjust according to voltage divider parameters.
+        # The current settings are suitable for the Pycom Expansion Board 3.2
+        # See also https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+        'vcc': {
+
+            # Sum of resistor values.
+            'resistor_sum': 115,
+
+            # Resistor between input pin and ground.
+            'resistor_pin': 56,
+        }
+    },
     'registry': {
         'hx711': {
             'address': 0x00,

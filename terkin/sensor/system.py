@@ -79,27 +79,36 @@ class SystemBatteryLevel:
     # How many times to sample the ADC for making a reading.
     adc_sample_count = const(1000)
 
-    # Sum of resistor values.
-    resistor_sum = 115
-
-    # Resistor between input pin and ground.
-    resistor_pin = 56
-
     def __init__(self):
         """
         Initialized ADC unit.
         """
+
+        # Sum of resistor values.
+        self.resistor_sum = None
+
+        # Resistor between input pin and ground.
+        self.resistor_pin = None
+
+        # ADC channel used for sampling the raw value.
         self.adc = ADC(id=0)
+
+    def setup(self, settings):
+        self.resistor_sum = settings.get('sensors.system.vcc.resistor_sum')
+        self.resistor_pin = settings.get('sensors.system.vcc.resistor_pin')
 
     def read(self):
         """
         Acquire vbatt reading by sampling ADC.
         """
 
+        assert type(self.resistor_sum) is int, 'Invalid setting for voltage divider resistor value "resistor_sum"'
+        assert type(self.resistor_pin) is int, 'Invalid setting for voltage divider resistor value "resistor_pin"'
+
         # Power on ADC.
         self.adc.init()
 
-        log.debug('Reading battery level')
+        log.debug('Reading battery level with voltage divider {}/{}'.format(self.resistor_sum, self.resistor_pin))
 
         # Sample ADC a few times.
         adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin='P16')
