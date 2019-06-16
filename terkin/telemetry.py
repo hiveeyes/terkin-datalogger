@@ -415,6 +415,9 @@ class TelemetryTransportMQTT:
 
         # Derive MQTT topic string from URI path component.
         topic = self.path.lstrip('/')
+        if not topic:
+            message = 'Empty MQTT topic, please configure MQTT URI with path component or topology with address'
+            raise TelemetryTransportError(message)
 
         # Use payload from request.
         payload = request_data['payload']

@@ -37,6 +37,7 @@ Development
 - Improve purging of sensible configuration settings
 - SystemBatteryLevel: Obtain voltage divider parameters from settings
 - Improve release tooling
+- Improve error signalling for missing "topology" configuration setting
 
 
 2019-06-07 0.3.0
