@@ -11,6 +11,7 @@ contributed to this software in one way or another.
 * Diedrich Lamken <didi@hiverize.org>
 * Diren Senger <diren@uni-bremen.de>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
+* Michael Kurzweil <https://flowers4bees.org/>
 * Ralf Lindlein <https://github.com/walterheisenberg>
 * Richard Pobering <richard@hiveeyes.org>
 * Ron Jacob <ron.jacob@easyhive.org>

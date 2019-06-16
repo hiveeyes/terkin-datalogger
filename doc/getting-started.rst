@@ -30,11 +30,11 @@ Setup sandbox
 
 As a general introduction, you might want to read the `Pycom Quickstart Guide`_.
 
-- When you are running Linux, the documentation at ``doc/getting-started.rst``
+- When you are running Linux, the documentation at ``doc/setup-sandbox.rst``
   might be the right place to follow up for details.
 - If you are using Windows, the documentation about how to
-`Install and configure the Hiveeyes Datalogger development sandbox on Windows`_
-might be of interest.
+  `Install and configure the Hiveeyes Datalogger development sandbox on Windows`_
+  might be of interest.
 
 
 **************
