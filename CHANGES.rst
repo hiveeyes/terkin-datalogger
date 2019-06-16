@@ -36,6 +36,7 @@ Development
 - Bump version to 0.4.0dev
 - Improve purging of sensible configuration settings
 - SystemBatteryLevel: Obtain voltage divider parameters from settings
+- Improve release tooling
 
 
 2019-06-07 0.3.0

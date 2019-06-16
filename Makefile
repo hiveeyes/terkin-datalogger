@@ -185,41 +185,53 @@ ratrack: check-serial-port
 # =========
 # Releasing
 # =========
-check-version:
-	@if test "$(version)" = ""; then \
-		echo "ERROR: Make variable 'version' not set"; \
-		exit 1; \
-	fi
+prepare-release:
 
-create-release-archives: check-version
+	@# Compute release name.
 	$(eval name := hiveeyes-micropython-firmware)
+	$(eval version := $(shell python3 -c 'import terkin; print(terkin.__version__)'))
 	$(eval releasename := $(name)-$(version))
+
+	@# Define directories.
 	$(eval build_dir := ./build)
 	$(eval work_dir := $(build_dir)/$(releasename))
 	$(eval dist_dir := ./dist)
 
+	@# Define archive names.
+	$(eval tarfile := $(dist_dir)/$(releasename).tar.gz)
+	$(eval zipfile := $(dist_dir)/$(releasename).zip)
+
+create-release-archives: prepare-release
+
+	@echo "Baking release artefacts for $(releasename)"
+
+    # Remove release bundle archives.
+	@rm -f $(tarfile)
+	@rm -f $(zipfile)
+
     # Populate build directory.
-	mkdir -p $(work_dir)
-	cp -r dist-packages hiveeyes terkin lib boot.py main.py settings.example.py $(work_dir)
+	@mkdir -p $(work_dir)
+	@rm -r $(work_dir)
+	@mkdir -p $(work_dir)
+	@cp -r dist-packages hiveeyes terkin lib boot.py main.py settings.example.py $(work_dir)
 
     # Create .tar.gz and .zip archives.
-	tar -czf $(dist_dir)/$(releasename).tar.gz -C $(build_dir) $(releasename)
-	(cd $(build_dir); zip -r ../$(dist_dir)/$(releasename).zip $(releasename))
+	tar -czf $(tarfile) -C $(build_dir) $(releasename)
+	(cd $(build_dir); zip -r ../$(zipfile) $(releasename))
 
-publish-release: check-version check-github-release create-release-archives
-	$(eval name := hiveeyes-micropython-firmware)
-	$(eval releasename := $(name)-$(version))
-	$(eval dist_dir := ./dist)
-	$(eval dist_file_tar := $(dist_dir)/$(releasename).tar.gz)
-	$(eval dist_file_zip := $(dist_dir)/$(releasename).zip)
+publish-release: prepare-release check-github-release create-release-archives
 
-	# Show current releases.
-	$(github-release) info --user hiveeyes --repo hiveeyes-micropython-firmware
+	@echo "Uploading release artefacts for $(releasename) to GitHub"
+
+	@# Show current releases.
+	@#$(github-release) info --user hiveeyes --repo hiveeyes-micropython-firmware
 
     # Create Release.
 	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --draft
-	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
+	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
 
     # Upload release artifacts.
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(dist_file_tar)) --file $(dist_file_tar) --replace
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(dist_file_zip)) --file $(dist_file_zip) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile)) --file $(tarfile) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile)) --file $(zipfile) --replace
+
+release-and-publish: release publish-release
