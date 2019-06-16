@@ -275,4 +275,5 @@ class TerkinDevice:
         # machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=True)
 
         # Let's try.
-        machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=False)
+        #machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=False)
+        pass
