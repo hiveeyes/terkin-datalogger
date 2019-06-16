@@ -1,5 +1,8 @@
 # Install libraries to MicroPython target device using "rshell".
 
+# Upload lib folder
+rsync ./lib /flash/lib
+
 mkdir /flash/lib/terkin
 rsync terkin /flash/lib/terkin
 

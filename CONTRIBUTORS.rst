@@ -10,6 +10,7 @@ contributed to this software in one way or another.
 * Clemens Gruber <clemens@hiveeyes.org>
 * Diedrich Lamken <didi@hiverize.org>
 * Diren Senger <diren@uni-bremen.de>
+* Dominik Kapusta <https://github.com/ayoy>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
 * Michael Kurzweil <https://flowers4bees.org/>
 * Ralf Lindlein <https://github.com/walterheisenberg>

@@ -9,6 +9,9 @@ Datalogger
 
 Prio 1
 ======
+- [o] Bundle and upload package to GitHub always when invoking ``make release``
+- [o] Interpolate/deduce Chip-ID into telemetry node name
+- [o] Map Chip-ID to specific configuration file
 - [o] Check appropriate interrupt handling of lowlevel sensor drivers
 - [o] Gracefully set time using NTP
   https://docs.pycom.io/firmwareapi/micropython/utime.html#maintaining-actual-calendar-datetime
@@ -51,7 +54,6 @@ Prio 1.1
 - [o] Documentation 140mm. Getting started, Pictures, Sphinx.
 - [o] Write about Terkin Telemetry.
 - [o] New target ``make format-flash``.
-- [o] Bundle and upload package to GitHub always when invoking ``make release``?
 - [o] Selectively enable/disable logging per module from configuration settings
 - [o] Disable interrupts when reading sensors
   https://docs.pycom.io/firmwareapi/pycom/machine/#interrupt-functions

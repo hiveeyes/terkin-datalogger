@@ -74,6 +74,12 @@ Background information:
 **************
 Upload program
 **************
+
+From scratch
+============
+When starting from scratch, these guys will upload the whole bunch of dependency
+modules, datalogger framework and sketch to the device.
+
 ::
 
     # Get most recent development sources
@@ -85,12 +91,45 @@ Upload program
     # Upload framework and datalogger to the device
     make install
 
-    # Upload program sketch and invoke hard reset
+    # Upload program sketch and invoke hard reset.
+    # This just uploads "boot.py", "main.py" and "settings.py".
     make sketch-and-run
 
+When updating
+=============
+For updating the firmware to the current development head, these steps
+should bring you up to speed.
+
+::
+
+    # Get most recent development sources.
+    git pull
+
+    # Upload framework and sketch and invoke hard reset.
+    make recycle
+
+Caveats
+=======
+Framework dependencies are occasionally updated and extended. In this
+case, it is appropriate to run the "from scratch" procedure again.
+
+You will most probably recognize this through any error messages
+signalling missing package or module dependencies.
+
+If you are having problems updating your device, feel free to `create an issue`_.
+
+Sometimes, you want to erase the filesystem on flash memory holding
+the program in order to completely start over from scratch. There's
+a shortcut for that::
+
+    make format-flash
+
+AS THIS IS A DESTRUCTIVE OPERATION, THERE'S A CONFIRMATION PROMPT PROTECTING
+YOURSELF FROM ACCIDENTALLY DESTROYING DATA. REMEMBER: ALL YOUR DATA WILL BE LOST.
 
 
 .. _Pycom Quickstart Guide: https://github.com/pycom/pycom-micropython-sigfox/blob/master/docs/pycom_esp32/getstarted.rst
 .. _Install and configure the Hiveeyes Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
 .. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
 .. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
+.. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
