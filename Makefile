@@ -228,7 +228,7 @@ publish-release: prepare-release check-github-release create-release-archives
 
     # Create Release.
 	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --draft
-	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
+	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
 
     # Upload release artifacts.
 	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile)) --file $(tarfile) --replace
