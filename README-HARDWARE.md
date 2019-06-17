@@ -41,3 +41,8 @@
 
 ### Links
 - https://github.com/hiveeyes/hiveeyes-micropython-firmware
+
+
+---
+
+Todo: Move to `doc/hardware.rst`.

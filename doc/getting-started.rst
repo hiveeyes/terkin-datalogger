@@ -9,11 +9,6 @@ Getting started with the Hiveeyes MicroPython Datalogger
     So, this firmware will be extended over time - you are dearly welcome
     to help closing some gaps.
 
-.. note::
-
-    Todo: Fold and/or refactor parts of ``README.rst``, ``setup.rst``, ``pycom-getting-started.rst``
-    and ``pycom-firmware-upgrade.rst`` into this document or link appropriately.
-
 
 ********
 Unboxing
@@ -30,7 +25,7 @@ Setup sandbox
 
 As a general introduction, you might want to read the `Pycom Quickstart Guide`_.
 
-- When you are running Linux, the documentation at ``doc/setup-sandbox.rst``
+- When you are running Linux, the documentation at ``doc/sandbox-setup.rst``
   might be the right place to follow up for details.
 - If you are using Windows, the documentation about how to
   `Install and configure the Hiveeyes Datalogger development sandbox on Windows`_
@@ -43,93 +38,52 @@ Prepare device
 
 Upgrade firmware
 ================
-Before uploading the user-space MicroPython program, please `upgrade the Pycom firmware`_
+Before uploading the user-space MicroPython program, please upgrade the Pycom firmware
 on your device. At the time of this writing, we are running
-``Pycom MicroPython 1.20.0.rc11`` on the FiPy without any flaws yet.
+``Pycom MicroPython 1.20.0.rc11`` successfully on the FiPy.
 
-
-Switch to LittleFS
-==================
-LittleFS should be favored over FatFS to prevent
-filesystem corruption in brownout conditions.
-
-.. attention::
-
-    **When switching between LittleFS and FatFS, the flash file system
-    will be re-formatted thus erasing all content.**
-
-Switch to LittleFS::
-
-    import pycom
-    pycom.bootmgr(fs_type=pycom.LittleFS, reset=True)
-
-Background information:
-
-    The option to use LittleFS instead of FAT as the primary filesystem of the internal flash
-    will prevent data corruption even in the case of power loss during write operations.
-
-    -- See also `Filesystem corruption on FiPy's FatFS in brownout conditions`_
-
-
-**************
-Upload program
-**************
-
-From scratch
-============
-When starting from scratch, these guys will upload the whole bunch of dependency
-modules, datalogger framework and sketch to the device.
-
-::
-
-    # Get most recent development sources
-    git pull
-
-    # Setup the sandbox environment on your workstation
-    make setup
-
-    # Upload framework and datalogger to the device
-    make install
-
-    # Upload program sketch and invoke hard reset.
-    # This just uploads "boot.py", "main.py" and "settings.py".
-    make sketch-and-run
-
-When updating
-=============
-For updating the firmware to the current development head, these steps
-should bring you up to speed.
-
-::
-
-    # Get most recent development sources.
-    git pull
-
-    # Upload framework and sketch and invoke hard reset.
-    make recycle
-
-Caveats
-=======
-Framework dependencies are occasionally updated and extended. In this
-case, it is appropriate to run the "from scratch" procedure again.
-
-You will most probably recognize this through any error messages
-signalling missing package or module dependencies.
-
-If you are having problems updating your device, feel free to `create an issue`_.
-
-Sometimes, you want to erase the filesystem on flash memory holding
-the program in order to completely start over from scratch. There's
-a shortcut for that::
-
-    make format-flash
-
-AS THIS IS A DESTRUCTIVE OPERATION, THERE'S A CONFIRMATION PROMPT PROTECTING
-YOURSELF FROM ACCIDENTALLY DESTROYING DATA. REMEMBER: ALL YOUR DATA WILL BE LOST.
+When upgrading, please use the ``LittleFS`` filesystem to prevent filesystem corruption
+in brownout conditions.
 
 
 .. _Pycom Quickstart Guide: https://github.com/pycom/pycom-micropython-sigfox/blob/master/docs/pycom_esp32/getstarted.rst
 .. _Install and configure the Hiveeyes Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
-.. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
-.. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
-.. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
+
+
+
+*******************
+Appendix: Resources
+*******************
+We collected some resources which offer a good start to read more about
+MicroPython development in general as well as the specific details of
+the Pycom MicroPython implementation.
+
+- `MicroPython documentation`_
+- `MicroPython libraries`_
+- `Pycom MicroPython for ESP32`_
+
+- `General information about the WiPy`_ on the MicroPython documentation pages
+- `Pycom documentation`_
+- `Getting started with Pycom MicroPython`_
+- `Pycom MicroPython Modules`_
+- `Pycom Vendor Modules`_
+- `Pycom Libraries and Examples`_
+
+- `Quick reference for the ESP32`_
+- `ESP32 Datasheet`_
+
+
+
+.. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html
+.. _MicroPython documentation: https://micropython.readthedocs.io/
+.. _MicroPython libraries: https://micropython.readthedocs.io/en/latest/library/
+.. _Pycom MicroPython Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/micropython
+.. _Pycom Vendor Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/pycom
+.. _Pycom documentation: https://docs.pycom.io/
+.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
+
+.. _Pycom MicroPython for ESP32: https://github.com/pycom/pycom-micropython-sigfox
+.. _Pycom Libraries and Examples: https://github.com/pycom/pycom-libraries
+
+.. _Quick reference for the ESP32: https://docs.micropython.org/en/latest/esp32/quickref.html
+.. _ESP32 Datasheet: https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf

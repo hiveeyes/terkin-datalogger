@@ -5,6 +5,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+- Improve documentation
 
 
 2019-06-17 0.4.0

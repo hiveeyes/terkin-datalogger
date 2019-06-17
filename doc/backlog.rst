@@ -81,7 +81,8 @@ Prio 1.1
 - [o] Not connecting a HX711 yields ``"weight": 0.0``
 - Power: {'reset_cause': {'code': 0, 'message': 'PWRON'}, 'wakeup_reason': {'code': 0, 'message': 'PWRON'}}
 - Reset: {'reset_cause': {'code': 0, 'message': 'PWRON'}, 'wakeup_reason': {'code': 0, 'message': 'PWRON'}}
-
+- Check "Espressif-specific" Long Range mode, see
+  https://github.com/pycom/pycom-micropython-sigfox/pull/281
 
 Prio 1.3
 ========

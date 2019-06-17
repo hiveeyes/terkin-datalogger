@@ -59,112 +59,58 @@ Architecture
   connectivity in Germany (thanks, Ron and Jan!).
 
 
+***********
+Screenshots
+***********
+
+.. figure:: https://ptrace.hiveeyes.org/2019-06-17_bob-sensorkit-small.jpeg
+    :target: https://ptrace.hiveeyes.org/2019-06-17_bob-sensorkit-large.jpeg
+
+.. figure:: https://ptrace.hiveeyes.org/2019-06-17_bob-board-small.jpeg
+    :target: https://ptrace.hiveeyes.org/2019-06-17_bob-board-large.jpeg
+
+To get a better idea about how running this firmware will feel like when
+watching its log output, we collected some excerpts at
+`Running the Hiveeyes MicroPython Datalogger`_.
+
 
 ****************
 Acknowledgements
 ****************
 This firmware is an effort of many people. So, thanks to all
-the `contributors`_ who got their hands dirty and helped to co-create
-and conceive it in one way or another. You know who you are.
+the `contributors`_ who got their hands dirty and helped to
+co-create and conceive it in one way or another.
+
+You know who you are.
 
 
 ***************
 Getting started
 ***************
-See ``doc/getting-started.rst``.
+See `Getting started with the Hiveeyes MicroPython Datalogger`_.
 
 
 *************
 Sandbox setup
 *************
-Please follow up at `Hiveeyes MicroPython Datalogger setup`_ to read about how to
-install the MicroPython firmware development environment and other software
-components it relies on and how to configure it properly.
+Please follow up at `Setup Hiveeyes MicroPython Datalogger sandbox`_ to
+read about how to install the MicroPython firmware development environment
+and other software components it relies on and how to configure it properly.
 
 
-*****************
-Sandbox operation
-*****************
+*************
+Configuration
+*************
 
-Configure serial port
-=====================
-After connecting the device to your USB port, you should tell the sandbox
-about the UART device the MicroPython MCU is now connected to.
-Running ``make list-serials`` might help here.
-
-Example::
-
-    export MCU_SERIAL_PORT=/dev/cu.usbmodemPye090a1
-
-Configure your program
-======================
 Copy the ``settings.example.py`` blueprint into ``settings.py``
 and adjust each configuration setting appropriately. The
 documentation of all parameters is in the file itself
-and should be self-explanatory.
+and should be reasonably self-explanatory.
 
 If you feel you have questions about the semantics of the
 configuration settings or if you even have suggestions to
 improve things, feel free to get back to us by creating
 an issue on the GitHub repository.
-
-Upload and run your program
-===========================
-There's a one-step command to upload all files from the current working tree
-to the MicroPython device. After that, it will reset the device by software
-(cold start), which essentially will run your program from scratch as it will
-likewise happen in the real world::
-
-    make recycle
-
-This will
-
-1. Upload the framework and sketch files to the device.
-
-2. Reset device using ``machine.reset()``.
-
-3. Drop you into the program execution flow through a REPL shell.
-   Use ``CTRL+C`` to interrupt the program and ``CTRL+X`` to detach from the environment.
-
-Attach to serial console
-========================
-In order to connect to a device which is already running, just execute::
-
-    make console
-
-To detach from the ``miniterm`` environment, just type ``CTRL+]``.
-
-Reset the device
-================
-In order to run a ``machine.reset()`` on the device, just execute::
-
-    make reset-device
-
-
-******************
-Reference hardware
-******************
-This software has been designed to run primarily on a `Pycom FiPy`_.
-However, it might also work on MicroPython hardware from different vendors.
-If you will find the firmware will not work on your MicroPython device,
-corresponding reports are very welcome and pull requests are even better!
-
-.. image:: https://ptrace.hiveeyes.org/2019_03-17_EasyHive%20Datalogger%20v1.jpg
-
-
-Please follow up on the `Reference hardware`_ page for different hardware
-configurations based on devices like these:
-
-- `EasyHive Pycom-Shield`_
-- `Hiverize Funktionsmuster`_
-- `Hiveeyes Buerger`_
-
-
-***************
-Troubleshooting
-***************
-We have collected some tracebacks with root causes and solutions which might also help
-you along, please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
 
 
 *******************
@@ -185,7 +131,7 @@ and problem reports from the community.
 
 So, if you'd like to contribute you're most welcome.
 Spend some time taking a look around, locate a bug, design issue or
-spelling mistake and then send us a pull request or create an issue_.
+spelling mistake and then send us a pull request or `create an issue`_.
 
 Thanks in advance for your efforts, we really appreciate any help or feedback.
 
@@ -199,63 +145,25 @@ Use of the source code included here is governed by the GNU General Public Licen
 `GNU-GPL-3.0`_ and the European Union Public License `EUPL-1.2`_.
 Please also have a look at the notices about licenses of third-party components.
 
-.. _issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
-.. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
-.. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
-
 
 ----
 
 Have fun!
 
 
-
-*******************
-Appendix: Resources
-*******************
-We collected some resources which offer a good start to read more about
-MicroPython development in general as well as the specific details of
-the Pycom MicroPython implementation.
-
-- `MicroPython documentation`_
-- `MicroPython libraries`_
-- `Pycom MicroPython for ESP32`_
-
-- `General information about the WiPy`_ on the MicroPython documentation pages
-- `Pycom documentation`_
-- `Getting started with Pycom MicroPython`_
-- `Pycom MicroPython Modules`_
-- `Pycom Vendor Modules`_
-- `Pycom Libraries and Examples`_
-
-- `Quick reference for the ESP32`_
-- `ESP32 Datasheet`_
-
-
-.. _Hiveeyes MicroPython Datalogger setup: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/setup-sandbox.rst
+.. _Setup Hiveeyes MicroPython Datalogger sandbox: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/sandbox-setup.rst
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
+.. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
+.. _Getting started with the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
 
-.. _General information about the WiPy: https://docs.micropython.org/en/latest/wipy/general.html
-.. _MicroPython documentation: https://micropython.readthedocs.io/
-.. _MicroPython libraries: https://micropython.readthedocs.io/en/latest/library/
-.. _Pycom MicroPython Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/micropython
-.. _Pycom Vendor Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/pycom
-.. _Pycom documentation: https://docs.pycom.io/
-.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
-
-.. _Pycom MicroPython for ESP32: https://github.com/pycom/pycom-micropython-sigfox
-.. _Pycom Libraries and Examples: https://github.com/pycom/pycom-libraries
-
-.. _Hiveeyes MicroPython Datalogger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst
 .. _Pycom FiPy: https://pycom.io/product/fipy/
-
-.. _Reference hardware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md
-.. _EasyHive Pycom-Shield: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#easyhive-pycom-shield
-.. _Hiverize Funktionsmuster: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiverize-funktionsmuster
-.. _Hiveeyes Buerger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/README-HARDWARE.md#hiveeyes-buerger
+.. _Pycom LoPy4: https://pycom.io/product/lopy4/
+.. _Pycom WiPy3: https://pycom.io/product/wipy-3-0/
 
 .. _LTE Cat M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
 .. _LTE Cat NB1: https://docs.pycom.io/tutorials/lte/nb-iot.html
 
-.. _Quick reference for the ESP32: https://docs.micropython.org/en/latest/esp32/quickref.html
-.. _ESP32 Datasheet: https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+.. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
+.. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
+
+.. _Running the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/0.4.0/doc/screenshots/05-running.rst
