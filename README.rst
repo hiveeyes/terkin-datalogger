@@ -43,15 +43,12 @@ Batteries included.
 Architecture
 ============
 - Datalogger and Device
-
   Singleton objects representing the data logger application and your logging device.
 
 - Sensor and HardwareDriver
-
   Sensor components wrap hardware drivers to generalize sensor reading.
 
 - Telemetry and TelemetryTransport
-
   The telemetry subsystem uses different transport adapters for different
   connectivity scenarios. MQTT and HTTP over TCP over WiFi is implemented
   already and TTN over LoRaWAN is almost there (thanks, Jan and Richard!).
@@ -83,34 +80,33 @@ watching its log output, we collected some excerpts at
 `Running the Hiveeyes MicroPython Datalogger`_.
 
 
-****************
-Acknowledgements
-****************
-This firmware is an effort of many people. So, thanks to all
-the `contributors`_ who got their hands dirty and helped to
-co-create and conceive it in one way or another.
-
-You know who you are.
-
-
 ***************
 Getting started
 ***************
+
+Introduction
+============
 See `Getting started with the Hiveeyes MicroPython Datalogger`_.
 
+Download
+========
+On the `release page`_ , bundles of the most recent software versions
+are available through ``.tar.gz`` and ``.zip`` archives.
+These are suitable for uploading through Pymakr or similar
+development environments / file synchronization tools.
 
-*************
 Sandbox setup
-*************
-Please follow up at `Setup Hiveeyes MicroPython Datalogger sandbox`_ to
-read about how to install the MicroPython firmware development environment
+=============
+If you would like to contribute to the development or want to setup
+a development environment for running the head version of this
+software, please follow up at `Setup Hiveeyes MicroPython Datalogger sandbox`_
+to read about how to install the MicroPython firmware development environment
 and other software components it relies on and how to configure it properly.
 
 
 *************
 Configuration
 *************
-
 Copy the ``settings.example.py`` blueprint into ``settings.py``
 and adjust each configuration setting appropriately. The
 documentation of all parameters is in the file itself
@@ -155,6 +151,16 @@ Use of the source code included here is governed by the GNU General Public Licen
 Please also have a look at the notices about licenses of third-party components.
 
 
+****************
+Acknowledgements
+****************
+This firmware is an effort of many people. So, thanks to all
+the `contributors`_ who got their hands dirty and helped to
+co-create and conceive it in one way or another.
+
+You know who you are.
+
+
 ----
 
 Have fun!
@@ -164,6 +170,8 @@ Have fun!
 .. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
 .. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
 .. _Getting started with the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
+.. _Running the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/0.4.0/doc/screenshots/05-running.rst
+.. _release page: https://github.com/hiveeyes/hiveeyes-micropython-firmware/releases
 
 .. _Pycom FiPy: https://pycom.io/product/fipy/
 .. _Pycom LoPy4: https://pycom.io/product/lopy4/
@@ -174,5 +182,3 @@ Have fun!
 
 .. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
 .. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
-
-.. _Running the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/0.4.0/doc/screenshots/05-running.rst

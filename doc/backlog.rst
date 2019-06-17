@@ -9,6 +9,7 @@ Datalogger
 
 Prio 1
 ======
+- [o] Add README and docs to download bundle.
 - [o] Bundle and upload package to GitHub always when invoking ``make release``
 - [o] Interpolate/deduce Chip-ID into telemetry node name
 - [o] Map Chip-ID to specific configuration file
