@@ -63,12 +63,21 @@ Architecture
 Screenshots
 ***********
 
+Sensorkit and board
+===================
 .. figure:: https://ptrace.hiveeyes.org/2019-06-17_bob-sensorkit-small.jpeg
     :target: https://ptrace.hiveeyes.org/2019-06-17_bob-sensorkit-large.jpeg
+
+    Bee Observer Sensorkit, assembled.
 
 .. figure:: https://ptrace.hiveeyes.org/2019-06-17_bob-board-small.jpeg
     :target: https://ptrace.hiveeyes.org/2019-06-17_bob-board-large.jpeg
 
+    Bee Observer Board, assembled.
+
+
+Console output
+==============
 To get a better idea about how running this firmware will feel like when
 watching its log output, we collected some excerpts at
 `Running the Hiveeyes MicroPython Datalogger`_.
