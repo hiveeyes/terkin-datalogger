@@ -6,6 +6,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 Development
 ===========
 - Improve documentation
+- Improve voltage divider settings for reading the battery level
 
 
 2019-06-17 0.4.0

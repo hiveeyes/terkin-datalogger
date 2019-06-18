@@ -55,13 +55,17 @@ class SystemTemperature:
 
 class SystemBatteryLevel:
     """
-    Read the battery level by reading the ADC on a pin connected
-    to a voltage divider, which is pin 16 on the expansion board.
+    Read the battery level by sampling the ADC on a pin connected
+    to a voltage divider. As the Pycom expansion board is using
+    Pin 16, this is also used on other boards as kind of a convention.
 
     Implementation
     ==============
     Written by Dominik Kapusta <https://github.com/ayoy>. Thanks!
+    Improved by Andreas Motl <https://github.com/amotl>.
 
+    License
+    =======
     The MIT License (MIT)
 
     Copyright (c) 2018 Dominik Kapusta
@@ -71,9 +75,15 @@ class SystemBatteryLevel:
 
     Documentation
     =============
-    - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
     - https://docs.pycom.io/firmwareapi/pycom/machine/adc
     - https://docs.pycom.io/tutorials/all/adc
+
+    More resources
+    ==============
+    - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
+    - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+    - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
+
     """
 
     # How many times to sample the ADC for making a reading.
@@ -84,34 +94,40 @@ class SystemBatteryLevel:
         Initialized ADC unit.
         """
 
-        # Sum of resistor values.
-        self.resistor_sum = None
+        # ADC Pin to sample from.
+        self.pin = None
 
-        # Resistor between input pin and ground.
-        self.resistor_pin = None
+        # Main resistor value (R1).
+        self.resistor_r1 = None
+
+        # Resistor between input pin and ground (R2).
+        self.resistor_r2 = None
 
         # ADC channel used for sampling the raw value.
         self.adc = ADC(id=0)
 
     def setup(self, settings):
-        self.resistor_sum = settings.get('sensors.system.vcc.resistor_sum')
-        self.resistor_pin = settings.get('sensors.system.vcc.resistor_pin')
+        self.pin = settings.get('sensors.system.vcc.pin')
+        self.resistor_r1 = settings.get('sensors.system.vcc.resistor_r1')
+        self.resistor_r2 = settings.get('sensors.system.vcc.resistor_r2')
 
     def read(self):
         """
         Acquire vbatt reading by sampling ADC.
         """
 
-        assert type(self.resistor_sum) is int, 'Invalid setting for voltage divider resistor value "resistor_sum"'
-        assert type(self.resistor_pin) is int, 'Invalid setting for voltage divider resistor value "resistor_pin"'
+        assert type(self.pin) is str, 'VCC Error: Voltage divider ADC pin invalid'
+        assert type(self.resistor_r1) is int, 'VCC Error: Voltage divider resistor value "resistor_r1" invalid'
+        assert type(self.resistor_r2) is int, 'VCC Error: Voltage divider resistor value "resistor_r2" invalid'
 
         # Power on ADC.
         self.adc.init()
 
-        log.debug('Reading battery level with voltage divider {}/{}'.format(self.resistor_sum, self.resistor_pin))
+        log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # Sample ADC a few times.
-        adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin='P16')
+        # Todo: Make attenuation factor configurable.
+        adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
         i = 0
@@ -139,7 +155,8 @@ class SystemBatteryLevel:
         log.debug("SystemBatteryLevel: Variance of ADC readings = %15.13f" % adc_variance)
         log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
-        voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * self.resistor_sum / self.resistor_pin
+        resistor_sum = self.resistor_r1 + self.resistor_r2
+        voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.

@@ -128,16 +128,32 @@ telemetry = {
 sensors = {
     'system': {
 
-        # Adjust according to voltage divider parameters.
-        # The current settings are suitable for the Pycom Expansion Board 3.2
-        # See also https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+        # Adjust voltage divider resistor values matching the board.
+        #
+        # See also
+        # - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
+        # - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+        # - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
+        #
+        # As a reference (all readings using 6dB attenuation unless otherwise noted):
+        #
+        # - Pycom Expansion board v3.0: 115 kΩ / 56 kΩ
+        # - Pycom Expansion board v3.1: 1 MΩ / 1 MΩ
+        # - Pycom Expansion board v3.2: 1 MΩ / 1 MΩ
+        # - BOB-HAT-V5: 1 MΩ / 470 kΩ or 220 kΩ
+        # - BOB-SHIELD: 10 MΩ / 2 MΩ
+        # - Air Quality monitor: 100kΩ / 47 kΩ, measured with 2.5dB attenuation
+
+        # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
         'vcc': {
 
-            # Sum of resistor values.
-            'resistor_sum': 115,
+            'pin': 'P16',
 
-            # Resistor between input pin and ground.
-            'resistor_pin': 56,
+            # Main resistor value (R1).
+            'resistor_r1': 1000,
+
+            # Resistor between input pin and ground (R2).
+            'resistor_r2': 1000,
         }
     },
     'registry': {
