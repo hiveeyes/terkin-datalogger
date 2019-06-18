@@ -7,6 +7,7 @@ Development
 ===========
 - Improve documentation
 - Improve voltage divider settings for reading the battery level
+- Package the release bundle with the same directory layout as the sandbox
 
 
 2019-06-17 0.4.0

@@ -213,7 +213,8 @@ create-release-archives: prepare-release
 	@mkdir -p $(work_dir)
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
-	@cp -r dist-packages hiveeyes terkin lib boot.py main.py settings.example.py $(work_dir)
+	@cp -r dist-packages lib boot.py main.py settings.example.py $(work_dir)
+	@cp -r hiveeyes terkin $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile) -C $(build_dir) $(releasename)
