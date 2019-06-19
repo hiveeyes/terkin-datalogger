@@ -21,6 +21,11 @@ main = {
         'configuration': True,
     },
 
+    # Configure RGB-LED.
+    'rgb_led': {
+        'heartbeat': True,
+    },
+
 }
 
 # Networking configuration.

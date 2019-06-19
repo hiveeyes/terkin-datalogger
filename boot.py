@@ -42,11 +42,13 @@ def extend_syspath():
 if __name__ == '__main__':
 
     # Enable heartbeat LED.
+    """
     try:
         import pycom
         pycom.heartbeat(True)
     except:
         pass
+    """
 
     # Extend module search path.
     extend_syspath()

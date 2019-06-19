@@ -125,6 +125,26 @@ class TerkinDevice:
         import gc
         gc.collect()
 
+    def configure_rgb_led(self):
+        """
+        https://docs.pycom.io/tutorials/all/rgbled.html
+        """
+        import pycom
+
+        # Enable or disable heartbeat.
+        rgb_led_heartbeat = self.settings.get('main.rgb_led.heartbeat', True)
+        pycom.heartbeat(rgb_led_heartbeat)
+        pycom.heartbeat_on_boot(rgb_led_heartbeat)
+
+        # Alternative signalling.
+        # Todo: Run this in a separate thread in order not to delay execution of main program flow.
+        if not rgb_led_heartbeat:
+            for _ in range(2):
+                pycom.rgbled(0x001100)
+                time.sleep(0.15)
+                pycom.rgbled(0x000000)
+                time.sleep(0.10)
+
     def start_telemetry(self):
         log.info('Starting telemetry')
 

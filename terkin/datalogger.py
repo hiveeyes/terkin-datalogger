@@ -47,6 +47,9 @@ class TerkinDatalogger:
 
         log.info('Starting %s', self.appname)
 
+        # Configure RGB-LED according to settings.
+        self.device.configure_rgb_led()
+
         logging_enabled = self.settings.get('main.logging.enabled', False)
         if not logging_enabled:
             logging.disable_logging()
