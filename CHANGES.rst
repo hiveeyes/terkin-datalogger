@@ -14,6 +14,7 @@ Development
 - Improve MAC address formatting when logging network status
 - Try 11 dB attenuation for measuring vcc
 - Disable heartbeat through RGB-LED, just blink twice on startup
+- Turn off interrupts when powering down the HX711
 
 
 2019-06-17 0.4.0

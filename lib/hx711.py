@@ -118,10 +118,14 @@ class HX711:
             self.time_constant = time_constant
 
     def power_down(self):
+        log.info('HX711 power down')
+        state = disable_irq()
         self.pSCK.value(False)
         self.pSCK.value(True)
+        enable_irq(state)
 
     def power_up(self):
+        log.info('HX711 power up')
         self.pSCK.value(False)
 
 
