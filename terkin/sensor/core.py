@@ -63,17 +63,32 @@ class SensorManager:
             else:
                 log.warning("Invalid bus configuration: %s", bus)
 
-    def power_off(self):
-        for sensor in self.sensors:
-            if hasattr(sensor, 'power_off'):
-                try:
-                    sensor.power_off()
-                except:
-                    log.exception('Turning off sensor failed')
+    def power_on(self):
+        self.power_toggle_busses('power_on')
+        self.power_toggle_sensors('power_on')
 
+    def power_off(self):
+        self.power_toggle_sensors('power_off')
+        self.power_toggle_busses('power_off')
+
+    def power_toggle_sensors(self, action):
+        for sensor in self.sensors:
+            sensorname = sensor.__class__.__name__
+            if hasattr(sensor, action):
+                log.info('Sending {} to sensor {}'.format(action, sensorname))
+                try:
+                    getattr(sensor, action)()
+                except:
+                    log.exception('Sending {} to sensor {} failed'.format(action, sensorname))
+
+    def power_toggle_busses(self, action):
         for busname, bus in self.busses.items():
-            if hasattr(bus, 'power_off'):
-                bus.power_off()
+            if hasattr(bus, action):
+                log.info('Sending {} to bus {}'.format(action, busname))
+                try:
+                    getattr(bus, action)()
+                except:
+                    log.exception('Sending {} to sensor {} failed'.format(action, busname))
 
 
 class AbstractSensor:
@@ -111,15 +126,8 @@ class AbstractSensor:
     def acquire_bus(self, bus):
         self.bus = bus
 
-    def power_on(self):
-        pass
-
-    def power_off(self):
-        pass
-
     def read(self):
         raise NotImplementedError()
-        pass
 
     def format_fieldname(self, name, address):
         fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
@@ -154,12 +162,6 @@ class AbstractBus:
 
     def register_pin(self, name, pin):
         self.pins[name] = pin
-
-    def power_on(self):
-        pass
-
-    def power_off(self):
-        pass
 
 
 class OneWireBus(AbstractBus):

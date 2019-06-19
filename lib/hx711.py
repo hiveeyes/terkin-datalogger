@@ -142,6 +142,13 @@ class HX711:
         elif 0 < time_constant < 1.0:
             self.time_constant = time_constant
 
+    def power_up(self):
+        """
+        When PD_SCK Input is low, chip is in normal working mode.
+        """
+        log.info('HX711 power up')
+        self.pSCK.value(False)
+
     def power_down(self):
         """
         When PD_SCK pin changes from low to high and stays at
@@ -153,10 +160,6 @@ class HX711:
         self.pSCK.value(True)
         utime.sleep_us(80)
         enable_irq(state)
-
-    def power_up(self):
-        log.info('HX711 power up')
-        self.pSCK.value(False)
 
 
 class DeviceNotFound(Exception):

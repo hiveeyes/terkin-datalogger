@@ -90,6 +90,9 @@ class TerkinDatalogger:
         self.sensor_manager.register_busses(bus_settings)
         self.register_sensors()
 
+        # Power up sensor peripherals.
+        self.sensor_manager.power_on()
+
         # Ready.
         self.start_mainloop()
 
