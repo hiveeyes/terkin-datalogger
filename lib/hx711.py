@@ -2,6 +2,7 @@
 # (c) 2017-2018 David Gerber <https://github.com/geda>
 # HX711 library for the LoPy.
 # https://github.com/geda/hx711-lopy
+import utime
 from terkin import logging
 from machine import Pin, enable_irq, disable_irq, idle
 
@@ -142,10 +143,15 @@ class HX711:
             self.time_constant = time_constant
 
     def power_down(self):
+        """
+        When PD_SCK pin changes from low to high and stays at
+        high for longer than 60µs, HX711 enters power down mode.
+        """
         log.info('HX711 power down')
         state = disable_irq()
         self.pSCK.value(False)
         self.pSCK.value(True)
+        utime.sleep_us(80)
         enable_irq(state)
 
     def power_up(self):
