@@ -230,6 +230,8 @@ class TerkinDevice:
 
     def hibernate(self, interval, deep=False):
 
+        logging.enable_logging()
+
         if deep:
 
             # Prepare and invoke deep sleep.

@@ -5,7 +5,8 @@
 import time
 import machine
 
-from terkin import __version__, logging
+from terkin import __version__
+from terkin import logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.radio import SystemWiFiMetrics
@@ -28,7 +29,6 @@ class TerkinDatalogger:
         # Obtain configuration settings.
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
-        self.settings.dump()
 
         # Button manager instance (optional).
         self.button_manager = None
@@ -47,6 +47,15 @@ class TerkinDatalogger:
 
         log.info('Starting %s', self.appname)
 
+        logging_enabled = self.settings.get('main.logging.enabled', False)
+        if not logging_enabled:
+            logging.disable_logging()
+
+        # Dump configuration settings.
+        log_configuration = self.settings.get('main.logging.configuration', False)
+        if log_configuration:
+            self.settings.dump()
+
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -60,7 +69,8 @@ class TerkinDatalogger:
         #self.device.enable_serial()
 
         # Hello world.
-        self.device.print_bootscreen()
+        if logging_enabled:
+            self.device.print_bootscreen()
 
         # Bootstrap infrastructure.
         self.device.start_networking()

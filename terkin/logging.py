@@ -59,3 +59,23 @@ def getLogger(name=None, level=logging.INFO):
         l.addHandler(sh)
     _loggers[name] = l
     return l
+
+
+def noop(*args, **kwargs):
+    return
+
+
+loggers_backup = {
+    'Logger': Logger.log,
+    'ExtendedLogger': ExtendedLogger.log,
+}
+
+
+def disable_logging():
+    Logger.log = noop
+    ExtendedLogger.log = noop
+
+
+def enable_logging():
+    Logger.log = loggers_backup['Logger']
+    ExtendedLogger.log = loggers_backup['ExtendedLogger']

@@ -9,6 +9,7 @@ Development
 - Improve voltage divider settings for reading the battery level
 - Package the release bundle with the same directory layout as the sandbox
 - Add foundation for having button events through ESP32 touch pads
+- Add basic logging configuration settings to support turning off logging entirely
 
 
 2019-06-17 0.4.0

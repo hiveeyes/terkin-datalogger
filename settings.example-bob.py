@@ -11,6 +11,16 @@ main = {
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': True,
 
+    # Configure logging.
+    'logging': {
+
+        # Enable or disable logging completely.
+        'enabled': True,
+
+        # Log configuration settings at system startup.
+        'configuration': True,
+    },
+
 }
 
 # Networking configuration.
