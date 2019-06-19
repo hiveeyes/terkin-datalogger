@@ -11,6 +11,7 @@ Development
 - Add foundation for having button events through ESP32 touch pads
 - Add basic logging configuration settings to support turning off logging entirely
 - Fix purging of sensible configuration keys
+- Improve MAC address formatting when logging network status
 
 
 2019-06-17 0.4.0

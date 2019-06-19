@@ -211,9 +211,18 @@ class NetworkManager:
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
-        mac_address = self.station.mac()
+        mac_address = self.humanize_mac_address(self.station.mac())
         ifconfig = self.station.ifconfig()
-        log.info('WiFi STA: Networking address: mac={}, ifconfig={}'.format(mac_address, ifconfig))
+        log.info('WiFi STA: Networking address (MAC): %s', mac_address)
+        log.info('WiFi STA: Networking address (IP):  %s', ifconfig)
+
+    def humanize_mac_address(self, mac):
+        info = {}
+        if hasattr(mac, 'sta_mac'):
+            info['sta_mac'] = binascii.hexlify(mac.sta_mac).decode()
+        if hasattr(mac, 'ap_mac'):
+            info['ap_mac'] = binascii.hexlify(mac.ap_mac).decode()
+        return info
 
     def print_station_statistics(self):
         stats = SystemWiFiMetrics(self.station).read()
