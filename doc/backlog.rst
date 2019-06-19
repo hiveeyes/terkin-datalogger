@@ -9,37 +9,51 @@ Datalogger
 
 Prio 1
 ======
-- [o] Optionally turn off logging
-- [o] Improve formatting of mac addresses
+- [o] Activate Watchdog Timer
+- [o] Interpolate Device-ID into telemetry node name
+- [o] Unlock NVRAM storage as ConfigurationSettings overlay
+- [o] Add named fields based on NVRAM overlay
+- [o] Energy saving
+    - [x] Turn off logging
+    - [x] Turn off heartbeat of RGB-LED
+    - [o] Fix HX711 power down
+    - [o] Turn off serial interface completely
+    - [o] Speed-up WiFi connection by not scanning at all.
+          In order to achieve that, scan once and remember auth-mode in NVRAM.
+    - [o] Turn off LED-RGB completely
+- [o] OneWire sensor enumeration
+
+
+Prio 1.2
+========
+- [o] Introduce and wire maintenance mode
+    - Increase measurement frequency
+    - Start access point
+    - Start webserver
+- [o] How to find individual espressif nodes on a LAN network?
 - [o] Add README and docs to download bundle.
 - [o] Resistor values for BOB-Board
   https://community.hiveeyes.org/t/pycom-mpy-verbesserung-des-systembatterylevel-systemsensors-energiehaushalt/2128/10
 - [o] Tiefentladungsschutz
-- [o] Speed-up WiFi connection by not scanning at all.
-      In order to achieve that, scan once and remember auth-mode in NVRAM.
 - [o] Buttons:
     - Improve configuration
     - Wire to actions
     - Wake up from deepsleep, see https://docs.pycom.io/firmwareapi/pycom/machine/#machinepindeepsleepwakeuppins-mode-enablepull
 - [o] Bundle and upload package to GitHub always when invoking ``make release``
 - [o] Improve LED signalling
-- [o] Interpolate/deduce Chip-ID into telemetry node name
 - [o] Map Chip-ID to specific configuration file
-- [o] Check appropriate interrupt handling of lowlevel sensor drivers
 - [o] Gracefully set time using NTP
   https://docs.pycom.io/firmwareapi/micropython/utime.html#maintaining-actual-calendar-datetime
-- [o] Unlock NVRAM storage as ConfigurationSettings overlay
-- [o] Add named fields based on NVRAM overlay
 - [o] AP mode
 - [o] Make retry interval / WiFi timeout configurable
 - [o] Sensor enabled/disabled for configuration settings
 - [o] Aggregate errors and submit using MQTT
-- [o] Reactivate Watchdog Timer
 - [o] Enable/disable sensors
 - [o] Transmit system states via MQTT
 
-Prio 1.1
+Prio 1.3
 ========
+- [o] Check appropriate interrupt handling of lowlevel sensor drivers
 - [o] Generic "median" function
 - [o] BT-OFF and BT-Proximity
 - [o] Set DNS servers: https://forum.pycom.io/topic/4361/new-stable-firmware-release-v1-18-2
@@ -97,7 +111,7 @@ Prio 1.1
 - Check "Espressif-specific" Long Range mode, see
   https://github.com/pycom/pycom-micropython-sigfox/pull/281
 
-Prio 1.3
+Prio 1.4
 ========
 - [o] Looks like the HX711 does not grok the ``offset`` parameter?
 - [o] Appropriate control for turning on DEBUG logging
@@ -234,6 +248,7 @@ Done
 - [x] Switch to LittleFS
 - [x] Add deep sleep
 - [x] Log wakeup type
+- [x] Improve formatting of mac addresses
 
 
 
