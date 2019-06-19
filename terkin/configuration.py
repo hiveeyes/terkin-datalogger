@@ -27,7 +27,7 @@ class TerkinConfiguration:
         'password',
 
         # LoRa
-        'application_key', 'application_eui'
+        'application_key', 'application_eui',
         
         # BEEP-BOB telemetry
         'key',
