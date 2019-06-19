@@ -6,10 +6,10 @@ main = {
     # Measurement interval in seconds.
     # TODO: Please note this is not the _real thing_ yet at it will just use
     #       this value to apply to ``time.sleep()`` after each duty cycle.
-    'interval': 5.0,
+    'interval': 15.0,
 
     # Whether to use deep sleep between measurement cycles.
-    'deepsleep': False,
+    'deepsleep': True,
 
     # Configure logging.
     'logging': {
