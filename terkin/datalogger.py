@@ -11,6 +11,7 @@ from terkin.device import TerkinDevice
 from terkin.radio import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
+from terkin.sensor.button import ButtonManager
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +28,9 @@ class TerkinDatalogger:
         self.settings.add(settings)
         self.settings.dump()
 
+        # Button manager instance (optional).
+        self.button_manager = None
+
         self.sensor_manager = SensorManager()
         self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
@@ -40,6 +44,12 @@ class TerkinDatalogger:
 
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
+
+        # Initialize buttons / touch pads.
+        buttons_enabled = self.settings.get('sensors.system.buttons.enabled', False)
+        if buttons_enabled:
+            self.button_manager = ButtonManager()
+            self.start_buttons()
 
         # Disable this if you don't want serial access.
         #self.device.enable_serial()
@@ -201,3 +211,26 @@ class TerkinDatalogger:
                         'Status: {}'.format(count_failed, count_total, telemetry_status))
 
         return success
+
+    def start_buttons(self):
+
+        # RGB-LED: 2
+        # POWER-ENABLE: 3
+        # SD-Card: 4, 8
+        # LTE 19, 20
+        # Misc: 13, 14, 9, 23
+
+        # Physical location when looking at the board with the RGB-LED oriented to the top.
+
+        # Location: Left side, 6th pin from top.
+        self.button_manager.setup_touchpad('P4', name='Touch3', location='Module-Left-Top-6th')
+
+        # Location: Left side, 5th pin from bottom.
+        self.button_manager.setup_touchpad('P8', name='Touch2', location='Module-Left-Bottom-5th')
+
+        # Location: Right side.
+        self.button_manager.setup_touchpad('P23', name='Touch6', location='Module-Right-Top-4th')
+
+        # Will yield ``ValueError: Touch pad error``.
+        #self.button_manager.setup_touchpad('P20', name='Touch8', location='Module-Right-Top-7th')
+        #self.button_manager.setup_touchpad('P19', name='Touch9', location='Module-Right-Top-8th')

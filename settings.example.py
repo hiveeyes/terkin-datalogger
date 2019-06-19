@@ -154,7 +154,12 @@ sensors = {
 
             # Resistor between input pin and ground (R2).
             'resistor_r2': 1000,
-        }
+        },
+
+        # Settings for button events, e.g. through touch pads.
+        'buttons': {
+            'enabled': False,
+        },
     },
     'registry': {
         'hx711': {
