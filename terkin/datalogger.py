@@ -24,6 +24,8 @@ class TerkinDatalogger:
     version = __version__
 
     def __init__(self, settings):
+
+        # Obtain configuration settings.
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
         self.settings.dump()
@@ -31,7 +33,10 @@ class TerkinDatalogger:
         # Button manager instance (optional).
         self.button_manager = None
 
+        # Initialize sensor domain.
         self.sensor_manager = SensorManager()
+
+        # Initialize device.
         self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
     @property
@@ -64,13 +69,15 @@ class TerkinDatalogger:
         if self.device.status.networking:
             self.device.start_telemetry()
 
-        # Signal readyness by publishing information about the device (Microhomie).
-        # self.device.publish_properties()
+        # Todo: Signal readyness by publishing information about the device (Microhomie).
+        # e.g. ``self.device.publish_properties()``
 
+        # Setup sensors.
         bus_settings = self.settings.get('sensors.busses')
         self.sensor_manager.register_busses(bus_settings)
         self.register_sensors()
 
+        # Ready.
         self.start_mainloop()
 
     def start_mainloop(self):
@@ -86,7 +93,7 @@ class TerkinDatalogger:
             self.device.feed_wdt()
 
             # Indicate activity.
-            # TODO: Optionally disable this output.
+            # Todo: Optionally disable this output.
             log.info('--- loop ---')
 
             # Run downstream mainloop handlers.

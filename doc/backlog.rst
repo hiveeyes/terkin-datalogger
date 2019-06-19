@@ -10,6 +10,12 @@ Datalogger
 Prio 1
 ======
 - [o] Add README and docs to download bundle.
+- [o] Resistor values for BOB-Board
+  https://community.hiveeyes.org/t/pycom-mpy-verbesserung-des-systembatterylevel-systemsensors-energiehaushalt/2128/10
+- [o] Tiefentladungsschutz
+- [o] Buttons:
+    - Improve configuration
+    - Wire to actions
 - [o] Bundle and upload package to GitHub always when invoking ``make release``
 - [o] Interpolate/deduce Chip-ID into telemetry node name
 - [o] Map Chip-ID to specific configuration file
