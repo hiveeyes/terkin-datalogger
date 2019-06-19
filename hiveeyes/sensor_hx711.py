@@ -95,9 +95,9 @@ class HX711Sensor(AbstractSensor):
         return effective_data
 
     def power_on(self):
-        log.info('Powering on HX711')
+        log.info('Powering up HX711')
         self.loadcell.power_up()
 
     def power_off(self):
-        log.info('Turning off HX711')
+        log.info('Powering down HX711')
         self.loadcell.power_down()

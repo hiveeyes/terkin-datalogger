@@ -14,6 +14,9 @@ log.setLevel(logging.DEBUG)
 
 
 class SensorManager:
+    """
+    Manages all busses and sensors.
+    """
 
     def __init__(self):
         self.sensors = []
@@ -75,7 +78,7 @@ class SensorManager:
 
 class AbstractSensor:
     """
-    Abstract sensor container, containing meta data as readings
+    Abstract sensor container, containing meta data as readings.
     """
 
     SENSOR_NOT_INITIALIZED = object()
@@ -130,6 +133,9 @@ class BusType:
 
 
 class AbstractBus:
+    """
+    A blueprint for all bus objects.
+    """
 
     type = None
 
@@ -157,12 +163,14 @@ class AbstractBus:
 
 
 class OneWireBus(AbstractBus):
-    # Initialize the OneWire hardware driver.
+    """
+    Initialize the OneWire hardware driver and represent as bus object.
+    """
 
     type = BusType.OneWire
 
     def start(self):
-        # TODO: Improve error handling.
+        # Todo: Improve error handling.
         try:
             from onewire.onewire import OneWire
             self.adapter = OneWire(Pin(self.pins['data']))
@@ -182,11 +190,14 @@ class OneWireBus(AbstractBus):
 
 
 class I2CBus(AbstractBus):
+    """
+    Initialize the I2C hardware driver and represent as bus object.
+    """
 
     type = BusType.I2C
 
     def start(self):
-        # TODO: Improve error handling.
+        # Todo: Improve error handling.
         try:
             self.adapter = I2C(self.bus_number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
             self.scan_devices()

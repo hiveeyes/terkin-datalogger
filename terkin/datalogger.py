@@ -193,8 +193,8 @@ class TerkinDatalogger:
         log.info('Reading %s sensor ports', len(sensors))
         for sensor in sensors:
 
-            sensor_name = sensor.__class__.__name__
-            log.debug('Reading sensor "%s"', sensor_name)
+            sensorname = sensor.__class__.__name__
+            log.info('Reading sensor port "%s"', sensorname)
 
             try:
                 reading = sensor.read()
@@ -203,7 +203,7 @@ class TerkinDatalogger:
                 data.update(reading)
 
             except:
-                log.exception('Reading sensor "%s" failed', sensor_name)
+                log.exception('Reading sensor "%s" failed', sensorname)
 
         # Debugging: Print sensor data before running telemetry.
         log.info('Sensor data:  %s', data)

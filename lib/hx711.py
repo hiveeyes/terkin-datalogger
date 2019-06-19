@@ -9,6 +9,11 @@ log = logging.getLogger(__name__)
 
 
 class HX711:
+    """
+    Baseline driver for the HX711 by David Gerber, with modifications.
+
+    https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf
+    """
 
     def __init__(self, dout, pd_sck, gain=128):
 
@@ -58,16 +63,35 @@ class HX711:
                 return False
 
     def read(self):
+        """
+        This chip has a non-standard serial protocol.
+
+        Serial Interface
+        ----------------
+        Pin PD_SCK and DOUT are used for data retrieval, input selection,
+        gain selection and power down controls.
+
+        When output data is not ready for retrieval, digital output pin DOUT
+        is high. Serial clock input PD_SCK should be low. When DOUT goes to
+        low, it indicates data is ready for retrieval.
+
+        By applying 25~27 positive clock pulses at the PD_SCK pin, data is
+        shifted out from the DOUT output pin. Each PD_SCK pulse shifts out
+        one bit, starting with the MSB bit first, until all 24 bits are
+        shifted out. The 25th pulse at PD_SCK input will pull DOUT pin back
+        to high.
+        """
 
         # Initialize the hardware once.
         if self.initialize() is False:
             raise DeviceNotFound('HX711 not available')
 
-        # wait for the device being ready
+        # Wait for the device being ready.
+        # FIXME: This might block forever?
         while not self.is_ready():
             idle()
 
-        # shift in data, and gain & channel info
+        # Shift in data, gain & channel info.
         result = 0
         for j in range(24 + self.GAIN):
             state = disable_irq()
@@ -76,10 +100,10 @@ class HX711:
             enable_irq(state)
             result = (result << 1) | self.pOUT()
 
-        # shift back the extra bits
+        # Shift back the extra bits.
         result >>= self.GAIN
 
-        # check sign
+        # Check sign.
         if result > 0x7fffff:
             result -= 0x1000000
 
