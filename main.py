@@ -15,7 +15,7 @@ Setup
 Just run::
 
     make setup
-    make install-requirements install-framework
+    make install
 
 to bring everything into shape.
 

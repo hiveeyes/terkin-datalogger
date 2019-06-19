@@ -9,14 +9,20 @@ Datalogger
 
 Prio 1
 ======
+- [o] Optionally turn off logging
+- [o] Improve formatting of mac addresses
 - [o] Add README and docs to download bundle.
 - [o] Resistor values for BOB-Board
   https://community.hiveeyes.org/t/pycom-mpy-verbesserung-des-systembatterylevel-systemsensors-energiehaushalt/2128/10
 - [o] Tiefentladungsschutz
+- [o] Speed-up WiFi connection by not scanning at all.
+      In order to achieve that, scan once and remember auth-mode in NVRAM.
 - [o] Buttons:
     - Improve configuration
     - Wire to actions
+    - Wake up from deepsleep, see https://docs.pycom.io/firmwareapi/pycom/machine/#machinepindeepsleepwakeuppins-mode-enablepull
 - [o] Bundle and upload package to GitHub always when invoking ``make release``
+- [o] Improve LED signalling
 - [o] Interpolate/deduce Chip-ID into telemetry node name
 - [o] Map Chip-ID to specific configuration file
 - [o] Check appropriate interrupt handling of lowlevel sensor drivers

@@ -15,7 +15,7 @@ Setup
 Just run::
 
     make setup
-    make install-requirements install-framework
+    make install
 
 to bring everything into shape.
 
@@ -37,7 +37,6 @@ def extend_syspath():
     import sys
     sys.path.append('dist-packages')
     print('[boot.py] INFO: Python module search path is:', sys.path)
-    print()
 
 
 if __name__ == '__main__':
