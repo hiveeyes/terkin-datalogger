@@ -97,8 +97,8 @@ class HX711:
             state = disable_irq()
             self.pSCK(True)
             self.pSCK(False)
-            enable_irq(state)
             result = (result << 1) | self.pOUT()
+            enable_irq(state)
 
         # Shift back the extra bits.
         result >>= self.GAIN
