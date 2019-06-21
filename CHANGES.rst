@@ -19,6 +19,7 @@ Development
 - Improve IRQ handling when reading the HX711
 - Sleep for 80 microseconds after pulling HX711 clock pin to high
 - Improve bus- and sensor power-management. Add "power_on" signal.
+- Explicitly turn off LTE modem before deep sleep
 
 
 2019-06-17 0.4.0

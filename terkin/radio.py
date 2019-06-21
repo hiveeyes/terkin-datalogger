@@ -48,6 +48,12 @@ class NetworkManager:
 
         # We don't use LTE yet.
         try:
+            log.info('Turning off LTE modem')
+            # https://forum.pycom.io/topic/1022/root-causes-of-high-deep-sleep-current-lopy1-wipy2-and-sipy-all-the-new-modules-do-not-have-deepsleep-issues/121
+            from network import LTE
+            lte = LTE()
+            lte.deinit()
+
             log.info('Turning off LTE modem on boot')
             import pycom
             pycom.lte_modem_en_on_boot(False)
