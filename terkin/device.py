@@ -32,6 +32,10 @@ class TerkinDevice:
         self.version = version
         self.settings = settings
 
+        # Conditionally enable terminal on UART0. Default: False.
+        self.terminal = Terminal(self.settings)
+        self.terminal.start()
+
         self.device_id = get_device_id()
 
         self.networking = None
@@ -292,7 +296,7 @@ class TerkinDevice:
 
     def hibernate(self, interval, deep=False):
 
-        logging.enable_logging()
+        #logging.enable_logging()
 
         if deep:
 
@@ -306,6 +310,7 @@ class TerkinDevice:
 
             # Invoke deep sleep.
             log.info('Entering deep sleep for {} seconds'.format(interval))
+            self.terminal.stop()
             machine.deepsleep(int(interval * 1000))
 
         else:
@@ -355,3 +360,42 @@ class TerkinDevice:
         # Let's try.
         #machine.pin_sleep_wakeup(pins=['P8'], mode=machine.WAKEUP_ALL_LOW, enable_pull=False)
         pass
+
+
+class Terminal:
+
+    def __init__(self, settings):
+        self.settings = settings
+        self.uart = None
+
+    def start(self):
+        """
+        Start Terminal on UART0 interface.
+        """
+        # Conditionally enable terminal on UART0. Default: False.
+        # https://forum.pycom.io/topic/1224/disable-console-to-uart0-to-use-uart0-for-other-purposes
+        uart0_enabled = self.settings.get('interfaces.uart0.terminal', False)
+        import os
+        if uart0_enabled:
+            from machine import UART
+            self.uart = UART(0, 115200)
+            os.dupterm(self.uart)
+        else:
+            self.stop()
+
+    def stop(self):
+        """
+        Shut down Terminal on UART0 interface.
+        """
+        import os
+        log.info('Shutting down Terminal')
+        os.dupterm(None)
+        self.deinit()
+
+    def deinit(self):
+        """
+        Shut down UART0 interface.
+        """
+        if self.uart:
+            log.info('Shutting down UART0')
+            self.uart.deinit()

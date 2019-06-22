@@ -25,6 +25,7 @@ Development
 - WiFi STA: Get hold of auth mode and store into NVRAM to skip WiFi scan on each cycle
 - WiFi STA: Erase auth mode from NVRAM if connection fails
 - Refactor radio/networking subsystem
+- Explicitly start and stop Terminal on UART0 based on configuration
 
 
 2019-06-17 0.4.0

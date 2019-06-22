@@ -28,6 +28,13 @@ main = {
 
 }
 
+# Interface settings.
+interfaces = {
+    'uart0': {
+        'terminal': True,
+    }
+}
+
 # Networking configuration.
 networking = {
     'wifi': {

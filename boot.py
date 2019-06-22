@@ -36,7 +36,7 @@ def extend_syspath():
     """
     import sys
     sys.path.append('dist-packages')
-    print('[boot.py] INFO: Python module search path is:', sys.path)
+    #print('[boot.py] INFO: Python module search path is:', sys.path)
 
 
 if __name__ == '__main__':

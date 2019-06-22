@@ -30,14 +30,14 @@ class TerkinDatalogger:
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
 
+        # Initialize device.
+        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
+
         # Button manager instance (optional).
         self.button_manager = None
 
         # Initialize sensor domain.
         self.sensor_manager = SensorManager()
-
-        # Initialize device.
-        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
     @property
     def appname(self):
