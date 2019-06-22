@@ -46,20 +46,6 @@ class NetworkManager:
             except:
                 log.exception('Turning off WiFi failed')
 
-        # We don't use LTE yet.
-        try:
-            log.info('Turning off LTE modem')
-            # https://forum.pycom.io/topic/1022/root-causes-of-high-deep-sleep-current-lopy1-wipy2-and-sipy-all-the-new-modules-do-not-have-deepsleep-issues/121
-            from network import LTE
-            lte = LTE()
-            lte.deinit()
-
-            log.info('Turning off LTE modem on boot')
-            import pycom
-            pycom.lte_modem_en_on_boot(False)
-        except:
-            log.exception('Shutting down LTE modem failed')
-
     def start_wifi(self):
         """
         https://docs.pycom.io/tutorials/all/wlan.html

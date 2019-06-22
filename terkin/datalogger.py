@@ -45,6 +45,14 @@ class TerkinDatalogger:
 
     def start(self):
 
+        # Report about wakeup reason and run wakeup tasks.
+        self.device.resume()
+
+        # Turn off LTE modem and Bluetooth as we don't use them yet.
+        # Todo: Revisit where this should actually go.
+        self.device.power_off_lte_modem()
+        self.device.power_off_bluetooth()
+
         log.info('Starting %s', self.appname)
 
         # Configure RGB-LED according to settings.
@@ -58,9 +66,6 @@ class TerkinDatalogger:
         log_configuration = self.settings.get('main.logging.configuration', False)
         if log_configuration:
             self.settings.dump()
-
-        # Report about wakeup reason and run wakeup tasks.
-        self.device.resume()
 
         # Initialize buttons / touch pads.
         buttons_enabled = self.settings.get('sensors.system.buttons.enabled', False)

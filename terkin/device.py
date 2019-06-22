@@ -145,6 +145,44 @@ class TerkinDevice:
                 pycom.rgbled(0x000000)
                 time.sleep(0.10)
 
+    def power_off_lte_modem(self):
+        """
+        We don't use LTE yet.
+
+        https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
+        https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
+        """
+        log.info('Turning off LTE modem')
+        try:
+            import pycom
+            from network import LTE
+
+            # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
+            #log.info('Enabling LTE modem on boot')
+            #pycom.lte_modem_en_on_boot(True)
+
+            log.info('Invoking LTE.deinit()')
+            lte = LTE()
+            lte.deinit()
+
+            log.info('Turning off LTE modem on boot')
+            pycom.lte_modem_en_on_boot(False)
+
+        except:
+            log.exception('Shutting down LTE modem failed')
+
+    def power_off_bluetooth(self):
+        """
+        We don't use Bluetooth yet.
+        """
+        log.info('Turning off Bluetooth')
+        try:
+            from network import Bluetooth
+            bluetooth = Bluetooth()
+            bluetooth.deinit()
+        except:
+            log.exception('Shutting down Bluetooth failed')
+
     def start_telemetry(self):
         log.info('Starting telemetry')
 
