@@ -23,28 +23,11 @@ class NetworkManager:
         self.settings = settings
         """ WIFI settings """
         self.stations = self.settings.get('networking.wifi.stations')
-        self.stations_available = []
         self.station = None
 
         """ LoRa settings """
         self.otaa_settings = self.settings.get('networking.lora.otaa')
         #self.generated_device_eui = binascii.hexlify(LoRa().mac())
-
-    def power_off(self):
-        """
-        Power off all radio peripherals.
-
-        - https://forum.pycom.io/topic/563/disabling-wifi-on-lopy
-        - https://github.com/Hiverize/FiPy/commit/b6b15677
-        """
-
-        # WiFi
-        if self.station:
-            try:
-                log.info('Turning off WiFi')
-                self.station.deinit()
-            except:
-                log.exception('Turning off WiFi failed')
 
     def start_wifi(self):
         """
@@ -82,25 +65,49 @@ class NetworkManager:
             return True
 
         # Prepare information about known WiFi networks.
-        network_map = {station['ssid']: station for station in self.stations}
-        networks_known = frozenset(network_map.keys())
-
-        log.info("WiFi STA: Networks configured: %s", list(networks_known))
+        networks_known = frozenset([station['ssid'] for station in self.stations])
 
         log.info("WiFi STA: Starting interface")
         self.station.mode(WLAN.STA)
 
-        # Names/SSIDs of networks found.
-        log.info("WiFi STA: Scanning for networks")
-        self.stations_available = self.station.scan()
-        networks_found = frozenset([e.ssid for e in self.stations_available])
-        log.info("WiFi STA: Networks available: %s", list(networks_found))
+        # Attempt to connect to known/configured networks.
+        log.info("WiFi STA: Directly connecting to configured networks: %s", list(networks_known))
+        try:
+            self.wifi_connect_stations(networks_known)
 
-        # Compute set of effective networks by intersecting known with found ones.
-        network_candidates = list(networks_found & networks_known)
-        log.info("WiFi STA: Network candidates: %s", network_candidates)
+        except:
+            log.warning('WiFi: Switching to AP mode not implemented yet')
 
-        for network_name in network_candidates:
+        # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
+        """
+        log.info('WiFi: Switching to AP mode')
+        # WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT
+        # TOOD: Make default channel configurable
+        self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
+        """
+
+    def power_off(self):
+        """
+        Power off all radio peripherals.
+
+        - https://forum.pycom.io/topic/563/disabling-wifi-on-lopy
+        - https://github.com/Hiverize/FiPy/commit/b6b15677
+        """
+
+        # WiFi
+        if self.station:
+            try:
+                log.info('Turning off WiFi')
+                self.station.deinit()
+            except:
+                log.exception('Turning off WiFi failed')
+
+    def wifi_connect_stations(self, network_names):
+
+        # Prepare information about known WiFi networks.
+        network_map = {station['ssid']: station for station in self.stations}
+
+        for network_name in network_names:
             try:
                 # All the configuration details for this network.
                 # {
@@ -118,27 +125,22 @@ class NetworkManager:
         if not self.station.isconnected():
             message = 'WiFi STA: Connecting to any network candidate failed'
             description = 'Please check your WiFi configuration for one of the ' \
-                          '{} station candidates in your neighbourhood.'.format(len(network_candidates))
+                          'station candidates {}.'.format(len(network_names))
             log.error('{}. {}'.format(message, description))
             log.warning('Todo: We might want to switch to AP mode here or alternatively '
                         'buffer telemetry data to flash to be scheduled for transmission later.')
             raise WiFiException(message)
 
-        # TODO: Reenable WiFi AP mode in the context of an "initial configuration" mode.
-        """
-        log.info('WiFi: Switching to AP mode')
-        # WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT
-        # TOOD: Make default channel configurable
-        self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
-        """
-
     def wifi_connect_station(self, network):
 
         network_name = network['ssid']
 
-        log.info('WiFi STA: Attempting to connect to network "{}"'.format(network_name))
+        log.info('WiFi STA: Prepare connecting to network "{}"'.format(network_name))
 
-        auth_mode = [e.sec for e in self.stations_available if e.ssid == network_name][0]
+        auth_mode = self.wifi_get_auth_mode(network_name)
+
+        log.info('WiFi STA: Attempt connecting to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
+
         password = network['password']
 
         # TODO: Optionally, configure hostname.
@@ -190,6 +192,19 @@ class NetworkManager:
 
         return True
 
+    def wifi_scan_stations(self):
+        # Names/SSIDs of networks found.
+        log.info("WiFi STA: Scanning for networks")
+        stations_available = self.station.scan()
+        networks_found = frozenset([e.ssid for e in stations_available])
+        log.info("WiFi STA: Networks available: %s", list(networks_found))
+
+        return stations_available
+
+        # Compute set of effective networks by intersecting known with found ones.
+        #network_candidates = list(networks_found & networks_known)
+        #log.info("WiFi STA: Network candidates: %s", network_candidates)
+
     def get_ssid(self):
         return self.station.ssid()
 
@@ -199,21 +214,72 @@ class NetworkManager:
         except:
             pass
 
+    def wifi_get_auth_mode(self, network_name):
+
+        # NVRAM key for storing auth mode per network. Maximum of 15 characters.
+        auth_mode_nvs_key = self.wifi_auth_mode_nvs_key(network_name)
+
+        # Get WiFi STA auth mode from NVRAM.
+        try:
+            import pycom
+            auth_mode = pycom.nvs_get(auth_mode_nvs_key)
+            log.info('WiFi STA: Auth mode from NVRAM with key=%s, value=%s', auth_mode_nvs_key, auth_mode)
+        except:
+            auth_mode = None
+
+        # Fall back to find out WiFi STA auth mode by network scan.
+        if auth_mode is None:
+            log.info('WiFi STA: Unknown auth mode for network "%s", invoking WiFi scan', network_name)
+            wifi_neighbourhood = self.wifi_scan_stations()
+
+            #log.info('WiFi STA: Neighbourhood is %s', wifi_neighbourhood)
+            for e in wifi_neighbourhood:
+                if e.ssid == network_name:
+                    auth_mode = e.sec
+                    break
+
+            if not auth_mode:
+                message = 'WiFi STA: Unable to inquire auth mode for network "{}"'.format(network_name)
+                log.warning(message)
+                raise WiFiException(message)
+
+            log.info('WiFi STA: Storing auth mode into NVRAM with key=%s, value=%s', auth_mode_nvs_key, auth_mode)
+            try:
+                import pycom
+                pycom.nvs_set(auth_mode_nvs_key, auth_mode)
+            except:
+                log.exception('WiFi STA: Storing auth mode into NVRAM failed')
+
+        return auth_mode
+
+    def wifi_auth_mode_nvs_key(self, ssid):
+        """
+        Hack to get a short representation of a WiFi SSID in order to
+        squeeze it into a NVRAM key with a maximum length of 15 characters.
+
+        Fixme: Review this.
+        """
+        import hashlib
+        import ubinascii
+        digest = ubinascii.hexlify(hashlib.sha512(ssid).digest()).decode()
+        identifier = 'wa.{}'.format(digest[15:27])
+        return identifier
+
     def print_short_status(self):
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
-        mac_address = self.humanize_mac_address(self.station.mac())
+        mac_address = self.humanize_mac_addresses(self.station.mac())
         ifconfig = self.station.ifconfig()
         log.info('WiFi STA: Networking address (MAC): %s', mac_address)
         log.info('WiFi STA: Networking address (IP):  %s', ifconfig)
 
-    def humanize_mac_address(self, mac):
+    def humanize_mac_addresses(self, mac):
         info = {}
         if hasattr(mac, 'sta_mac'):
-            info['sta_mac'] = binascii.hexlify(mac.sta_mac).decode()
+            info['sta_mac'] = binascii.hexlify(mac.sta_mac).decode().upper()
         if hasattr(mac, 'ap_mac'):
-            info['ap_mac'] = binascii.hexlify(mac.ap_mac).decode()
+            info['ap_mac'] = binascii.hexlify(mac.ap_mac).decode().upper()
         return info
 
     def print_station_statistics(self):
@@ -229,6 +295,8 @@ class NetworkManager:
             except OSError as ex:
                 log.warning('Network interface not available: %s', format_exception(ex))
             log.info('Waiting for network interface')
+            # Save power while waiting.
+            machine.idle()
             time.sleep(0.25)
             attempts += 1
         log.info('Network interface ready')

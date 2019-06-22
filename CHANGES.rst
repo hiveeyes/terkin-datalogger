@@ -22,6 +22,7 @@ Development
 - Explicitly turn off LTE modem before deep sleep
 - Use 6dB attenuation factor again when reading the ADC for measuring VCC
 - Conditionally turn off LTE modem
+- Get hold of WiFi STA auth mode and store into NVRAM to skip WiFi scan on each cycle
 
 
 2019-06-17 0.4.0
