@@ -20,6 +20,8 @@ Prio 1
       See also https://github.com/HowManyOliversAreThere/six-nibble-name
 - [o] Revisit smoothing of HX711 value
 - [o] Improve HX711 timeout
+- [o] Publish status information at boot time with retained message to MQTT
+- [o] Enable/disable of system- and environmental-sensors
 
 Prio 1.1
 ========
