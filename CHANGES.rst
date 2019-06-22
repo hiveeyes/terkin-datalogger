@@ -24,6 +24,7 @@ Development
 - Conditionally turn off LTE modem
 - WiFi STA: Get hold of auth mode and store into NVRAM to skip WiFi scan on each cycle
 - WiFi STA: Erase auth mode from NVRAM if connection fails
+- Refactor radio/networking subsystem
 
 
 2019-06-17 0.4.0

@@ -9,7 +9,7 @@ from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
-from terkin.radio import SystemWiFiMetrics
+from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
 from terkin.sensor.button import ButtonManager
@@ -184,15 +184,18 @@ class TerkinDatalogger:
             SystemUptime,
         ]
 
-        # Create sensor adapters.
+        # Create environmental sensor adapters.
         for sensor_factory in system_sensors:
             sensor = sensor_factory()
             if hasattr(sensor, 'setup') and callable(sensor.setup):
                 sensor.setup(self.settings)
             self.sensor_manager.register_sensor(sensor)
 
-        # Add WiFi metadata.
-        self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.station))
+        # Add WiFi metrics.
+        try:
+            self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.wifi_manager.station))
+        except:
+            log.exception('Enabling SystemWiFiMetrics sensor failed')
 
     def read_sensors(self):
         """Read sensors"""

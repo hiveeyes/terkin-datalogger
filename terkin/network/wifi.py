@@ -3,37 +3,30 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-import socket
-import binascii
 import machine
+import binascii
 from network import WLAN
 from terkin import logging
-from terkin.util import format_exception
 
 log = logging.getLogger(__name__)
 
 
-class WiFiException(Exception):
-    pass
-
-
-class NetworkManager:
+class WiFiManager:
 
     def __init__(self, settings):
         self.settings = settings
-        """ WIFI settings """
+
+        # WIFI settings.
         self.stations = self.settings.get('networking.wifi.stations')
         self.station = None
 
-        """ LoRa settings """
-        self.otaa_settings = self.settings.get('networking.lora.otaa')
-        #self.generated_device_eui = binascii.hexlify(LoRa().mac())
-
-    def start_wifi(self):
+    def start(self):
         """
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
         """
+
+        # Todo: Propagate more parameters here, e.g. for using an external antenna.
         self.station = WLAN()
 
         #if machine.reset_cause() == machine.SOFT_RESET:
@@ -73,7 +66,7 @@ class NetworkManager:
         # Attempt to connect to known/configured networks.
         log.info("WiFi STA: Directly connecting to configured networks: %s", list(networks_known))
         try:
-            self.wifi_connect_stations(networks_known)
+            self.connect_stations(networks_known)
 
         except:
             log.warning('WiFi: Switching to AP mode not implemented yet')
@@ -102,7 +95,7 @@ class NetworkManager:
             except:
                 log.exception('Turning off WiFi failed')
 
-    def wifi_connect_stations(self, network_names):
+    def connect_stations(self, network_names):
 
         # Prepare information about known WiFi networks.
         network_map = {station['ssid']: station for station in self.stations}
@@ -116,7 +109,7 @@ class NetworkManager:
                 #    'ifconfig': ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1'),
                 # }
                 network_selected = network_map[network_name]
-                if self.wifi_connect_station(network_selected):
+                if self.connect_station(network_selected):
                     break
 
             except Exception:
@@ -124,7 +117,7 @@ class NetworkManager:
 
         if not self.station.isconnected():
 
-            self.wifi_forget_network(network_name)
+            self.forget_network(network_name)
 
             message = 'WiFi STA: Connecting to any network candidate failed'
             description = 'Please check your WiFi configuration for one of the ' \
@@ -134,13 +127,13 @@ class NetworkManager:
                         'buffer telemetry data to flash to be scheduled for transmission later.')
             raise WiFiException(message)
 
-    def wifi_connect_station(self, network):
+    def connect_station(self, network):
 
         network_name = network['ssid']
 
         log.info('WiFi STA: Prepare connecting to network "{}"'.format(network_name))
 
-        auth_mode = self.wifi_get_auth_mode(network_name)
+        auth_mode = self.get_auth_mode(network_name)
 
         log.info('WiFi STA: Attempt connecting to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
 
@@ -195,7 +188,7 @@ class NetworkManager:
 
         return True
 
-    def wifi_scan_stations(self):
+    def scan_stations(self):
         # Names/SSIDs of networks found.
         log.info("WiFi STA: Scanning for networks")
         stations_available = self.station.scan()
@@ -217,10 +210,10 @@ class NetworkManager:
         except:
             pass
 
-    def wifi_get_auth_mode(self, network_name):
+    def get_auth_mode(self, network_name):
 
         # NVRAM key for storing auth mode per network. Maximum of 15 characters.
-        auth_mode_nvs_key = self.wifi_auth_mode_nvs_key(network_name)
+        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name)
 
         # Get WiFi STA auth mode from NVRAM.
         try:
@@ -233,7 +226,7 @@ class NetworkManager:
         # Fall back to find out WiFi STA auth mode by network scan.
         if auth_mode is None:
             log.info('WiFi STA: Unknown auth mode for network "%s", invoking WiFi scan', network_name)
-            wifi_neighbourhood = self.wifi_scan_stations()
+            wifi_neighbourhood = self.scan_stations()
 
             #log.info('WiFi STA: Neighbourhood is %s', wifi_neighbourhood)
             for e in wifi_neighbourhood:
@@ -255,7 +248,7 @@ class NetworkManager:
 
         return auth_mode
 
-    def wifi_auth_mode_nvs_key(self, ssid):
+    def auth_mode_nvs_key(self, ssid):
         """
         Hack to get a short representation of a WiFi SSID in order to
         squeeze it into a NVRAM key with a maximum length of 15 characters.
@@ -268,9 +261,9 @@ class NetworkManager:
         identifier = 'wa.{}'.format(digest[15:27])
         return identifier
 
-    def wifi_forget_network(self, network_name):
+    def forget_network(self, network_name):
         log.info('WiFi STA: Forgetting NVRAM data for network "{}"'.format(network_name))
-        auth_mode_nvs_key = self.wifi_auth_mode_nvs_key(network_name)
+        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name)
         try:
             import pycom
             pycom.nvs_erase(auth_mode_nvs_key)
@@ -294,123 +287,13 @@ class NetworkManager:
             info['ap_mac'] = binascii.hexlify(mac.ap_mac).decode().upper()
         return info
 
-    def print_station_statistics(self):
-        stats = SystemWiFiMetrics(self.station).read()
-        print('stats:', stats)
+    def print_metrics(self):
+        metrics = SystemWiFiMetrics(self.station).read()
+        log.info('WiFi STA: Metrics: %s', metrics)
 
-    def wait_for_nic(self, retries=5):
-        attempts = 0
-        while attempts < retries:
-            try:
-                socket.getaddrinfo("localhost", 333)
-                break
-            except OSError as ex:
-                log.warning('Network interface not available: %s', format_exception(ex))
-            log.info('Waiting for network interface')
-            # Save power while waiting.
-            machine.idle()
-            time.sleep(0.25)
-            attempts += 1
-        log.info('Network interface ready')
 
-    def start_lora(self):
-        self.start_lora_join()
-        self.wait_for_lora_join(42)
-
-        time.sleep(2.5)
-
-        if self.lora_joined:
-            self.create_lora_socket()
-        else:
-            log.error("[LoRa] Could not join network")
-
-    def start_lora_join(self):
-
-        from network import LoRa
-
-        #pycom.rgbled(0x0f0000) # red
-        #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
-        self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
-
-        # Create LoRaWAN OTAA connection to TTN.
-        app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
-        app_key = binascii.unhexlify(self.otaa_settings['application_key'])
-
-        # Remark: For Pycom Nanogateway.
-        # Set the 3 default channels to the same frequency (must be before sending the otaa join request)
-        #self.lora.add_channel(0, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
-        #self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
-        #self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
-
-        if self.otaa_settings.get('device_eui') is None:
-            self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
-        else:
-            dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
-            self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
-
-    def wait_for_lora_join(self, attempts):
-        self.lora_joined = None
-        for i in range(0, attempts):
-            while not self.lora.has_joined():
-                time.sleep(2.5)
-                #pycom.rgbled(0x0f0f00) # yellow
-                time.sleep(0.1)
-                log.info('[LoRA] Not joined yet...')
-                #pycom.rgbled(0x000000) # off
-
-        self.lora_joined = self.lora.has_joined()
-
-        if self.lora_joined:
-            log.info('[LoRA] joined...')
-        else:
-            log.info('[LoRa] did not join in %s attempts', attempts)
-
-        #for i in range(3, 16):
-        #    self.lora.remove_channel(i)
-
-        return self.lora_joined
-
-    def create_lora_socket(self):
-        # create a lora socket
-
-        self.lora_socket = None
-        self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
-
-        # set the LoRaWAN data rate
-        #self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
-        self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
-        # make the socket non-blocking
-        self.socket.setblocking(False)
-
-        self.lora_socket = True
-        log.info('[LoRa] socket created')
-
-        for i in range(0,2):
-            #pycom.rgbled(0x000f00) # green
-            time.sleep(0.1)
-            #pycom.rgbled(0x000000) # off
-
-        time.sleep(4.0)
-        return self.lora_socket
-
-    def lora_send(self, payload):
-        success = self.socket.send(payload)
-        for i in range(0,2):
-            #pycom.rgbled(0x00000f) # green
-            time.sleep(0.1)
-            #pycom.rgbled(0x000000) # off
-
-        return success
-
-    def lora_receive(self):
-        rx, port = self.socket.recvfrom(256)
-        if rx:
-            #pycom.rgbled(0x000f00) # green
-            log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
-            #pycom.rgbled(0x000f00) # green
-        time.sleep(6)
-
-        return rx, port
+class WiFiException(Exception):
+    pass
 
 
 class SystemWiFiMetrics:

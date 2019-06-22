@@ -10,7 +10,6 @@ import machine
 
 from terkin import logging
 from terkin.pycom import MachineResetCause
-from terkin.radio import WiFiException
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
 
@@ -50,7 +49,7 @@ class TerkinDevice:
     def start_networking(self):
         log.info('Starting networking')
 
-        from terkin.radio import NetworkManager
+        from terkin.network import NetworkManager, WiFiException
 
         self.networking = NetworkManager(self.settings)
 
@@ -289,7 +288,7 @@ class TerkinDevice:
         log.info('\n' + buffer.getvalue())
 
     def power_off(self):
-        self.networking.power_off()
+        self.networking.stop()
 
     def hibernate(self, interval, deep=False):
 
