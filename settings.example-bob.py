@@ -25,7 +25,7 @@ main = {
     'watchdog': {
 
         # Enable or disable Watchdog completely.
-        'enabled': True,
+        'enabled': False,
 
         # Watchdog timeout in milliseconds.
         'timeout': 20000,
