@@ -5,6 +5,13 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+
+
+2019-06-22 0.5.0
+================
+
+**Power saving.**
+
 - Improve documentation
 - Improve voltage divider settings for reading the battery level
 - Package the release bundle with the same directory layout as the sandbox
