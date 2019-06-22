@@ -5,6 +5,10 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+
+
+2019-06-22 0.5.1
+================
 - HX711: Configure data pin as pull-up to be able to detect readiness
 - Disable Watchdog in blueprint settings
 - Improve logging and terminal handling in bootstrap phase
