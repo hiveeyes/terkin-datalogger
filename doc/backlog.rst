@@ -9,26 +9,26 @@ Datalogger
 
 Prio 1
 ======
-- [o] Activate internal pull-up for HX711 PD_SCK in deep sleep mode with "pin hold".
-  https://docs.pycom.io/firmwareapi/pycom/machine/pin.html#pinholdhold
-- [o] WiFi STA: Support connecting to BSSIDs
-- [o] WiFi STA: Exponential backoff and elsewhere
-- [o] Activate Watchdog Timer
-- [o] Interpolate Device-ID into telemetry node name or better derive humanized name from it.
-      See also https://github.com/HowManyOliversAreThere/six-nibble-name
-- [o] Unlock NVRAM storage as ConfigurationSettings overlay
-- [o] Add named fields based on NVRAM overlay
-- [o] Energy saving
-    - [x] Turn off logging
-    - [x] Turn off heartbeat of RGB-LED
-    - [o] Fix HX711 power down
-    - [o] Turn off serial interface completely
-    - [o] Speed-up WiFi connection by not scanning at all.
-          In order to achieve that, scan once and remember auth-mode in NVRAM.
-    - [o] Turn off LED-RGB completely
+- [o] More power saving
     - [o] Low-voltage cutoff
           https://github.com/opensourcebeehives/DataLogger/commit/39b45433dc54ce60419429fc6e6c114c7c3fa4a2
+    - [o] Turn off LED-RGB completely
+- [o] WiFi STA: Support connecting to BSSIDs
+- [o] Exponential backoff for WiFi STA, MQTT broker and general connectivity
+- [o] Time-based timeout behavior everything, not just based on retries
+- [o] Interpolate Device-ID into telemetry node name or better derive humanized name from it.
+      See also https://github.com/HowManyOliversAreThere/six-nibble-name
+- [o] Revisit smoothing of HX711 value
+- [o] Improve HX711 timeout
+
+Prio 1.1
+========
+- [o] Publish system events to MQTT
+- [o] Subscribe to MQTT downlink channel
+- [o] Unlock NVRAM storage as ConfigurationSettings overlay
+- [o] Add named fields based on NVRAM overlay
 - [o] OneWire sensor enumeration - display lexographically sorted?
+- [o] DEBUG mode
 
 Prio 1.2
 ========
@@ -56,6 +56,7 @@ Prio 1.2
 - [o] Aggregate errors and submit using MQTT
 - [o] Enable/disable sensors
 - [o] Transmit system states via MQTT
+- [o] settings: Rename "sensors.registry" to "sensors.environment".
 
 Prio 1.3
 ========
@@ -255,6 +256,17 @@ Done
 - [x] Add deep sleep
 - [x] Log wakeup type
 - [x] Improve formatting of mac addresses
+- [x] Power saving
+    - [x] Turn off logging
+    - [x] Turn off heartbeat of RGB-LED
+    - [x] Speed-up WiFi connection by not scanning at all.
+          In order to achieve that, scan once and remember auth-mode in NVRAM.
+    - [x] Fix HX711 power down re. spec
+    - [x] Activate internal pull-up for HX711 PD_SCK in deep sleep mode with "pin hold".
+      https://docs.pycom.io/firmwareapi/pycom/machine/pin.html#pinholdhold
+    - [x] Turn off serial interface completely
+    - [x] Tame LED-RGB
+- [x] Activate Watchdog Timer
 
 
 
