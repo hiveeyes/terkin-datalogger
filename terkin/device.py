@@ -152,21 +152,26 @@ class TerkinDevice:
         https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
         https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
         """
+
+        import pycom
+        if not pycom.lte_modem_en_on_boot():
+            log.info('Skip turning off LTE modem')
+            return
+
         log.info('Turning off LTE modem')
         try:
-            import pycom
             from network import LTE
 
             # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
             #log.info('Enabling LTE modem on boot')
             #pycom.lte_modem_en_on_boot(True)
 
+            log.info('Turning off LTE modem on boot')
+            pycom.lte_modem_en_on_boot(False)
+
             log.info('Invoking LTE.deinit()')
             lte = LTE()
             lte.deinit()
-
-            log.info('Turning off LTE modem on boot')
-            pycom.lte_modem_en_on_boot(False)
 
         except:
             log.exception('Shutting down LTE modem failed')

@@ -21,6 +21,7 @@ Development
 - Improve bus- and sensor power-management. Add "power_on" signal.
 - Explicitly turn off LTE modem before deep sleep
 - Use 6dB attenuation factor again when reading the ADC for measuring VCC
+- Conditionally turn off LTE modem
 
 
 2019-06-17 0.4.0
