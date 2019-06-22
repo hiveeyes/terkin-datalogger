@@ -55,7 +55,7 @@ class TerkinDevice:
 
         from terkin.network import NetworkManager, WiFiException
 
-        self.networking = NetworkManager(self.settings)
+        self.networking = NetworkManager(device=self, settings=self.settings)
 
         # Start WiFi.
         try:
@@ -83,7 +83,7 @@ class TerkinDevice:
         # Inform about networking status.
         #self.networking.print_status()
 
-    def start_wdt(self):
+    def start_watchdog(self):
         """
         The WDT is used to restart the system when the application crashes and
         ends up into a non recoverable state. After enabling, the application
@@ -92,17 +92,22 @@ class TerkinDevice:
         """
         # https://docs.pycom.io/firmwareapi/pycom/machine/wdt.html
 
-        log.info('Starting the watchdog timer (WDT)')
+        if not self.settings.get('main.watchdog.enabled', False):
+            log.info('Skipping watchdog timer (WDT)')
+            return
+
+        watchdog_timeout = self.settings.get('main.watchdog.timeout', 10000)
+        log.info('Starting the watchdog timer (WDT) with timeout {}ms'.format(watchdog_timeout))
 
         from machine import WDT
-        # Enable it with a specified timeout.
-        # TODO: Use values from configuration settings here.
-        self.wdt = WDT(timeout=5000)
+        self.wdt = WDT(timeout=watchdog_timeout)
 
+        # Feed Watchdog once.
         self.wdt.feed()
 
-    def feed_wdt(self):
+    def feed_watchdog(self):
         if self.wdt is not None:
+            log.info('Feeding Watchdog')
             self.wdt.feed()
 
     def start_rtc(self):
@@ -209,6 +214,8 @@ class TerkinDevice:
         for telemetry_target in telemetry_candidates:
             try:
                 self.create_telemetry_adapter(telemetry_target)
+                self.feed_watchdog()
+
             except:
                 log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
 

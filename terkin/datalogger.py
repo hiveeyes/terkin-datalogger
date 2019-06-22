@@ -55,6 +55,9 @@ class TerkinDatalogger:
 
         log.info('Starting %s', self.appname)
 
+        # Start the watchdog for sanity.
+        self.device.start_watchdog()
+
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()
 
@@ -91,6 +94,7 @@ class TerkinDatalogger:
         # e.g. ``self.device.publish_properties()``
 
         # Setup sensors.
+        self.device.feed_watchdog()
         bus_settings = self.settings.get('sensors.busses')
         self.sensor_manager.register_busses(bus_settings)
         self.register_sensors()
@@ -102,16 +106,14 @@ class TerkinDatalogger:
         self.start_mainloop()
 
     def start_mainloop(self):
-        # TODO: Refactor by using timers.
 
-        # Start the watchdog for sanity.
-        #self.device.start_wdt()
+        # Todo: Refactor by using timers.
 
         # Enter the main loop.
         while True:
 
             # Feed the watchdog timer to keep the system alive.
-            self.device.feed_wdt()
+            self.device.feed_watchdog()
 
             # Indicate activity.
             # Todo: Optionally disable this output.
@@ -215,6 +217,8 @@ class TerkinDatalogger:
 
             except:
                 log.exception('Reading sensor "%s" failed', sensorname)
+
+            self.device.feed_watchdog()
 
         # Debugging: Print sensor data before running telemetry.
         log.info('Sensor data:  %s', data)

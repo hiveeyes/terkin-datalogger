@@ -15,11 +15,14 @@ log = logging.getLogger(__name__)
 
 class NetworkManager:
 
-    def __init__(self, settings):
+    def __init__(self, device, settings):
+        self.device = device
         self.settings = settings
 
-        self.wifi_manager = WiFiManager(self.settings)
-        self.lora_manager = LoRaManager(self.settings)
+        self.device.feed_watchdog()
+
+        self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
+        self.lora_manager = LoRaManager(manager=self, settings=self.settings)
 
     def stop(self):
         self.wifi_manager.power_off()

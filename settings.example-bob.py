@@ -21,6 +21,16 @@ main = {
         'configuration': True,
     },
 
+    # Configure Watchdog.
+    'watchdog': {
+
+        # Enable or disable Watchdog completely.
+        'enabled': True,
+
+        # Watchdog timeout in milliseconds.
+        'timeout': 20000,
+    },
+
     # Configure RGB-LED.
     'rgb_led': {
         'heartbeat': True,

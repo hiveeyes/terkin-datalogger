@@ -13,7 +13,8 @@ log = logging.getLogger(__name__)
 
 class WiFiManager:
 
-    def __init__(self, settings):
+    def __init__(self, manager, settings):
+        self.manager = manager
         self.settings = settings
 
         # WIFI settings.
@@ -159,7 +160,7 @@ class WiFiManager:
         network_timeout = network.get('timeout', 15.0)
 
         # Set interval how often to poll for WiFi connectivity.
-        network_poll_interval = 1.0
+        network_poll_interval = 800
 
         # Connect to WiFi station.
         log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name, network_timeout))
@@ -176,8 +177,11 @@ class WiFiManager:
             # Save power while waiting.
             machine.idle()
 
+            # Feed watchdog.
+            self.manager.device.feed_watchdog()
+
             # Don't busy-wait.
-            time.sleep(network_poll_interval)
+            time.sleep_ms(network_poll_interval)
 
         if not self.station.isconnected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
@@ -189,10 +193,15 @@ class WiFiManager:
         return True
 
     def scan_stations(self):
-        # Names/SSIDs of networks found.
+
+        self.manager.device.feed_watchdog()
+
+        # Inquire visible networks.
         log.info("WiFi STA: Scanning for networks")
         stations_available = self.station.scan()
         networks_found = frozenset([e.ssid for e in stations_available])
+
+        # Print names/SSIDs of networks found.
         log.info("WiFi STA: Networks available: %s", list(networks_found))
 
         return stations_available

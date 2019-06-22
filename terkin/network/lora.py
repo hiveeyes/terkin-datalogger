@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 
 class LoRaManager:
 
-    def __init__(self, settings):
+    def __init__(self, manager, settings):
+        self.manager = manager
         self.settings = settings
 
         # LoRa settings.
