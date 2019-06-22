@@ -30,6 +30,11 @@ class TerkinDatalogger:
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
 
+        # Configure logging.
+        logging_enabled = self.settings.get('main.logging.enabled', False)
+        if not logging_enabled:
+            logging.disable_logging()
+
         # Initialize device.
         self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
@@ -61,10 +66,6 @@ class TerkinDatalogger:
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()
 
-        logging_enabled = self.settings.get('main.logging.enabled', False)
-        if not logging_enabled:
-            logging.disable_logging()
-
         # Dump configuration settings.
         log_configuration = self.settings.get('main.logging.configuration', False)
         if log_configuration:
@@ -80,8 +81,7 @@ class TerkinDatalogger:
         #self.device.enable_serial()
 
         # Hello world.
-        if logging_enabled:
-            self.device.print_bootscreen()
+        self.device.print_bootscreen()
 
         # Bootstrap infrastructure.
         self.device.start_networking()

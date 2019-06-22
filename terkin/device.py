@@ -252,7 +252,10 @@ class TerkinDevice:
         and the operating system running on it.
         """
 
-        # TODO: Maybe move to TerkinDatalogger.
+        if not self.settings.get('main.logging.enabled', False):
+            return
+
+        # Todo: Maybe refactor to TerkinDatalogger.
         from uio import StringIO
         buffer = StringIO()
 
@@ -386,16 +389,23 @@ class Terminal:
         if uart0_enabled:
             from machine import UART
             self.uart = UART(0, 115200)
+            #self.uart = UART(0)
             os.dupterm(self.uart)
         else:
-            self.stop()
+            self.shutdown()
 
     def stop(self):
         """
-        Shut down Terminal on UART0 interface.
+        Shut down.
+        """
+        log.info('Shutting down Terminal')
+        self.shutdown()
+
+    def shutdown(self):
+        """
+        Shut down Terminal and UART0 interface.
         """
         import os
-        log.info('Shutting down Terminal')
         os.dupterm(None)
         self.deinit()
 
