@@ -20,7 +20,7 @@ class HX711:
 
         # Define two pins for clock and data.
         self.pSCK = Pin(pd_sck, mode=Pin.OUT)
-        self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_DOWN)
+        self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_UP)
 
         self.initialized = False
 
