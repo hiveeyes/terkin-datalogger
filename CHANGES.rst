@@ -17,7 +17,7 @@ Development
 - Turn off interrupts while powering down the HX711
 - Improve inline documentation and logging
 - Improve IRQ handling when reading the HX711
-- Sleep for 80 microseconds after pulling HX711 clock pin to high
+- Sleep for 80 microseconds after pulling HX711 clock pin ``PD_SCK`` to HIGH
 - Improve bus- and sensor power-management. Add "power_on" signal.
 - Explicitly turn off LTE modem before deep sleep
 - Use 6dB attenuation factor again when reading the ADC for measuring VCC
@@ -26,6 +26,8 @@ Development
 - WiFi STA: Erase auth mode from NVRAM if connection fails
 - Refactor radio/networking subsystem
 - Explicitly start and stop Terminal on UART0 based on configuration
+- HX711: Hold clock pin "PD_SCK" in designated state through internal
+  pull-up in the RTC-domain, even during deep sleep.
 
 
 2019-06-17 0.4.0

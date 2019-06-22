@@ -18,9 +18,12 @@ class HX711:
 
     def __init__(self, dout, pd_sck, gain=128):
 
+        # Define two pins for clock and data.
         self.pSCK = Pin(pd_sck, mode=Pin.OUT)
         self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_DOWN)
-        self.pSCK.value(False)
+
+        # Wake up the HX711.
+        self.power_up()
 
         self.GAIN = 0
         self.OFFSET = 0
@@ -146,6 +149,11 @@ class HX711:
         """
         When PD_SCK Input is low, chip is in normal working mode.
         """
+
+        # Unfreeze pin hold when coming from deep sleep.
+        # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
+        self.pSCK.hold(False)
+
         log.info('HX711 power up')
         self.pSCK.value(False)
 
@@ -160,6 +168,10 @@ class HX711:
         self.pSCK.value(True)
         utime.sleep_us(80)
         enable_irq(state)
+
+        # Hold level to HIGH, even during deep sleep.
+        # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
+        self.pSCK.hold(True)
 
 
 class DeviceNotFound(Exception):
