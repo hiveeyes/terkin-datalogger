@@ -28,6 +28,7 @@ Development
 - Explicitly start and stop Terminal on UART0 based on configuration
 - HX711: Hold clock pin "PD_SCK" in designated state through internal
   pull-up in the RTC-domain, even during deep sleep.
+- HX711: Improve setup and initialization after power up
 
 
 2019-06-17 0.4.0

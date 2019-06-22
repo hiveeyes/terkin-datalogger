@@ -22,17 +22,14 @@ class HX711:
         self.pSCK = Pin(pd_sck, mode=Pin.OUT)
         self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_DOWN)
 
-        # Wake up the HX711.
-        self.power_up()
+        self.initialized = False
 
         self.GAIN = 0
         self.OFFSET = 0
         self.SCALE = 1
 
         self.time_constant = 0.1
-        self.filtered = 0
-
-        self.initialized = False
+        self.filtered = None
 
         self.set_gain(gain)
 
@@ -48,23 +45,32 @@ class HX711:
         return self.pOUT() == 0
 
     def initialize(self):
-        """To initialize the chip, perform an initial reading once"""
+        """
+        Power and initialize the chip.
+        Wait for becoming ready.
+        """
         if not self.initialized:
-            log.info('HX711 initialization started')
-            if self.is_ready():
-                self.initialized = True
 
-                # FIXME: These two functions have been moved
-                #        here from the ``set_gain()`` method.
-                #        Are they actually required?
-                self.read()
-                self.filtered = self.read()
+            # Wake up the HX711.
+            self.power_up()
 
-                log.info('HX711 initialization succeeded')
-                return True
-            else:
-                log.error('HX711 not found, skipping initialization')
-                return False
+            # Wait for device to become ready.
+            log.info('Initialization started')
+            self.wait_ready()
+            self.initialized = True
+
+            log.info('Initialization succeeded')
+            return True
+
+    def wait_ready(self):
+        retries = 10000
+        #log.info('Waiting for device to become ready')
+        while not self.is_ready():
+            idle()
+            retries -= 1
+            if retries == 0:
+                raise DeviceNotFound('HX711 not ready')
+        #log.info('Device ready')
 
     def read(self):
         """
@@ -87,13 +93,11 @@ class HX711:
         """
 
         # Initialize the hardware once.
-        if self.initialize() is False:
-            raise DeviceNotFound('HX711 not available')
+        # Otherwise, croak with ``DeviceNotFound('HX711 not available')``.
+        if not self.initialize():
 
-        # Wait for the device being ready.
-        # FIXME: This might block forever?
-        while not self.is_ready():
-            idle()
+            # Wait for the device becoming ready.
+            self.wait_ready()
 
         # Shift in data, gain & channel info.
         result = 0
@@ -120,6 +124,8 @@ class HX711:
         return sum / times
 
     def read_lowpass(self):
+        if self.filtered is None:
+            self.filtered = self.read()
         self.filtered += self.time_constant * (self.read() - self.filtered)
         return self.filtered
 
@@ -156,6 +162,9 @@ class HX711:
 
         log.info('HX711 power up')
         self.pSCK.value(False)
+        #utime.sleep_us(80)
+
+        #self.initialize()
 
     def power_down(self):
         """

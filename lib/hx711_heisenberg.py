@@ -45,7 +45,7 @@ class HX711Heisenberg(HX711):
 
         self.time_constant = 0.9
 
-    def set_gain(self, gain):
+    def set_gain_inactive(self, gain):
         if gain is 128:
             self.GAIN = 1
         elif gain is 64:
@@ -71,6 +71,7 @@ class HX711Heisenberg(HX711):
         Acquire multiple readings and return median.
         """
         lst = []
+        # Fixme: Think about feeding the watchdog here.
         for i in range(times):
             lst.append(self.read_average())
         sortedLst = sorted(lst)
