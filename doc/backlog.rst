@@ -9,8 +9,13 @@ Datalogger
 
 Prio 1
 ======
+- [o] Activate internal pull-up for HX711 PD_SCK in deep sleep mode with "pin hold".
+  https://docs.pycom.io/firmwareapi/pycom/machine/pin.html#pinholdhold
+- [o] WiFi STA: Support connecting to BSSIDs
+- [o] WiFi STA: Exponential backoff and elsewhere
 - [o] Activate Watchdog Timer
-- [o] Interpolate Device-ID into telemetry node name
+- [o] Interpolate Device-ID into telemetry node name or better derive humanized name from it.
+      See also https://github.com/HowManyOliversAreThere/six-nibble-name
 - [o] Unlock NVRAM storage as ConfigurationSettings overlay
 - [o] Add named fields based on NVRAM overlay
 - [o] Energy saving
@@ -21,8 +26,9 @@ Prio 1
     - [o] Speed-up WiFi connection by not scanning at all.
           In order to achieve that, scan once and remember auth-mode in NVRAM.
     - [o] Turn off LED-RGB completely
-- [o] OneWire sensor enumeration
-
+    - [o] Low-voltage cutoff
+          https://github.com/opensourcebeehives/DataLogger/commit/39b45433dc54ce60419429fc6e6c114c7c3fa4a2
+- [o] OneWire sensor enumeration - display lexographically sorted?
 
 Prio 1.2
 ========

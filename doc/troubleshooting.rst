@@ -609,3 +609,30 @@ Just initialize it again, like::
 
 - https://forum.pycom.io/topic/4493/trouble-uploading-to-fipy
 - https://forum.pycom.io/topic/4479/fipy-upload-failed
+
+
+NVRAM maximum key length
+========================
+::
+
+    >>> pycom.nvs_set('0123456789012345', 42)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    ValueError: Key is invalid
+
+    >>> len('0123456789012345')
+    16
+
+Conclusion: Use a maximum length of 15 characters as NVRAM key.
+
+
+Only one hash operation at once
+===============================
+Otherwise...
+::
+
+    >>> hashlib.sha1('abc')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    OSError: only one active hash operation is permitted at a time
+
