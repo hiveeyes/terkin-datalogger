@@ -123,6 +123,9 @@ class NetworkManager:
                 log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
 
         if not self.station.isconnected():
+
+            self.wifi_forget_network(network_name)
+
             message = 'WiFi STA: Connecting to any network candidate failed'
             description = 'Please check your WiFi configuration for one of the ' \
                           'station candidates {}.'.format(len(network_names))
@@ -264,6 +267,15 @@ class NetworkManager:
         digest = ubinascii.hexlify(hashlib.sha512(ssid).digest()).decode()
         identifier = 'wa.{}'.format(digest[15:27])
         return identifier
+
+    def wifi_forget_network(self, network_name):
+        log.info('WiFi STA: Forgetting NVRAM data for network "{}"'.format(network_name))
+        auth_mode_nvs_key = self.wifi_auth_mode_nvs_key(network_name)
+        try:
+            import pycom
+            pycom.nvs_erase(auth_mode_nvs_key)
+        except:
+            pass
 
     def print_short_status(self):
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
