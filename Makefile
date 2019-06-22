@@ -213,7 +213,7 @@ create-release-archives: prepare-release
 	@mkdir -p $(work_dir)
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
-	@cp -r dist-packages lib boot.py main.py settings.example.py $(work_dir)
+	@cp -r dist-packages lib boot.py main.py settings.example*.py $(work_dir)
 	@cp -r hiveeyes terkin $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
@@ -235,4 +235,9 @@ publish-release: prepare-release check-github-release create-release-archives
 	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile)) --file $(tarfile) --replace
 	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile)) --file $(zipfile) --replace
 
-release-and-publish: release publish-release
+#release-and-publish: release publish-release
+
+# Release this piece of software
+# Synopsis:
+#   make release bump=minor  (major,minor,patch)
+release: bumpversion push publish-release

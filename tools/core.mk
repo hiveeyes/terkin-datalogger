@@ -58,7 +58,7 @@ build-env: install-platformio
 # Release this piece of software
 # Synopsis:
 #   make release bump=minor  (major,minor,patch)
-release: bumpversion push
+#release: bumpversion push
 
 bumpversion: install-releasetools
 	@$(bumpversion) $(bump)

@@ -8,6 +8,7 @@ Development
 - HX711: Configure data pin as pull-up to be able to detect readiness
 - Disable Watchdog in blueprint settings
 - Improve logging and terminal handling in bootstrap phase
+- Improve release bundling
 
 
 2019-06-22 0.5.0
