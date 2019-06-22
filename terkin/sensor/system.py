@@ -127,7 +127,7 @@ class SystemBatteryLevel:
 
         # Sample ADC a few times.
         # Todo: Make attenuation factor configurable.
-        adc_channel = self.adc.channel(attn=ADC.ATTN_11DB, pin=self.pin)
+        adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
         i = 0
