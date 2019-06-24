@@ -5,6 +5,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+- Explicitly ``deinit()`` LTE modem on each startup
 
 
 2019-06-22 0.5.1

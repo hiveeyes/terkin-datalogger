@@ -162,9 +162,12 @@ class TerkinDevice:
         """
 
         import pycom
+
+        """
         if not pycom.lte_modem_en_on_boot():
             log.info('Skip turning off LTE modem')
             return
+        """
 
         log.info('Turning off LTE modem')
         try:
