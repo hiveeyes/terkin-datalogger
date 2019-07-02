@@ -191,7 +191,7 @@ sensor_telemetry_map = {
     "temperature.0x77.i2c:0": "t",
     "humidity.0x77.i2c:0": "h",
     "pressure.0x77.i2c:0": "p",
-    "weight.0": "weight",
+    "weight.0": "weight_kg",
     "temperature.28ff641d8fdf18c1.onewire:0": "t_i_1",
     "temperature.28ff641d8fc3944f.onewire:0": "t_i_2",
     "system.temperature": "t_i_5",
