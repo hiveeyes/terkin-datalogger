@@ -316,10 +316,10 @@ class SystemWiFiMetrics:
             return
 
         stats = {
-            'system.wifi.bandwidth': self.station.bandwidth(),
+            # 'system.wifi.bandwidth': self.station.bandwidth(),
             'system.wifi.channel': self.station.channel(),
             #'system.wifi.protocol': self.station.wifi_protocol(),
-            'system.wifi.max_tx_power': self.station.max_tx_power(),
+            # 'system.wifi.max_tx_power': self.station.max_tx_power(),
             #'system.wifi.joined_ap_info': self.station.joined_ap_info(),
         }
 

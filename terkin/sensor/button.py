@@ -4,7 +4,7 @@
 # License: GNU General Public License, Version 3
 from machine import Timer
 from terkin import logging
-from terkin.sensor.touch import TouchPad
+# from terkin.sensor.touch import TouchPad
 
 log = logging.getLogger(__name__)
 
@@ -40,13 +40,14 @@ class ButtonManager:
         self.alarm = Timer.Alarm(self.check, ms=self.check_interval_ms, periodic=True)
 
     def setup_touchpad(self, pin, name, location):
-        button = Button(
-            name=name,
-            location=location,
-            adapter=TouchPad(pin, name, sensitivity=1000, duration=500),
-        )
-        log.info('Setting up %s', button)
-        self.buttons.append(button)
+        pass
+        # button = Button(
+        #     name=name,
+        #     location=location,
+        #     adapter=TouchPad(pin, name, sensitivity=1000, duration=500),
+        # )
+        # log.info('Setting up %s', button)
+        # self.buttons.append(button)
 
     def check(self, alarm):
         for button in self.buttons:
