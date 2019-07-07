@@ -50,6 +50,9 @@ class TerkinDatalogger:
 
     def start(self):
 
+        # Start the watchdog for sanity.
+        self.device.start_watchdog()
+        
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -60,8 +63,6 @@ class TerkinDatalogger:
 
         log.info('Starting %s', self.appname)
 
-        # Start the watchdog for sanity.
-        self.device.start_watchdog()
 
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()
