@@ -192,10 +192,14 @@ sensor_telemetry_map = {
     "humidity.0x77.i2c:0": "h",
     "pressure.0x77.i2c:0": "p",
     "weight.0": "weight_kg",
+    "system.wifi.rssi": "rssi", #signalstärke
+    "system.wifi.max_tx_power": "snr", #Sendeleistung
+    "system.voltage":"bv", #Batteriespannung 
     "temperature.1111111111111111.onewire:0": "t_i_1",
     "temperature.2222222222222222.onewire:0": "t_i_2",
     "temperature.3333333333333333.onewire:0": "t_i_3",
     "temperature.4444444444444444.onewire:0": "t_i_4",
     "temperature.5555555555555555.onewire:0": "t_i_5",
     "temperature.6666666666666666.onewire:0": "t_o",
+
 }
