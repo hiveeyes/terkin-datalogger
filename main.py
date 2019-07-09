@@ -29,6 +29,9 @@ to upload the program and reset the ESP32.
 import settings
 from terkin import logging
 from hiveeyes.datalogger import HiveeyesDatalogger
+from hiveeyes import webserver
+import machine
+import time
 
 log = logging.getLogger(__name__)
 
@@ -45,12 +48,24 @@ class BobDatalogger(HiveeyesDatalogger):
         """
         Loop function. Do what I mean.
         """
-
+        test_server = False
         # It's your turn.
         #log.info('BOB loop')
 
         # Finally, schedule other system tasks.
-        super().loop()
+
+        if (machine.reset_cause() != 0 and not test_server):
+            super().loop()
+        else:
+            log.info('enabled AP')
+            # todo: open access-point
+            # for now: start webserver
+            if not webserver.mws.IsStarted():
+                webserver.mws.Start(threaded=True)
+                log.info('You have 10 minutes until AP-mode is disabled automatically')
+                time.sleep_ms(1000*60*10)
+                machine.reset()
+
 
 
 def main():
