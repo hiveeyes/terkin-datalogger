@@ -16,6 +16,8 @@ Development
 - Describe environment variable "MCU_MAC_PREFIX"
 - Attempt to fix woes with IPv6 addresses from ``terkin.py``
 - Skip networks like 127.0.0.0/8 and 169.254.0.0/16 for ``terkin.py``
+- Make "terkin.py" handle multiple MAC address prefixes
+  coming from different Pycom devices. Now: WiPy, FiPy.
 
 
 2019-06-22 0.5.1

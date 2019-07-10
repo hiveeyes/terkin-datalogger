@@ -14,6 +14,15 @@ import netifaces
 
 from scapy.all import Ether, ARP, srp, sniff
 
+"""
+Backlog
+=======
+
+- Operate on multiple devices.
+- Add more MAC address prefixes from the Pycom device family.
+- Acknowledge UDP mode change to improve user feedback.
+
+"""
 
 # Setup logging.
 logging.basicConfig(level=logging.INFO, format='%(asctime)-15s [%(name)-10s] %(levelname)-7s: %(message)s')
@@ -88,8 +97,8 @@ class NetworkMonitor:
 
     VERBOSITY = 0
 
-    def __init__(self, mac_prefix=None, mode=None):
-        self.mac_prefix = mac_prefix
+    def __init__(self, mac_prefixes=None, mode=None):
+        self.mac_prefixes = mac_prefixes
         self.mode = mode
 
     def maintain(self):
@@ -101,7 +110,7 @@ class NetworkMonitor:
     def pkt_callback(pkt):
         pkt.show()  # debug statement
 
-    def arp_ping(self, destination, delay=0):
+    def arp_ping(self, destination):
         """
         The fastest way to discover hosts on a local
         ethernet network is to use the ARP Ping method.
@@ -111,15 +120,16 @@ class NetworkMonitor:
         :param destination: Network to scan.
         :param delay: How long to delay before starting the network scan.
         """
-        time.sleep(delay)
-        log.info(f'Sending an ARP ping to {destination} to find devices already connected')
-
         # "srp" means: Send and receive packets at layer 2.
         ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=destination), timeout=2, verbose=self.VERBOSITY)
         return ans, unans
 
-    def arp_ping_async(self, destination):
-        thread = Thread(target=self.arp_ping, args=(destination,), kwargs={'delay': 0.5})
+    def arp_discover(self, destination, delay=0):
+        time.sleep(delay)
+        return self.arp_ping(destination)
+
+    def arp_discover_background(self, destination):
+        thread = Thread(target=self.arp_discover, args=(destination,), kwargs={'delay': 0.5})
         thread.start()
         #thread.join()
 
@@ -153,16 +163,30 @@ class NetworkMonitor:
         #sys.stdout.flush()
 
     def check_esp32(self, pkt):
+
+        # Only process ARP packages.
         if ARP not in pkt:
             return
+
+        # Debugging.
         self.arp_display(pkt)
-        if pkt[ARP].hwsrc.startswith(self.mac_prefix) and pkt[ARP].psrc != '0.0.0.0':
-            member = NetworkMember()
-            member.mac = pkt[ARP].hwsrc
-            member.ip = pkt[ARP].psrc
-            log.info(f'Found device at {member}')
-            if self.mode is not None:
-                self.toggle_maintenance(member)
+
+        # Filter irrelevant devices and addresses.
+        if pkt[ARP].psrc == '0.0.0.0' or not self.match_mac_prefix(pkt[ARP].hwsrc):
+            return
+
+        member = NetworkMember()
+        member.mac = pkt[ARP].hwsrc
+        member.ip = pkt[ARP].psrc
+        log.info(f'Found device at {member}')
+        if self.mode is not None:
+            self.toggle_maintenance(member)
+
+    def match_mac_prefix(self, mac_address):
+        for prefix in self.mac_prefixes:
+            if mac_address.startswith(prefix):
+                return True
+        return False
 
     def arp_monitor(self):
         """
@@ -177,7 +201,8 @@ class NetworkMonitor:
 
         -- https://scapy.readthedocs.io/en/latest/usage.html#simplistic-arp-monitor
         """
-        log.info(f'Waiting for device with MAC address prefix {self.mac_prefix} to appear on your local network')
+        log.info(f'Waiting for any devices having MAC address prefixes of {self.mac_prefixes} '
+                 f'to appear on your local network')
         #sniff(prn=self.arp_monitor_callback, filter="arp", store=0)
         sniff(prn=self.check_esp32, filter="arp", store=0)
 
@@ -239,17 +264,17 @@ def get_local_networks():
 
 def boot_monitor(monitor):
     networks = get_local_networks()
-    log.info(f'Local networks: {networks}')
+    log.info(f'IP networks found: {networks}')
 
     for network in networks:
-        monitor.arp_ping_async(network)
+        log.info(f'Sending an ARP ping to discover already connected devices on network {network}')
+        monitor.arp_discover_background(network)
 
     monitor.arp_monitor()
-    return
 
 
-def run_monitor(mac_prefix, command):
-    monitor = NetworkMonitor(mac_prefix=mac_prefix)
+def run_monitor(mac_prefixes, command):
+    monitor = NetworkMonitor(mac_prefixes=mac_prefixes)
     if command == 'maintain':
         monitor.maintain()
     elif command == 'field':
@@ -264,9 +289,25 @@ def run_monitor(mac_prefix, command):
 
 
 if __name__ == '__main__':
-    mac_prefix = os.getenv('MCU_MAC_PREFIX', '80:7d:3a')
+
+    # There are different MAC address prefixes for different Pycom devices.
+    # Thanks for finding out, @ClemensGruber.
+    # WiPy: 30:ae:a4
+    # FiPy: 80:7d:3a
+
+    mac_prefixes = [
+        # WiPy
+        '30:ae:a4',
+        # FiPy
+        '80:7d:3a'
+    ]
+
+    mac_prefix_override = os.getenv('MCU_MAC_PREFIX')
+    if mac_prefix_override:
+        mac_prefixes = mac_prefix_override.split(',')
+
     command = sys.argv[1]
-    run_monitor(mac_prefix, command)
+    run_monitor(mac_prefixes, command)
 
 
 #hosts = mon.discover_hosts('192.168.178.0/24')
