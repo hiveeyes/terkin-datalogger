@@ -9,6 +9,7 @@ Development
 - Fix ``settings.example-bob.py``. Thanks, @MKO1640 and @ClemensGruber!
 - Improve formatting of BEEP telemetry field mapping for BOB
 - Disable telemetry adapter offline state for now
+- Disable DEBUG log level for system sensors
 
 
 2019-06-22 0.5.1
