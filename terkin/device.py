@@ -71,6 +71,9 @@ class TerkinDevice:
             log.error('Network connectivity not available, WiFi failed')
             self.status.networking = False
 
+        # Start UDP server for pulling device into maintenance mode.
+        self.networking.start_modeserver()
+
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
             try:

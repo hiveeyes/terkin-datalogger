@@ -6,6 +6,7 @@ import time
 import socket
 import machine
 from terkin import logging
+from terkin.network.ip import UdpServer
 from terkin.network.lora import LoRaManager
 from terkin.network.wifi import WiFiManager
 from terkin.util import format_exception
@@ -23,6 +24,7 @@ class NetworkManager:
 
         self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.lora_manager = LoRaManager(manager=self, settings=self.settings)
+        self.mode_server = None
 
     def stop(self):
         if self.device.status.maintenance is not True:
@@ -48,3 +50,22 @@ class NetworkManager:
             time.sleep(0.25)
             attempts += 1
         log.info('Network interface ready')
+
+    def start_modeserver(self):
+        """
+        Start UDP server for pulling device into maintenance mode.
+        """
+        ip = self.wifi_manager.get_ip_address()
+        port = 666
+        log.info('Starting mode server on {}:{}'.format(ip, port))
+        self.mode_server = UdpServer(ip, port)
+        self.mode_server.start(self.handle_modeserver)
+
+    def handle_modeserver(self, data, addr):
+        message = data.decode()
+        if message == 'maintenance.enable()':
+            log.info('Enabling maintenance mode')
+            self.device.status.maintenance = True
+        elif message == 'maintenance.disable()':
+            log.info('Releasing maintenance mode')
+            self.device.status.maintenance = False

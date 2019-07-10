@@ -11,6 +11,7 @@ Development
 - Disable telemetry adapter offline state for now
 - Disable DEBUG log level for system sensors
 - Add the "maintenance" device status / mode
+- Add UDP mode server for signalling the device into maintenance mode
 
 
 2019-06-22 0.5.1
