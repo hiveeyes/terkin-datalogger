@@ -14,7 +14,8 @@ Development
 - Add UDP mode server for signalling the device into maintenance mode
 - Add device discovery and UDP client for signalling maintenance mode
 - Describe environment variable "MCU_MAC_PREFIX"
-- Attempt to fix woes with IPv6 addresses from "terkin.py"
+- Attempt to fix woes with IPv6 addresses from ``terkin.py``
+- Skip networks like 127.0.0.0/8 and 169.254.0.0/16 for ``terkin.py``
 
 
 2019-06-22 0.5.1
