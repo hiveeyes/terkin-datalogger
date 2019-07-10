@@ -148,7 +148,12 @@ class TelemetryAdapter:
         return data
 
     def is_online(self):
-        return self.failure_count < self.MAX_FAILURES
+
+        # Short-cut online/offline state.
+        return True
+
+        # Todo: Re-enable online/offline state.
+        #return self.failure_count < self.MAX_FAILURES
 
     def record_error(self):
         self.failure_count += 1
