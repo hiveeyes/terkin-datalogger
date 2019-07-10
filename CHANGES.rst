@@ -13,6 +13,7 @@ Development
 - Add the "maintenance" device status / mode
 - Add UDP mode server for signalling the device into maintenance mode
 - Add device discovery and UDP client for signalling maintenance mode
+- Describe environment variable "MCU_MAC_PREFIX"
 
 
 2019-06-22 0.5.1

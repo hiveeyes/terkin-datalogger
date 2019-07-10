@@ -254,7 +254,7 @@ def run_monitor(mac_prefix, command):
 
 
 if __name__ == '__main__':
-    mac_prefix = os.getenv('MAC_PREFIX', '80:7d:3a')
+    mac_prefix = os.getenv('MCU_MAC_PREFIX', '80:7d:3a')
     command = sys.argv[1]
     run_monitor(mac_prefix, command)
 

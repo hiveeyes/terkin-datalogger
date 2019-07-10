@@ -134,6 +134,14 @@ Release maintenance mode and enable field mode again::
 
     sudo python3 tools/terkin.py field
 
+In order to restrict these operations to a single device on the network,
+you should do like::
+
+    export MCU_MAC_PREFIX=80:7d:3a:c2:de:44
+
+By default, a mac prefix of ``80:7d:3a`` will be used, essentially
+matching all Espressif/Pycom devices.
+
 
 Attach to serial console
 ========================
