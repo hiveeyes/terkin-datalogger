@@ -94,6 +94,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://daq.example.org',
+            #'endpoint': 'mqtt://username:password@daq.example.org',
             'topology': 'mqttkit',
             'address': {
                 "realm": "workbench",

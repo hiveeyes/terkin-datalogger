@@ -6,7 +6,7 @@ import json
 from copy import copy
 from urllib.parse import urlsplit, urlencode
 from terkin import logging
-from terkin.util import to_base64, format_exception, get_device_id
+from terkin.util import to_base64, format_exception, get_device_id, urlparse
 
 log = logging.getLogger(__name__)
 
@@ -383,7 +383,12 @@ class TelemetryTransportMQTT:
         # Addressing.
         self.uri = uri
         self.format = format
-        self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
+
+        # v1
+        #self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
+
+        # v2
+        self.target = urlparse(self.uri)
 
         # Todo: Refactor `get_device_id` somehow better.
         self.client_id = 'terkin.{}'.format(get_device_id())
@@ -395,20 +400,29 @@ class TelemetryTransportMQTT:
         # TODO: Start connecting to MQTT broker here already?
         #       Maybe we should defer this to the point where the
         #       first transmission will require it.
-        self.start()
+        self.ensure_connection()
 
-    def start(self):
+    def ensure_connection(self):
         # Create one MQTTAdapter instance per target host:port.
-        if self.netloc not in self.connections:
+        if self.target.netloc not in self.connections:
             # TODO: Add more parameters to MQTTAdapter here.
-            log.info('Starting connection to MQTT broker. client_id=%s, netloc=%s', self.client_id, self.netloc)
+            log.info('Connecting to MQTT broker at {} with username {}. '
+                     'client_id={}'.format(self.target.hostname, self.target.username, self.client_id))
             try:
-                self.connections[self.netloc] = MQTTAdapter(self.client_id, self.netloc)
+                self.connections[self.target.netloc] = MQTTAdapter(self.client_id,
+                                                                   self.target.hostname,
+                                                                   username=self.target.username,
+                                                                   password=self.target.password)
             except Exception:
-                self.defunct = True
+                log.warning('Connecting to MQTT broker at {} '
+                            'with username {} failed'.format(self.target.hostname, self.target.username))
+                # Todo: Re-enable defunctness
+                #self.defunct = True
+
+        return self.connections.get(self.target.netloc)
 
     def get_connection(self):
-        return self.connections.get(self.netloc)
+        return self.ensure_connection()
 
     def send(self, request_data):
 
@@ -421,7 +435,7 @@ class TelemetryTransportMQTT:
             return False
 
         # Derive MQTT topic string from URI path component.
-        topic = self.path.lstrip('/')
+        topic = self.target.path.lstrip('/')
         if not topic:
             message = 'Empty MQTT topic, please configure MQTT URI with path component or topology with address'
             raise TelemetryTransportError(message)
@@ -454,11 +468,14 @@ class MQTTAdapter:
           E.g., what about Paho?
     """
 
-    def __init__(self, client_id, server, port=0):
+    def __init__(self, client_id, server, port=0, username=None, password=None):
+
+        # TODO: Add more parameters: keepalive=0, ssl=False, ssl_params={}
         self.client_id = client_id
         self.server = server
         self.port = port
-        # TODO: Add more parameters: user=None, password=None, keepalive=0, ssl=False, ssl_params={}
+        self.username = username
+        self.password = password
 
         # Transport driver.
         self.driver_class = None
@@ -490,14 +507,15 @@ class MQTTAdapter:
     def connect(self):
         """Connect to MQTT broker"""
         try:
-            log.info('Connecting to MQTT broker at %s', self.server)
-            self.connection = self.driver_class(self.client_id, self.server, port=self.port)
+            log.info('Connecting to MQTT broker at {} with username {}'.format(self.server, self.username))
+            self.connection = self.driver_class(self.client_id, self.server, port=self.port, user=self.username, password=self.password)
             self.connection.DEBUG = True
             self.connection.connect()
             self.connected = True
             log.info('Connecting to MQTT broker at %s succeeded', self.connection.addr)
 
         except Exception as ex:
+            # FIXME: Evaluate exception. "MQTTException: 5" means "Authentication/Authorization failed".
             self.connected = False
             message = 'Connecting to MQTT broker at {} failed: {}'.format(self.server, format_exception(ex))
             log.exception(message)

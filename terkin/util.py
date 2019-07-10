@@ -19,3 +19,55 @@ def get_device_id():
     import machine
     from ubinascii import hexlify
     return hexlify(machine.unique_id()).decode()
+
+
+class URI:
+    def __str__(self):
+        return str(self.__dict__)
+
+
+def urlparse(url, scheme='', allow_fragments=True):
+    """Parse a URL into 6 components:
+    <scheme>://<netloc>/<path>;<params>?<query>#<fragment>
+    Return a 6-tuple: (scheme, netloc, path, params, query, fragment).
+    Note that we don't break the components up in smaller bits
+    (e.g. netloc is a single string) and we don't expand % escapes."""
+    from urllib.parse import uses_params, urlsplit, _splitparams, _coerce_args, ParseResult
+    url, scheme, _coerce_result = _coerce_args(url, scheme)
+    splitresult = urlsplit(url, scheme, allow_fragments)
+    scheme, netloc, url, query, fragment = splitresult
+    if scheme in uses_params and ';' in url:
+        url, params = _splitparams(url)
+    else:
+        params = ''
+    result = ParseResult(scheme, netloc, url, params, query, fragment)
+
+    # FIXME: Appropriately parse netloc into parts using the real ``urlparse``.
+    # However, Pycom MicroPython currently lacks the ``rpartition`` method on string objects.
+
+    uri = URI()
+    for fieldname in ['scheme', 'netloc', 'path', 'params', 'query', 'fragment']:
+        key = fieldname
+        value = getattr(result, fieldname)
+        #print(key, value)
+        setattr(uri, key, value)
+
+    setattr(uri, 'hostname', uri.netloc)
+    setattr(uri, 'username', None)
+    setattr(uri, 'password', None)
+
+    #print('URI-1:', uri)
+
+    # Manually parse credentials from netloc.
+    # Fixme: Improve urlparse to do the same.
+    if '@' in uri.netloc:
+        credentials, hostname = uri.netloc.split('@')
+        username, password = credentials.split(':')
+
+        setattr(uri, 'hostname', hostname)
+        setattr(uri, 'username', username)
+        setattr(uri, 'password', password)
+
+    #print('URI-2:', uri)
+
+    return uri

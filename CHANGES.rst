@@ -19,6 +19,7 @@ Development
   coming from different Pycom devices. Now: WiPy, FiPy.
 - Optionally read MAC address from command line in order to
   discover and maintain specific device
+- Add MQTT authentication
 
 
 2019-06-22 0.5.1
