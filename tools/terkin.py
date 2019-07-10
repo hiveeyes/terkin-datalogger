@@ -273,7 +273,7 @@ def boot_monitor(monitor):
     monitor.arp_monitor()
 
 
-def run_monitor(mac_prefixes, command):
+def run_monitor(command, mac_prefixes):
     monitor = NetworkMonitor(mac_prefixes=mac_prefixes)
     if command == 'maintain':
         monitor.maintain()
@@ -295,19 +295,22 @@ if __name__ == '__main__':
     # WiPy: 30:ae:a4
     # FiPy: 80:7d:3a
 
-    mac_prefixes = [
+    mac_prefixes_default = [
         # WiPy
         '30:ae:a4',
         # FiPy
         '80:7d:3a'
     ]
 
-    mac_prefix_override = os.getenv('MCU_MAC_PREFIX')
-    if mac_prefix_override:
-        mac_prefixes = mac_prefix_override.split(',')
-
+    # Read command line arguments.
     command = sys.argv[1]
-    run_monitor(mac_prefixes, command)
+    try:
+        mac_prefixes = sys.argv[2].split(',')
+    except:
+        mac_prefixes = mac_prefixes_default
+
+    # Start network monitoring and device discovery machinery.
+    run_monitor(command, mac_prefixes)
 
 
 #hosts = mon.discover_hosts('192.168.178.0/24')

@@ -13,11 +13,12 @@ Development
 - Add the "maintenance" device status / mode
 - Add UDP mode server for signalling the device into maintenance mode
 - Add device discovery and UDP client for signalling maintenance mode
-- Describe environment variable "MCU_MAC_PREFIX"
 - Attempt to fix woes with IPv6 addresses from ``terkin.py``
 - Skip networks like 127.0.0.0/8 and 169.254.0.0/16 for ``terkin.py``
 - Make "terkin.py" handle multiple MAC address prefixes
   coming from different Pycom devices. Now: WiPy, FiPy.
+- Optionally read MAC address from command line in order to
+  discover and maintain specific device
 
 
 2019-06-22 0.5.1
