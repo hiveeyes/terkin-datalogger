@@ -117,6 +117,24 @@ YOURSELF FROM ACCIDENTALLY DESTROYING DATA. REMEMBER: ALL YOUR DATA WILL BE LOST
 More commands
 *************
 
+Toggle between maintenance and field mode
+=========================================
+When the device is in maintenance mode, deep sleep is disabled and
+the measurement interval will be decreased to 5 seconds.
+
+Prepare::
+
+    pip install scapy netifaces netaddr
+
+Enable maintenance mode::
+
+    sudo python3 tools/terkin.py maintain
+
+Release maintenance mode and enable field mode again::
+
+    sudo python3 tools/terkin.py field
+
+
 Attach to serial console
 ========================
 In order to connect to a device which is already running, just execute::
