@@ -117,32 +117,6 @@ YOURSELF FROM ACCIDENTALLY DESTROYING DATA. REMEMBER: ALL YOUR DATA WILL BE LOST
 More commands
 *************
 
-Toggle between maintenance and field mode
-=========================================
-When the device is in maintenance mode, deep sleep is disabled and
-the measurement interval will be decreased to 5 seconds.
-
-Prepare::
-
-    pip install scapy netifaces netaddr
-
-Enable maintenance mode::
-
-    sudo python3 tools/terkin.py maintain
-
-Release maintenance mode and enable field mode again::
-
-    sudo python3 tools/terkin.py field
-
-In order to restrict these operations to a single device on the network,
-you should do like::
-
-    export MCU_MAC_PREFIX=80:7d:3a:c2:de:44
-
-By default, a mac prefix of ``80:7d:3a`` will be used, essentially
-matching all Espressif/Pycom devices.
-
-
 Attach to serial console
 ========================
 In order to connect to a device which is already running, just execute::
@@ -156,6 +130,43 @@ Reset the device
 In order to run a ``machine.reset()`` on the device, just execute::
 
     make reset-device
+
+Toggle between maintenance and field mode
+=========================================
+When the device is pulled into maintenance mode, deep sleep is disabled and
+the measurement interval will be decreased to 5 seconds.
+
+Install prerequisites::
+
+    pip install scapy netifaces netaddr
+
+Monitor local networks for devices::
+
+    sudo python3 tools/terkin.py monitor
+
+Enable maintenance mode::
+
+    sudo python3 tools/terkin.py maintain
+
+Release maintenance mode and enable field mode again::
+
+    sudo python3 tools/terkin.py field
+
+In order to restrict these operations to a single device on the network,
+you should invoke the program like::
+
+    sudo python3 tools/terkin.py maintain 80:7d:3a:c2:de:44
+
+By default, the list of MAC address prefixes are::
+
+    mac_prefixes_default = [
+        # WiPy
+        '30:ae:a4',
+        # FiPy
+        '80:7d:3a'
+    ]
+
+Essentially, we would like to be able to match all Espressif/Pycom devices.
 
 
 ***************
