@@ -221,8 +221,11 @@ def get_local_networks():
                 #print(thing)
                 if 'addr' in thing and 'netmask' in thing and 'broadcast' in thing:
                     address = f"{thing['addr']}/{thing['netmask']}"
-                    address_cidr = str(netaddr.IPNetwork(address).cidr)
-                    addresses.append(address_cidr)
+                    try:
+                        address_cidr = str(netaddr.IPNetwork(address).cidr)
+                        addresses.append(address_cidr)
+                    except:
+                        log.debug(f'Ignoring address {address}. IPv4 only.')
 
     return addresses
 
