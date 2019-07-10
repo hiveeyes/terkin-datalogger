@@ -4,6 +4,8 @@
 cp boot.py /flash
 cp main.py /flash
 cp settings.py /flash
+cp hiveeyes/webserver.py /flash/lib/hiveeyes/webserver.py
+cp terkin/datalogger.py /flash/lib/terkin/datalogger.py
 
 # Just drop into REPL after upload
 # repl

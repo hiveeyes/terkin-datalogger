@@ -24,25 +24,43 @@ class TerkinDatalogger:
     name = 'Terkin MicroPython Datalogger'
     version = __version__
 
+    __instance = None
+
+    @staticmethod
+    def getInstance(settings = None):
+        """ Static access method. """
+        if TerkinDatalogger.__instance == None:
+            if settings == None:
+                raise Exception("Settings are None but instance wasn't created before.")
+            else:
+                TerkinDatalogger(settings)
+        return TerkinDatalogger.__instance
+
     def __init__(self, settings):
+        if TerkinDatalogger.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
 
-        # Obtain configuration settings.
-        self.settings = TerkinConfiguration()
-        self.settings.add(settings)
 
-        # Configure logging.
-        logging_enabled = self.settings.get('main.logging.enabled', False)
-        if not logging_enabled:
-            logging.disable_logging()
+            # Obtain configuration settings.
+            self.settings = TerkinConfiguration()
+            self.settings.add(settings)
 
-        # Initialize device.
-        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
+            # Configure logging.
+            logging_enabled = self.settings.get('main.logging.enabled', False)
+            if not logging_enabled:
+                logging.disable_logging()
 
-        # Button manager instance (optional).
-        self.button_manager = None
+            # Initialize device.
+            self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
 
-        # Initialize sensor domain.
-        self.sensor_manager = SensorManager()
+            # Button manager instance (optional).
+            self.button_manager = None
+
+            # Initialize sensor domain.
+            self.sensor_manager = SensorManager()
+
+            TerkinDatalogger.__instance = self
 
     @property
     def appname(self):

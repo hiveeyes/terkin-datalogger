@@ -48,7 +48,7 @@ class BobDatalogger(HiveeyesDatalogger):
         """
         Loop function. Do what I mean.
         """
-        test_server = False
+        test_server = True
         # It's your turn.
         #log.info('BOB loop')
 
@@ -72,6 +72,7 @@ def main():
     """Start the data logger application."""
     datalogger = BobDatalogger(settings)
     datalogger.start()
+
 
 
 if __name__ == '__main__':
