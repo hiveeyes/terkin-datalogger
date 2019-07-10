@@ -21,12 +21,14 @@ Backlog
 - Operate on multiple devices.
 - Add more MAC address prefixes from the Pycom device family.
 - Acknowledge UDP mode change to improve user feedback.
+- Honor KeyboardInterrupt / CTRL+C on Windows
 
 """
 
 # Setup logging.
 logging.basicConfig(level=logging.INFO, format='%(asctime)-15s [%(name)-10s] %(levelname)-7s: %(message)s')
 log = logging.getLogger(__file__)
+#log.setLevel(logging.DEBUG)
 
 
 class NetworkWatch:
@@ -96,6 +98,7 @@ class DeviceMode:
 class NetworkMonitor:
 
     VERBOSITY = 0
+    TRACE = False
 
     def __init__(self, mac_prefixes=None, mode=None):
         self.mac_prefixes = mac_prefixes
@@ -120,6 +123,7 @@ class NetworkMonitor:
         :param destination: Network to scan.
         :param delay: How long to delay before starting the network scan.
         """
+        log.info(f'Sending ARP ping request to {destination}')
         # "srp" means: Send and receive packets at layer 2.
         ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=destination), timeout=2, verbose=self.VERBOSITY)
         return ans, unans
@@ -156,11 +160,14 @@ class NetworkMonitor:
 
     def arp_display(self, pkt):
         # https://thepacketgeek.com/scapy-sniffing-with-custom-actions-part-1/
+        #log.debug('Packet: %s', dir(pkt[ARP]))
         if pkt[ARP].op == 1:  # who-has (request)
             log.debug(f"Request: {pkt[ARP].hwsrc} / {pkt[ARP].psrc} is asking about {pkt[ARP].pdst}")
         if pkt[ARP].op == 2:  # is-at (response)
             log.debug(f"*Response: {pkt[ARP].hwsrc} has address {pkt[ARP].psrc}")
-        #sys.stdout.flush()
+        if self.TRACE:
+            pkt[ARP].show()
+        sys.stdout.flush()
 
     def check_esp32(self, pkt):
 
@@ -263,11 +270,12 @@ def get_local_networks():
 
 
 def boot_monitor(monitor):
+
     networks = get_local_networks()
     log.info(f'IP networks found: {networks}')
 
     for network in networks:
-        log.info(f'Sending an ARP ping to discover already connected devices on network {network}')
+        log.info(f'Discovering devices already connected to IP network {network}')
         monitor.arp_discover_background(network)
 
     monitor.arp_monitor()
