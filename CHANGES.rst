@@ -10,6 +10,7 @@ Development
 - Improve formatting of BEEP telemetry field mapping for BOB
 - Disable telemetry adapter offline state for now
 - Disable DEBUG log level for system sensors
+- Add the "maintenance" device status / mode
 
 
 2019-06-22 0.5.1

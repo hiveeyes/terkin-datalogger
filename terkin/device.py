@@ -21,6 +21,7 @@ class DeviceStatus:
     Object holding device status information.
     """
     def __init__(self):
+        self.maintenance = False
         self.networking = False
 
 
@@ -310,6 +311,11 @@ class TerkinDevice:
     def hibernate(self, interval, deep=False):
 
         #logging.enable_logging()
+
+        if self.status.maintenance is True:
+            log.info('Device is in maintenance mode, skipping deep sleep and decreasing interval to 5 seconds.')
+            deep = False
+            interval = 5.0
 
         if deep:
 

@@ -25,7 +25,8 @@ class NetworkManager:
         self.lora_manager = LoRaManager(manager=self, settings=self.settings)
 
     def stop(self):
-        self.wifi_manager.power_off()
+        if self.device.status.maintenance is not True:
+            self.wifi_manager.power_off()
 
     def start_wifi(self):
         self.wifi_manager.start()
