@@ -125,7 +125,7 @@ class NetworkMonitor:
         """
         log.info(f'Sending ARP ping request to {destination}')
         # "srp" means: Send and receive packets at layer 2.
-        ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=destination), timeout=2, verbose=self.VERBOSITY)
+        ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=destination), timeout=5, verbose=self.VERBOSITY)
         return ans, unans
 
     def arp_discover(self, destination, delay=0):
