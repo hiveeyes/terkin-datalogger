@@ -27,6 +27,7 @@ Development
 - Use offset values for DS18B20 sensors from settings
 - Enable/disable individual sensors per settings
 - Install MicroWebSrv and MicroDNSSrv libraries into ``dist-packages`` folder
+- Add singleton factory method to ``TerkinDatalogger``. Thanks, @DieDiren.
 
 
 2019-06-22 0.5.1

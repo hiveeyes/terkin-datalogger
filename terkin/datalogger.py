@@ -24,7 +24,25 @@ class TerkinDatalogger:
     name = 'Terkin MicroPython Datalogger'
     version = __version__
 
+    __instance__ = None
+
+    @staticmethod
+    def getInstance(settings=None):
+        """
+        Singleton factory.
+        """
+        if TerkinDatalogger.__instance__ is None:
+            if settings is None:
+                raise Exception("Settings are None but instance wasn't created before.")
+            else:
+                TerkinDatalogger(settings)
+
+        return TerkinDatalogger.__instance__
+
     def __init__(self, settings):
+
+        # Fulfill singleton factory.
+        TerkinDatalogger.__instance__ = self
 
         # Obtain configuration settings.
         self.settings = TerkinConfiguration()
