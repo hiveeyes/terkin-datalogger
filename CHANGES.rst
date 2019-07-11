@@ -25,6 +25,7 @@ Development
 - Rename environment variable ``MCU_SERIAL_PORT`` to ``MCU_PORT``
   for configuring both USB/UART port and IP address
 - Use offset values for DS18B20 sensors from settings
+- Enable/disable individual sensors per settings
 
 
 2019-06-22 0.5.1

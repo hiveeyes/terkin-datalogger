@@ -65,6 +65,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Initialize HX711 sensor component.
         settings = self.settings.get('sensors.registry.hx711')
 
+        if settings.get('enabled') is False:
+            log.info("Skipping HX711 device on pins {}/{}".format(settings['pin_dout'], settings['pin_pdsck']))
+            return
+
         hx711_sensor = HX711Sensor()
         hx711_sensor.set_address(settings.get('address', 0x00))
         hx711_sensor.register_pin('dout', settings['pin_dout'])
@@ -106,6 +110,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         settings = self.settings.get('sensors.registry.bme280')
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
+
+        if settings.get('enabled') is False:
+            log.info("Skipping BME280 device {} on bus {}".format(hex(settings['address']), bus.name))
+            return
 
         sensor = BME280Sensor()
         if 'address' in settings:

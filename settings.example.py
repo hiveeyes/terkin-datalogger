@@ -216,9 +216,11 @@ sensors = {
             }
         },
         'bme280_1': {
+            'enabled': True,
             'bus': 'i2c:0',
         },
         'bme280_2': {
+            'enabled': True,
             'bus': 'i2c:1',
             'address': 0x77,
         },

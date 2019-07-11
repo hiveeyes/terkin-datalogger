@@ -148,6 +148,7 @@ sensors = {
     },
     'registry': {
         'hx711': {
+            'enabled': True,
             'address': 0x00,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
@@ -168,6 +169,7 @@ sensors = {
             }
         },
         'bme280': {
+            'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
         },
