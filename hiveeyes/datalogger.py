@@ -43,19 +43,19 @@ class HiveeyesDatalogger(TerkinDatalogger):
         try:
             self.add_hx711_sensor()
         except Exception as ex:
-            log.exception('Skipping HX711 sensor')
+            log.exception('Setting up HX711 sensor failed')
 
         # Setup the DS18X20.
         try:
             self.add_ds18x20_sensor()
         except Exception as ex:
-            log.exception('Skipping DS18x20 sensor')
+            log.exception('Setting up DS18X20 sensor failed')
 
         # Setup the BME280.
         try:
             self.add_bme280_sensor()
         except Exception as ex:
-            log.exception('Skipping bme280 sensor')
+            log.exception('Setting up BME280 sensor failed')
 
     def add_hx711_sensor(self):
         """
