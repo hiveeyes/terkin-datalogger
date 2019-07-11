@@ -57,7 +57,7 @@ Running ``make list-serials`` might help here.
 
 Example::
 
-    export MCU_SERIAL_PORT=/dev/cu.usbmodemPye090a1
+    export MCU_PORT=/dev/cu.usbmodemPye090a1
 
 
 From scratch

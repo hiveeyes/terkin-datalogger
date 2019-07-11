@@ -32,10 +32,21 @@ setup-environment: setup-virtualenv3
 # ----------------
 # Serial interface
 # ----------------
-$(eval serial_port     := ${MCU_SERIAL_PORT})
-$(eval serial_bufsize  := 2048)
-$(eval rshell_options  := --port $(serial_port) --buffer-size $(serial_bufsize) --timing)
-#$(eval rshell_options  := --port $(serial_port) --user micro --password python)
+$(eval mcu_port     := ${MCU_PORT})
+ifeq ($(MCU_PORT),)
+    $(eval mcu_port := ${MCU_SERIAL_PORT})
+endif
+$(eval mcu_transfer_buffer  := 2048)
+$(eval rshell_options  := --port $(mcu_port) --user micro --password python --buffer-size $(mcu_transfer_buffer) --timing)
+
+check-mcu-port:
+	@if test "${MCU_PORT}" = ""; then \
+        if test "${MCU_SERIAL_PORT}" = ""; then \
+            echo "ERROR: Environment variable 'MCU_PORT' or 'MCU_SERIAL_PORT' not set"; \
+            exit 1; \
+        fi; \
+	fi
+
 
 # ----------
 # PlatformIO

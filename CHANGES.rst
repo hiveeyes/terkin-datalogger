@@ -21,6 +21,9 @@ Development
   discover and maintain specific device
 - Add MQTT authentication
 - Update documentation
+- Improve rshell access over IP
+- Rename environment variable ``MCU_SERIAL_PORT`` to ``MCU_PORT``
+  for configuring both USB/UART port and IP address
 
 
 2019-06-22 0.5.1

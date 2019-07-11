@@ -83,32 +83,33 @@ download-requirements:
 list-serials:
 	@$(rshell) --list
 
-check-serial-port:
-	@if test "${MCU_SERIAL_PORT}" = ""; then \
-		echo "ERROR: Environment variable 'MCU_SERIAL_PORT' not set"; \
-		exit 1; \
-	fi
-
-rshell: check-serial-port
+rshell: check-mcu-port
 	$(rshell) $(rshell_options)
 
-repl: check-serial-port
+repl: check-mcu-port
 	$(rshell) $(rshell_options) repl
 
-console: check-serial-port
-	$(miniterm) ${MCU_SERIAL_PORT} 115200
+console: check-mcu-port
+ifneq (,$(findstring /dev,$(mcu_port)))
+	@echo "Connecting via serial port ${mcu_port}."
+	$(miniterm) ${mcu_port} 115200
+else
+	@echo "Connecting via telnet to ${mcu_port}. Please enter User: micro, Password: python"
+	@#telnet ${mcu_port}
+	expect -c 'spawn telnet ${mcu_port}; expect "*?ogin as:*"; sleep 0.2; send -- "micro\r"; expect "*?assword:*"; sleep 0.2; send -- "python\r"; interact;'
+endif
 
-list-boards: check-serial-port
+list-boards: check-mcu-port
 	@$(rshell) $(rshell_options) boards
 
-device-info: check-serial-port
-	@$(rshell) $(rshell_options) --quiet repl pyboard 'import os ~ os.uname() ~'
+device-info: check-mcu-port
+	@$(rshell) $(rshell_options) --quiet repl '~ import os ~ os.uname() ~'
 
-reset-device: check-serial-port
-	@$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset() ~'
+reset-device: check-mcu-port
+	@$(rshell) $(rshell_options) --quiet repl '~ import machine ~ machine.reset() ~'
 
-reset-device-attached: check-serial-port
-	@$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset()'
+reset-device-attached: check-mcu-port
+	@$(rshell) $(rshell_options) --quiet repl '~ import machine ~ machine.reset()'
 
 reset-ampy:
 	$(ampy) --port $(serial_port) --delay 1 reset
@@ -129,14 +130,14 @@ sketch-and-run: install-sketch reset-device-attached
 
 install: install-requirements install-framework install-sketch
 
-install-requirements: check-serial-port
+install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages
 	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
 
-install-framework: check-serial-port
+install-framework: check-mcu-port
 	$(rshell) $(rshell_options) --file tools/upload-framework.rshell
 
-install-sketch: check-serial-port
+install-sketch: check-mcu-port
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 
 refresh-requirements:
@@ -146,7 +147,7 @@ refresh-requirements:
 	$(rshell) $(rshell_options) ls /flash/dist-packages
 	$(MAKE) install-requirements
 
-format-flash: check-serial-port
+format-flash: check-mcu-port
 
 	@# Old version
 	@# $(rshell) $(rshell_options) --file tools/clean.rshell
@@ -172,11 +173,11 @@ format-flash: check-serial-port
 terkin: install-terkin
 ratrack: install-ratrack
 
-terkin: check-serial-port
+terkin: check-mcu-port
 	@#$(rshell) $(rshell_options) --file tools/upload-framework.rshell
 	$(rshell) $(rshell_options) --file tools/upload-terkin.rshell
 
-ratrack: check-serial-port
+ratrack: check-mcu-port
 	# $(rshell) $(rshell_options) --file tools/upload-framework.rshell
 	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
 
