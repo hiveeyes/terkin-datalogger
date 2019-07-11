@@ -37,10 +37,18 @@ download-requirements:
 	# Install Pycom "mqtt.py"
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/6544105e/lib/mqtt/mqtt.py
 
+    # Install MicroWebSrv and MicroDNSSrv libraries
+    # https://github.com/jczic/MicroWebSrv
+    # https://github.com/jczic/MicroDNSSrv
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSrv.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSocket.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
+
 	# Install Pycoproc Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/681302a4/lib/pycoproc/pycoproc.py
 
-	#Install quectel L76 GNSS library (Pytrack Board)
+	# Install Quectel L76 GNSS library (Pytrack Board)
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/andrethemac/L76GLNSV4/b68b3402/L76GNSV4.py
 
 	#Install Pytrack Board Libary

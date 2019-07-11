@@ -26,6 +26,7 @@ Development
   for configuring both USB/UART port and IP address
 - Use offset values for DS18B20 sensors from settings
 - Enable/disable individual sensors per settings
+- Install MicroWebSrv and MicroDNSSrv libraries into ``dist-packages`` folder
 
 
 2019-06-22 0.5.1
