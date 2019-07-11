@@ -90,7 +90,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         settings = self.settings.get('sensors.registry.ds18x20')
 
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
-        sensor = DS18X20Sensor()
+        sensor = DS18X20Sensor(settings=settings)
         sensor.acquire_bus(bus)
 
         # Start sensor.

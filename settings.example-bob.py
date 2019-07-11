@@ -156,6 +156,16 @@ sensors = {
         },
         'ds18x20': {
             'bus': 'onewire:0',
+            'devices': {
+                '1111111111111111': {
+                    'enabled': True,
+                    #'offset': 0.42,
+                },
+                '2222222222222222': {
+                    'enabled': True,
+                    #'offset': -0.42,
+                },
+            }
         },
         'bme280': {
             'bus': 'i2c:0',
