@@ -166,13 +166,19 @@ class TerkinDatalogger:
         """
         Sleep until the next measurement cycle.
         """
-        interval = self.settings.get('main.interval')
-        #print(dir(machine))
+
+        deepsleep = self.settings.get('main.deepsleep', False)
+        interval = self.get_sleep_time()
+
+        # Amend deep sleep intent when masked through maintenance mode.
+        if self.device.status.maintenance is True:
+            deepsleep = False
+            log.info('Device is in maintenance mode. Skipping deep sleep and decreasing '
+                     'interval to {} seconds'.format(interval))
 
         # Use deep sleep if requested.
         try:
-            deep = self.settings.get('main.deepsleep', False)
-            if deep:
+            if deepsleep:
 
                 # Shut down sensor peripherals.
                 self.sensor_manager.power_off()
@@ -181,7 +187,7 @@ class TerkinDatalogger:
                 self.device.power_off()
 
             # Send device to deep sleep.
-            self.device.hibernate(interval, deep=deep)
+            self.device.hibernate(interval, deepsleep=deepsleep)
 
         # When hibernation fails, fall back to regular "time.sleep".
         except:
@@ -189,6 +195,27 @@ class TerkinDatalogger:
             # Todo: Emit error message here.
             log.info('Sleeping for {} seconds'.format(interval))
             time.sleep(interval)
+
+    def get_sleep_time(self):
+        interval = self.settings.get('main.interval', 60.0)
+
+        # Configuration switchover backward compatibility / defaults.
+        if isinstance(interval, (float, int)):
+            self.settings.set('main.interval', {})
+            self.settings.setdefault('main.interval.field', interval)
+        self.settings.setdefault('main.interval.maintenance', 5.0)
+
+        # Compute interval.
+        interval = self.settings.get('main.interval.field')
+
+        # Amend deep sleep intent when masked through maintenance mode.
+        if self.device.status.maintenance is True:
+            interval = self.settings.get('main.interval.maintenance')
+
+        # FIXME
+        sleep_time = interval
+
+        return sleep_time
 
     def register_sensors(self):
         """

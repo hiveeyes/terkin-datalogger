@@ -31,6 +31,7 @@ Development
 - Increase timeout for ARP ping requests with "terkin.py"
 - Use most recent "dotty_dict" module
 - Properly format MAC addresses
+- Add maintenance mode interval to configuration settings
 
 
 2019-06-22 0.5.1

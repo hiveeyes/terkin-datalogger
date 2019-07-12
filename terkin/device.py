@@ -311,16 +311,11 @@ class TerkinDevice:
     def power_off(self):
         self.networking.stop()
 
-    def hibernate(self, interval, deep=False):
+    def hibernate(self, interval, deepsleep=False):
 
         #logging.enable_logging()
 
-        if self.status.maintenance is True:
-            log.info('Device is in maintenance mode, skipping deep sleep and decreasing interval to 5 seconds.')
-            deep = False
-            interval = 5.0
-
-        if deep:
+        if deepsleep:
 
             # Prepare and invoke deep sleep.
             # https://docs.micropython.org/en/latest/library/machine.html#machine.deepsleep
