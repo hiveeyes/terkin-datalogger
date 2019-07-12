@@ -7,6 +7,10 @@ Hiveeyes MicroPython Datalogger backlog
 Datalogger
 **********
 
+Prio 0
+======
+- [o] https://community.hiveeyes.org/t/kontinuierliche-verbesserungen-des-hiveeyes-micropython-datenloggers/2121/40
+
 Prio 1
 ======
 - [o] More power saving
@@ -15,13 +19,15 @@ Prio 1
     - [o] Turn off LED-RGB completely
 - [o] WiFi STA: Support connecting to BSSIDs
 - [o] Exponential backoff for WiFi STA, MQTT broker and general connectivity
-- [o] Time-based timeout behavior everything, not just based on retries
+- [o] Time-based timeout behavior for everything, not just based on retries
 - [o] Interpolate Device-ID into telemetry node name or better derive humanized name from it.
       See also https://github.com/HowManyOliversAreThere/six-nibble-name
 - [o] Revisit smoothing of HX711 value
 - [o] Improve HX711 timeout
-- [o] Publish status information at boot time with retained message to MQTT
-- [o] Enable/disable of system- and environmental-sensors
+- [o] Call name support
+- [o] Release names: Murmeltier, Mordillo
+- [o] Release pics
+    - https://commons.wikimedia.org/wiki/File:Agc_view.jpg
 
 Prio 1.1
 ========
@@ -343,3 +349,20 @@ User interface
 **************
 - https://blog.koley.in/2019/339-bytes-of-responsive-css
   https://news.ycombinator.com/item?id=19622786
+
+
+
+Firmware update output
+======================
+::
+
+    Erased 2 MiB in 15.28 seconds
+    Erased 4MB device flash fs in 1.22 second
+    Wrote 20.95 KiB from bootloader.bin in 1.11 second
+    Wrote 3 KiB from partitions.bin in 0.08 seconds
+    Wrote 1.66 MiB from fipy.bin in 54.4 seconds
+    Wrote 4 KiB from config in 0.1 seconds
+    Device ID: 807D3AC2DE44
+    LoRa MAC: 70B3D54992DBE31D
+    Sigfox ID: 004D4881
+    Sigfox PAC: 211AC57838BF7C29

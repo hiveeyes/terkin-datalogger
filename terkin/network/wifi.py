@@ -7,6 +7,7 @@ import machine
 import binascii
 from network import WLAN
 from terkin import logging
+from terkin.util import format_mac
 
 log = logging.getLogger(__name__)
 
@@ -291,9 +292,9 @@ class WiFiManager:
     def humanize_mac_addresses(self, mac):
         info = {}
         if hasattr(mac, 'sta_mac'):
-            info['sta_mac'] = binascii.hexlify(mac.sta_mac).decode().upper()
+            info['sta_mac'] = format_mac(binascii.hexlify(mac.sta_mac).decode())
         if hasattr(mac, 'ap_mac'):
-            info['ap_mac'] = binascii.hexlify(mac.ap_mac).decode().upper()
+            info['ap_mac'] = format_mac(binascii.hexlify(mac.ap_mac).decode())
         return info
 
     def print_metrics(self):

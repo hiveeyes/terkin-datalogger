@@ -6,6 +6,32 @@ Hiveeyes MicroPython Datalogger CHANGES
 Development
 ===========
 - Explicitly ``deinit()`` LTE modem on each startup
+- Fix ``settings.example-bob.py``. Thanks, @MKO1640 and @ClemensGruber!
+- Improve formatting of BEEP telemetry field mapping for BOB
+- Disable telemetry adapter offline state for now
+- Disable DEBUG log level for system sensors
+- Add the "maintenance" device status / mode
+- Add UDP mode server for signalling the device into maintenance mode
+- Add device discovery and UDP client for signalling maintenance mode
+- Attempt to fix woes with IPv6 addresses from ``terkin.py``
+- Skip networks like 127.0.0.0/8 and 169.254.0.0/16 for ``terkin.py``
+- Make "terkin.py" handle multiple MAC address prefixes
+  coming from different Pycom devices. Now: WiPy, FiPy.
+- Optionally read MAC address from command line in order to
+  discover and maintain specific device
+- Add MQTT authentication
+- Update documentation
+- Improve rshell access over IP
+- Rename environment variable ``MCU_SERIAL_PORT`` to ``MCU_PORT``
+  for configuring both USB/UART port and IP address
+- Use offset values for DS18B20 sensors from settings
+- Enable/disable individual sensors per settings
+- Install MicroWebSrv and MicroDNSSrv libraries into ``dist-packages`` folder
+- Add singleton factory method to ``TerkinDatalogger``. Thanks, @DieDiren.
+- Increase timeout for ARP ping requests with "terkin.py"
+- Use most recent "dotty_dict" module
+- Properly format MAC addresses
+- Add maintenance mode interval to configuration settings
 
 
 2019-06-22 0.5.1

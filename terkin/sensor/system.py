@@ -10,7 +10,7 @@ from terkin import logging
 log = logging.getLogger(__name__)
 
 # Todo: Make this configurable.
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 class SystemMemoryFree:
