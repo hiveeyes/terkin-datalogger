@@ -12,7 +12,6 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.sensor.button import ButtonManager
 
 log = logging.getLogger(__name__)
 
@@ -92,6 +91,7 @@ class TerkinDatalogger:
         # Initialize buttons / touch pads.
         buttons_enabled = self.settings.get('sensors.system.buttons.enabled', False)
         if buttons_enabled:
+            from terkin.sensor.button import ButtonManager
             self.button_manager = ButtonManager()
             self.start_buttons()
 
