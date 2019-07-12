@@ -21,7 +21,8 @@ Backlog
 - Operate on multiple devices.
 - Add more MAC address prefixes from the Pycom device family.
 - Acknowledge UDP mode change to improve user feedback.
-- Honor KeyboardInterrupt / CTRL+C on Windows
+- Honor KeyboardInterrupt / CTRL+C on Windows.
+- Lower-case MAC addresses before comparison.
 
 """
 

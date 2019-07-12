@@ -147,7 +147,7 @@ install-framework: check-mcu-port
 install-sketch: check-mcu-port
 	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
 
-refresh-requirements:
+refresh-requirements: check-mcu-port
 	rm -r dist-packages
 	$(MAKE) download-requirements
 	$(rshell) $(rshell_options) rm -r /flash/dist-packages
