@@ -191,7 +191,9 @@ class NetworkMonitor:
             self.toggle_maintenance(member)
 
     def match_mac_prefix(self, mac_address):
+        mac_address = normalize_mac_address(mac_address)
         for prefix in self.mac_prefixes:
+            prefix = normalize_mac_address(prefix)
             if mac_address.startswith(prefix):
                 return True
         return False
@@ -232,6 +234,8 @@ class NetworkMonitor:
             s.send(b'maintenance.disable()')
 
 
+# Utilities
+
 def get_primary_ip():
     # https://stackoverflow.com/a/28950776
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -269,6 +273,23 @@ def get_local_networks():
 
     return addresses
 
+
+def normalize_mac_address(mac_address):
+    return mac_address.lower().replace(':', '')
+
+
+def str_grouper(n, iterable):
+    # https://stackoverflow.com/questions/11006702/elegant-format-for-a-mac-address-in-python-3-2/11006779#11006779
+    args = [iter(iterable)] * n
+    for part in zip(*args):  # itertools.izip in 2.x for efficiency.
+        yield "".join(part)
+
+
+def format_mac_address(mac_address):
+    return ":".join(str_grouper(2, mac_address)).lower()
+
+
+# Main program
 
 def boot_monitor(monitor):
 
@@ -317,6 +338,8 @@ if __name__ == '__main__':
         mac_prefixes = sys.argv[2].split(',')
     except:
         mac_prefixes = mac_prefixes_default
+
+    mac_prefixes = list(map(format_mac_address, mac_prefixes))
 
     # Start network monitoring and device discovery machinery.
     run_monitor(command, mac_prefixes)

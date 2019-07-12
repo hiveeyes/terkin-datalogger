@@ -80,5 +80,5 @@ def str_grouper(n, iterable):
         yield "".join(part)
 
 
-def format_mac(mac_address):
-    return ":".join(str_grouper(2, mac_address))
+def format_mac_address(mac_address):
+    return ":".join(str_grouper(2, mac_address)).lower()

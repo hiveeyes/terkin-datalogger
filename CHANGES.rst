@@ -33,6 +33,7 @@ Development
 - Properly format MAC addresses
 - Add maintenance mode interval to configuration settings
 - Lazily import "ButtonManager" for trimming #11
+- Improve MAC address parsing and formatting
 
 
 2019-06-22 0.5.1
