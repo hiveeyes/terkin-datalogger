@@ -29,6 +29,7 @@ Development
 - Install MicroWebSrv and MicroDNSSrv libraries into ``dist-packages`` folder
 - Add singleton factory method to ``TerkinDatalogger``. Thanks, @DieDiren.
 - Increase timeout for ARP ping requests with "terkin.py"
+- Use most recent "dotty_dict" module
 
 
 2019-06-22 0.5.1

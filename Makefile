@@ -60,12 +60,11 @@ download-requirements:
 	#Install BME280 Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
 
-	# Install and patch "dotty_dict"
+	# Install slightly updated "dotty_dict" module
 	# https://github.com/pawelzny/dotty_dict
 	mkdir -p $(target_dir)/dotty_dict
-	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/__init__.py
-	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/c040a96/dotty_dict/dotty_dict.py
-	patch --forward dist-packages/dotty_dict/dotty_dict.py tools/dotty_dict-01.patch || true
+	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/hiveeyes/dotty_dict/micropython/dotty_dict/__init__.py
+	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/hiveeyes/dotty_dict/micropython/dotty_dict/dotty_dict.py
 
 	# Install OneWire and DS18x20 libraries
 	# https://github.com/micropython/micropython/tree/master/drivers
