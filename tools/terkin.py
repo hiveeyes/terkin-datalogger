@@ -339,7 +339,7 @@ if __name__ == '__main__':
     except:
         mac_prefixes = mac_prefixes_default
 
-    mac_prefixes = list(map(format_mac_address, mac_prefixes))
+    mac_prefixes = list(map(format_mac_address, map(normalize_mac_address, mac_prefixes)))
 
     # Start network monitoring and device discovery machinery.
     run_monitor(command, mac_prefixes)
