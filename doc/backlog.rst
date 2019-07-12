@@ -9,7 +9,18 @@ Datalogger
 
 Prio 0
 ======
-- [o] https://community.hiveeyes.org/t/kontinuierliche-verbesserungen-des-hiveeyes-micropython-datenloggers/2121/40
+- [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
+- [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
+- [o] https://community.hiveeyes.org/t/loggen-von-daten-und-error-warning-events-auf-sd/2279
+- [o] https://community.hiveeyes.org/t/http-und-webbasierte-konfiguration-fur-terkin-datenlogger-captive-portal/2270
+- [o] https://community.hiveeyes.org/t/kontinuierliche-verbesserungen-des-terkin-datenloggers-600er/2121
+
+Ideas
+-----
+- [o] Leave maintenance mode after 10 minutes
+- [o] Configure ARP-ping timeout for "terkin.py"
+  https://community.hiveeyes.org/t/running-terkin-py-on-windows/2273/31
+
 
 Prio 1
 ======
@@ -28,6 +39,7 @@ Prio 1
 - [o] Release names: Murmeltier, Mordillo
 - [o] Release pics
     - https://commons.wikimedia.org/wiki/File:Agc_view.jpg
+
 
 Prio 1.1
 ========
