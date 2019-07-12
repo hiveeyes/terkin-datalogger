@@ -71,3 +71,14 @@ def urlparse(url, scheme='', allow_fragments=True):
     #print('URI-2:', uri)
 
     return uri
+
+
+def str_grouper(n, iterable):
+    # https://stackoverflow.com/questions/11006702/elegant-format-for-a-mac-address-in-python-3-2/11006779#11006779
+    args = [iter(iterable)] * n
+    for part in zip(*args):  # itertools.izip in 2.x for efficiency.
+        yield "".join(part)
+
+
+def format_mac(mac_address):
+    return ":".join(str_grouper(2, mac_address))
