@@ -275,7 +275,7 @@ def get_local_networks():
 
 
 def normalize_mac_address(mac_address):
-    return mac_address.lower().replace(':', '')
+    return mac_address.lower().replace(':', '').replace('-', '').replace('.', '')
 
 
 def str_grouper(n, iterable):
