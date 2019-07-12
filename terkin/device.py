@@ -21,6 +21,7 @@ class DeviceStatus:
     Object holding device status information.
     """
     def __init__(self):
+        self.maintenance = False
         self.networking = False
 
 
@@ -69,6 +70,9 @@ class TerkinDevice:
         except WiFiException:
             log.error('Network connectivity not available, WiFi failed')
             self.status.networking = False
+
+        # Start UDP server for pulling device into maintenance mode.
+        self.networking.start_modeserver()
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
@@ -307,11 +311,11 @@ class TerkinDevice:
     def power_off(self):
         self.networking.stop()
 
-    def hibernate(self, interval, deep=False):
+    def hibernate(self, interval, deepsleep=False):
 
         #logging.enable_logging()
 
-        if deep:
+        if deepsleep:
 
             # Prepare and invoke deep sleep.
             # https://docs.micropython.org/en/latest/library/machine.html#machine.deepsleep

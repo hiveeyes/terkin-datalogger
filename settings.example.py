@@ -3,10 +3,13 @@
 # General settings.
 main = {
 
-    # Measurement interval in seconds.
-    # TODO: Please note this is not the _real thing_ yet at it will just use
+    # Measurement intervals in seconds.
+    # Todo: Please note this is not the _real thing_ yet at it will just use
     #       this value to apply to ``time.sleep()`` after each duty cycle.
-    'interval': 15.0,
+    'interval': {
+        'field': 60.0,
+        'maintenance': 5.0,
+    },
 
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': True,
@@ -94,6 +97,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://daq.example.org',
+            #'endpoint': 'mqtt://username:password@daq.example.org',
             'topology': 'mqttkit',
             'address': {
                 "realm": "workbench",
@@ -203,11 +207,23 @@ sensors = {
         },
         'ds18x20': {
             'bus': 'onewire:0',
+            'devices': {
+                '28ff641d8fdf18c1': {
+                    'enabled': False,
+                    #'offset': 0.42,
+                },
+                '28ff641d8fc3944f': {
+                    'enabled': True,
+                    #'offset': -0.42,
+                },
+            }
         },
         'bme280_1': {
+            'enabled': True,
             'bus': 'i2c:0',
         },
         'bme280_2': {
+            'enabled': True,
             'bus': 'i2c:1',
             'address': 0x77,
         },

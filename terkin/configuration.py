@@ -35,13 +35,19 @@ class TerkinConfiguration:
 
     def __init__(self):
         self.store = dotty()
-        self.set_defaults()
 
     def get(self, key, default=None):
         return self.store.get(key, default=default)
 
-    def set_defaults(self):
-        self.store.setdefault('networking.wifi.stations', [])
+    def set(self, key, value):
+        self.store[key] = value
+        return value
+
+    def setdefault(self, key, default=None):
+        return self.store.setdefault(key, default=default)
+
+    def __delitem__(self, key):
+        del self.store[key]
 
     def add(self, data):
         try:

@@ -103,10 +103,10 @@ Upload firmware
 1. Upload firmware::
 
     # Define serial port.
-    export MCU_SERIAL_PORT=/dev/cu.usbmodemPye090a1
+    export MCU_PORT=/dev/cu.usbmodemPye090a1
 
     # Upload Pycom firmware.
-    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT flash --tar FiPy-1.20.0.rc11.tar.gz
+    pycom-fwtool-cli --verbose --port $MCU_PORT flash --tar FiPy-1.20.0.rc11.tar.gz
 
 2. Reset device
 
@@ -134,15 +134,15 @@ Board information
 In order to get board information, you might want to check out some commands like::
 
     # Read chip identifier
-    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT chip_id
+    pycom-fwtool-cli --verbose --port $MCU_PORT chip_id
     ESP32D0WDQ6 (revision (unknown 0xa))
 
     # Read MAC address of WiFi NIC
-    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT wmac
+    pycom-fwtool-cli --verbose --port $MCU_PORT wmac
     WMAC=807D3AC2DE44
 
     # Read SMAC
-    pycom-fwtool-cli --verbose --port $MCU_SERIAL_PORT smac
+    pycom-fwtool-cli --verbose --port $MCU_PORT smac
     SMAC=70B3D54992DBE31D
 
 By watching the preamble, you might be able to deduce the

@@ -3,10 +3,13 @@
 # General settings.
 main = {
 
-    # Measurement interval in seconds.
-    # TODO: Please note this is not the _real thing_ yet at it will just use
+    # Measurement intervals in seconds.
+    # Todo: Please note this is not the _real thing_ yet at it will just use
     #       this value to apply to ``time.sleep()`` after each duty cycle.
-    'interval': 15.0,
+    'interval': {
+        'field': 60.0,
+        'maintenance': 5.0,
+    },
 
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': True,
@@ -83,6 +86,7 @@ telemetry = {
 
             # Define telemetry endpoint and address information.
             'endpoint': 'mqtt://swarm.hiveeyes.org',
+            #'endpoint': 'mqtt://username:password@swarm.hiveeyes.org',
             'topology': 'mqttkit',
             'address': {
                 "realm": "hiveeyes",
@@ -147,6 +151,7 @@ sensors = {
     },
     'registry': {
         'hx711': {
+            'enabled': True,
             'address': 0x00,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
@@ -155,8 +160,19 @@ sensors = {
         },
         'ds18x20': {
             'bus': 'onewire:0',
+            'devices': {
+                '1111111111111111': {
+                    'enabled': True,
+                    #'offset': 0.42,
+                },
+                '2222222222222222': {
+                    'enabled': True,
+                    #'offset': -0.42,
+                },
+            }
         },
         'bme280': {
+            'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
         },
@@ -188,11 +204,30 @@ sensors = {
 # HTTP API and captive portal.
 sensor_telemetry_map = {
     "_version": "1.0.0",
+
+    # Waage
+    "weight.0": "weight_kg",
+
+    # BME280
     "temperature.0x77.i2c:0": "t",
     "humidity.0x77.i2c:0": "h",
     "pressure.0x77.i2c:0": "p",
-    "weight.0": "weight",
-    "temperature.28ff641d8fdf18c1.onewire:0": "t_i_1",
-    "temperature.28ff641d8fc3944f.onewire:0": "t_i_2",
-    "system.temperature": "t_i_5",
+
+    # DS18B20
+    "temperature.1111111111111111.onewire:0": "t_i_1",
+    "temperature.2222222222222222.onewire:0": "t_i_2",
+    "temperature.3333333333333333.onewire:0": "t_i_3",
+    "temperature.4444444444444444.onewire:0": "t_i_4",
+    "temperature.5555555555555555.onewire:0": "t_i_5",
+    "temperature.6666666666666666.onewire:0": "t_o",
+
+    # Signalstärke
+    "system.wifi.rssi": "rssi",
+
+    # Sendeleistung
+    "system.wifi.max_tx_power": "snr",
+
+    # Batteriespannung
+    "system.voltage": "bv",
+
 }
