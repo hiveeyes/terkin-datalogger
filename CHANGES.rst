@@ -35,6 +35,7 @@ Development
 - Lazily import "ButtonManager" for trimming #11
 - Improve MAC address parsing and formatting
 - Improve MAC address normalization by also removing dashes and dots
+- Follow the Pycopy MicroPython fork, standard library wise
 
 
 2019-06-22 0.5.1

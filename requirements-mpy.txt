@@ -1,9 +1,9 @@
-micropython-copy
-micropython-types
-micropython-collections
-micropython-collections.defaultdict
-micropython-urequests
+pycopy-copy
+pycopy-types
+pycopy-collections
+pycopy-collections.defaultdict
+pycopy-urequests
 # Apply cherrypick-style installation for some packages to ignore dependencies
-#micropython-urllib.parse
-#micropython-base64
-#micropython-logging
+#pycopy-urllib.parse
+#pycopy-base64
+#pycopy-logging
