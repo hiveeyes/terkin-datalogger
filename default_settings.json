@@ -1,0 +1,70 @@
+{
+    "networking": {
+
+        "wlan": {
+            "enabled": true,
+            "ssid": "TP-LINK_A5328E",
+            "encryption": 0,
+            "password": "sdc20172019",
+            "timeout": 1000,
+            "ifconfig": "dhcp",
+            "available": {}
+        },
+
+        "accesspoint": {
+            "enabled": true,
+            "ssid": "hiverize-accespoint-didi",
+            "encryption": 3,
+            "password": "hiverize",
+            "channel": 4
+        },
+
+        "lora": {
+        },
+
+        "lte": {
+        }
+    },
+
+    "telemetry": {
+        "beep": {
+            "enabled": true,
+            "server": "https://bee-observer.org",
+            "sensor_key": ""
+        }
+    },
+    "sensors": {
+        "ds1820": {
+            "enabled": true,
+            "pin": "P11",
+            "positions": {
+                "t_i_1": "",
+                "t_i_2": "",
+                "t_i_3": "",
+                "t_i_4": "",
+                "t_i_5": "",
+                "t_o": ""
+            }
+        },
+        "hx711": {
+            "enabled": true,
+            "pin_dout": "P22",
+            "pin_pdsck": "P21",
+            "calibration_factor": 1,
+            "tare_offset": 0
+        },
+        "bme280": {
+            "enabled": true,
+            "pin_sda": "P9",
+            "pin_scl": "P10"
+        }
+    },
+    "general": {
+        "general": {
+            "button_ap_enabled": true,
+            "button_ap_pin": "P2",
+            "initial_time": 1556805688,
+            "measurement_interval": 10
+        }
+    }
+}

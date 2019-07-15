@@ -10,9 +10,9 @@ from hiveeyes.sensor_ds18x20 import DS18X20Sensor
 
 from main import BobDatalogger
 
-#from config import Config
+from config import Config
 
-#_config = Config()
+_config = Config()
 
 # To not run into trouble with CORS while developing
 _headers = {'Access-Control-Allow-Origin': '*'}
@@ -72,70 +72,70 @@ def measure_ds1820(httpClient, httpResponse, routeArgs):
     #else:
     #    return httpResponse.WriteResponseJSONError(404)
 
-#
-# ##############################################################################
-# # Routes for working with the config                                         #
-# ##############################################################################
-#
-# @MicroWebSrv.route('/api/config')
-# def get_config(httpClient, httpResponse):
-#     return httpResponse.WriteResponseJSONOk(obj=_config.data, headers=_headers)
-#
-# @MicroWebSrv.route('/api/config/<section>/<subsection>', 'GET')
-# def get_config_subsection(httpClient, httpResponse, routeArgs):
-#     section = routeArgs['section']
-#     subsection = routeArgs['subsection']
-#
-#     data = _config.get_subsection(section, subsection)
-#     if data is None:
-#         return httpResponse.WriteResponseJSONError(404)
-#     else:
-#         return httpResponse.WriteResponseJSONOk(
-#             obj=data,
-#             headers=_headers)
-#
-# @MicroWebSrv.route('/api/config/<section>/<subsection>', 'POST')
-# def post_config_subsection(httpClient, httpResponse, routeArgs):
-#     section = routeArgs['section']
-#     subsection = routeArgs['subsection']
-#     form_data = httpClient.ReadRequestContentAsJSON()
-#     _config.set_subsection(section, subsection, form_data)
-#     return httpResponse.WriteResponseJSONOk(
-#         obj={'status': 'saved'},
-#         headers=_headers)
-#
-# @MicroWebSrv.route('/api/config/<section>/<subsection>', 'OPTIONS')
-# def options_config(httpClient, httpResponse, routeArgs):
-#     headers = {
-#         'Access-Control-Allow-Origin': '*',
-#         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-#         'Access-Control-Allow-Headers': 'Content-Type'}
-#     return httpResponse.WriteResponseOk(
-#         headers = headers,
-#         contentType = "text/plain",
-#         contentCharset = "UTF-8",
-#         content="")
-#
-# @MicroWebSrv.route('/api/log', 'GET')
-# def get_logfile(httpClient, httpResponse):
-#     reset_causes = {
-#         machine.PWRON_RESET: 'PWRON', # Press reset button on FiPy
-#         machine.HARD_RESET: 'HARD',
-#         machine.WDT_RESET: 'WDT', # Upload and restart from USB or machine.reset()
-#         machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
-#         machine.SOFT_RESET: 'SOFT',
-#         machine.BROWN_OUT_RESET: 'BROWN_OUT'
-#     }
-#     data = {}
-#     data['reset_cause'] = reset_causes[machine.reset_cause()]
-#     try:
-#         with open('/sd/hiverizelog/logging.csv') as f:
-#             data['logfile'] = f.read()
-#     except OSError as err:
-#         data['logfile'] = "Could not open logfile: {}".format(err)
-#     return httpResponse.WriteResponseJSONOk(
-#         obj=data,
-#         headers=_headers)
+
+##############################################################################
+# Routes for working with the config                                         #
+##############################################################################
+
+@MicroWebSrv.route('/api/config')
+def get_config(httpClient, httpResponse):
+    return httpResponse.WriteResponseJSONOk(obj=_config.data, headers=_headers)
+
+@MicroWebSrv.route('/api/config/<section>/<subsection>', 'GET')
+def get_config_subsection(httpClient, httpResponse, routeArgs):
+    section = routeArgs['section']
+    subsection = routeArgs['subsection']
+
+    data = _config.get_subsection(section, subsection)
+    if data is None:
+        return httpResponse.WriteResponseJSONError(404)
+    else:
+        return httpResponse.WriteResponseJSONOk(
+            obj=data,
+            headers=_headers)
+
+@MicroWebSrv.route('/api/config/<section>/<subsection>', 'POST')
+def post_config_subsection(httpClient, httpResponse, routeArgs):
+    section = routeArgs['section']
+    subsection = routeArgs['subsection']
+    form_data = httpClient.ReadRequestContentAsJSON()
+    _config.set_subsection(section, subsection, form_data)
+    return httpResponse.WriteResponseJSONOk(
+        obj={'status': 'saved'},
+        headers=_headers)
+
+@MicroWebSrv.route('/api/config/<section>/<subsection>', 'OPTIONS')
+def options_config(httpClient, httpResponse, routeArgs):
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'}
+    return httpResponse.WriteResponseOk(
+        headers = headers,
+        contentType = "text/plain",
+        contentCharset = "UTF-8",
+        content="")
+
+@MicroWebSrv.route('/api/log', 'GET')
+def get_logfile(httpClient, httpResponse):
+    reset_causes = {
+        machine.PWRON_RESET: 'PWRON', # Press reset button on FiPy
+        machine.HARD_RESET: 'HARD',
+        machine.WDT_RESET: 'WDT', # Upload and restart from USB or machine.reset()
+        machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
+        machine.SOFT_RESET: 'SOFT',
+        machine.BROWN_OUT_RESET: 'BROWN_OUT'
+    }
+    data = {}
+    data['reset_cause'] = reset_causes[machine.reset_cause()]
+    try:
+        with open('/sd/hiverizelog/logging.csv') as f:
+            data['logfile'] = f.read()
+    except OSError as err:
+        data['logfile'] = "Could not open logfile: {}".format(err)
+    return httpResponse.WriteResponseJSONOk(
+        obj=data,
+        headers=_headers)
 
 
 mws = MicroWebSrv()
