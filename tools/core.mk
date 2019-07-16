@@ -29,25 +29,6 @@ setup-virtualenv3:
 setup-environment: setup-virtualenv3
 
 
-# ----------------
-# Serial interface
-# ----------------
-$(eval mcu_port     := ${MCU_PORT})
-ifeq ($(MCU_PORT),)
-    $(eval mcu_port := ${MCU_SERIAL_PORT})
-endif
-$(eval mcu_transfer_buffer  := 2048)
-$(eval rshell_options  := --port $(mcu_port) --user micro --password python --buffer-size $(mcu_transfer_buffer) --timing)
-
-check-mcu-port:
-	@if test "${MCU_PORT}" = ""; then \
-        if test "${MCU_SERIAL_PORT}" = ""; then \
-            echo "ERROR: Environment variable 'MCU_PORT' or 'MCU_SERIAL_PORT' not set"; \
-            exit 1; \
-        fi; \
-	fi
-
-
 # ----------
 # PlatformIO
 # ----------
@@ -79,21 +60,3 @@ push:
 
 install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
-
-
-# --------------
-# github-release
-# --------------
-
-check-github-release:
-	@test -e $(github-release) || (echo 'ERROR: "github-release" not found.\nPlease install "github-release" to "./bin/github-release".\nSee https://github.com/aktau/github-release\n'; exit 1)
-
-install-github-release:
-	# https://github.com/aktau/github-release
-	$(eval url := https://github.com/aktau/github-release/releases/download/v0.7.2/darwin-amd64-github-release.tar.bz2)
-
-	# NotYetImplemented
-	@exit 1
-
-	@#@test -e $(github-release) || cd tmp; wget $(url)
-	@#$(eval github-release := $(tools_dir)tmp/bin/darwin/amd64/github-release)

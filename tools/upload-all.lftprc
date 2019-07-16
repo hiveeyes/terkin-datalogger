@@ -1,0 +1,29 @@
+# https://lftp.yar.ru/lftp-man.html
+
+#open -u micro,python 192.168.178.24
+
+set net:connection-limit 1
+set net:reconnect-interval-base 0
+set ftp:passive-mode true
+set ftp:ssl-allow false
+set ftp:list-empty-ok true
+
+#set cache:enable false
+#cache off
+#debug
+#set mirror:require-source true
+#set mirror:set-permissions false
+
+set mirror:exclude-regex "\.(pyc)$|__pycache__"
+set mirror:overwrite true
+
+cd /flash
+mirror --reverse --delete --use-cache dist-packages
+mirror --reverse --delete --use-cache lib
+
+cd /flash/lib
+mirror --reverse --delete --use-cache terkin
+mirror --reverse --delete --use-cache hiveeyes
+
+cd /flash
+mirror --reverse --use-cache --file=boot.py --file=main.py --file=settings.py

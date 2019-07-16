@@ -37,6 +37,7 @@ Development
 - Improve MAC address normalization by also removing dashes and dots
 - Follow the Pycopy MicroPython fork, standard library wise
 - Upgrade to Dotty Dict 1.1.1. Thanks, Paweł.
+- Improve sandbox tooling incl. FTP source code upload
 
 
 2019-06-22 0.5.1
