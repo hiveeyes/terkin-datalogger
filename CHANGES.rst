@@ -38,7 +38,8 @@ Development
 - Follow the Pycopy MicroPython fork, standard library wise
 - Upgrade to Dotty Dict 1.1.1. Thanks, Paweł.
 - Improve sandbox tooling incl. FTP source code upload
-
+- DS18B20: Extend time between starting the
+  conversion and reading the sensor to one second.
 
 2019-06-22 0.5.1
 ================

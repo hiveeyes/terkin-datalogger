@@ -76,7 +76,7 @@ class DS18X20Sensor(AbstractSensor):
 
         log.info("Reading DS18X20 device {}".format(address))
         self.driver.start_conversion(device)
-        time.sleep(0.750)
+        time.sleep(1)
         value = self.driver.read_temp_async(device)
 
         # Evaluate device response.
@@ -97,7 +97,7 @@ class DS18X20Sensor(AbstractSensor):
         else:
             log.warning("No response from DS18X20 device {}".format(address))
 
-        time.sleep(0.750)
+        time.sleep(1)
 
     def get_setting(self, address, name):
         device_settings = self.settings.get('devices', {})
