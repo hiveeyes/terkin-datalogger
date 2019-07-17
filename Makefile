@@ -1,21 +1,51 @@
-# =======================
+# ***********************
 # The MicroTerkin sandbox
-# =======================
+# ***********************
 
-# Synopsis:
+# See also https://community.hiveeyes.org/t/terkin-for-micropython/233/21
+
+
+# =============
+# Initial setup
+# =============
 #
-#   https://community.hiveeyes.org/t/terkin-for-micropython/233/21
+# Refresh sources and dependencies::
 #
 #   git pull
 #   make setup
-#   make terkin-agent action=maintain
+#
+# Establish network connectivity::
+#
+#   export MCU_PORT=/dev/cu.usbmodemPy001711
+#   make connect-wifi SSID=<YourNetwork> PASSWORD=<YourPassword>
+#
+# Transfer files::
+#
 #   export MCU_PORT=192.168.178.33
-#   make install-ng
+#   make install-ftp
+#
+# Watch log output::
+#
 #   make console
 #
-# - Press reset button
-# - Have fun
+# Start over::
+#
+#   -- Press reset button
+#   -- Have fun
 
+
+# ================
+# Maintenance mode
+# ================
+#
+# When the device is already running, it is already attached to a network.
+# So, to make it stay connected and pull it out of deep sleep, you might
+# want to adjust one step in the procedure above.
+#
+# Establish network connectivity::
+#
+#   make terkin-agent action=maintain
+#
 include tools/core.mk
 include tools/micropython.mk
 include tools/setup.mk
@@ -36,6 +66,13 @@ setup-terkin-agent:
 
 terkin-agent: setup-terkin-agent
 	sudo $(python3) tools/terkin.py $(action)
+
+## Load the MiniNet module to the device
+## and start a WiFi STA connection.
+connect-wifi:
+	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(SSID)', '$(PASSWORD)')"
+
 
 
 # -----------------------
