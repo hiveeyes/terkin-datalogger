@@ -38,10 +38,11 @@ Prerequisites
 To perform the next steps, please install the following software
 packages on your machine::
 
-    apt install make patch wget git python python3 python-virtualenv
+    apt install make patch wget git python python3 python-virtualenv lftp
 
 
-Depending on your operating system, set add your user to the group in order to allow access to Serial. On debian:
+Depending on your operating system, add your user to the group ``dialout``
+in order to allow access to Serial. On Debian:
 
     addgroup $USER dialout
     # relogin or run
@@ -58,7 +59,7 @@ Acquire source code
 Setup development sandbox
 =========================
 The MicroPython firmware pulls in some packages and programs like the
-the ``rshell`` utility from the MicroPython standard library and beyond.
+``rshell`` utility from the MicroPython standard library and beyond.
 The following installation step will create a Python virtualenv and
 download the required packages into it.
 

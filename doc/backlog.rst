@@ -39,6 +39,10 @@ Prio 1
 - [o] Release names: Murmeltier, Mordillo
 - [o] Release pics
     - https://commons.wikimedia.org/wiki/File:Agc_view.jpg
+- [o] Current firmware 1.20.0.rc12
+- [o] Build complete firmware, see
+  https://github.com/pycom/pycom-libraries/tree/master/pycom-docker-fw-build
+- [o] Make WiFi-timeout configurable, see ``wifi.py`` at ``network.get('timeout', 15.0)``
 
 
 Prio 1.1
