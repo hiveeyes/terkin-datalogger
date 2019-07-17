@@ -41,6 +41,7 @@ Development
 - DS18B20: Extend time between starting the
   conversion and reading the sensor to one second.
 - Add MiniNet helper and corresponding ``Makefile`` rule ``wifi-connect``
+- Ship configuration blueprint with deep sleep disabled
 
 
 2019-06-22 0.5.1

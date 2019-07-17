@@ -12,7 +12,7 @@ main = {
     },
 
     # Whether to use deep sleep between measurement cycles.
-    'deepsleep': True,
+    'deepsleep': False,
 
     # Configure logging.
     'logging': {
