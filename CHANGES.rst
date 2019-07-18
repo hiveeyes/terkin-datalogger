@@ -42,6 +42,7 @@ Development
   conversion and reading the sensor to one second.
 - Add MiniNet helper and corresponding ``Makefile`` rule ``wifi-connect``
 - Ship configuration blueprint with deep sleep disabled
+- Improve MiniNet helper to get IP address
 
 
 2019-06-22 0.5.1

@@ -73,6 +73,11 @@ connect-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(SSID)', '$(PASSWORD)')"
 
+## Load the MiniNet module to the device
+## and get IP address.
+ip-address:
+	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ print(MiniNet().get_ip_address()) ~"
 
 
 # -----------------------
