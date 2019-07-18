@@ -40,10 +40,17 @@ download-pycom-firmware:
 	@mkdir -p $(target_dir)
 	@#$(fetch) $(target_dir) https://github.com/pycom/pycom-micropython-sigfox/releases/download/v1.20.0.rc12/FiPy-1.20.0.rc12-application.elf
 
-	$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) https://software.pycom.io/downloads/$(pycom_firmware_file) || true
+	$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) https://software.pycom.io/downloads/$(pycom_firmware_file) | true
 
 ## Install Pycom firmware on device
 install-pycom-firmware: download-pycom-firmware
+
+	@if test "${mcu_port_type}" = "ip"; then \
+		echo; \
+		echo "ERROR: Unable to install firmware over IP"; \
+		exit 1; \
+	fi
+
 	$(eval retval := $(shell bash -c 'read -s -p "Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(MCU_PORT)\" [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
 		echo; \

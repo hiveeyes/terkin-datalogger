@@ -32,6 +32,17 @@ check-mcu-port:
 list-serials:
 	@$(rshell) --list
 
+## List all MicroPython boards
+list-boards: check-mcu-port
+	@$(rshell) $(rshell_options) boards
+
+## Inquire device information
+device-info: check-mcu-port
+	@$(rshell) $(rshell_options) --quiet repl '~ import os ~ os.uname() ~'
+
+## Open console over serial or telnet
+console: check-mcu-port
+
 ## Run interactive rshell on the device
 rshell: check-mcu-port
 	$(rshell) $(rshell_options)
@@ -39,9 +50,6 @@ rshell: check-mcu-port
 ## Run interactive REPL on the device
 repl: check-mcu-port
 	$(rshell) $(rshell_options) repl
-
-## Open console over serial or telnet
-console: check-mcu-port
 
 ifeq ($(mcu_port_type),usb)
 	@echo "Connecting via serial port ${mcu_port}."
@@ -51,14 +59,6 @@ else
 	@#telnet ${mcu_port}
 	expect -c 'spawn telnet ${mcu_port}; expect "*?ogin as:*"; sleep 0.2; send -- "micro\r"; expect "*?assword:*"; sleep 0.2; send -- "python\r"; interact;'
 endif
-
-## List all MicroPython boards
-list-boards: check-mcu-port
-	@$(rshell) $(rshell_options) boards
-
-## Inquire device information
-device-info: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet repl '~ import os ~ os.uname() ~'
 
 ## Send reset command to device
 reset-device: check-mcu-port

@@ -58,8 +58,8 @@ include tools/core.mk
 include tools/setup.mk
 include tools/release.mk
 
-include tools/micropython.mk
 include tools/pycom.mk
+include tools/micropython.mk
 
 
 # -----
@@ -160,7 +160,7 @@ ratrack: check-mcu-port
 
 #release-and-publish: release publish-release
 
-## Release this piece of software.
-## Synopsis:
-##   "make release bump=minor"   (major,minor,patch)
+# Release this piece of software.
+# Synopsis:
+#   "make release bump=minor"   (major,minor,patch)
 release: bumpversion push publish-release

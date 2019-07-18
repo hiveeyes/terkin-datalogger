@@ -23,7 +23,6 @@ help:
 		s/\\n/ /g; \
 		p; \
 	}" ${MAKEFILE_LIST} \
-	| LC_ALL='C' sort --ignore-case \
 	| awk -F '---' \
 		-v ncol=$$(tput cols) \
 		-v indent=29 \
@@ -45,4 +44,5 @@ help:
 	}'
 
 	@echo
+	@#| LC_ALL='C' sort --ignore-case \
 	@#| more $(shell test $(shell uname) == Darwin && echo '--no-init --raw-control-chars')

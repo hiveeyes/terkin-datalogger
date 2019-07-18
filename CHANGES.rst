@@ -50,6 +50,7 @@ Development
 - Improve Pycom firmware installation
 - Slightly document Makefile targets
 - Increase timeout when sending ARP packets for device discovery. Thanks, `@ClemensGruber`_.
+- Slightly adjust "make help". More Makefile improvements.
 
 
 2019-06-22 0.5.1
