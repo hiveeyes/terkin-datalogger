@@ -2,6 +2,14 @@
 Pycom firmware upgrade
 ######################
 
+::
+
+    # Install FiPy-1.20.0.rc11.tar.gz (default)
+    make install-pycom-firmware
+
+    # Install recent firmware for WiPy
+    make install-pycom-firmware pycom_firmware_file=WiPy-1.20.0.rc11.tar.gz
+
 
 ************
 Introduction

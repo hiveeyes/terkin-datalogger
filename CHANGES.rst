@@ -47,6 +47,7 @@ Development
 - Improve Watchdog subsystem by adjusting to edge cases
 - Reorder sections when uploading using FTP
 - Add Self-documenting-Makefile helper
+- Improve Pycom firmware installation
 
 
 2019-06-22 0.5.1

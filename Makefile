@@ -55,9 +55,11 @@
 # Load modules
 include tools/help.mk
 include tools/core.mk
-include tools/micropython.mk
 include tools/setup.mk
 include tools/release.mk
+
+include tools/micropython.mk
+include tools/pycom.mk
 
 
 # -----
@@ -112,9 +114,6 @@ install-ng:
 	else \
 		$(MAKE) install; \
 	fi
-
-install-pycom-firmware:
-	$(pycom_fwtool_cli) --verbose --port $(MCU_PORT) flash --tar dist-firmwares/fipy/FiPy-1.20.0.rc11.tar.gz
 
 install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages

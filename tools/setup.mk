@@ -1,14 +1,3 @@
-download-pycom-firmware:
-
-	# Define path to the "dist-packages" installation directory.
-	$(eval target_dir := ./dist-firmwares)
-	$(eval fetch := wget --quiet --no-clobber --directory-prefix)
-
-	mkdir -p $(target_dir)/fipy
-	#$(fetch) $(target_dir)/fipy https://github.com/pycom/pycom-micropython-sigfox/releases/download/v1.20.0.rc12/FiPy-1.20.0.rc12-application.elf
-
-	$(fetch) $(target_dir)/fipy https://software.pycom.io/downloads/FiPy-1.20.0.rc11.tar.gz
-
 download-requirements:
 
 	# Define path to the "dist-packages" installation directory.
