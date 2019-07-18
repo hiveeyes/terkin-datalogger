@@ -46,6 +46,7 @@ Development
 - Set default maintenance duty cycle to 15 seconds
 - Improve Watchdog subsystem by adjusting to edge cases
 - Reorder sections when uploading using FTP
+- Add Self-documenting-Makefile helper
 
 
 2019-06-22 0.5.1

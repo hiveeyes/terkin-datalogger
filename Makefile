@@ -46,6 +46,14 @@
 #
 #   make terkin-agent action=maintain
 #
+
+
+# =============
+# Main Makefile
+# =============
+
+# Load modules
+include tools/help.mk
 include tools/core.mk
 include tools/micropython.mk
 include tools/setup.mk
