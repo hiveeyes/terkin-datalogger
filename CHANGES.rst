@@ -45,6 +45,7 @@ Development
 - Improve MiniNet helper to get IP address
 - Set default maintenance duty cycle to 15 seconds
 - Improve Watchdog subsystem by adjusting to edge cases
+- Reorder sections when uploading using FTP
 
 
 2019-06-22 0.5.1
