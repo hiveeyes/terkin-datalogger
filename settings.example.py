@@ -8,7 +8,7 @@ main = {
     #       this value to apply to ``time.sleep()`` after each duty cycle.
     'interval': {
         'field': 60.0,
-        'maintenance': 5.0,
+        'maintenance': 15.0,
     },
 
     # Whether to use deep sleep between measurement cycles.
