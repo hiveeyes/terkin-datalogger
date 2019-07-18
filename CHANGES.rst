@@ -6,7 +6,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 Development
 ===========
 - Explicitly ``deinit()`` LTE modem on each startup
-- Fix ``settings.example-bob.py``. Thanks, @MKO1640 and @ClemensGruber!
+- Fix ``settings.example-bob.py``. Thanks, `@MKO1640`_ and `@ClemensGruber`_.
 - Improve formatting of BEEP telemetry field mapping for BOB
 - Disable telemetry adapter offline state for now
 - Disable DEBUG log level for system sensors
@@ -27,7 +27,7 @@ Development
 - Use offset values for DS18B20 sensors from settings
 - Enable/disable individual sensors per settings
 - Install MicroWebSrv and MicroDNSSrv libraries into ``dist-packages`` folder
-- Add singleton factory method to ``TerkinDatalogger``. Thanks, @DieDiren.
+- Add singleton factory method to ``TerkinDatalogger``. Thanks, `@DieDiren`_.
 - Increase timeout for ARP ping requests with "terkin.py"
 - Use most recent "dotty_dict" module
 - Properly format MAC addresses
@@ -36,7 +36,7 @@ Development
 - Improve MAC address parsing and formatting
 - Improve MAC address normalization by also removing dashes and dots
 - Follow the Pycopy MicroPython fork, standard library wise
-- Upgrade to Dotty Dict 1.1.1. Thanks, Paweł.
+- Upgrade to Dotty Dict 1.1.1. Thanks, `@pawelzny`_.
 - Improve sandbox tooling incl. FTP source code upload
 - DS18B20: Extend time between starting the
   conversion and reading the sensor to one second.
@@ -44,11 +44,12 @@ Development
 - Ship configuration blueprint with deep sleep disabled
 - Improve MiniNet helper to get IP address
 - Set default maintenance duty cycle to 15 seconds
-- Improve Watchdog subsystem by adjusting to edge cases
+- Improve Watchdog subsystem by adjusting to edge cases. Thanks, `@pinguin999`_.
 - Reorder sections when uploading using FTP
 - Add Self-documenting-Makefile helper
 - Improve Pycom firmware installation
 - Slightly document Makefile targets
+- Increase timeout when sending ARP packets for device discovery. Thanks, `@ClemensGruber`_.
 
 
 2019-06-22 0.5.1
@@ -104,13 +105,13 @@ Development
 - Improve Makefile targets
 - Add more wakeup reasons
 - Add missing configuration section for HX711 to settings example.
-  Thanks, @ClemensGruber.
+  Thanks, `@ClemensGruber`_.
 - Add basic device-interval sensors ``SystemTemperature`` and ``SystemBatteryLevel``
 - Explicitly shut down all peripherals having implicitly been turned on
 - Add ``SystemWiFiMetrics`` sensor
 - Add ``SystemUptime`` sensor
 - Fix: Better explicitly initialize the ADC before reading it
-- Improve ``SystemBatteryLevel`` sensor. Thanks, `Dominik <https://github.com/ayoy>`_!
+- Improve ``SystemBatteryLevel`` sensor. Thanks, `@ayoy`_.
 - Make ``TelemetryTransportHTTP`` work again
 - Improve telemetry subsystem re. multi-protocol and -topology. Enable HTTP telemetry.
 - Add configuration example for BEEP-BOB ``settings.example-bob.py``
@@ -280,8 +281,8 @@ Development
 - Add DummySensor
 - Add MemoryFree sensor
 - Update documentation
-- Add vanilla hx711.py by David Gerber
-- Add improved HX711 library by Ralf Lindlein
+- Add vanilla ``hx711.py`` by `David Gerber`_
+- Add improved HX711 library by `Ralf Lindlein`_
 - Improve documentation
 - Code cosmetics, improve logging
 - Add HX711 sensor component
@@ -294,7 +295,7 @@ Development
 - Prepare RTC code
 - Ignore empty sensor readings
 - Naming things, HX711 robustness
-- Add vanilla "dotty_dict" package
+- Add vanilla Dotty Dict package
 - Add basic TTN example
 - TTN for real?
 - Improve configuration system and WiFi STA connectivity
@@ -323,3 +324,13 @@ Development
 - Add .gitignore to exclude `*_local.py` configuration files
 - WIP: Hands on FiPy
 - First stable version
+
+
+.. _David Gerber: https://github.com/geda
+.. _Ralf Lindlein: https://github.com/walterheisenberg
+.. _@ClemensGruber: https://github.com/ClemensGruber
+.. _@MKO1640: https://github.com/MKO1640
+.. _@DieDiren: https://github.com/DieDiren
+.. _@pawelzny: https://github.com/pawelzny/
+.. _@ayoy: https://github.com/ayoy
+.. _@pinguin999: https://github.com/pinguin999
