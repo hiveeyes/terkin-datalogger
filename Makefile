@@ -17,7 +17,7 @@
 # Establish network connectivity::
 #
 #   export MCU_PORT=/dev/cu.usbmodemPy001711
-#   make connect-wifi SSID=<YourNetwork> PASSWORD=<YourPassword>
+#   make connect-wifi ssid=<YourNetwork> password=<YourPassword>
 #
 # Transfer files::
 #
@@ -81,7 +81,7 @@ terkin-agent: setup-terkin-agent
 ## and start a WiFi STA connection.
 connect-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(SSID)', '$(PASSWORD)')"
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(ssid)', '$(password)')"
 
 ## Load the MiniNet module to the device
 ## and get IP address.
