@@ -28,6 +28,7 @@ check-mcu-port:
 # Action utilities
 # ================
 
+## List all serial interfaces
 list-serials:
 	@$(rshell) --list
 
@@ -51,15 +52,19 @@ else
 	expect -c 'spawn telnet ${mcu_port}; expect "*?ogin as:*"; sleep 0.2; send -- "micro\r"; expect "*?assword:*"; sleep 0.2; send -- "python\r"; interact;'
 endif
 
+## List all MicroPython boards
 list-boards: check-mcu-port
 	@$(rshell) $(rshell_options) boards
 
+## Inquire device information
 device-info: check-mcu-port
 	@$(rshell) $(rshell_options) --quiet repl '~ import os ~ os.uname() ~'
 
+## Send reset command to device
 reset-device: check-mcu-port
 	@$(rshell) $(rshell_options) --quiet repl '~ import machine ~ machine.reset() ~'
 
+## Send reset command to device and keep the REPL shell attached
 reset-device-attached: check-mcu-port
 	@$(rshell) $(rshell_options) --quiet repl '~ import machine ~ machine.reset()'
 

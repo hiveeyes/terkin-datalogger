@@ -29,7 +29,7 @@ check-pycom-fwtool:
 
 pycom_firmware_file := FiPy-1.20.0.rc11.tar.gz
 
-## Download Pycom firmware to your workstation
+# Download Pycom firmware to your workstation
 download-pycom-firmware:
 
 	@# Define path to the "dist-packages" installation directory.

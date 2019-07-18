@@ -65,26 +65,28 @@ include tools/pycom.mk
 # -----
 # Setup
 # -----
+## Prepare sandbox environment and download requirements
 setup: setup-environment download-requirements
 
 
 # -----------------------
 # Discovery & Maintenance
 # -----------------------
+
 setup-terkin-agent:
 	$(pip3) install -r requirements-terkin-agent.txt
 
+.PHONY: terkin-agent
+## Run the MicroTerkin Agent, e.g. "make terkin-agent action=maintain"
 terkin-agent: setup-terkin-agent
 	sudo $(python3) tools/terkin.py $(action)
 
-## Load the MiniNet module to the device
-## and start a WiFi STA connection.
+## Load the MiniNet module to the device and start a WiFi STA connection.
 connect-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(ssid)', '$(password)')"
 
-## Load the MiniNet module to the device
-## and get IP address.
+## Load the MiniNet module to the device and get IP address.
 ip-address:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ print(MiniNet().get_ip_address()) ~"
@@ -103,11 +105,14 @@ sketch-and-run: install-sketch reset-device-attached
 # File transfer solo
 # ------------------
 
+## Install all files to the device, using rshell
 install: install-requirements install-framework install-sketch
 
+## Install all files to the device, using FTP
 install-ftp:
-	lftp -u micro,python ${MCU_PORT} < tools/upload-all.lftprc
+	time lftp -u micro,python ${MCU_PORT} < tools/upload-all.lftprc
 
+## Install all files to the device, using best method
 install-ng:
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
@@ -155,7 +160,7 @@ ratrack: check-mcu-port
 
 #release-and-publish: release publish-release
 
-# Release this piece of software
-# Synopsis:
-#   make release bump=minor  (major,minor,patch)
+## Release this piece of software.
+## Synopsis:
+##   "make release bump=minor"   (major,minor,patch)
 release: bumpversion push publish-release
