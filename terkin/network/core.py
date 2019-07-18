@@ -20,7 +20,7 @@ class NetworkManager:
         self.device = device
         self.settings = settings
 
-        self.device.feed_watchdog()
+        self.device.watchdog.feed()
 
         self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.lora_manager = LoRaManager(manager=self, settings=self.settings)
@@ -62,10 +62,15 @@ class NetworkManager:
         self.mode_server.start(self.handle_modeserver)
 
     def handle_modeserver(self, data, addr):
+
         message = data.decode()
+
         if message == 'maintenance.enable()':
             log.info('Enabling maintenance mode')
             self.device.status.maintenance = True
+            self.device.watchdog.suspend()
+
         elif message == 'maintenance.disable()':
             log.info('Releasing maintenance mode')
             self.device.status.maintenance = False
+            self.device.watchdog.resume()

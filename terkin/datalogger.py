@@ -70,15 +70,18 @@ class TerkinDatalogger:
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
+        # Start the watchdog for sanity.
+        self.device.watchdog.start()
+
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # Todo: Revisit where this should actually go.
+        # The modem driver takes about six seconds to initialize, so adjust the watchdog accordingly.
+        self.device.watchdog.reconfigure_minimum_timeout(15000)
         self.device.power_off_lte_modem()
         self.device.power_off_bluetooth()
+        self.device.watchdog.resume()
 
         log.info('Starting %s', self.appname)
-
-        # Start the watchdog for sanity.
-        self.device.start_watchdog()
 
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()
@@ -112,7 +115,7 @@ class TerkinDatalogger:
         # e.g. ``self.device.publish_properties()``
 
         # Setup sensors.
-        self.device.feed_watchdog()
+        self.device.watchdog.feed()
         bus_settings = self.settings.get('sensors.busses')
         self.sensor_manager.register_busses(bus_settings)
         self.register_sensors()
@@ -131,7 +134,7 @@ class TerkinDatalogger:
         while True:
 
             # Feed the watchdog timer to keep the system alive.
-            self.device.feed_watchdog()
+            self.device.watchdog.feed()
 
             # Indicate activity.
             # Todo: Optionally disable this output.
@@ -173,8 +176,8 @@ class TerkinDatalogger:
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:
             deepsleep = False
-            log.info('Device is in maintenance mode. Skipping deep sleep and decreasing '
-                     'interval to {} seconds'.format(interval))
+            log.info('Device is in maintenance mode. Skipping deep sleep and '
+                     'adjusting interval to {} seconds'.format(interval))
 
         # Use deep sleep if requested.
         try:
@@ -263,7 +266,7 @@ class TerkinDatalogger:
             except:
                 log.exception('Reading sensor "%s" failed', sensorname)
 
-            self.device.feed_watchdog()
+            self.device.watchdog.feed()
 
         # Debugging: Print sensor data before running telemetry.
         log.info('Sensor data:  %s', data)

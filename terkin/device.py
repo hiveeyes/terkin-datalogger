@@ -12,6 +12,7 @@ from terkin import logging
 from terkin.pycom import MachineResetCause
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
+from terkin.watchdog import Watchdog
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +34,9 @@ class TerkinDevice:
         self.version = version
         self.settings = settings
 
+        self.status = DeviceStatus()
+        self.watchdog = Watchdog(device=self, settings=self.settings)
+
         # Conditionally enable terminal on UART0. Default: False.
         self.terminal = Terminal(self.settings)
         self.terminal.start()
@@ -42,10 +46,7 @@ class TerkinDevice:
         self.networking = None
         self.telemetry = None
 
-        self.wdt = None
         self.rtc = None
-
-        self.status = DeviceStatus()
 
     @property
     def appname(self):
@@ -86,33 +87,6 @@ class TerkinDevice:
 
         # Inform about networking status.
         #self.networking.print_status()
-
-    def start_watchdog(self):
-        """
-        The WDT is used to restart the system when the application crashes and
-        ends up into a non recoverable state. After enabling, the application
-        must "feed" the watchdog periodically to prevent it from expiring and
-        resetting the system.
-        """
-        # https://docs.pycom.io/firmwareapi/pycom/machine/wdt.html
-
-        if not self.settings.get('main.watchdog.enabled', False):
-            log.info('Skipping watchdog timer (WDT)')
-            return
-
-        watchdog_timeout = self.settings.get('main.watchdog.timeout', 10000)
-        log.info('Starting the watchdog timer (WDT) with timeout {}ms'.format(watchdog_timeout))
-
-        from machine import WDT
-        self.wdt = WDT(timeout=watchdog_timeout)
-
-        # Feed Watchdog once.
-        self.wdt.feed()
-
-    def feed_watchdog(self):
-        if self.wdt is not None:
-            log.info('Feeding Watchdog')
-            self.wdt.feed()
 
     def start_rtc(self):
         """
@@ -221,7 +195,7 @@ class TerkinDevice:
         for telemetry_target in telemetry_candidates:
             try:
                 self.create_telemetry_adapter(telemetry_target)
-                self.feed_watchdog()
+                self.watchdog.feed()
 
             except:
                 log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
@@ -334,6 +308,9 @@ class TerkinDevice:
 
             log.info('Entering light sleep for {} seconds'.format(interval))
 
+            # Adjust watchdog for interval.
+            self.watchdog.adjust_for_interval(interval)
+
             # Invoke light sleep.
             # https://docs.micropython.org/en/latest/library/machine.html#machine.sleep
             # https://docs.micropython.org/en/latest/library/machine.html#machine.lightsleep
@@ -341,6 +318,7 @@ class TerkinDevice:
             # As "machine.sleep" seems to be a noop on Pycom MicroPython,
             # we will just use the regular "time.sleep" here.
             # machine.sleep(int(interval * 1000))
+            machine.idle()
             time.sleep(interval)
 
     def resume(self):

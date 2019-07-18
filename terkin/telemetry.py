@@ -99,7 +99,7 @@ class TelemetryAdapter:
 
     def transmit(self, data):
 
-        self.device.feed_watchdog()
+        self.device.watchdog.feed()
 
         if not self.is_online():
             # Todo: Suppress this message after a while or reduce interval.

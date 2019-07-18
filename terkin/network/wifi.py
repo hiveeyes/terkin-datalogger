@@ -182,7 +182,7 @@ class WiFiManager:
             machine.idle()
 
             # Feed watchdog.
-            self.manager.device.feed_watchdog()
+            self.manager.device.watchdog.feed()
 
             # Don't busy-wait.
             time.sleep_ms(network_poll_interval)
@@ -198,7 +198,7 @@ class WiFiManager:
 
     def scan_stations(self):
 
-        self.manager.device.feed_watchdog()
+        self.manager.device.watchdog.feed()
 
         # Inquire visible networks.
         log.info("WiFi STA: Scanning for networks")
