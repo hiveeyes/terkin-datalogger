@@ -69,9 +69,6 @@ class TerkinDevice:
             log.error('Network connectivity not available, WiFi failed')
             self.status.networking = False
 
-        # Start UDP server for pulling device into maintenance mode.
-        self.networking.start_modeserver()
-
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
             try:
@@ -196,6 +193,12 @@ class TerkinDevice:
 
             except:
                 log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
+
+    def start_network_services(self):
+
+        # Start UDP server for pulling device into maintenance mode.
+        if self.settings.get('services.api.modeserver.enabled', False):
+            self.networking.start_modeserver()
 
     def create_telemetry_adapter(self, telemetry_target):
         # Create adapter object.

@@ -41,6 +41,15 @@ main = {
 
 }
 
+# Control the services offered by the device.
+services = {
+    'api': {
+        'modeserver': {
+            'enabled': True,
+        },
+    },
+}
+
 # Interface settings.
 interfaces = {
     'uart0': {

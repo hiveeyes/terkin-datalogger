@@ -55,6 +55,7 @@ Development
 - Make MicroTerkin Agent write detected IP address into file
 - Improve Makefile sandbox tooling
 - Prettify logging
+- Optionally start modeserver, defaulting to true
 
 
 2019-06-22 0.5.1
