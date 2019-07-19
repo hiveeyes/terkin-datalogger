@@ -51,6 +51,7 @@ Development
 - Slightly document Makefile targets
 - Increase timeout when sending ARP packets for device discovery. Thanks, `@ClemensGruber`_.
 - Slightly adjust "make help". More Makefile improvements.
+- Desktop notifications for MicroTerkin Agent
 
 
 2019-06-22 0.5.1

@@ -68,6 +68,21 @@ download the required packages into it.
     make setup
 
 
+Setup desktop notifications
+===========================
+Linux/Windows::
+
+    pip install py-notifier
+
+macOS::
+
+    pip install pync
+
+Windows::
+
+    pip install zroya
+
+
 Pre-flight checks
 =================
 Check serial interface connectivity. Example::

@@ -186,9 +186,19 @@ class NetworkMonitor:
         member = NetworkMember()
         member.mac = pkt[ARP].hwsrc
         member.ip = pkt[ARP].psrc
+
+        # Found a device of interest.
         log.info(f'Found device at {member}')
+        self.device_action(member)
+
+    def device_action(self, member):
+
+        # Pull device into maintenance mode.
         if self.mode is not None:
             self.toggle_maintenance(member)
+
+        # Send desktop notification.
+        notify_user("MicroTerkin Agent", "Device '{}' has\nIP address '{}'".format(member.mac, member.ip))
 
     def match_mac_prefix(self, mac_address):
         mac_address = normalize_mac_address(mac_address)
@@ -316,6 +326,44 @@ def run_monitor(command, mac_prefixes):
         return
 
     boot_monitor(monitor)
+
+
+def notify_user(title, text):
+
+    if sys.platform == 'linux':
+        # https://pypi.org/project/py-notifier/#description
+        # https://github.com/YuriyLisovskiy/pynotifier
+        from pynotifier import Notification
+        Notification(
+            title=title,
+            description=text,
+            duration=5,  # Duration in seconds
+            urgency=Notification.URGENCY_NORMAL
+        ).send()
+
+    elif sys.platform == 'darwin':
+        try:
+            # https://pypi.org/project/pync/
+            import pync
+            pync.notify(text, title=title)
+        except:
+            # https://stackoverflow.com/questions/17651017/python-post-osx-notification/41318195#41318195
+            os.system("""
+            osascript -e 'display notification "{}" with title "{}"'
+            """.format(text, title))
+
+    elif sys.platform.startswith('win'):
+        # https://github.com/malja/zroya
+        # https://malja.github.io/zroya/
+        # https://www.devdungeon.com/content/windows-desktop-notifications-python
+        try:
+            import zroya
+            zroya.init(title, "a", "b", "c", "d")
+            t = zroya.Template(zroya.TemplateType.Text1)
+            t.setFirstLine(text)
+            zroya.show(t)
+        except:
+            pass
 
 
 if __name__ == '__main__':
