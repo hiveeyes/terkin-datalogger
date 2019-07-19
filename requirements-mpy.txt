@@ -7,3 +7,4 @@ pycopy-urequests
 #pycopy-urllib.parse
 #pycopy-base64
 #pycopy-logging
+#pycopy-json

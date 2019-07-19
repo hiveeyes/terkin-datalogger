@@ -16,6 +16,18 @@ from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatt
 log = logging.getLogger(__name__)
 
 
+class ApplicationInfo:
+
+    def __init__(self, name=None, version=None, settings=None):
+        self.name = name
+        self.version = version
+        self.settings = settings
+
+    @property
+    def fullname(self):
+        return '{} {}'.format(self.name, self.version)
+
+
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
 
@@ -23,7 +35,33 @@ class TerkinDatalogger:
     name = 'Terkin MicroPython Datalogger'
     version = __version__
 
+    # For the singleton factory.
     __instance__ = None
+
+    def __init__(self, settings):
+
+        # Fulfill singleton factory.
+        TerkinDatalogger.__instance__ = self
+
+        # Obtain configuration settings.
+        self.settings = TerkinConfiguration()
+        self.settings.add(settings)
+
+        self.application_info = ApplicationInfo(self.name, self.version, self.settings)
+
+        # Configure logging.
+        logging_enabled = self.settings.get('main.logging.enabled', False)
+        if not logging_enabled:
+            logging.disable_logging()
+
+        # Initialize device.
+        self.device = TerkinDevice(self.application_info)
+
+        # Button manager instance (optional).
+        self.button_manager = None
+
+        # Initialize sensor domain.
+        self.sensor_manager = SensorManager()
 
     @staticmethod
     def getInstance(settings=None):
@@ -38,32 +76,8 @@ class TerkinDatalogger:
 
         return TerkinDatalogger.__instance__
 
-    def __init__(self, settings):
-
-        # Fulfill singleton factory.
-        TerkinDatalogger.__instance__ = self
-
-        # Obtain configuration settings.
-        self.settings = TerkinConfiguration()
-        self.settings.add(settings)
-
-        # Configure logging.
-        logging_enabled = self.settings.get('main.logging.enabled', False)
-        if not logging_enabled:
-            logging.disable_logging()
-
-        # Initialize device.
-        self.device = TerkinDevice(name=self.name, version=self.version, settings=self.settings)
-
-        # Button manager instance (optional).
-        self.button_manager = None
-
-        # Initialize sensor domain.
-        self.sensor_manager = SensorManager()
-
-    @property
-    def appname(self):
-        return '{} {}'.format(self.name, self.version)
+    def setup(self):
+        pass
 
     def start(self):
 
@@ -81,7 +95,7 @@ class TerkinDatalogger:
         self.device.power_off_bluetooth()
         self.device.watchdog.resume()
 
-        log.info('Starting %s', self.appname)
+        log.info('Starting %s', self.application_info.fullname)
 
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()

@@ -27,6 +27,9 @@ class HiveeyesDatalogger(TerkinDatalogger):
     # Naming things.
     name = 'Hiveeyes MicroPython Datalogger'
 
+    def setup(self):
+        super().setup()
+
     def register_sensors(self):
         """
         Add your sensors here.

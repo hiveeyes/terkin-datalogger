@@ -35,11 +35,11 @@ log = logging.getLogger(__name__)
 
 class BobDatalogger(HiveeyesDatalogger):
     """
-    The BOB MicroPython Datalogger.
+    The Bee Observer Datalogger for MicroPython.
     """
 
     # Naming things.
-    name = 'BOB MicroPython Datalogger'
+    name = 'Bee Observer Datalogger'
 
     def loop(self):
         """
@@ -56,6 +56,7 @@ class BobDatalogger(HiveeyesDatalogger):
 def main():
     """Start the data logger application."""
     datalogger = BobDatalogger(settings)
+    datalogger.setup()
     datalogger.start()
 
 

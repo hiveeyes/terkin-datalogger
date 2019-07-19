@@ -28,11 +28,12 @@ class DeviceStatus:
 
 class TerkinDevice:
 
-    def __init__(self, name=None, version=None, settings=None):
+    def __init__(self, application):
 
-        self.name = name
-        self.version = version
-        self.settings = settings
+        self.application = application
+        self.name = application.name
+        self.version = application.version
+        self.settings = application.settings
 
         self.status = DeviceStatus()
         self.watchdog = Watchdog(device=self, settings=self.settings)
@@ -47,10 +48,6 @@ class TerkinDevice:
         self.telemetry = None
 
         self.rtc = None
-
-    @property
-    def appname(self):
-        return '{} {}'.format(self.name, self.version)
 
     def start_networking(self):
         log.info('Starting networking')
