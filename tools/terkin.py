@@ -31,6 +31,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)-15s [%(name)-10s] %(l
 log = logging.getLogger(__file__)
 #log.setLevel(logging.DEBUG)
 
+APP_NAME = "MicroTerkin Agent"
+
 
 class NetworkWatch:
 
@@ -201,7 +203,7 @@ class NetworkMonitor:
         write_floating_address(member.ip)
 
         # Send desktop notification.
-        notify_user("MicroTerkin Agent", "Device '{}' has\nIP address '{}'".format(member.mac, member.ip))
+        notify_user(APP_NAME, "Device '{}' has\nIP address '{}'".format(member.mac, member.ip))
 
     def match_mac_prefix(self, mac_address):
         mac_address = normalize_mac_address(mac_address)
@@ -408,6 +410,11 @@ if __name__ == '__main__':
         mac_prefixes = mac_prefixes_default
 
     mac_prefixes = list(map(format_mac_address, map(normalize_mac_address, mac_prefixes)))
+
+    if command == 'notify':
+        # Send desktop notification.
+        notify_user(APP_NAME, sys.argv[2])
+        sys.exit(0)
 
     # Start network monitoring and device discovery machinery.
     run_monitor(command, mac_prefixes)

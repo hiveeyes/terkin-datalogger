@@ -2,6 +2,7 @@
 
 #open -u micro,python 192.168.178.24
 
+set ftp:use-quit true
 set net:connection-limit 1
 set net:reconnect-interval-base 0
 set ftp:passive-mode true
@@ -20,12 +21,18 @@ set mirror:overwrite true
 cd /flash
 mirror --reverse --use-cache --file=settings.py --file=boot.py --file=main.py
 
+sleep 0.5
+
 cd /flash
 mirror --reverse --delete --use-cache lib
+
+sleep 0.5
 
 cd /flash/lib
 mirror --reverse --delete --use-cache terkin
 mirror --reverse --delete --use-cache hiveeyes
+
+sleep 0.5
 
 cd /flash
 mirror --reverse --delete --use-cache dist-packages

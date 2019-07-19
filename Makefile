@@ -58,6 +58,7 @@ include tools/core.mk
 include tools/setup.mk
 include tools/release.mk
 
+include tools/terkin.mk
 include tools/pycom.mk
 include tools/micropython.mk
 
@@ -79,27 +80,43 @@ setup-terkin-agent:
 .PHONY: terkin-agent
 ## Run the MicroTerkin Agent, e.g. "make terkin-agent action=maintain"
 terkin-agent: setup-terkin-agent
-	sudo $(python3) tools/terkin.py $(action)
+	sudo $(python3) tools/terkin.py $(action) $(macs)
 
 ## Load the MiniNet module to the device and start a WiFi STA connection.
 connect-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(ssid)', '$(password)')"
+	@echo
 
 ## Load the MiniNet module to the device and get IP address.
 ip-address:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ print(MiniNet().get_ip_address()) ~"
+	@echo
 
 
 # -----------------------
 # File transfer & Execute
 # -----------------------
 
+## Upload framework, program and settings and restart attached to REPL
 recycle: install-framework install-sketch reset-device-attached
 
+## Upload framework, program and settings and restart device
+recycle-ng: install-ng sleep restart-device
+
+## Upload program and settings and restart attached to REPL
 sketch-and-run: install-sketch reset-device-attached
 
+## Restart device using the HTTP API
+restart-device:
+	$(eval ip_address := $(shell cat .terkin/floatip))
+	@echo "Restarting device at IP address $(ip_address)"
+	# TODO: If this fails, reset using serial interface
+	http --timeout=3 POST "http://$(ip_address)/restart" 2> /dev/null && echo "Restart succeeded" || echo "Restart failed" | true
+	# TODO: Actually check if device becomes available again before signalling readyness.
+	@$(python3) tools/terkin.py notify 'Signalled device to restart'
+	@echo "Ready."
 
 # ------------------
 # File transfer solo
@@ -110,15 +127,27 @@ install: install-requirements install-framework install-sketch
 
 ## Install all files to the device, using FTP
 install-ftp:
-	time lftp -u micro,python ${MCU_PORT} < tools/upload-all.lftprc
+	time lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+
+sleep:
+	@sleep 1
 
 ## Install all files to the device, using best method
-install-ng:
+install-ng: check-mcu-port
+
+	$(eval msg := 'Uploading MicroPython application to device')
+	@echo $(msg)
+	@$(python3) tools/terkin.py notify $(msg)
+
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
-	else \
+	elif test "${mcu_port_type}" = "usb"; then \
 		$(MAKE) install; \
 	fi
+
+	$(eval msg := 'Upload finished')
+	@echo $(msg)
+	@$(python3) tools/terkin.py notify $(msg)
 
 install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages

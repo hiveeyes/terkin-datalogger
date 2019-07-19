@@ -42,6 +42,10 @@ download-pycom-firmware:
 
 	$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) https://software.pycom.io/downloads/$(pycom_firmware_file) | true
 
+## Display chip_id
+chip_id: check-mcu-port
+	$(pycom_fwtool_cli) --port $(mcu_port) chip_id
+
 ## Install Pycom firmware on device
 install-pycom-firmware: download-pycom-firmware
 
@@ -51,16 +55,15 @@ install-pycom-firmware: download-pycom-firmware
 		exit 1; \
 	fi
 
-	$(eval retval := $(shell bash -c 'read -s -p "Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(MCU_PORT)\" [y/n]? " outcome; echo $$outcome'))
+	$(eval retval := $(shell bash -c 'read -s -p "Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(mcu_port)\" [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
 		echo; \
 		\
 		echo Installing firmware $(pycom_firmware_file); \
-		$(pycom_fwtool_cli) --verbose --port $(MCU_PORT) flash --tar dist-firmwares/$(pycom_firmware_file); \
+		$(pycom_fwtool_cli) --verbose --port $(mcu_port) flash --tar dist-firmwares/$(pycom_firmware_file); \
 	else \
 		echo; \
 	fi
-
 
 ## Format flash filesystem with LittleFS
 format-flash: check-mcu-port
@@ -91,7 +94,7 @@ erase-fs: check-mcu-port
 		echo; \
 		\
 		echo Erasing filesystem; \
-		$(pycom_fwtool_cli) --port ${MCU_PORT} erase_fs; \
+		$(pycom_fwtool_cli) --port ${mcu_port} erase_fs; \
 	else \
 		echo; \
 	fi
