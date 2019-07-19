@@ -57,6 +57,7 @@ Development
 - Prettify logging
 - Optionally start modeserver, defaulting to true
 - Add basic HTTP API subsystem. Thanks `@vkuhlen`_ and `@DieDiren`_.
+- Add ``make wifi-ap`` command for starting the access point interactively
 
 
 2019-06-22 0.5.1

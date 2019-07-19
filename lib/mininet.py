@@ -12,10 +12,25 @@ import network
 class MiniNet:
 
     def __init__(self):
-        print('INFO:  WiFi STA: Starting MiniNet')
+        print('INFO:  Starting MiniNet')
         self.station = network.WLAN()
 
-    def connect_wifi(self, ssid, password, timeout=3000):
+    def activate_wifi_ap(self):
+        """
+        https://docs.pycom.io/firmwareapi/pycom/network/wlan/
+        """
+
+        #self.station = network.WLAN(mode=network.WLAN.STA)
+        try:
+            self.station.disconnect()
+        except:
+            pass
+
+        # Connect to WLAN
+        print('INFO:  WiFi AP:  Starting access point')
+        self.station.mode(network.WLAN.AP)
+
+    def connect_wifi_sta(self, ssid, password, timeout=3000):
         """
         https://docs.pycom.io/firmwareapi/pycom/network/wlan/
         https://mike632t.wordpress.com/2017/04/11/connecting-my-wipy-to-my-wifi/

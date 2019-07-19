@@ -82,11 +82,19 @@ setup-terkin-agent:
 terkin-agent: setup-terkin-agent
 	sudo $(python3) tools/terkin.py $(action) $(macs)
 
-## Load the MiniNet module to the device and start a WiFi STA connection.
-connect-wifi:
+## Load the MiniNet module to the device and start an WiFi access point.
+wifi-ap:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi('$(ssid)', '$(password)')"
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().activate_wifi_ap()"
 	@echo
+
+## Load the MiniNet module to the device and start a WiFi STA connection.
+wifi-sta:
+	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
+	@echo
+
+connect-wifi: wifi-sta
 
 ## Load the MiniNet module to the device and get IP address.
 ip-address:
