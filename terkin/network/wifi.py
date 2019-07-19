@@ -66,7 +66,7 @@ class WiFiManager:
         networks_known = frozenset([station['ssid'] for station in self.stations])
 
         log.info("WiFi STA: Starting interface")
-        self.station.mode(WLAN.STA)
+        self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
         log.info("WiFi STA: Directly connecting to configured networks: %s", list(networks_known))
