@@ -56,6 +56,7 @@ Development
 - Improve Makefile sandbox tooling
 - Prettify logging
 - Optionally start modeserver, defaulting to true
+- Add basic HTTP API subsystem. Thanks `@vkuhlen`_ and `@DieDiren`_.
 
 
 2019-06-22 0.5.1
@@ -337,6 +338,7 @@ Development
 .. _@ClemensGruber: https://github.com/ClemensGruber
 .. _@MKO1640: https://github.com/MKO1640
 .. _@DieDiren: https://github.com/DieDiren
+.. _@vkuhlen: https://github.com/vkuhlen
 .. _@pawelzny: https://github.com/pawelzny/
 .. _@ayoy: https://github.com/ayoy
 .. _@pinguin999: https://github.com/pinguin999

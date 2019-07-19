@@ -200,6 +200,10 @@ class TerkinDevice:
         if self.settings.get('services.api.modeserver.enabled', False):
             self.networking.start_modeserver()
 
+        # Start HTTP server
+        if self.settings.get('services.api.http.enabled', False):
+            self.networking.start_httpserver()
+
     def create_telemetry_adapter(self, telemetry_target):
         # Create adapter object.
         telemetry_adapter = TelemetryAdapter(

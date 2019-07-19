@@ -47,6 +47,9 @@ services = {
         'modeserver': {
             'enabled': True,
         },
+        'http': {
+            'enabled': True,
+        },
     },
 }
 
