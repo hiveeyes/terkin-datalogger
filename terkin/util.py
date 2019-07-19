@@ -82,3 +82,65 @@ def str_grouper(n, iterable):
 
 def format_mac_address(mac_address):
     return ":".join(str_grouper(2, mac_address)).lower()
+
+
+def dformat(data, indent=0):
+    padding = ' ' * indent
+    from uio import StringIO
+    buffer = StringIO()
+    for key in sorted(data.keys()):
+        value = data[key]
+        buffer.write('{}{}: {}\n'.format(padding, key, value))
+    return buffer.getvalue()
+
+
+def _flatten(input_obj, key_prefix, separator='_'):
+    """
+    Flatten any type of python object into one-level dict object.
+    https://github.com/evamayerova/python-flatten/blob/master/flatten_to_dict/flatten_to_dict.py
+
+    :param input_obj:
+    :param key_prefix:
+    :return:
+    """
+    new_dict = {}
+    if type(input_obj) is dict:
+        for key, value in input_obj.items():
+            if type(value) is dict or type(value) is list or type(value) is tuple:
+                new_key = key_prefix + key + separator
+                new_dict.update(_flatten(input_obj[key], new_key, separator))
+            else:
+                new_dict[key_prefix + key] = value
+    elif type(input_obj) is list or type(input_obj) is tuple:
+        for nr, item in enumerate(input_obj):
+            new_key = key_prefix + str(nr) + separator
+            new_dict.update(_flatten(item, new_key, separator))
+    else:
+        new_dict[key_prefix[:-1]] = input_obj
+
+    return new_dict
+
+
+def flatten(input_object, separator='_'):
+    """
+    Flatten any object into one-level dict representation.
+
+    Args:
+        input_object: Python object (list, dict, tuple, int, string, ...)
+    Returns:
+        dict: Flattened object in dict representation.
+    Examples:
+        >>> a = {"f": ["a", "b"], "b": {"x": [1, 2, 3]}, "i": 1}
+        >>> flatten(a)
+        {
+            'f_0': 'a',
+            'f_1': 'b',
+            'b_x_0': 1,
+            'b_x_1': 2,
+            'b_x_2': 3,
+            'i': 1
+         }
+
+    https://github.com/evamayerova/python-flatten/blob/master/flatten_to_dict/flatten_to_dict.py
+    """
+    return _flatten(input_object, key_prefix="", separator=separator)

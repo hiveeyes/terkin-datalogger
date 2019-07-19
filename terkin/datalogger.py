@@ -3,6 +3,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
+
 import machine
 
 from terkin import __version__
@@ -12,6 +13,7 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
+from terkin.util import dformat
 
 log = logging.getLogger(__name__)
 
@@ -283,7 +285,11 @@ class TerkinDatalogger:
             self.device.watchdog.feed()
 
         # Debugging: Print sensor data before running telemetry.
-        log.info('Sensor data:  %s', data)
+        prettify_log = self.settings.get('sensors.prettify_log', False)
+        if prettify_log:
+            log.info('Sensor data:\n\n%s', dformat(data, indent=48))
+        else:
+            log.info('Sensor data:  %s', data)
 
         return data
 

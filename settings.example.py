@@ -162,6 +162,10 @@ telemetry = {
 
 # Sensor configuration.
 sensors = {
+
+    # Whether to prettify sensor log output.
+    'prettify_log': True,
+
     'system': {
 
         # Adjust voltage divider resistor values matching the board.

@@ -6,11 +6,11 @@ import json
 from copy import copy
 from urllib.parse import urlsplit, urlencode
 from terkin import logging
-from terkin.util import to_base64, format_exception, get_device_id, urlparse
+from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat
 
 log = logging.getLogger(__name__)
 
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 class TelemetryManager:
@@ -444,8 +444,12 @@ class TelemetryTransportMQTT:
         payload = request_data['payload']
 
         # Reporting.
-        log.debug('MQTT topic:   %s', topic)
-        log.debug('MQTT payload: %s', payload)
+        log.info('MQTT topic:   %s', topic)
+        prettify_log = False
+        if prettify_log:
+            log.info('MQTT payload:\n\ns', dformat(payload, indent=48))
+        else:
+            log.info('MQTT payload: %s', payload)
 
         try:
             connection = self.get_connection()
