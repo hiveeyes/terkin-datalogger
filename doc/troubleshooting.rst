@@ -636,3 +636,19 @@ Otherwise...
       File "<stdin>", line 1, in <module>
     OSError: only one active hash operation is permitted at a time
 
+
+When webserver is started twice
+===============================
+::
+
+       22.0515 [terkin.api.http          ] INFO   : Setting up HTTP API
+       22.1503 [terkin.api.http          ] INFO   : Starting HTTP server
+    Traceback (most recent call last):
+      File "main.py", line 65, in <module>
+      File "main.py", line 60, in main
+      File "/flash/lib/terkin/datalogger.py", line 116, in start
+      File "/flash/lib/terkin/device.py", line 206, in start_network_services
+      File "/flash/lib/terkin/network/core.py", line 71, in start_httpserver
+      File "/flash/lib/terkin/api/http.py", line 42, in start
+      File "dist-packages/microWebSrv.py", line 224, in Start
+    OSError: [Errno 12] ENOMEM

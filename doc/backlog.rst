@@ -20,6 +20,18 @@ Ideas
 - [o] Leave maintenance mode after 10 minutes
 - [o] Configure ARP-ping timeout for "terkin.py"
   https://community.hiveeyes.org/t/running-terkin-py-on-windows/2273/31
+- [o] Add more information to ``make help``
+- https://github.com/lucien2k/sonoff-python
+- Output network config on each cycle in non-deepsleep mode
+- Client wrapper for Terkin HTTP API. e.g. sync files, upload config, restart
+  What about ``terkinctl``?
+- When putting files on the device, maybe stop the program!?
+- Check out
+    - https://github.com/jczic/xAsyncSockets
+    - https://xasyncsockets.hc2.fr/
+- https://pypi.org/project/picotui/1.0/
+- https://github.com/pfalcon/picoweb
+- https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
 
 
 Prio 1
