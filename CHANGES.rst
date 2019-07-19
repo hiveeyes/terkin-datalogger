@@ -52,6 +52,7 @@ Development
 - Increase timeout when sending ARP packets for device discovery. Thanks, `@ClemensGruber`_.
 - Slightly adjust "make help". More Makefile improvements.
 - Desktop notifications for MicroTerkin Agent
+- Make MicroTerkin Agent write detected IP address into file
 
 
 2019-06-22 0.5.1

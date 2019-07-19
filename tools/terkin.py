@@ -197,6 +197,9 @@ class NetworkMonitor:
         if self.mode is not None:
             self.toggle_maintenance(member)
 
+        # IP address bookkeeping.
+        write_floating_address(member.ip)
+
         # Send desktop notification.
         notify_user("MicroTerkin Agent", "Device '{}' has\nIP address '{}'".format(member.mac, member.ip))
 
@@ -326,6 +329,23 @@ def run_monitor(command, mac_prefixes):
         return
 
     boot_monitor(monitor)
+
+
+def write_floating_address(address):
+    # TODO: Add bookkeeping for multiple devices.
+    os.system('mkdir -p .terkin')
+    file_path = os.path.join(os.getcwd(), '.terkin', 'floatip')
+    open(file_path, 'w').write(address)
+
+
+def read_floating_address(address):
+    # TODO: Add bookkeeping for multiple devices.
+    os.system('mkdir -p .terkin')
+    file_path = os.path.join(os.getcwd(), '.terkin', 'floatip')
+    try:
+        return open(file_path, 'r').read(address)
+    except:
+        return None
 
 
 def notify_user(title, text):
