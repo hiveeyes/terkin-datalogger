@@ -13,7 +13,7 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.util import dformat
+from terkin.util import dformat, gc_disabled
 
 log = logging.getLogger(__name__)
 
@@ -274,14 +274,21 @@ class TerkinDatalogger:
             sensorname = sensor.__class__.__name__
             log.info('Reading sensor port "%s"', sensorname)
 
+            # Read sensor port.
             try:
-                reading = sensor.read()
+
+                # Disable garbage collector to guarantee reasonable
+                # realtime behavior before invoking sensor reading.
+                with gc_disabled():
+                    reading = sensor.read()
                 if reading is None or reading is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
                 data.update(reading)
 
-            except:
-                log.exception('Reading sensor "%s" failed', sensorname)
+            except Exception as ex:
+                # Because of the ``gc_disabled`` context manager used above,
+                # the propagation of exceptions has to be tweaked like that.
+                log.exc(ex, 'Reading sensor "%s" failed', sensorname)
 
             self.device.watchdog.feed()
 

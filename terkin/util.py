@@ -144,3 +144,35 @@ def flatten(input_object, separator='_'):
     https://github.com/evamayerova/python-flatten/blob/master/flatten_to_dict/flatten_to_dict.py
     """
     return _flatten(input_object, key_prefix="", separator=separator)
+
+
+class gc_disabled:
+    """
+    Context manager to temporarily disable the garbage collector.
+
+    Please be aware this piece does not account for thread safety in any way.
+
+    https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329
+    https://bugs.python.org/issue31356
+
+    Synopsis::
+
+        with gc_disabled():
+            # Do something that needs realtime guarantees
+            # such as a pair trade, robotic braking, etc.
+            run_some_timing_critical_stuff()
+
+    """
+
+    def __enter__(self):
+        import gc
+        gc.disable()
+        return self
+
+    def __exit__(self, *exc_details):
+        # exc_info: (<class 'NameError'>, NameError("name 'asdf' is not defined",), None)
+        received_exc = exc_details[0] is not None
+        import gc
+        gc.enable()
+        if received_exc:
+            raise exc_details[1]
