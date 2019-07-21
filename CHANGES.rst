@@ -61,6 +61,8 @@ Development
 - Start WiFi in STA_AP mode by default
 - Disable garbage collector when reading sensors to improve timing
 - Improve tooling and inline documentation
+- Add option ``main.fastboot`` for skipping LTE modem teardown
+  for faster development iterations
 
 
 2019-06-22 0.5.1

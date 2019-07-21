@@ -93,7 +93,8 @@ class TerkinDatalogger:
         # Todo: Revisit where this should actually go.
         # The modem driver takes about six seconds to initialize, so adjust the watchdog accordingly.
         self.device.watchdog.reconfigure_minimum_timeout(15000)
-        self.device.power_off_lte_modem()
+        if not self.settings.get('main.fastboot', False):
+            self.device.power_off_lte_modem()
         self.device.power_off_bluetooth()
         self.device.watchdog.resume()
 

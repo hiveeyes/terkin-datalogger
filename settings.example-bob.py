@@ -34,6 +34,9 @@ main = {
         'timeout': 20000,
     },
 
+    # Whether to skip LTE modem deinit on startup. This will save ~6 seconds.
+    'fastboot': False,
+
     # Configure RGB-LED.
     'rgb_led': {
         'heartbeat': True,
