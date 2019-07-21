@@ -242,7 +242,7 @@ class TerkinDatalogger:
         Add system sensors.
         """
 
-        log.info('Registering Terkin sensors')
+        log.info('Registering system sensors')
 
         system_sensors = [
             SystemMemoryFree,
@@ -251,7 +251,6 @@ class TerkinDatalogger:
             SystemUptime,
         ]
 
-        # Create environmental sensor adapters.
         for sensor_factory in system_sensors:
             sensor = sensor_factory()
             if hasattr(sensor, 'setup') and callable(sensor.setup):
@@ -265,12 +264,19 @@ class TerkinDatalogger:
             log.exception('Enabling SystemWiFiMetrics sensor failed')
 
     def read_sensors(self):
-        """Read sensors"""
+        """
+        Read sensors
+        """
+
+        # Collect observations.
         data = {}
+
+        # Iterate all registered sensors.
         sensors = self.sensor_manager.sensors
         log.info('Reading %s sensor ports', len(sensors))
         for sensor in sensors:
 
+            # Signal sensor reading to user.
             sensorname = sensor.__class__.__name__
             log.info('Reading sensor port "%s"', sensorname)
 
@@ -281,8 +287,12 @@ class TerkinDatalogger:
                 # realtime behavior before invoking sensor reading.
                 with gc_disabled():
                     reading = sensor.read()
+
+                # Evaluate sensor outcome.
                 if reading is None or reading is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
+
+                # Add sensor reading to observations.
                 data.update(reading)
 
             except Exception as ex:
@@ -290,6 +300,7 @@ class TerkinDatalogger:
                 # the propagation of exceptions has to be tweaked like that.
                 log.exc(ex, 'Reading sensor "%s" failed', sensorname)
 
+            # Feed the watchdog.
             self.device.watchdog.feed()
 
         # Debugging: Print sensor data before running telemetry.

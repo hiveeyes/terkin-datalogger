@@ -60,6 +60,7 @@ Development
 - Add ``make provide-wifi`` command for starting the access point interactively
 - Start WiFi in STA_AP mode by default
 - Disable garbage collector when reading sensors to improve timing
+- Improve tooling and inline documentation
 
 
 2019-06-22 0.5.1

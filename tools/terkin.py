@@ -412,8 +412,18 @@ if __name__ == '__main__':
     mac_prefixes = list(map(format_mac_address, map(normalize_mac_address, mac_prefixes)))
 
     if command == 'notify':
+
+        message = sys.argv[2]
+        status = ''
+        try:
+            status = sys.argv[3]
+        except:
+            pass
+
+        title = '{} {}'.format(APP_NAME, status)
+
         # Send desktop notification.
-        notify_user(APP_NAME, sys.argv[2])
+        notify_user(title, message)
         sys.exit(0)
 
     # Start network monitoring and device discovery machinery.

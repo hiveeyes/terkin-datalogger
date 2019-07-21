@@ -17,7 +17,7 @@
 # Establish network connectivity::
 #
 #   export MCU_PORT=/dev/cu.usbmodemPy001711
-#   make connect-wifi ssid=<YourNetwork> password=<YourPassword>
+#   make connect-wifi ssid=YourNetwork password=YourPassword
 #
 # Transfer files::
 #
@@ -82,19 +82,17 @@ setup-terkin-agent:
 terkin-agent: setup-terkin-agent
 	sudo $(python3) tools/terkin.py $(action) $(macs)
 
-## Load the MiniNet module to the device and start an WiFi access point.
-wifi-ap:
+## Load the MiniNet module to the device and start a WiFi access point.
+provide-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().activate_wifi_ap()"
 	@echo
 
 ## Load the MiniNet module to the device and start a WiFi STA connection.
-wifi-sta:
+connect-wifi:
 	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
 	@echo
-
-connect-wifi: wifi-sta
 
 ## Load the MiniNet module to the device and get IP address.
 ip-address:
@@ -119,12 +117,29 @@ sketch-and-run: install-sketch reset-device-attached
 ## Restart device using the HTTP API
 restart-device:
 	$(eval ip_address := $(shell cat .terkin/floatip))
-	@echo "Restarting device at IP address $(ip_address)"
-	# TODO: If this fails, reset using serial interface
-	http --timeout=3 POST "http://$(ip_address)/restart" 2> /dev/null && echo "Restart succeeded" || echo "Restart failed" | true
-	# TODO: Actually check if device becomes available again before signalling readyness.
-	@$(python3) tools/terkin.py notify 'Signalled device to restart'
+
+	@# Notify user about the power cycling.
+	@$(MAKE) notify message="Restarting device at IP address $(ip_address) using HTTP API"
+
+	@# Send restart command to HTTP API
+	@# TODO: If this fails, maybe reset automatically using the serial interface.
+	$(eval response := $(shell http --check-status --timeout=3 POST "http://$(ip_address)/restart" 2> /dev/null || (echo "Your command failed with $$?")))
+
+	@# Evaluate response
+	@if test "${response}" = "ACK"; then \
+		$(MAKE) notify status=SUCCESS message="Device restart acknowledged. Please wait some seconds for reboot."; \
+	else \
+		$(MAKE) notify status=ERROR message="Device restart using HTTP API failed. Try using a different method."; \
+	fi
+
+	@# TODO: Actually check if device becomes available again before signalling readyness.
 	@echo "Ready."
+
+
+notify:
+	@echo "$(status): $(message)"
+	@$(python3) tools/terkin.py notify "$(message)" "$(status)"
+
 
 # ------------------
 # File transfer solo
@@ -143,7 +158,7 @@ sleep:
 ## Install all files to the device, using best method
 install-ng: check-mcu-port
 
-	$(eval msg := 'Uploading MicroPython application to device')
+	$(eval msg := 'Uploading MicroPython code to device')
 	@echo $(msg)
 	@$(python3) tools/terkin.py notify $(msg)
 
