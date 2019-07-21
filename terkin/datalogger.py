@@ -174,6 +174,9 @@ class TerkinDatalogger:
         # Read sensors.
         readings = self.read_sensors()
 
+        # Run the garbage collector.
+        self.device.run_gc()
+
         # Transmit data.
         self.transmit_readings(readings)
 

@@ -99,11 +99,17 @@ class TerkinDevice:
 
     def run_gc(self):
         """
-        Run a garbage collection.
+        Curate the garbage collector.
         https://docs.pycom.io/firmwareapi/micropython/gc.html
+
+        For a "quick fix", issue the following periodically.
+        https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329/9
         """
         import gc
+        log.info('Start curating the garbage collector')
         gc.collect()
+        gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+        log.info('Curating the garbage collector finished')
 
     def configure_rgb_led(self):
         """
