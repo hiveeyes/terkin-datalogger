@@ -34,6 +34,12 @@ main = {
         'timeout': 20000,
     },
 
+    # Configure backup.
+    'backup': {
+        # How many backup files to keep around.
+        'file_count': 7,
+    },
+
     # Whether to skip LTE modem deinit on startup. This will save ~6 seconds.
     'fastboot': False,
 
