@@ -64,6 +64,7 @@ Development
 - Add option ``main.fastboot`` for skipping LTE modem teardown
   for faster development iterations
 - Curate the garbage collector
+- Add backup mechanism for configuration files
 
 
 2019-06-22 0.5.1
