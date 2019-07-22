@@ -316,7 +316,7 @@ class TerkinDevice:
 
         else:
 
-            log.info('Entering light sleep for {} seconds'.format(interval))
+            log.info('Waiting for {} seconds'.format(interval))
 
             # Adjust watchdog for interval.
             self.watchdog.adjust_for_interval(interval)
@@ -329,7 +329,13 @@ class TerkinDevice:
             # we will just use the regular "time.sleep" here.
             # machine.sleep(int(interval * 1000))
             machine.idle()
+
+            # Normal wait.
             time.sleep(interval)
+
+            # Light sleep.
+            # TODO: Implement light sleep.
+            #machine.sleep(int(interval * 1000))
 
     def resume(self):
         log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())

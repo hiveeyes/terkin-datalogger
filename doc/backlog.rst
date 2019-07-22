@@ -32,6 +32,30 @@ Ideas
 - https://pypi.org/project/picotui/1.0/
 - https://github.com/pfalcon/picoweb
 - https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
+- Pull modeserver into MiniNet
+- Check out switching to
+    - https://github.com/peterhinch/micropython-mqtt
+    - https://github.com/yutter/micropython-mqtt
+- How to catch and report bad things like::
+
+    Traceback (most recent call last):
+      File "main.py", line 31, in <module>
+      File "/flash/lib/hiveeyes/datalogger.py", line 14, in <module>
+      File "/flash/lib/terkin/datalogger.py", line 12, in <module>
+      File "/flash/lib/terkin/configuration.py", line 12, in <module>
+      File "/flash/lib/terkin/util.py", line 151, in <module>
+    NameError: name 'contextmanager' is not defined
+- Implicitly connect to network on ``make recycle-ng``
+- Automatically connect to console if device is discovered
+- Implement real light sleep
+  "in light sleep mode the current consumption on a Lopy is 3.5 mA with RTC peripherals ON"
+  https://forum.pycom.io/topic/3351/new-development-firmware-release-v1-19-0-b1/3
+- https://github.com/Bucknalla/balena-pycom-ota
+- Detect file transfer errors::
+
+    time lftp -u micro,python 192.168.178.143 < tools/upload-all.lftprc
+    mirror: Access failed: 550  (telemetry.py)
+- ``?overwrite=true`` option or ``DELETE`` action for purging configuration files
 
 
 Prio 1

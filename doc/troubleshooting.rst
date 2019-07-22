@@ -652,3 +652,132 @@ When webserver is started twice
       File "/flash/lib/terkin/api/http.py", line 42, in start
       File "dist-packages/microWebSrv.py", line 224, in Start
     OSError: [Errno 12] ENOMEM
+
+
+Core dump when handling more than 4000something characters within a single string
+=================================================================================
+::
+
+    rename: /flash/backup/settings.py
+    ***ERROR*** A stack overflow in task MPThread has been detected.
+    abort() was called at PC 0x40099324 on core 1
+
+    Backtrace: 0x400991b3:0x3fff07c0 0x4009930b:0x3fff07e0 0x40099324:0x3fff0800 0x40095a33:0x3fff0820 0x400976a4:0x3fff0850 0x4009765a:0x00000000
+    Backtrace: 0x40098864:0x3fff0460 0x40097116:0x3fff0480 0x4009982f:0x3fff04b0 0x40099b6e:0x3fff0680 0x4009946f:0x3fff06c0 0x400996aa:0x3fff06e0 0x40083882:0x3fff0700 0x400991b0:0x3fff07c0 0x4009930b:0x3fff07e0 0x40099324:0x3fff0800 0x40095a33:0x3fff0820 0x400976a4:0x3fff0850 0x4009765a:0x00000000
+
+    Re-entered core dump! Exception happened during core dump!
+    Rebooting...
+    ets Jun  8 2016 00:22:57
+
+    rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+    configsip: 0, SPIWP:0xee
+    clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+    mode:DIO, clock div:1
+    load:0x3fff8028,len:8
+    load:0x3fff8030,len:2156
+    ho 0 tail 12 room 4
+    load:0x4009fa00,len:19208
+    entry 0x400a05f4
+    Initializing filesystem as LittleFS!
+    Traceback (most recent call last):
+      File "main.py", line 29, in <module>
+      File "settings.py", line 157
+    SyntaxError: invalid syntax
+
+
+When invoking ``os.stat`` from a threaded MicroWebSrv::
+
+    ***ERROR*** A stack overflow in task MPThread has been detected.
+    abort() was called at PC 0x40099324 on core 1
+
+    Backtrace: 0x400991b3:0x3fff0840 0x4009930b:0x3fff0860 0x40099324:0x3fff0880 0x40095a5d:0x3fff08a0 0x400976a4:0x3fff08d0 0x4009765a:0xa5a5a5a5
+
+    ================= CORE DUMP START =================
+    dE4AABMAAABsAQAA
+    KKL9P8Cg/T8gov0/
+    wKD9P8Ch/T+xR2vHAFn8PwBZ/D8oov0/+Fj8PwEAAADc1P0/3NT9Pyii/T8AAAAA
+    GAAAACSe/T9pcGMwAJPi3UASjflpzu0AAAAAACCi/T8AAAAAIAoGABgAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAo0f0/kNH9P/jR/T8AAAAAAAAAAAEAAAAAAAAA
+    p3xAPwAAAAC84glAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACfqcA==
+
+
+Core dump when accessing network, filesystem and UART
+=====================================================
+::
+
+    os.stat: /flash/backup
+    ***ERROR*** A stack overflow in task MPThread has been detected.
+    abort() was called at PC 0x40099324 on core 1
+
+    Backtrace: 0x400991b3:0x3fff0870 0x4009930b:0x3fff0890 0x40099324:0x3fff08b0 0x40095a5d:0x3fff08d0 0x400976a4:0x3fff0900 0x4009765a:0x3ffdd458
+
+
+Sometimes, WiFi is not up
+=========================
+::
+
+       28.3683 [terkin.datalogger        ] ERROR  : Reading sensor "SystemWiFiMetrics" failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/datalogger.py", line 293, in read_sensors
+      File "/flash/lib/terkin/util.py", line 179, in __exit__
+      File "/flash/lib/terkin/datalogger.py", line 293, in read_sensors
+      File "/flash/lib/terkin/network/wifi.py", line 327, in read
+    OSError: the requested operation is not possible
+
+       29.6547 [terkin.telemetry         ] ERROR  : MQTT publishing failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 542, in publish
+      File "dist-packages/mqtt.py", line 120, in publish
+    OSError: [Errno 118] EHOSTUNREACH
+
+       29.7129 [terkin.telemetry         ] ERROR  : Telemetry to mqtt://swarm.hiveeyes.org/hiveeyes/testdrive/area-38/fipy-workbench-01 failed
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/telemetry.py", line 119, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 279, in transmit
+      File "/flash/lib/terkin/telemetry.py", line 460, in send
+      File "/flash/lib/terkin/telemetry.py", line 460, in send
+    TelemetryTransportError: Protocol adapter not connected: TelemetryAdapterError: MQTT publishing failed: [Errno 118] EHOSTUNREACH
+
+
+Sometimes, not all files get transferred using FTP
+==================================================
+This leaves the system in a broken state.
+::
+
+    $ time make recycle-ng
+    Device port: ip => 192.168.178.123
+    Uploading MicroPython code to device
+    time lftp -u micro,python 192.168.178.123 < tools/upload-all.lftprc
+    mirror: Access failed: 550  (__init__.py)
+    mirror: Access failed: 550  (core.py)
+    mirror: Access failed: 550  (ip.py)
+    mirror: Access failed: 550  (lora.py)
+
+    Traceback (most recent call last):
+      File "main.py", line 31, in <module>
+      File "/flash/lib/hiveeyes/datalogger.py", line 14, in <module>
+      File "/flash/lib/terkin/datalogger.py", line 13, in <module>
+      File "/flash/lib/terkin/network/__init__.py", line 1, in <module>
+    ImportError: cannot import name NetworkManager
+
+
+Sometimes, the Web server runs out of memory, crashing the system
+=================================================================
+This happens on soft reboots.
+::
+
+       22.3080 [terkin.api.http          ] INFO   : Setting up HTTP API
+       22.4902 [terkin.api.http          ] INFO   : Starting HTTP server
+    Traceback (most recent call last):
+      File "main.py", line 65, in <module>
+      File "main.py", line 60, in main
+      File "/flash/lib/terkin/datalogger.py", line 130, in start
+      File "/flash/lib/terkin/device.py", line 211, in start_network_services
+      File "/flash/lib/terkin/network/core.py", line 70, in start_httpserver
+      File "/flash/lib/terkin/api/http.py", line 54, in start
+      File "dist-packages/microWebSrv.py", line 224, in Start
+    OSError: [Errno 12] ENOMEM

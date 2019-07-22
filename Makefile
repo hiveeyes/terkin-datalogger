@@ -150,7 +150,8 @@ install: install-requirements install-framework install-sketch
 
 ## Install all files to the device, using FTP
 install-ftp:
-	time lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+	lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+	@echo "lftp status: $$?"
 
 sleep:
 	@sleep 1
