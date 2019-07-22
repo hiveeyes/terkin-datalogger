@@ -68,6 +68,7 @@ Development
 - Fix polling for WiFi connectivity
 - Add basic HTTP API endpoints for configuration settings
 - Add backup configuration snippet to settings blueprint files
+- Makefile: Prompt for restart after FTP transfer
 
 
 2019-06-22 0.5.1

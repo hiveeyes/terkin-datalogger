@@ -109,7 +109,19 @@ ip-address:
 recycle: install-framework install-sketch reset-device-attached
 
 ## Upload framework, program and settings and restart device
-recycle-ng: install-ng sleep restart-device
+recycle-ng: install-ng
+
+	@# Conditionally
+	@#$(MAKE) sleep
+
+	@# Prompt the user for action.
+	$(eval retval := $(shell bash -c 'read -s -p "Restart device using the HTTP API [y/n]? " outcome; echo $$outcome'))
+	@if test "$(retval)" = "y"; then \
+		echo; \
+		$(MAKE) restart-device; \
+	else \
+		echo; \
+	fi
 
 ## Upload program and settings and restart attached to REPL
 sketch-and-run: install-sketch reset-device-attached
@@ -119,7 +131,7 @@ restart-device:
 	$(eval ip_address := $(shell cat .terkin/floatip))
 
 	@# Notify user about the power cycling.
-	@$(MAKE) notify message="Restarting device at IP address $(ip_address) using HTTP API"
+	@$(MAKE) notify status=INFO message="Restarting device at IP address $(ip_address) using HTTP API"
 
 	@# Send restart command to HTTP API
 	@# TODO: If this fails, maybe reset automatically using the serial interface.

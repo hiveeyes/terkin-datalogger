@@ -57,6 +57,7 @@ install-pycom-firmware: download-pycom-firmware
 		exit 1; \
 	fi
 
+	# Prompt the user for action.
 	$(eval retval := $(shell bash -c 'read -s -p "Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(pycom_firmware_port)\" [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
 		echo; \
@@ -73,6 +74,7 @@ format-flash: check-mcu-port
 	@# Old version
 	@# $(rshell) $(rshell_options) --file tools/clean.rshell
 
+	# Prompt the user for action.
 	$(eval retval := $(shell bash -c 'read -s -p "Format /flash on the device with LittleFS? THIS WILL DESTROY DATA ON YOUR DEVICE. [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
 		echo; \
@@ -91,6 +93,7 @@ format-flash: check-mcu-port
 
 ## Erase flash filesystem
 erase-fs: check-mcu-port
+	# Prompt the user for action.
 	$(eval retval := $(shell bash -c 'read -s -p "Erase the filesystem on the device? THIS WILL DESTROY DATA ON YOUR DEVICE. [y/n]? " outcome; echo $$outcome'))
 	@if test "$(retval)" = "y"; then \
 		echo; \
