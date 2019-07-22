@@ -10,6 +10,15 @@ $(eval rshell_options  := --port $(mcu_port) --user micro --password python --bu
 list-serials:
 	@$(rshell) --list
 
+## Reset port or even USB subsystem
+reset-port:
+ifeq ($(RUNNING_IN_HELL),true)
+	@echo "TODO: Reset USB subsystem on Windows"
+else
+	@echo "Restarting USB subsystem"
+	systemctl restart usb
+endif
+
 ## List all MicroPython boards
 list-boards: check-mcu-port
 	@$(rshell) $(rshell_options) boards

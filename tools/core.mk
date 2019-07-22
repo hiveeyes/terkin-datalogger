@@ -29,6 +29,18 @@ setup-virtualenv3:
 setup-environment: setup-virtualenv3
 
 
+# -----------
+# Workstation
+# -----------
+# Detect operating system (Windows vs Linux)
+# https://renenyffenegger.ch/notes/development/make/detect-os
+# https://gist.github.com/sighingnow/deee806603ec9274fd47
+ifeq ($(OS),Windows_NT)
+    $(eval RUNNING_IN_HELL := true)
+endif
+
+
+
 # ----------
 # PlatformIO
 # ----------
