@@ -2,11 +2,15 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import os_path
 import json
 import types
 from copy import deepcopy
 from dotty_dict import dotty
+from shutil import copyfileobj
 from terkin import logging
+from terkin.backup import backup_file
+from terkin.util import ensure_directory
 
 log = logging.getLogger(__name__)
 
@@ -15,6 +19,9 @@ class TerkinConfiguration:
     """
     A flexible configuration manager.
     """
+
+    CONFIG_PATH = '/flash'
+    BACKUP_PATH = '/flash/backup'
 
     # Strip some settings when displaying configuration values
     # to prevent leaking sensible information into log files.
@@ -35,6 +42,11 @@ class TerkinConfiguration:
 
     def __init__(self):
         self.store = dotty()
+        log.info('Starting TerkinConfiguration on path "{}"'.format(self.CONFIG_PATH))
+        #os.stat(self.CONFIG_PATH)
+
+        log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
+        ensure_directory(self.BACKUP_PATH)
 
     def get(self, key, default=None):
         return self.store.get(key, default=default)
@@ -83,3 +95,39 @@ class TerkinConfiguration:
             if key in self.protected_settings:
                 value = '## redacted ##'
                 thing[key] = value
+
+    def to_dict(self):
+        return dict(self.store.to_dict())
+
+    def save(self, filename, instream):
+        """
+        Save configuration file, with rotating backup.
+        """
+        import uos
+
+        # Protect against directory traversals.
+        filename = os_path.basename(filename)
+
+        # Only allow specific filenames.
+        if 'settings' not in filename:
+            raise ValueError('Writing arbitrary files to the system is prohibited')
+
+        # Absolute path to configuration file.
+        filepath = os_path.join(self.CONFIG_PATH, filename)
+
+        # Number of backup files to keep around.
+        backup_count = self.get('main.backup.file_count', 7)
+
+        # Backup configuration file.
+        log.info('Backing up file {} to {}, keeping a history worth of {} files'.format(filepath, self.BACKUP_PATH, backup_count))
+        backup_file(filepath, self.BACKUP_PATH, backup_count)
+
+        # Overwrite configuration file.
+        log.info('Saving configuration file {}'.format(filepath))
+        with open(filepath, "w") as outstream:
+            if isinstance(instream, str):
+                outstream.write(instream)
+            else:
+                copyfileobj(instream, outstream)
+
+        uos.sync()

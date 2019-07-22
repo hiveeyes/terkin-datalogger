@@ -13,6 +13,9 @@ download-requirements:
 
     ## Utilities
 
+	# Install "os.path" under the different name "os_path"
+	@test -e $(target_dir)/os_path.py || $(fetch) $(target_dir) --output-document=$(target_dir)/os_path.py https://raw.githubusercontent.com/pfalcon/pycopy-lib/7ba2231/os.path/os/path.py
+
 	# Install "micropython-base64" without 'micropython-binascii', 'micropython-re-pcre', 'micropython-struct'
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/base64/base64.py
 

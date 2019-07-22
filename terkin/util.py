@@ -2,6 +2,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import os
 
 
 def to_base64(bytes):
@@ -176,3 +177,33 @@ class gc_disabled:
         gc.enable()
         if received_exc:
             raise exc_details[1]
+
+
+def file_remove(fn: str) -> None:
+    """
+    Try to remove a file if it exists.
+
+    From logging.handlers.
+    """
+    #print('os.remove:', fn)
+    try:
+        os.remove(fn)
+    except OSError:
+        pass
+
+
+def file_exists(fn: str) -> bool:
+    #print('os.stat:', fn)
+    try:
+        os.stat(fn)
+        return True
+    except OSError:
+        pass
+    return False
+
+
+def ensure_directory(path: str) -> None:
+    #print('file_exists')
+    if file_exists(path):
+        return True
+    return os.mkdir(path)
