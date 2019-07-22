@@ -12,6 +12,8 @@
 # https://github.com/hiveeyes/hiveeyes-micropython-firmware/pull/12/files
 # https://github.com/Hiverize/FiPy/blob/master/webserver.py
 #
+import json
+
 import machine
 from microWebSrv import MicroWebSrv
 from microDNSSrv import MicroDNSSrv
@@ -28,6 +30,7 @@ class TerkinHttpApi:
     headers = None
 
     def __init__(self, device=None, settings=None):
+
         log.info('Setting up HTTP API')
 
         TerkinHttpApi.device = device
@@ -35,11 +38,14 @@ class TerkinHttpApi:
         TerkinHttpApi.headers = {
             # Work around troubles with CORS in development.
             'Access-Control-Allow-Origin': '*',
+
+            # Put application name and version into HTTP headers.
             'Application-Name': TerkinHttpApi.device.application.name,
             'Application-Version': TerkinHttpApi.device.application.version,
         }
 
         # TCP port 80 and files in /flash/www.
+        # TODO: Make port and htdocs folder configurable.
         self.webserver = MicroWebSrv()
 
     def start(self):
@@ -55,22 +61,23 @@ class TerkinHttpApi:
         self.webserver.SetNotFoundPageUrl("http://hiverize.wifi")
         MicroDNSSrv.Create({'*': '192.168.4.1'})
 
-    def respond_text(httpResponse, text):
-        httpResponse.WriteResponseOk(headers=TerkinHttpApi.headers, contentType='text/plain', contentCharset='utf-8', content=text)
+    # ======
+    # System
+    # ======
 
     @MicroWebSrv.route('/status', 'GET')
     @MicroWebSrv.route('/status', 'POST')
     def about(httpClient, httpResponse):
-        TerkinHttpApi.respond_text(httpResponse, 'OK')
+        return TerkinHttpApi.respond_text(httpResponse, 'OK')
 
     @MicroWebSrv.route('/about', 'GET')
     def about(httpClient, httpResponse):
-        TerkinHttpApi.respond_text(httpResponse, TerkinHttpApi.device.application.fullname)
+        return TerkinHttpApi.respond_text(httpResponse, TerkinHttpApi.device.application.fullname)
 
     @MicroWebSrv.route('/restart', 'POST')
     def restart(httpClient, httpResponse):
 
-        TerkinHttpApi.respond_text(httpResponse, 'Restart acknowledged')
+        TerkinHttpApi.respond_text(httpResponse, 'ACK')
 
         def do_reset():
             log.info('Resetting device')
@@ -82,6 +89,81 @@ class TerkinHttpApi:
         except:
             do_reset()
 
+    # ===========
+    # Application
+    # ===========
+
+    @MicroWebSrv.route('/api/v1/settings', 'GET')
+    def get_settings(httpClient, httpResponse):
+        try:
+            query_params = httpClient.GetRequestQueryParams()
+            format = query_params.get('format', 'json')
+            if format == 'json':
+                headers = dict(TerkinHttpApi.headers)
+                headers.update({'Content-Disposition': 'attachment; filename="settings.json"'})
+                return httpResponse.WriteResponseJSONOk(headers=headers, obj=TerkinHttpApi.settings.to_dict())
+            elif format == 'python':
+                return httpResponse.WriteResponseFileAttachment('/flash/settings.py', 'settings.py', headers=TerkinHttpApi.headers)
+
+        except:
+            log.exception('GET settings request failed')
+            return httpResponse.WriteResponseError(400)
+
+        return httpResponse.WriteResponseNotFound()
+
+    @MicroWebSrv.route('/api/v1/settings', 'PUT')
+    def put_settings(httpClient, httpResponse):
+        try:
+
+            # Sanity checks.
+            # TODO: Validate the request.
+            content_type = httpClient.GetRequestContentType()
+
+            if content_type is None:
+                return httpResponse.WriteResponseNotFound()
+
+            if content_type.startswith('application/json'):
+                body = httpClient.ReadRequestContentAsJSON()
+                TerkinHttpApi.settings.save('settings.json', json.dumps(body))
+                return TerkinHttpApi.respond_text(httpResponse, 'ACK')
+
+            elif content_type.startswith('text/plain') or content_type.startswith('application/octet-stream'):
+                buffer = TerkinHttpApi.read_request(httpClient)
+                #print('body:')
+                #print(body)
+                TerkinHttpApi.settings.save('settings.py', buffer)
+                return TerkinHttpApi.respond_text(httpResponse, 'ACK')
+
+        except:
+            log.exception('PUT settings request failed')
+            return httpResponse.WriteResponseError(500)
+
+        return httpResponse.WriteResponseNotFound()
+
+    def read_request(httpClient):
+        # Requests are chunked into mac. 4308 bytes.
+        # https://github.com/jczic/MicroWebSrv/issues/51
+        from uio import StringIO
+        buffer = StringIO()
+        while True:
+            try:
+                log.info('Reading 4000 bytes from network')
+                payload = httpClient.ReadRequestContent(size=4000)
+                if not payload:
+                    log.info('Reading finished')
+                    raise StopIteration()
+                log.info('Writing {} bytes to buffer'.format(len(payload)))
+                buffer.write(payload)
+            except:
+                break
+        log.info('Rewinding buffer')
+        buffer.seek(0)
+        return buffer
+
+    # ====
+    # Demo
+    # ====
+
     @MicroWebSrv.route('/echo/<slot>', 'GET')
     @MicroWebSrv.route('/echo/<slot>', 'POST')
     def echo(httpClient, httpResponse, routeArgs):
@@ -92,6 +174,7 @@ class TerkinHttpApi:
 
         if content_type.startswith('application/json'):
             data = httpClient.ReadRequestContentAsJSON()
+
         elif content_type.startswith('application/x-www-form-urlencoded'):
             data = httpClient.ReadRequestPostedFormData()
 
@@ -103,3 +186,11 @@ class TerkinHttpApi:
             'data': data,
         }
         return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=payload)
+
+    # =========
+    # Utilities
+    # =========
+
+    def respond_text(httpResponse, text):
+        return httpResponse.WriteResponseOk(headers=TerkinHttpApi.headers, contentType='text/plain',
+                                            contentCharset='utf-8', content=text)

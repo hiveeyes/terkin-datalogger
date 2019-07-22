@@ -66,6 +66,7 @@ Development
 - Curate the garbage collector
 - Add backup mechanism for configuration files
 - Fix polling for WiFi connectivity
+- Add basic HTTP API endpoints for configuration settings
 
 
 2019-06-22 0.5.1
