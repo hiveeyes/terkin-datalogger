@@ -78,6 +78,7 @@ Development
 - Slightly tweak garbage collector curator to collect
   garbage after computing and setting threshold
 - Add more accessor methods to ``TerkinConfiguration``
+- Add ``get_last_stacktrace`` utility function
 
 
 2019-06-22 0.5.1

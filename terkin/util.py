@@ -3,6 +3,8 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import os
+import sys
+import uio
 
 
 def to_base64(bytes):
@@ -207,3 +209,10 @@ def ensure_directory(path: str) -> None:
     if file_exists(path):
         return True
     return os.mkdir(path)
+
+
+def get_last_stacktrace():
+    buf = uio.StringIO()
+    exc = sys.exc_info()[1]
+    sys.print_exception(exc, buf)
+    return buf.getvalue()
