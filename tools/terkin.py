@@ -420,7 +420,9 @@ if __name__ == '__main__':
         except:
             pass
 
-        title = '{} {}'.format(APP_NAME, status)
+        title = 'Terkin Pinocchio'
+        #title = '{} {}'.format(title, status)
+        message = '{}: {}'.format(status, message)
 
         # Send desktop notification.
         notify_user(title, message)

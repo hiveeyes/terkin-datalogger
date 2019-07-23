@@ -150,7 +150,9 @@ restart-device:
 
 notify:
 	@echo "$(status): $(message)"
-	@$(python3) tools/terkin.py notify "$(message)" "$(status)"
+	@if test "${RUNNING_IN_HELL}" != "true"; then \
+		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
+	fi
 
 
 # ------------------
@@ -171,9 +173,8 @@ sleep:
 ## Install all files to the device, using best method
 install-ng: check-mcu-port
 
-	$(eval msg := 'Uploading MicroPython code to device')
-	@echo $(msg)
-	@$(python3) tools/terkin.py notify $(msg)
+	@# User notification
+	$(MAKE) notify status=INFO message="Uploading MicroPython code to device"
 
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
@@ -181,9 +182,8 @@ install-ng: check-mcu-port
 		$(MAKE) install; \
 	fi
 
-	$(eval msg := 'Upload finished')
-	@echo $(msg)
-	@$(python3) tools/terkin.py notify $(msg)
+	@# User notification
+	$(MAKE) notify status=INFO message="MicroPython code upload finished"
 
 install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages

@@ -32,9 +32,11 @@ setup-environment: setup-virtualenv3
 # -----------
 # Workstation
 # -----------
-# Detect operating system (Windows vs Linux)
+# Minimal operating system detection for Windows
 # https://renenyffenegger.ch/notes/development/make/detect-os
 # https://gist.github.com/sighingnow/deee806603ec9274fd47
+# TODO: Expand this.
+# https://stackoverflow.com/questions/714100/os-detecting-makefile/14777895#14777895
 ifeq ($(OS),Windows_NT)
     $(eval RUNNING_IN_HELL := true)
 endif
