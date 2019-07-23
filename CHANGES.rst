@@ -72,6 +72,8 @@ Development
 - Makefile: Add ``RUNNING_IN_HELL`` flag
 - Makefile: Suppress desktop notifications on Windows for now
 - Makefile-Todo: Use lftp.exe for file transfer on Windows?
+- Extend module search path to "terkin" and "hiveeyes"
+  folders in order to support native Pymakr operation
 
 
 2019-06-22 0.5.1

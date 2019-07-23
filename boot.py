@@ -35,7 +35,7 @@ def extend_syspath():
     expecting anything to work.
     """
     import sys
-    sys.path.append('dist-packages')
+    sys.path.extend(['dist-packages', 'terkin', 'hiveeyes'])
     #print('[boot.py] INFO: Python module search path is:', sys.path)
 
 
