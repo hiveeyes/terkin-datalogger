@@ -20,14 +20,21 @@ log = logging.getLogger(__name__)
 
 class ApplicationInfo:
 
-    def __init__(self, name=None, version=None, settings=None):
+    def __init__(self, name=None, version=None, settings=None, application=None):
         self.name = name
         self.version = version
         self.settings = settings
+        self.application = application
 
     @property
     def fullname(self):
         return '{} {}'.format(self.name, self.version)
+
+
+class TransientStorage:
+
+    def __init__(self):
+        self.last_reading = {}
 
 
 # Maybe refactor to TerkinCore.
@@ -49,12 +56,17 @@ class TerkinDatalogger:
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
 
-        self.application_info = ApplicationInfo(self.name, self.version, self.settings)
+        self.application_info = ApplicationInfo(
+            name=self.name, version=self.version, settings=self.settings,
+            application=self)
 
         # Configure logging.
         logging_enabled = self.settings.get('main.logging.enabled', False)
         if not logging_enabled:
             logging.disable_logging()
+
+        # Initialize transient storage.
+        self.storage = TransientStorage()
 
         # Initialize device.
         self.device = TerkinDevice(self.application_info)
@@ -173,6 +185,9 @@ class TerkinDatalogger:
 
         # Read sensors.
         readings = self.read_sensors()
+
+        # Remember current reading
+        self.storage.last_reading = readings
 
         # Run the garbage collector.
         self.device.run_gc()

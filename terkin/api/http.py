@@ -44,8 +44,8 @@ class TerkinHttpApi:
             'Access-Control-Allow-Origin': '*',
 
             # Put application name and version into HTTP headers.
-            'Application-Name': TerkinHttpApi.device.application.name,
-            'Application-Version': TerkinHttpApi.device.application.version,
+            'Application-Name': TerkinHttpApi.device.application_info.name,
+            'Application-Version': TerkinHttpApi.device.application_info.version,
         }
 
         # Conditionally initialize webserver.
@@ -82,7 +82,7 @@ class TerkinHttpApi:
 
     @MicroWebSrv.route('/about', 'GET')
     def about(httpClient, httpResponse):
-        return TerkinHttpApi.respond_text(httpResponse, TerkinHttpApi.device.application.fullname)
+        return TerkinHttpApi.respond_text(httpResponse, TerkinHttpApi.device.application_info.fullname)
 
     @MicroWebSrv.route('/restart', 'POST')
     def restart(httpClient, httpResponse):

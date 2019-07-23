@@ -28,12 +28,12 @@ class DeviceStatus:
 
 class TerkinDevice:
 
-    def __init__(self, application):
+    def __init__(self, application_info):
 
-        self.application = application
-        self.name = application.name
-        self.version = application.version
-        self.settings = application.settings
+        self.application_info = application_info
+        self.name = application_info.name
+        self.version = application_info.version
+        self.settings = application_info.settings
 
         self.status = DeviceStatus()
         self.watchdog = Watchdog(device=self, settings=self.settings)
