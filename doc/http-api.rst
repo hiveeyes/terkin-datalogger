@@ -78,6 +78,20 @@ Restart
 Application endpoints
 *********************
 
+
+Get single setting
+==================
+Request::
+
+    GET /api/v1/setting?name=<name>
+
+Set single setting
+==================
+Request::
+
+    PUT /api/v1/setting?name=<name>
+    Content-Type: application/json
+
 Settings JSON
 =============
 Retrieve runtime settings in JSON format.
@@ -154,8 +168,22 @@ Response::
 
     }
 
-Examples
-========
+
+**************
+Basic examples
+**************
+::
+
+    # Get measurement interval
+    http GET "http://$(cat .terkin/floatip)/api/v1/setting?name=main.interval.field"
+    15.0
+
+    # Get sensor configuration
+    http GET "http://$(cat .terkin/floatip)/api/v1/setting?name=sensors"
+
+    # Set measurement interval
+    echo 42.42 | http PUT "http://$(cat .terkin/floatip)/api/v1/setting?name=main.interval.field"
+
 
 Upload ``settings.py``::
 
@@ -164,6 +192,26 @@ Upload ``settings.py``::
 Upload ``settings.json``::
 
     cat settings.json | http PUT "http://$(cat .terkin/floatip)/api/v1/settings" Content-Type:application/json
+
+
+*************************
+Request/response examples
+*************************
+::
+
+    $ echo '"Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"' | http PUT "http://$(cat .terkin/floatip)/api/v1/setting?name=main.testdrive" --print hHbB
+    PUT /api/v1/setting?name=main.testdrive HTTP/1.1
+    Content-Length: 62
+    Content-Type: application/json
+
+    "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"
+
+    HTTP/1.1 200 OK
+    Connection: close
+    Content-Length: 61
+    Content-Type: application/json; charset=UTF-8
+
+    "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"
 
 
 **************

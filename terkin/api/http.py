@@ -133,8 +133,8 @@ class TerkinHttpApi:
                 return httpResponse.WriteResponseNotFound()
 
             if content_type.startswith('application/json'):
-                body = httpClient.ReadRequestContentAsJSON()
-                TerkinHttpApi.settings.save('settings.json', json.dumps(body))
+                data = httpClient.ReadRequestContentAsJSON()
+                TerkinHttpApi.settings.save('settings.json', json.dumps(data))
                 return TerkinHttpApi.respond_text(httpResponse, 'ACK')
 
             elif content_type.startswith('text/plain') or content_type.startswith('application/octet-stream'):
@@ -150,8 +150,39 @@ class TerkinHttpApi:
 
         return httpResponse.WriteResponseNotFound()
 
+    @MicroWebSrv.route('/api/v1/setting', 'GET')
+    def get_setting(httpClient, httpResponse):
+        try:
+            query_data = httpClient.GetRequestQueryParams()
+            name = query_data['name']
+            log.info('Getting configuration setting "{}"'.format(name))
+            value = TerkinHttpApi.settings.get(name)
+            log.info('Configuration setting "{}" is "{}"'.format(name, value))
+            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
+
+        except:
+            log.exception('GET setting request failed')
+            return httpResponse.WriteResponseError(500)
+
+    @MicroWebSrv.route('/api/v1/setting', 'PUT')
+    def put_setting(httpClient, httpResponse):
+        try:
+            query_data = httpClient.GetRequestQueryParams()
+            name = query_data['name']
+            value = httpClient.ReadRequestContentAsJSON()
+            log.info('Setting configuration setting "{}" to "{}"'.format(name, value))
+            TerkinHttpApi.settings[name] = value
+
+            value = TerkinHttpApi.settings.get(name)
+            log.info('Re-reading configuration setting "{}" as "{}"'.format(name, value))
+            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
+
+        except:
+            log.exception('PUT setting request failed')
+            return httpResponse.WriteResponseError(500)
+
     def read_request(httpClient):
-        # Requests are chunked into mac. 4308 bytes.
+        # Observations show request payloads are capped at ~4308 bytes.
         # https://github.com/jczic/MicroWebSrv/issues/51
         from uio import StringIO
         buffer = StringIO()
@@ -169,6 +200,10 @@ class TerkinHttpApi:
         log.info('Rewinding buffer')
         buffer.seek(0)
         return buffer
+
+    @MicroWebSrv.route('/api/v1/sensors/<sensor>')
+    def sensors(httpClient, httpResponse, routeArgs):
+        sensor = routeArgs['sensor']
 
     # ====
     # Demo
