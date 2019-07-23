@@ -83,6 +83,7 @@ Development
 - HTTP API: Add endpoints for getting and setting individual configuration settings
 - Object model refactoring
 - HTTP API: Add endpoint for getting the last reading
+- Refactor ``sensors``-section of configuration settings
 
 
 2019-06-22 0.5.1

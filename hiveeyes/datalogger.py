@@ -41,32 +41,47 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Add some sensors for the Hiveeyes project.
         log.info('Registering Hiveeyes sensors')
 
+        # Scan and register configured list of environmental sensors.
+        sensor_infos = self.settings.get('sensors.environment')
 
-        # Setup the HX711.
-        try:
-            self.add_hx711_sensor()
-        except Exception as ex:
-            log.exception('Setting up HX711 sensor failed')
+        # Backward compatibility.
+        if sensor_infos is None:
+            sensor_infos = self.settings.get('sensors.registry').values()
 
-        # Setup the DS18X20.
-        try:
-            self.add_ds18x20_sensor()
-        except Exception as ex:
-            log.exception('Setting up DS18X20 sensor failed')
+        for sensor_info in sensor_infos:
+            sensor_key = sensor_info.get('key')
+            sensor_type = sensor_info.get('type')
+            description = sensor_info.get('description')
+            message = 'Setting up {} sensor with key {} described as "{}"'.format(sensor_type, sensor_key, description)
+            log.info(message)
+            try:
 
-        # Setup the BME280.
-        try:
-            self.add_bme280_sensor()
-        except Exception as ex:
-            log.exception('Setting up BME280 sensor failed')
+                if sensor_info.get('enabled') is False:
+                    log.info('Skipping {} sensor {}'.format(sensor_type, sensor_key))
+                    continue
 
-    def add_hx711_sensor(self):
+                # Setup the HX711.
+                if sensor_type == 'HX711':
+                    self.add_hx711_sensor(sensor_info)
+
+                # Setup the DS18X20.
+                elif sensor_type == 'DS18B20':
+                    self.add_ds18x20_sensor(sensor_info)
+
+                # Setup the BME280.
+                elif sensor_type == 'BME280':
+                    self.add_bme280_sensor(sensor_info)
+
+                else:
+                    log.warning('Sensor has unknown type, skipping registration {}'.format(sensor_info))
+
+            except Exception as ex:
+                log.exception('Setting up {} sensor {} failed'.format(sensor_type, sensor_key))
+
+    def add_hx711_sensor(self, settings):
         """
         Setup and register the HX711 sensor component with your data logger.
         """
-
-        # Initialize HX711 sensor component.
-        settings = self.settings.get('sensors.registry.hx711')
 
         if settings.get('enabled') is False:
             log.info("Skipping HX711 device on pins {}/{}".format(settings['pin_dout'], settings['pin_pdsck']))
@@ -89,12 +104,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Register with framework.
         self.sensor_manager.register_sensor(hx711_sensor)
 
-    def add_ds18x20_sensor(self):
+    def add_ds18x20_sensor(self, settings):
         """
         Setup and register the DS18X20  sensor component with your data logger.
         """
-
-        settings = self.settings.get('sensors.registry.ds18x20')
 
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
         sensor = DS18X20Sensor(settings=settings)
@@ -106,12 +119,11 @@ class HiveeyesDatalogger(TerkinDatalogger):
         # Register with framework.
         self.sensor_manager.register_sensor(sensor)
 
-    def add_bme280_sensor(self):
+    def add_bme280_sensor(self, settings):
         """
         Setup and register the DS18X20  sensor component with your data logger.
         """
 
-        settings = self.settings.get('sensors.registry.bme280')
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
 
         if settings.get('enabled') is False:

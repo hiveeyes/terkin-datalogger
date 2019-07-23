@@ -222,37 +222,46 @@ sensors = {
             'enabled': False,
         },
     },
-    'registry': {
-        'hx711': {
+    'environment': [
+        {
+            'key': 'scale-1',
+            'name': 'scale',
+            'description': 'Waage 1',
+            'type': 'HX711',
+            'enabled': True,
             'address': 0x00,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
             'scale': 4.424242,
-            'offset': -73000.0,
+            'offset': -73000,
         },
-        'ds18x20': {
+        {
+            'key': 'ds18b20-1',
+            'name': 'temperature',
+            'description': 'Wabengasse 1',
+            'type': 'DS18B20',
+            'enabled': True,
             'bus': 'onewire:0',
             'devices': {
-                '28ff641d8fdf18c1': {
-                    'enabled': False,
+                '1111111111111111': {
+                    'enabled': True,
                     #'offset': 0.42,
                 },
-                '28ff641d8fc3944f': {
+                '2222222222222222': {
                     'enabled': True,
                     #'offset': -0.42,
                 },
-            }
+            },
         },
-        'bme280_1': {
+        {
+            'key': 'bme280-1',
+            'description': 'Temperatur und Feuchte außen',
+            'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
-        },
-        'bme280_2': {
-            'enabled': True,
-            'bus': 'i2c:1',
             'address': 0x77,
-        },
-    },
+        }
+    ],
     'busses': [
         {
             "family": "i2c",
