@@ -73,7 +73,6 @@ Restart
     POST /restart
 
 
-
 *********************
 Application endpoints
 *********************
@@ -101,79 +100,15 @@ Request::
 
 Settings JSON
 =============
-Retrieve runtime settings in JSON format.
+Retrieve dynamic runtime settings in JSON format::
 
-Request::
-
-    GET /api/v1/settings
-
-Response::
-
-    HTTP/1.1 200 OK
-    Content-Length: 2627
-    Content-Type: application/json; charset=UTF-8
-
-    {
-        "main": {
-            "deepsleep": false,
-            "interval": {
-                "field": 15.0,
-                "maintenance": 10.0
-            },
-            "logging": {
-                "configuration": false,
-                "enabled": true
-            },
-            "rgb_led": {
-                "heartbeat": true
-            },
-            "watchdog": {
-                "enabled": false,
-                "timeout": 10000
-            }
-        },
-
-        [...]
-    }
-
+    GET /api/v1/settings?format=json
 
 Settings Python
 ===============
-Retrieve global static ``settings.py`` in Python format.
-
-Request::
+Retrieve global static ``settings.py`` in Python format::
 
     GET /api/v1/settings?format=python
-
-
-Response::
-
-    HTTP/1.1 200 OK
-    Content-Disposition: attachment; filename="settings.py"
-    Content-Length: 8997
-    Content-Type: application/octet-stream
-
-    """Datalogger configuration"""
-
-    # General settings.
-    main = {
-
-        # Measurement intervals in seconds.
-        # Todo: Please note this is not the _real thing_ yet at it will just use
-        #       this value to apply to ``time.sleep()`` after each duty cycle.
-        'interval': {
-
-            # Use this interval if device is in field mode.
-            'field': 15.0,
-
-            # Apply this interval if device is in maintenance mode.
-            # https://community.hiveeyes.org/t/wartungsmodus-fur-den-terkin-datenlogger/2274
-            'maintenance': 10.0,
-        },
-
-        [...]
-
-    }
 
 
 **************
@@ -205,7 +140,9 @@ Upload ``settings.json``::
 Request/response examples
 *************************
 
-Set individual configuration setting::
+Set individual configuration setting
+====================================
+::
 
     $ echo '"Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"' | http PUT "http://$(cat .terkin/floatip)/api/v1/setting?name=main.testdrive" --print hHbB
     PUT /api/v1/setting?name=main.testdrive HTTP/1.1
@@ -221,7 +158,9 @@ Set individual configuration setting::
 
     "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"
 
-Get last reading::
+Get last reading
+================
+::
 
     http GET "http://$(cat .terkin/floatip)/api/v1/reading/last"
 
@@ -241,6 +180,70 @@ Get last reading::
         "system.wifi.country": "DE",
         "system.wifi.max_tx_power": 78,
         "system.wifi.rssi": -55
+    }
+
+Whole bunch of settings
+=======================
+Get runtime settings in JSON format::
+
+    http GET "http://$(cat .terkin/floatip)/api/v1/settings?format=json"
+
+    HTTP/1.1 200 OK
+    Content-Length: 2627
+    Content-Type: application/json; charset=UTF-8
+
+    {
+        "main": {
+            "deepsleep": false,
+            "interval": {
+                "field": 15.0,
+                "maintenance": 10.0
+            },
+            "logging": {
+                "configuration": false,
+                "enabled": true
+            },
+            "rgb_led": {
+                "heartbeat": true
+            },
+            "watchdog": {
+                "enabled": false,
+                "timeout": 10000
+            }
+        },
+
+        [...]
+    }
+
+Get runtime settings in Python format::
+
+    http GET "http://$(cat .terkin/floatip)/api/v1/settings?format=python"
+
+    HTTP/1.1 200 OK
+    Content-Disposition: attachment; filename="settings.py"
+    Content-Length: 8997
+    Content-Type: application/octet-stream
+
+    """Datalogger configuration"""
+
+    # General settings.
+    main = {
+
+        # Measurement intervals in seconds.
+        # Todo: Please note this is not the _real thing_ yet at it will just use
+        #       this value to apply to ``time.sleep()`` after each duty cycle.
+        'interval': {
+
+            # Use this interval if device is in field mode.
+            'field': 15.0,
+
+            # Apply this interval if device is in maintenance mode.
+            # https://community.hiveeyes.org/t/wartungsmodus-fur-den-terkin-datenlogger/2274
+            'maintenance': 10.0,
+        },
+
+        [...]
+
     }
 
 

@@ -59,6 +59,7 @@ Ideas
 - ``?overwrite=true`` option or ``DELETE`` action for purging configuration files
 - Curate FTP upload by prewarming the device for transfer to mitigate the 550 errors references above
 - Prevent invalid runtime configuration settings like ``main.interval.field=None``
+- When halting the datalogger using ``CTRL+C``, another ``datalogger.start()`` will register all sensors again ;[
 
 
 Prio 1
