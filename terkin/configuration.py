@@ -45,8 +45,20 @@ class TerkinConfiguration:
         log.info('Starting TerkinConfiguration on path "{}"'.format(self.CONFIG_PATH))
         #os.stat(self.CONFIG_PATH)
 
-        log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
-        ensure_directory(self.BACKUP_PATH)
+        try:
+            log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
+            ensure_directory(self.BACKUP_PATH)
+        except:
+            log.exception('Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
+
+    def __getitem__(self, key, default=None):
+        return self.get(key, default=default)
+
+    def __setitem__(self, key, value):
+        return self.set(key, value)
+
+    def __delitem__(self, key):
+        del self.store[key]
 
     def get(self, key, default=None):
         return self.store.get(key, default=default)
@@ -57,9 +69,6 @@ class TerkinConfiguration:
 
     def setdefault(self, key, default=None):
         return self.store.setdefault(key, default=default)
-
-    def __delitem__(self, key):
-        del self.store[key]
 
     def add(self, data):
         try:
