@@ -23,6 +23,10 @@ from terkin import logging
 log = logging.getLogger(__name__)
 
 
+# Global reference to webserver object.
+webserver = None
+
+
 class TerkinHttpApi:
 
     device = None
@@ -44,13 +48,19 @@ class TerkinHttpApi:
             'Application-Version': TerkinHttpApi.device.application.version,
         }
 
+        # Conditionally initialize webserver.
         # TCP port 80 and files in /flash/www.
         # TODO: Make port and htdocs folder configurable.
-        self.webserver = MicroWebSrv()
+        global webserver
+        if webserver is None:
+            webserver = MicroWebSrv()
+        self.webserver = webserver
 
     def start(self):
-        log.info('Starting HTTP server')
-        if not self.webserver.IsStarted():
+        if self.webserver.IsStarted():
+            log.info('HTTP server already started')
+        else:
+            log.info('Starting HTTP server')
             self.webserver.Start(threaded=True)
 
     def captive(self):

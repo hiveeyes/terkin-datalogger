@@ -79,6 +79,7 @@ Development
   garbage after computing and setting threshold
 - Add more accessor methods to ``TerkinConfiguration``
 - Add ``get_last_stacktrace`` utility function
+- Fix memory exhaustion when starting the MicroWebSrv twice
 
 
 2019-06-22 0.5.1
