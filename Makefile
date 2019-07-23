@@ -164,9 +164,9 @@ install: install-requirements install-framework install-sketch
 
 ## Install all files to the device, using FTP
 install-ftp:
-	lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
-	# TODO: Use lftp.exe on Windows at C:\ProgramData\chocolatey\bin\lftp.exe
-    # Installed through chocolatey by "choco install lftp".
+	@lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+	@# TODO: Use lftp.exe on Windows at C:\ProgramData\chocolatey\bin\lftp.exe
+	@# Installed through chocolatey by "choco install lftp".
 	@echo "lftp status: $$?"
 
 sleep:
@@ -176,7 +176,7 @@ sleep:
 install-ng: check-mcu-port
 
 	@# User notification
-	$(MAKE) notify status=INFO message="Uploading MicroPython code to device"
+	@$(MAKE) notify status=INFO message="Uploading MicroPython code to device"
 
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
@@ -185,7 +185,7 @@ install-ng: check-mcu-port
 	fi
 
 	@# User notification
-	$(MAKE) notify status=INFO message="MicroPython code upload finished"
+	@$(MAKE) notify status=INFO message="MicroPython code upload finished"
 
 install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages

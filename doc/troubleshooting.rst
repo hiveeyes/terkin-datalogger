@@ -781,3 +781,28 @@ This happens on soft reboots.
       File "/flash/lib/terkin/api/http.py", line 54, in start
       File "dist-packages/microWebSrv.py", line 224, in Start
     OSError: [Errno 12] ENOMEM
+
+
+Setting invalid runtime configuration setting
+=============================================
+Here: Setting ``main.interval.field`` to ``None``.
+::
+
+      224.3915 [terkin.device            ] INFO   : Waiting for None seconds
+      224.4166 [terkin.datalogger        ] ERROR  : Failed to hibernate, falling back to regular sleep
+    Traceback (most recent call last):
+      File "/flash/lib/terkin/datalogger.py", line 214, in sleep
+      File "/flash/lib/terkin/device.py", line 334, in hibernate
+    TypeError: can't convert NoneType to float
+
+      224.4534 [terkin.datalogger        ] INFO   : Sleeping for None seconds
+    Traceback (most recent call last):
+      File "main.py", line 65, in <module>
+      File "main.py", line 60, in main
+      File "/flash/lib/terkin/datalogger.py", line 145, in start
+      File "/flash/lib/terkin/datalogger.py", line 162, in start_mainloop
+      File "main.py", line 53, in loop
+      File "/flash/lib/hiveeyes/datalogger.py", line 141, in loop
+      File "/flash/lib/terkin/datalogger.py", line 187, in loop
+      File "/flash/lib/terkin/datalogger.py", line 221, in sleep
+    TypeError: can't convert NoneType to float

@@ -31,6 +31,7 @@ Ideas
     - https://xasyncsockets.hc2.fr/
 - https://pypi.org/project/picotui/1.0/
 - https://github.com/pfalcon/picoweb
+  https://github.com/pfalcon/pycopy-lib/tree/master/uasyncio
 - https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
 - Pull modeserver into MiniNet
 - Check out switching to
@@ -56,6 +57,8 @@ Ideas
     time lftp -u micro,python 192.168.178.143 < tools/upload-all.lftprc
     mirror: Access failed: 550  (telemetry.py)
 - ``?overwrite=true`` option or ``DELETE`` action for purging configuration files
+- Curate FTP upload by prewarming the device for transfer to mitigate the 550 errors references above
+- Prevent invalid runtime configuration settings like ``main.interval.field=None``
 
 
 Prio 1
