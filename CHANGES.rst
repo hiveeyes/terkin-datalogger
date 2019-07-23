@@ -66,7 +66,7 @@ Development
 - Curate the garbage collector
 - Add backup mechanism for configuration files
 - Fix polling for WiFi connectivity
-- Add basic HTTP API endpoints for configuration settings
+- HTTP API: Add basic endpoints for configuration settings
 - Add backup configuration snippet to settings blueprint files
 - Makefile: Prompt for restart after FTP transfer
 - Makefile: Add ``RUNNING_IN_HELL`` flag
@@ -82,6 +82,7 @@ Development
 - Fix memory exhaustion when starting the MicroWebSrv twice
 - HTTP API: Add endpoints for getting and setting individual configuration settings
 - Object model refactoring
+- HTTP API: Add endpoint for getting the last reading
 
 
 2019-06-22 0.5.1

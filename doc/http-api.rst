@@ -92,6 +92,13 @@ Request::
     PUT /api/v1/setting?name=<name>
     Content-Type: application/json
 
+Get last reading
+================
+Request::
+
+    GET /api/v1/reading/last
+
+
 Settings JSON
 =============
 Retrieve runtime settings in JSON format.
@@ -197,7 +204,8 @@ Upload ``settings.json``::
 *************************
 Request/response examples
 *************************
-::
+
+Set individual configuration setting::
 
     $ echo '"Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"' | http PUT "http://$(cat .terkin/floatip)/api/v1/setting?name=main.testdrive" --print hHbB
     PUT /api/v1/setting?name=main.testdrive HTTP/1.1
@@ -212,6 +220,28 @@ Request/response examples
     Content-Type: application/json; charset=UTF-8
 
     "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern"
+
+Get last reading::
+
+    http GET "http://$(cat .terkin/floatip)/api/v1/reading/last"
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=UTF-8
+    Content-Length: 286
+
+    {
+        "system.memfree": 2155584,
+        "system.runtime": 12,
+        "system.temperature": 26.0,
+        "system.time": 31,
+        "system.uptime": 31.422,
+        "system.voltage": 3.732,
+        "system.wifi.bandwidth": 2,
+        "system.wifi.channel": 8,
+        "system.wifi.country": "DE",
+        "system.wifi.max_tx_power": 78,
+        "system.wifi.rssi": -55
+    }
 
 
 **************

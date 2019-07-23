@@ -31,14 +31,16 @@ class TerkinHttpApi:
 
     device = None
     settings = None
+    storage = None
     headers = None
 
-    def __init__(self, device=None, settings=None):
+    def __init__(self, device=None, settings=None, storage=None):
 
         log.info('Setting up HTTP API')
 
         TerkinHttpApi.device = device
         TerkinHttpApi.settings = settings
+        TerkinHttpApi.storage = storage
         TerkinHttpApi.headers = {
             # Work around troubles with CORS in development.
             'Access-Control-Allow-Origin': '*',
@@ -180,6 +182,17 @@ class TerkinHttpApi:
         except:
             log.exception('PUT setting request failed')
             return httpResponse.WriteResponseError(500)
+
+    @MicroWebSrv.route('/api/v1/reading/last', 'GET')
+    def get_settings(httpClient, httpResponse):
+        try:
+            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=TerkinHttpApi.storage.last_reading)
+
+        except:
+            log.exception('GET last reading request failed')
+            return httpResponse.WriteResponseError(500)
+
+        return httpResponse.WriteResponseNotFound()
 
     def read_request(httpClient):
         # Observations show request payloads are capped at ~4308 bytes.

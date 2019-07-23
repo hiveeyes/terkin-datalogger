@@ -66,7 +66,8 @@ class NetworkManager:
         """
         Start HTTP server for managing the device.
         """
-        http_api = TerkinHttpApi(device=self.device, settings=self.settings)
+        storage = self.device.application_info.application.storage
+        http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
         http_api.start()
 
     def handle_modeserver(self, data, addr):
