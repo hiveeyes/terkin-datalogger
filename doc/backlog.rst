@@ -60,6 +60,8 @@ Ideas
 - Curate FTP upload by prewarming the device for transfer to mitigate the 550 errors references above
 - Prevent invalid runtime configuration settings like ``main.interval.field=None``
 - When halting the datalogger using ``CTRL+C``, another ``datalogger.start()`` will register all sensors again ;[
+- Notify user about pulling into maintenance mode
+- Enumerate all DS18B20 sensors and provide over HTTP
 
 
 Prio 1

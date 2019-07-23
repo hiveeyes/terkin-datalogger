@@ -166,20 +166,30 @@ Get last reading
 
     HTTP/1.1 200 OK
     Content-Type: application/json; charset=UTF-8
-    Content-Length: 286
+    Content-Length: 610
 
     {
-        "system.memfree": 2155584,
-        "system.runtime": 12,
-        "system.temperature": 26.0,
-        "system.time": 31,
-        "system.uptime": 31.422,
-        "system.voltage": 3.732,
+        "humidity.0x77.i2c:0": 53.38,
+        "pressure.0x77.i2c:0": 1013.92,
+        "scale.0.kg": 0.715,
+        "scale.0.offset": 87448.65,
+        "scale.0.raw": 71191.33,
+        "scale.0.scale": -22742.99,
+        "system.memfree": 2325744,
+        "system.runtime": 1786,
+        "system.temperature": 39.3913,
+        "system.time": 1806,
+        "system.uptime": 1806.707,
+        "system.voltage": 3.822,
         "system.wifi.bandwidth": 2,
         "system.wifi.channel": 8,
         "system.wifi.country": "DE",
         "system.wifi.max_tx_power": 78,
-        "system.wifi.rssi": -55
+        "system.wifi.rssi": -47,
+        "temperature.0x77.i2c:0": 24.23,
+        "temperature.28ff641d8fc3944f.onewire:0": 25.58,
+        "temperature.28ff641d8fdf18c1.onewire:0": 28.295,
+        "weight.0": 0.715
     }
 
 Whole bunch of settings

@@ -152,6 +152,7 @@ class AbstractBus:
         convention <type>:<index>
         """
         self.adapter = None
+        # TODO: Publish found onewire devices to MQTT bus and HTTP API.
         self.devices = []
         self.pins = {}
         self.bus_number = bus_number
@@ -187,6 +188,7 @@ class OneWireBus(AbstractBus):
         self.adapter.reset()
         time.sleep(0.750)
         # Scan for OneWire devices and populate `devices`.
+        # TODO: Refactor things specific to DS18x20 devices elsewhere.
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
         log.info("Found {} OneWire (DS18x20) devices: {}.".format(len(self.devices), list(map(hexlify, self.devices))))
 
