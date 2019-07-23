@@ -71,6 +71,7 @@ Development
 - Makefile: Prompt for restart after FTP transfer
 - Makefile: Add ``RUNNING_IN_HELL`` flag
 - Makefile: Suppress desktop notifications on Windows for now
+- Makefile-Todo: Use lftp.exe for file transfer on Windows?
 
 
 2019-06-22 0.5.1

@@ -165,6 +165,8 @@ install: install-requirements install-framework install-sketch
 ## Install all files to the device, using FTP
 install-ftp:
 	lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+	# TODO: Use lftp.exe on Windows at C:\ProgramData\chocolatey\bin\lftp.exe
+    # Installed through chocolatey by "choco install lftp".
 	@echo "lftp status: $$?"
 
 sleep:
