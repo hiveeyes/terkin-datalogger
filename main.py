@@ -53,8 +53,10 @@ class BobDatalogger(HiveeyesDatalogger):
         super().loop()
 
 
+datalogger = None
 def main():
     """Start the data logger application."""
+    global datalogger
     datalogger = BobDatalogger(settings)
     datalogger.setup()
     datalogger.start()
