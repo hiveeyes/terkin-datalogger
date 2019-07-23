@@ -107,8 +107,8 @@ class TerkinDevice:
         """
         import gc
         log.info('Start curating the garbage collector')
-        gc.collect()
         gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+        gc.collect()
         log.info('Curating the garbage collector finished')
 
     def configure_rgb_led(self):

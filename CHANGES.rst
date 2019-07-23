@@ -75,6 +75,8 @@ Development
 - Extend module search path to "terkin" and "hiveeyes"
   folders in order to support native Pymakr operation
 - Make reference to "datalogger" object available in global scope
+- Slightly tweak garbage collector curator to collect
+  garbage after computing and setting threshold
 
 
 2019-06-22 0.5.1
