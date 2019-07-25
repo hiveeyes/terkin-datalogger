@@ -225,11 +225,11 @@ sensors = {
     'environment': [
         {
             'id': 'scale-1',
+            'number': 0,
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
             'enabled': True,
-            'address': 0x00,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
             'scale': 4.424242,

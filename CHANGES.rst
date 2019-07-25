@@ -85,6 +85,7 @@ Development
 - HTTP API: Add endpoint for getting the last reading
 - Refactor ``sensors``-section of configuration settings
 - Settings: Rename sensor "key" attribute to sensor "id"
+- Settings: Rename HX711 enumeration attribute from "address" to "number"
 
 
 2019-06-22 0.5.1

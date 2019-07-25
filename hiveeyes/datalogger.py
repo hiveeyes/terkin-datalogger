@@ -90,7 +90,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
             return
 
         hx711_sensor = HX711Sensor()
-        hx711_sensor.set_address(settings.get('address', 0x00))
+        hx711_sensor.set_address(settings.get('number', settings.get('address', 0)))
         hx711_sensor.register_pin('dout', settings['pin_dout'])
         hx711_sensor.register_pin('pdsck', settings['pin_pdsck'])
         hx711_sensor.register_parameter('scale', settings['scale'])
