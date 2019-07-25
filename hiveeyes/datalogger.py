@@ -49,15 +49,16 @@ class HiveeyesDatalogger(TerkinDatalogger):
             sensor_infos = self.settings.get('sensors.registry').values()
 
         for sensor_info in sensor_infos:
-            sensor_key = sensor_info.get('key')
+            sensor_id = sensor_info.get('id', sensor_info.get('key'))
             sensor_type = sensor_info.get('type')
             description = sensor_info.get('description')
-            message = 'Setting up {} sensor with key {} described as "{}"'.format(sensor_type, sensor_key, description)
+            message = 'Setting up {} sensor with id "{}" described as "{}"'.format(sensor_type, sensor_id, description)
             log.info(message)
             try:
 
                 if sensor_info.get('enabled') is False:
-                    log.info('Skipping {} sensor {}'.format(sensor_type, sensor_key))
+                    log.info('Sensor with id={} and type={} is disabled, '
+                             'skipping registration'.format(sensor_id, sensor_type))
                     continue
 
                 # Setup the HX711.
@@ -73,10 +74,11 @@ class HiveeyesDatalogger(TerkinDatalogger):
                     self.add_bme280_sensor(sensor_info)
 
                 else:
-                    log.warning('Sensor has unknown type, skipping registration {}'.format(sensor_info))
+                    log.warning('Sensor with id={} has unknown type, skipping registration. '
+                                'Sensor settings:\n{}'.format(sensor_id, sensor_info))
 
             except Exception as ex:
-                log.exception('Setting up {} sensor {} failed'.format(sensor_type, sensor_key))
+                log.exception('Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
 
     def add_hx711_sensor(self, settings):
         """

@@ -176,7 +176,7 @@ sensors = {
     },
     'environment': [
         {
-            'key': 'scale-1',
+            'id': 'scale-1',
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
@@ -188,7 +188,7 @@ sensors = {
             'offset': -73000,
         },
         {
-            'key': 'ds18b20-1',
+            'id': 'ds18b20-1',
             'name': 'temperature',
             'description': 'Wabengasse 1',
             'type': 'DS18B20',
@@ -206,13 +206,13 @@ sensors = {
             },
         },
         {
-            'key': 'bme280-1',
+            'id': 'bme280-1',
             'description': 'Temperatur und Feuchte außen',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
-        }
+        },
     ],
     'busses': [
         {
