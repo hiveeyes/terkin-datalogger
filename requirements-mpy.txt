@@ -1,7 +1,7 @@
 pycopy-copy
 pycopy-types
-pycopy-collections
-pycopy-collections.defaultdict
+micropython-collections
+micropython-collections.defaultdict
 pycopy-urequests
 pycopy-shutil
 # All of these pull in dependencies of vanilla MicroPython

@@ -86,6 +86,7 @@ Development
 - Refactor ``sensors``-section of configuration settings
 - Settings: Rename sensor "key" attribute to sensor "id"
 - Settings: Rename HX711 enumeration attribute from "address" to "number"
+- Fix broken dependencies re. ``pycopy-collections``
 
 
 2019-06-22 0.5.1
