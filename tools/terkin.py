@@ -403,7 +403,10 @@ if __name__ == '__main__':
     ]
 
     # Read command line arguments.
-    command = sys.argv[1]
+    try:
+        command = sys.argv[1]
+    except:
+        command = 'monitor'
     try:
         mac_prefixes = sys.argv[2].split(',')
     except:

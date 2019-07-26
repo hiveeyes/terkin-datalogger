@@ -7,6 +7,7 @@ from binascii import hexlify
 
 from terkin import logging
 from terkin.sensor import AbstractSensor
+from terkin.sensor.core import OneWireBus
 
 log = logging.getLogger(__name__)
 
@@ -15,16 +16,6 @@ class DS18X20Sensor(AbstractSensor):
     """
     A generic DS18B20 sensor component.
     """
-
-    def __init__(self, settings=None):
-        super().__init__()
-
-        # The driver instance.
-        self.bus = None
-        self.driver = None
-
-        # DS18B20-specific settings
-        self.settings = settings or {}
 
     def acquire_bus(self, bus):
         self.bus = bus

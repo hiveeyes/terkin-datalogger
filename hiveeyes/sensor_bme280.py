@@ -15,16 +15,12 @@ class BME280Sensor(AbstractSensor):
     A generic BME280 sensor component.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, settings=None):
 
-        # The driver instance.
-        self.bus = None
+        super().__init__(settings=settings)
 
         # Can be overwritten by ``.set_address()``.
         self.address = 0x76
-
-        self.driver = None
 
     def start(self):
         """

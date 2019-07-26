@@ -88,6 +88,7 @@ Development
 - Settings: Rename HX711 enumeration attribute from "address" to "number"
 - Fix broken dependencies re. ``pycopy-collections``
 - Move HTTP API request/response examples to screenshots folder
+- Constructor refactoring and naming things
 
 
 2019-06-22 0.5.1

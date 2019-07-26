@@ -18,9 +18,9 @@ class HX711Sensor(AbstractSensor):
     using ``self.loadcell.read_median()``.
     """
 
-    def __init__(self):
+    def __init__(self, settings=None):
 
-        super().__init__()
+        super().__init__(settings=settings)
 
         # The driver class.
         self.driver_class = None
