@@ -6,6 +6,7 @@ import time
 
 import machine
 
+from copy import deepcopy
 from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
@@ -13,7 +14,7 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.util import dformat, gc_disabled
+from terkin.util import dformat, gc_disabled, ddformat
 
 log = logging.getLogger(__name__)
 
@@ -289,6 +290,7 @@ class TerkinDatalogger:
 
         # Collect observations.
         data = {}
+        richdata = {}
 
         # Iterate all registered sensors.
         sensors = self.sensor_manager.sensors
@@ -314,6 +316,9 @@ class TerkinDatalogger:
                 # Add sensor reading to observations.
                 data.update(reading)
 
+                # Record reading for prettified output.
+                self.record_reading(sensor, reading, richdata)
+
             except Exception as ex:
                 # Because of the ``gc_disabled`` context manager used above,
                 # the propagation of exceptions has to be tweaked like that.
@@ -325,11 +330,26 @@ class TerkinDatalogger:
         # Debugging: Print sensor data before running telemetry.
         prettify_log = self.settings.get('sensors.prettify_log', False)
         if prettify_log:
-            log.info('Sensor data:\n\n%s', dformat(data, indent=48))
+            log.info('Sensor data:\n\n%s', ddformat(richdata, indent=11))
         else:
             log.info('Sensor data:  %s', data)
 
         return data
+
+    def record_reading(self, sensor, reading, richdata):
+        for key, value in reading.items():
+            richdata[key] = {'value': value}
+            if hasattr(sensor, 'settings') and 'description' in sensor.settings:
+                richdata[key]['description'] = sensor.settings.get('description')
+                # Hack to propagate the correct detail-description to prettified output.
+                # TODO: Attach settings directly to its reading, while actually reading it.
+                if 'devices' in sensor.settings:
+                    for device_settings in sensor.settings['devices']:
+                        if device_settings['address'] in key:
+                            if hasattr(sensor, 'get_device_description'):
+                                device_description = sensor.get_device_description(device_settings['address'])
+                                if device_description:
+                                    richdata[key]['description'] = device_description
 
     def transmit_readings(self, data):
         """Transmit data"""

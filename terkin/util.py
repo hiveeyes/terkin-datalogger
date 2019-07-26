@@ -97,6 +97,18 @@ def dformat(data, indent=0):
     return buffer.getvalue()
 
 
+def ddformat(data, indent=0):
+    padding = ' ' * indent
+    from uio import StringIO
+    buffer = StringIO()
+    for key in sorted(data.keys()):
+        item = data[key]
+        value = item['value']
+        text = item.get('description', '')
+        buffer.write('{}{:<40}{:>10}    {}\n'.format(padding, key, value, text))
+    return buffer.getvalue()
+
+
 def _flatten(input_obj, key_prefix, separator='_'):
     """
     Flatten any type of python object into one-level dict object.
