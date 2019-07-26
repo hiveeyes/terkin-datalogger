@@ -194,16 +194,22 @@ sensors = {
             'type': 'DS18B20',
             'enabled': True,
             'bus': 'onewire:0',
-            'devices': {
-                '1111111111111111': {
+            'devices': [
+                {
+                    'id': 'ds18b20-w1r1',
+                    'address': '1111111111111111',
+                    'description': 'Wabengasse 1, Rahmen 1',
                     'enabled': True,
                     #'offset': 0.42,
                 },
-                '2222222222222222': {
+                {
+                    'id': 'ds18b20-w1r2',
+                    'address': '2222222222222222',
+                    'description': 'Wabengasse 1, Rahmen 2',
                     'enabled': True,
                     #'offset': -0.42,
                 },
-            },
+            ],
         },
         {
             'id': 'bme280-1',

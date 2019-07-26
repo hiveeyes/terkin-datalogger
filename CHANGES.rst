@@ -89,7 +89,8 @@ Development
 - Fix broken dependencies re. ``pycopy-collections``
 - Move HTTP API request/response examples to screenshots folder
 - Constructor refactoring and naming things
-- Add "id" attribute to bus configuration settings
+- Add ``id`` attribute to bus configuration settings
+- Refactor and improve DS18B20 settings, reading and processing
 
 
 2019-06-22 0.5.1

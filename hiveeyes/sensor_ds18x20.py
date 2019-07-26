@@ -38,59 +38,94 @@ class DS18X20Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        data = {}
-
         # TODO: Review device reading re. glitches and timing.
-        log.info('Acquire readings from all DS18X20 sensors attached to bus {}'.format(self.bus.name))
-        for device in self.bus.devices:
-            try:
-                self.read_single(data, device)
-            except:
-                log.exception("Reading DS18X20 device failed")
+        log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
+        devices = self.start_reading()
+        time.sleep(1)
+        data = self.read_devices(devices)
 
         if not data:
-            log.warning("No data from any DS18X20 devices on bus {}".format(self.bus.name))
+            log.warning('No data from any DS18X20 devices on bus "{}"'.format(self.bus.name))
 
-        log.debug("Onewire data: {}".format(data))
+        log.debug('Data from 1-Wire bus "{}" is "{}"'.format(self.bus.name, data))
 
         return data
 
-    def read_single(self, data, device):
+    def start_reading(self):
+
+        log.info('Start conversion for DS18X20 devices on bus "{}"'.format(self.bus.name))
+        effective_devices = []
+        for device in self.bus.devices:
+
+            address = OneWireBus.device_address_ascii(device)
+            device_settings = self.get_device_settings(address)
+
+            enabled = device_settings.get('enabled')
+            if enabled is False:
+                log.info('Skipping DS18X20 device "{}"'.format(address))
+                continue
+
+            self.driver.start_conversion(device)
+
+            effective_devices.append(device)
+
+        return effective_devices
+
+    def read_devices(self, devices):
+
+        data = {}
+        for device in devices:
+
+            address = OneWireBus.device_address_ascii(device)
+            log.info('Reading DS18X20 device "{}"'.format(address))
+            try:
+                value = self.driver.read_temp_async(device)
+            except:
+                log.exception("Reading DS18X20 device {} failed".format(address))
+                continue
+
+            # Evaluate device response.
+            if value is not None:
+
+                try:
+                    # Compute telemetry field name.
+                    fieldname = self.format_fieldname('temperature', address)
+
+                    # Apply value offset.
+                    offset = self.get_setting(address, 'offset')
+                    if offset is not None:
+                        log.info('Adding offset {} to value {} from device "{}"'.format(offset, value, address))
+                        value += offset
+
+                    # Add value to telemetry message.
+                    data[fieldname] = value
+
+                except:
+                    log.exception('Processing data from DS18X20 device "{}" failed'.format(address))
+                    continue
+
+            else:
+                log.warning('No response from DS18X20 device "{}"'.format(address))
+
+        return data
+
+    def get_setting(self, address, name, default=None):
+        settings = self.get_device_settings(address)
+        value = settings.get(name, default)
+        return value
+
+    def get_device_settings(self, address):
 
         # Compute ASCII representation of device address.
-        address = hexlify(device).decode()
+        address = OneWireBus.device_address_ascii(address)
 
-        enabled = self.get_setting(address, 'enabled')
-        if enabled is False:
-            log.info("Skipping DS18X20 device {}".format(address))
-            return
+        # Get device-specific settings from configuration.
+        for device_settings in self.settings.get('devices', []):
+            if device_settings['address'] == address:
+                return device_settings
 
-        log.info("Reading DS18X20 device {}".format(address))
-        self.driver.start_conversion(device)
-        time.sleep(1)
-        value = self.driver.read_temp_async(device)
+        return {}
 
-        # Evaluate device response.
-        if value is not None:
-
-            # Compute telemetry field name.
-            fieldname = self.format_fieldname('temperature', address)
-
-            # Apply value offset.
-            offset = self.get_setting(address, 'offset')
-            if offset is not None:
-                log.info('Adding offset {} to value {} from sensor {}'.format(offset, value, address))
-                value += offset
-
-            # Add value to telemetry message.
-            data[fieldname] = value
-
-        else:
-            log.warning("No response from DS18X20 device {}".format(address))
-
-        time.sleep(1)
-
-    def get_setting(self, address, name):
-        device_settings = self.settings.get('devices', {})
-        value = device_settings.get(address, {}).get(name)
-        return value
+    def get_device_description(self, address):
+        device_settings = self.get_device_settings(address)
+        return device_settings.get('description')
