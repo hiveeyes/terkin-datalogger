@@ -205,7 +205,7 @@ class OneWireBus(AbstractBus):
         Resetting the 1-Wire device in case of leftovers
         """
         self.adapter.reset()
-        time.sleep(1)
+        time.sleep(0.750)
         # Scan for 1-Wire devices and populate `devices`.
         # TODO: Refactor things specific to DS18x20 devices elsewhere.
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
