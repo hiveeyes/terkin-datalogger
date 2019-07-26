@@ -62,6 +62,12 @@ Ideas
 - When halting the datalogger using ``CTRL+C``, another ``datalogger.start()`` will register all sensors again ;[
 - Notify user about pulling into maintenance mode
 - Enumerate all DS18B20 sensors and provide over HTTP
+- Write description to prettified sensor output
+- Install from::
+
+    pycopy-collections==0.1.3
+    pycopy-collections.defaultdict==0.3
+
 
 
 Prio 1

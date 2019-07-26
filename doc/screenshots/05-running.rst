@@ -99,7 +99,30 @@ Screenshot from a typical measurement cycle with deep sleep.
        20.2319 [terkin.sensor            ] INFO   : Found bus by name "i2c:0": <I2CBus object at 3f98cee0>
        20.2518 [terkin.datalogger        ] INFO   : --- loop ---
        20.2643 [terkin.datalogger        ] INFO   : Reading 4 sensor ports
-       25.6847 [terkin.datalogger        ] INFO   : Sensor data:  {'temperature.0x77.i2c:0': 27.15, 'temperature.28ff641d8fc3944f.onewire:0': 24.75, 'pressure.0x77.i2c:0': 1005.95, 'memfree': 2276320, 'temperature.28ff641d8fdf18c1.onewire:0': 25.8125, 'humidity.0x77.i2c:0': 38.3, 'weight': 85490.32}
+       25.6847 [terkin.datalogger        ] INFO   : Sensor data:
+
+               humidity.0x77.i2c:0                          53.12    Temperatur und Feuchte außen
+               pressure.0x77.i2c:0                        1010.59    Temperatur und Feuchte außen
+               scale.0.kg                                   0.767    Waage 1
+               scale.0.offset                             87448.7    Waage 1
+               scale.0.raw                                70000.2    Waage 1
+               scale.0.scale                               -22743    Waage 1
+               system.memfree                             2148448
+               system.runtime                                  12
+               system.temperature                         39.3913
+               system.time                                     32
+               system.uptime                              4180.08
+               system.voltage                               3.822
+               system.wifi.bandwidth                            2
+               system.wifi.channel                              8
+               system.wifi.country                             DE
+               system.wifi.max_tx_power                        78
+               system.wifi.rssi                               -52
+               temperature.0x77.i2c:0                       22.86    Temperatur und Feuchte außen
+               temperature.28ff641d8fc3944f.onewire:0      22.705    Wabengasse 1, Rahmen 2
+               temperature.28ff641d8fdf18c1.onewire:0      26.545    Wabengasse 1, Rahmen 1
+               weight.0                                     0.767    Waage 1
+
        25.7158 [terkin.telemetry         ] INFO   : Telemetry transport: MQTT over TCP over WiFi
        25.8643 [terkin.telemetry         ] INFO   : Starting connection to MQTT broker. client_id=terkin.807d3ac342bc, netloc=swarm.hiveeyes.org
        26.5122 [terkin.telemetry         ] INFO   : Connecting to MQTT broker at swarm.hiveeyes.org
