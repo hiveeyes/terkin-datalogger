@@ -140,6 +140,9 @@ class AbstractSensor:
         fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
         return fieldname
 
+    def serialize(self):
+        return dict(serialize_som(self.__dict__, stringify=['bus']))
+
 
 class BusType:
 
@@ -173,6 +176,12 @@ class AbstractBus:
     def register_pin(self, name, pin):
         self.pins[name] = pin
 
+    def serialize(self):
+        info = dict(serialize_som(self.__dict__))
+        # FIXME: Why is that?
+        info.update({'name': self.name, 'type': self.type})
+        return info
+
 
 class OneWireBus(AbstractBus):
     """
@@ -204,6 +213,12 @@ class OneWireBus(AbstractBus):
 
     def get_devices_ascii(self):
         return list(map(self.device_address_ascii, self.devices))
+
+    def serialize(self):
+        info = super().serialize()
+        if 'devices' in info:
+            info['devices'] = self.get_devices_ascii()
+        return info
 
     @staticmethod
     def device_address_ascii(address):
@@ -241,3 +256,36 @@ class I2CBus(AbstractBus):
         """
         log.info('Turning off I2C bus {}'.format(self.name))
         self.adapter.deinit()
+
+
+def serialize_som(thing, stringify=None):
+    """
+    Serialize the sensor object model to a representation
+    suitable to be served for the device API.
+    """
+    stringify = stringify or []
+
+    if isinstance(thing, list):
+        hm = []
+        for item in thing:
+            hm.append(serialize_som(item))
+        return hm
+
+    elif isinstance(thing, dict):
+        newthing = {}
+        for key, value in thing.items():
+            if key in stringify:
+                newthing[key] = str(value)
+            else:
+                newthing[key] = serialize_som(value)
+        return newthing
+
+    elif isinstance(thing, (str, int, float, bool, set)) or type(thing) is type(None):
+        return thing
+
+    else:
+        if hasattr(thing, 'serialize'):
+            thing = thing.serialize()
+        else:
+            thing = str(thing)
+        return thing

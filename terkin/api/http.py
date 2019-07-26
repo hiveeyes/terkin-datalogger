@@ -15,10 +15,14 @@
 import json
 
 import machine
+
+from copy import deepcopy
 from microWebSrv import MicroWebSrv
 from microDNSSrv import MicroDNSSrv
 
 from terkin import logging
+from terkin.sensor import BusType
+from terkin.sensor.core import serialize_som
 
 log = logging.getLogger(__name__)
 
@@ -214,9 +218,38 @@ class TerkinHttpApi:
         buffer.seek(0)
         return buffer
 
-    @MicroWebSrv.route('/api/v1/sensors/<sensor>')
-    def sensors(httpClient, httpResponse, routeArgs):
-        sensor = routeArgs['sensor']
+    @MicroWebSrv.route('/api/v1/peripherals/busses')
+    def sensor_index(httpClient, httpResponse):
+        sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
+        som_info = serialize_som(sensor_manager.busses)
+        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=som_info)
+
+    @MicroWebSrv.route('/api/v1/peripherals/sensors')
+    def sensor_index(httpClient, httpResponse):
+        sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
+        som_info = serialize_som(sensor_manager.sensors)
+        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=som_info)
+
+    @MicroWebSrv.route('/api/v1/sensors/ds18b20')
+    def sensor_index_ds18b20(httpClient, httpResponse):
+        sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
+        ds18b20_sensors = []
+        #print('sensor_manager.busses:', sensor_manager.busses)
+
+        # Collect information about all DS18B20 sensors connected to all 1-Wire busses.
+        for sensor in sensor_manager.sensors:
+            if not hasattr(sensor, 'type') or sensor.type != 'DS18B20':
+                continue
+            bus_info = {
+                'bus': sensor.bus.name,
+                'pin': sensor.bus.pins.get('data'),
+            }
+            for address in sensor.bus.get_devices_ascii():
+                sensor_info = deepcopy(bus_info)
+                sensor_info['address'] = address
+                sensor_info['description'] = sensor.get_device_description(address)
+                ds18b20_sensors.append(sensor_info)
+        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=ds18b20_sensors)
 
     # ====
     # Demo

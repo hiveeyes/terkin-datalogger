@@ -92,6 +92,7 @@ Development
 - Add ``id`` attribute to bus configuration settings
 - Refactor and improve DS18B20 settings, reading and processing
 - Improve prettified sensor readings log output
+- Improve HTTP API
 
 
 2019-06-22 0.5.1

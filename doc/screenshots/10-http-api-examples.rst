@@ -155,27 +155,44 @@ Busses
     {
         "i2c:0": {
             "adapter": "I2C(0, I2C.MASTER, baudrate=100000)",
-            "bus_number": 0,
             "devices": [
                 119
             ],
             "name": "i2c:0",
+            "number": 0,
             "pins": {
                 "scl": "P10",
                 "sda": "P9"
             },
+            "settings": {
+                "enabled": true,
+                "family": "i2c",
+                "id": "i2c:0",
+                "number": 0,
+                "pin_scl": "P10",
+                "pin_sda": "P9"
+            },
             "type": "i2c"
         },
         "onewire:0": {
-            "adapter": "<OneWire object at 3f9abab0>",
-            "bus_number": 0,
+            "adapter": "<OneWire object at 3f9abb30>",
             "devices": [
                 "28ff641d8fdf18c1",
                 "28ff641d8fc3944f"
             ],
+            "name": "onewire:0",
+            "number": 0,
             "pins": {
                 "data": "P11"
-            }
+            },
+            "settings": {
+                "enabled": true,
+                "family": "onewire",
+                "id": "onewire:0",
+                "number": 0,
+                "pin_data": "P11"
+            },
+            "type": "onewire"
         }
     }
 
@@ -270,6 +287,28 @@ Sensors
                 "id": "bme280-1",
                 "type": "BME280"
             }
+        }
+    ]
+
+
+DS18B20 Sensors
+===============
+::
+
+    http GET "http://$(cat .terkin/floatip)/api/v1/sensors/ds18b20"
+
+    [
+        {
+            "address": "28ff641d8fdf18c1",
+            "bus": "onewire:0",
+            "description": "Wabengasse 1, Rahmen 1",
+            "pin": "P11"
+        },
+        {
+            "address": "28ff641d8fc3944f",
+            "bus": "onewire:0",
+            "description": "Wabengasse 1, Rahmen 2",
+            "pin": "P11"
         }
     ]
 

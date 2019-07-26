@@ -73,10 +73,9 @@ Restart
     POST /restart
 
 
-*********************
-Application endpoints
-*********************
-
+******************
+Settings endpoints
+******************
 
 Get single setting
 ==================
@@ -91,13 +90,6 @@ Request::
     PUT /api/v1/setting?name=<name>
     Content-Type: application/json
 
-Get last reading
-================
-Request::
-
-    GET /api/v1/reading/last
-
-
 Settings JSON
 =============
 Retrieve dynamic runtime settings in JSON format::
@@ -109,6 +101,34 @@ Settings Python
 Retrieve global static ``settings.py`` in Python format::
 
     GET /api/v1/settings?format=python
+
+
+*********************
+Peripherals endpoints
+*********************
+
+Request information about busses::
+
+    GET /api/v1/peripherals/busses
+
+Request information about sensors::
+
+    GET /api/v1/peripherals/sensors
+
+Request information about DS18B20 sensors::
+
+    GET /api/v1/sensors/ds18b20
+
+
+**************
+Data endpoints
+**************
+
+Get last reading
+================
+Request::
+
+    GET /api/v1/reading/last
 
 
 **************
