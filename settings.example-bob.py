@@ -216,6 +216,7 @@ sensors = {
     ],
     'busses': [
         {
+            "id": "bus-i2c-0",
             "family": "i2c",
             "number": 0,
             "enabled": True,
@@ -223,6 +224,7 @@ sensors = {
             "pin_scl": "P10",
         },
         {
+            "id": "bus-onewire-0",
             "family": "onewire",
             "number": 0,
             "enabled": True,
