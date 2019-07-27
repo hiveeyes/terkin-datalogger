@@ -94,6 +94,7 @@ Development
 - Improve prettified sensor readings log output
 - Improve HTTP API
 - Adjust waiting time after resetting 1-Wire bus
+- Improve initialization robustness with bus device objects
 
 
 2019-06-22 0.5.1

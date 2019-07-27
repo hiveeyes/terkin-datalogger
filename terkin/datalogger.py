@@ -148,7 +148,7 @@ class TerkinDatalogger:
         # Setup sensors.
         self.device.watchdog.feed()
         bus_settings = self.settings.get('sensors.busses')
-        self.sensor_manager.register_busses(bus_settings)
+        self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
 
         # Power up sensor peripherals.

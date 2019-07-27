@@ -39,32 +39,41 @@ class SensorManager:
     def get_sensor_by_name(self, name):
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
-    def register_busses(self, busses):
+    def setup_busses(self, busses_settings):
         """
         Register configured I2C, OneWire and SPI busses.
         """
-        log.info("Starting all busses %s", busses)
-        for bus_settings in busses:
+        log.info("Starting all busses %s", busses_settings)
+        for bus_settings in busses_settings:
 
             if bus_settings.get("enabled") is False:
-                log.info('Bus "{}" is disabled, skipping'.format(bus_settings.name))
+                log.info('Bus with id "{}" and family "{}" is disabled, '
+                         'skipping registration'.format(bus_settings.get('id'), bus_settings.get('family')))
                 continue
 
-            if bus_settings['family'] == BusType.OneWire:
-                owb = OneWireBus(bus_settings)
-                owb.register_pin("data", bus_settings['pin_data'])
-                owb.start()
-                self.register_bus(owb)
+            try:
+                self.setup_bus(bus_settings)
+            except:
+                log.exception('Registering bus failed. settings={}'.format(bus_settings))
 
-            elif bus_settings['family'] == BusType.I2C:
-                i2c = I2CBus(bus_settings)
-                i2c.register_pin("sda", bus_settings['pin_sda'])
-                i2c.register_pin("scl", bus_settings['pin_scl'])
-                i2c.start()
-                self.register_bus(i2c)
+    def setup_bus(self, bus_settings):
+        bus_family = bus_settings.get('family')
 
-            else:
-                log.warning("Invalid bus configuration: %s", bus_settings)
+        if bus_family == BusType.OneWire:
+            owb = OneWireBus(bus_settings)
+            owb.register_pin("data", bus_settings['pin_data'])
+            owb.start()
+            self.register_bus(owb)
+
+        elif bus_family == BusType.I2C:
+            i2c = I2CBus(bus_settings)
+            i2c.register_pin("sda", bus_settings['pin_sda'])
+            i2c.register_pin("scl", bus_settings['pin_scl'])
+            i2c.start()
+            self.register_bus(i2c)
+
+        else:
+            log.error("Invalid bus configuration: %s", bus_settings)
 
     def power_on(self):
         self.power_toggle_busses('power_on')
@@ -209,7 +218,7 @@ class OneWireBus(AbstractBus):
         # Scan for 1-Wire devices and populate `devices`.
         # TODO: Refactor things specific to DS18x20 devices elsewhere.
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
-        log.info("Found {} 1-Wire (DS18x20) devices: {}.".format(len(self.devices), self.get_devices_ascii()))
+        log.info("Found {} 1-Wire (DS18x20) devices: {}".format(len(self.devices), self.get_devices_ascii()))
 
     def get_devices_ascii(self):
         return list(map(self.device_address_ascii, self.devices))
