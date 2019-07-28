@@ -3,9 +3,11 @@
 # ======================
 $(eval pycom_fwtool_cli_macos := /Applications/Pycom\ Firmware\ Update.app/Contents/Resources/pycom-fwtool-cli)
 $(eval pycom_fwtool_cli_windows := /mnt/c/Program\ Files\ \(x86\)/Pycom/Pycom\ Firmware\ Update/pycom-fwtool-cli.exe)
+$(eval pycom_fwtool_cli_linux := /usr/local/bin/pycom-fwtool-cli)
 
 PYCOM_MACOS := $(or $(and $(wildcard $(pycom_fwtool_cli_macos)),1),0)
 PYCOM_WINDOWS := $(or $(and $(wildcard $(pycom_fwtool_cli_windows)),1),0)
+PYCOM_LINUX := $(or $(and $(wildcard $(pycom_fwtool_cli_linux)),1),0)
 
 ifeq ($(PYCOM_MACOS),1)
 	pycom_fwtool_cli := $(pycom_fwtool_cli_macos)
@@ -13,7 +15,11 @@ ifeq ($(PYCOM_MACOS),1)
 endif
 ifeq ($(PYCOM_WINDOWS),1)
 	pycom_fwtool_cli := $(pycom_fwtool_cli_windows)
-        pycom_firmware_port :=$(subst /dev/ttyS, COM, $(mcu_port))
+	pycom_firmware_port :=$(subst /dev/ttyS, COM, $(mcu_port))
+endif
+ifeq ($(PYCOM_LINUX),1)
+	pycom_fwtool_cli := $(pycom_fwtool_cli_linux)
+	pycom_firmware_port := $(mcu_port)
 endif
 
 check-pycom-fwtool:
