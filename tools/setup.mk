@@ -148,6 +148,9 @@ download-requirements-real:
     # 4. Install driver for SI7021
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/SI7021/e5d49689/SI7021.py
 
+	# 5. Install INA219 library
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/chrisb2/pyb_ina219/f427017/ina219.py
+
 
 download-requirements-ui:
 
