@@ -103,6 +103,7 @@ Development
   - Fix interactive confirmation
   - Add advices to guide user on errors
   - Improve Windows compatibility for the ``ng`` series of commands
+- Add colors to ``mpy-mk``
 
 
 2019-06-22 0.5.1

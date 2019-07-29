@@ -27,9 +27,10 @@ check-pycom-fwtool:
 		echo "INFO: Found Pycom Firmware Updater at \"$(pycom_fwtool_cli)\""; \
 	else \
 		echo; \
-		echo "ERROR: Pycom Firmware Updater not found"; \
+		echo "$(ERROR) Pycom Firmware Updater not found"; \
 		echo; \
-		echo "ADVICE: Please go to https://docs.pycom.io/gettingstarted/installation/firmwaretool/."; \
+		echo "$(ADVICE) Please go to https://docs.pycom.io/gettingstarted/installation/firmwaretool/ and follow "; \
+		echo "          the instructions to download the appropriate program matching your operating system."; \
 		echo; \
 		exit 1; \
 	fi

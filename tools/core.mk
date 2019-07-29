@@ -98,3 +98,17 @@ confirm:
 	@if test "$(retval)" != "y"; then \
 		exit 1; \
 	fi
+
+# http://jamesdolan.blogspot.com/2009/10/color-coding-makefile-output.html
+NO_COLOR=\x1b[0m
+GREEN_COLOR=\x1b[32;01m
+RED_COLOR=\x1b[31;01m
+ORANGE_COLOR=\x1b[38;5;208m
+YELLOW_COLOR=\x1b[33;01m
+CYAN_COLOR=\x1b[36;01m
+
+OK=$(GREEN_COLOR)[OK]$(NO_COLOR)
+INFO=$(RED_COLOR)[INFO]   $(NO_COLOR)
+ERROR=$(RED_COLOR)[ERROR]  $(NO_COLOR)
+WARNING=$(ORANGE_COLOR)[WARNING]$(NO_COLOR)
+ADVICE=$(CYAN_COLOR)[ADVICE] $(NO_COLOR)
