@@ -308,6 +308,10 @@ def format_mac_address(mac_address):
 
 def boot_monitor(monitor):
 
+    welcome_message = "Starting network monitor"
+    log.info(welcome_message)
+    notify_user(APP_NAME, welcome_message)
+
     networks = get_local_networks()
     log.info(f'IP networks found: {networks}')
 

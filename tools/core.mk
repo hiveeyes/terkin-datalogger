@@ -30,18 +30,31 @@ setup-virtualenv3:
 setup-environment: setup-virtualenv3
 
 
-# -----------
-# Workstation
-# -----------
-# Minimal operating system detection for Windows
+# --------------
+# Workstation OS
+# --------------
+
+# Poor man's operating system detection
 # https://renenyffenegger.ch/notes/development/make/detect-os
 # https://gist.github.com/sighingnow/deee806603ec9274fd47
-# TODO: Expand this.
 # https://stackoverflow.com/questions/714100/os-detecting-makefile/14777895#14777895
+
+UNAME=$(shell uname -a 2> /dev/null)
+OSNAME=$(shell uname -s 2> /dev/null)
+
 ifeq ($(OS),Windows_NT)
     $(eval RUNNING_IN_HELL := true)
 endif
+ifneq (,$(findstring Microsoft,$(UNAME)))
+    $(eval RUNNING_IN_WSL := true)
+endif
 
+## Display operating system information
+uname:
+	@echo "OSNAME           $(OSNAME)"
+	@echo "UNAME            $(UNAME)"
+	@echo "RUNNING_IN_HELL  $(RUNNING_IN_HELL)"
+	@echo "RUNNING_IN_WSL   $(RUNNING_IN_WSL)"
 
 
 # ----------
@@ -86,7 +99,7 @@ sleep:
 
 notify:
 	@echo "$(status): $(message)"
-	@if test "${RUNNING_IN_HELL}" != "true"; then \
+	@if test "${RUNNING_IN_HELL}" != "true" -a "${RUNNING_IN_WSL}" != "true"; then \
 		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
 	fi
 
