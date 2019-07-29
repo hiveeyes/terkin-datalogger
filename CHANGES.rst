@@ -99,7 +99,7 @@ Development
 - Add ahead-of-time compilation using ``mpy-cross``
   through ``make recycle-ng MPY_CROSS=true``
 - Refactoring, documentation, cleanups, naming things
-- Improve user experience with ``mpy-mk`` sandbox toolkit
+- Improve user experience with ``mpy-mk`` sandbox toolkit. Thanks, `@rohlan`_ and `@ClemensGruber`_.
   - Fix interactive confirmation
   - Add advices to guide user on errors
   - Improve Windows compatibility for the ``ng`` series of commands
@@ -390,3 +390,4 @@ Development
 .. _@pawelzny: https://github.com/pawelzny/
 .. _@ayoy: https://github.com/ayoy
 .. _@pinguin999: https://github.com/pinguin999
+.. _@rohlan: https://github.com/rohlan
