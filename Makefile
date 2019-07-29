@@ -101,9 +101,22 @@ ip-address:
 	@echo
 
 
-# -----------------------
-# File transfer & Execute
-# -----------------------
+# -----------------------------
+# File compilation and transfer
+# -----------------------------
+
+## Compile all library files using mpy-cross
+mpy-compile: mpy-cross-setup
+
+	@echo 'INFO: Ahead-of-time compiling to .mpy bytecode'
+
+	@echo 'INFO: Populating folder "lib-mpy"'
+	@rm -rf lib-mpy
+
+	@$(python2) $(mpy-cross-all) --out lib-mpy dist-packages
+	@$(python2) $(mpy-cross-all) --out lib-mpy lib
+	@$(python2) $(mpy-cross-all) --out lib-mpy/terkin terkin
+	@$(python2) $(mpy-cross-all) --out lib-mpy/hiveeyes hiveeyes
 
 ## Upload framework, program and settings and restart attached to REPL
 recycle: install-framework install-sketch reset-device-attached
@@ -164,7 +177,14 @@ install: install-requirements install-framework install-sketch
 
 ## Install all files to the device, using FTP
 install-ftp:
-	@lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc
+
+	@if test "${mpy_cross}" = "true"; then \
+		$(MAKE) mpy-compile; \
+		lftp -u micro,python ${mcu_port} < tools/upload-mpy.lftprc; \
+	else \
+		lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc; \
+	fi
+
 	@# TODO: Use lftp.exe on Windows at C:\ProgramData\chocolatey\bin\lftp.exe
 	@# Installed through chocolatey by "choco install lftp".
 	@echo "lftp status: $$?"

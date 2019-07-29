@@ -35,8 +35,13 @@ def extend_syspath():
     expecting anything to work.
     """
     import sys
+
+    # vanilla: ['', '/flash', '/flash/lib']
+
+    sys.path[0:0] = ['/flash/lib-mpy']
     sys.path.extend(['dist-packages', 'terkin', 'hiveeyes'])
-    #print('[boot.py] INFO: Python module search path is:', sys.path)
+
+    print('[boot.py] INFO: Python module search path is:', sys.path)
 
 
 if __name__ == '__main__':

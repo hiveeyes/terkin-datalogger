@@ -17,6 +17,7 @@ $(eval miniterm     := $(venv3path)/bin/miniterm.py)
 $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 
 $(eval github-release := ./bin/github-release)
+$(eval mpy-cross-all := ./bin/mpy_cross_all.py)
 
 # Setup Python virtualenv
 setup-virtualenv2:

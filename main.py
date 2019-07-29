@@ -26,10 +26,14 @@ Then, invoke::
 to upload the program and reset the ESP32.
 """
 
+print('[main.py] INFO: Importing settings')
 import settings
+
+print('[main.py] INFO: Loading modules')
 from terkin import logging
 from hiveeyes.datalogger import HiveeyesDatalogger
 
+print('[main.py] INFO: Getting logger')
 log = logging.getLogger(__name__)
 
 
@@ -56,6 +60,7 @@ class BobDatalogger(HiveeyesDatalogger):
 datalogger = None
 def main():
     """Start the data logger application."""
+    print('[main.py] INFO: Starting Terkin Datalogger')
     global datalogger
     datalogger = BobDatalogger(settings)
     datalogger.setup()

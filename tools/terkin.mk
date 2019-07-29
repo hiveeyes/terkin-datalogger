@@ -35,3 +35,11 @@ check-mcu-port:
         echo "MCU port could not be obtained, please set MCU_PORT environment variable or populate .terkin/floatip"; \
         exit 1; \
 	fi
+
+
+# ===========
+# Compilation
+# ===========
+
+# Whether to use mpy-cross
+$(eval mpy_cross     := ${MPY_CROSS})

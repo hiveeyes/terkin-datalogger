@@ -65,3 +65,16 @@ reset-device-attached: check-mcu-port
 reset-ampy:
 	$(ampy) --port $(serial_port) --delay 1 reset
 	@echo
+
+
+# -------------------------
+# Ahead of time compilation
+# -------------------------
+
+mpy-cross-setup: setup-virtualenv2
+
+	@# mpy-cross
+	@$(pip2) --quiet install mpy-cross==1.9.4
+
+	@# mpy-cross-all
+	@wget --quiet --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
