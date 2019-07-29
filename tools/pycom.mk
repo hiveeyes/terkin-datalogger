@@ -32,6 +32,9 @@ check-pycom-fwtool:
 		echo "$(ADVICE) Please go to https://docs.pycom.io/gettingstarted/installation/firmwaretool/ and follow "; \
 		echo "          the instructions to download the appropriate program matching your operating system."; \
 		echo; \
+		echo "          If you are running Linux, https://software.pycom.io/downloads/linux-1.15.1.html"; \
+		echo "          might make you happy."; \
+		echo; \
 		exit 1; \
 	fi
 

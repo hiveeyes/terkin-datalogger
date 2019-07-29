@@ -104,6 +104,7 @@ Development
   - Add advices to guide user on errors
   - Improve Windows compatibility for the ``ng`` series of commands
 - Add colors to ``mpy-mk``
+- Add note about installing ``pycom-fwtool-cli`` on Linux. Thanks, weef.
 
 
 2019-06-22 0.5.1
