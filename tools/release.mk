@@ -2,6 +2,8 @@
 # github-release program
 # ======================
 
+$(eval github-release := ./bin/github-release)
+
 check-github-release:
 	@test -e $(github-release) || (echo 'ERROR: "github-release" not found.\nPlease install "github-release" to "./bin/github-release".\nSee https://github.com/aktau/github-release\n'; exit 1)
 

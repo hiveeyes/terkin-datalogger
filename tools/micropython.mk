@@ -1,10 +1,17 @@
-# ================
-# Action utilities
-# ================
+# ============
+# Dependencies
+# ============
 
 $(eval rshell_options  := --port $(mcu_port) --user micro --password python --buffer-size $(mcu_transfer_buffer) --quiet)
 #$(eval rshell_options  := --port $(mcu_port) --user micro --password python --buffer-size $(mcu_transfer_buffer) --timing)
 
+$(eval mpy-cross-all := ./bin/mpy_cross_all.py)
+
+
+
+# ================
+# Action utilities
+# ================
 
 ## List all serial interfaces
 list-serials:
@@ -83,3 +90,35 @@ mpy-cross-setup: setup-virtualenv2
 
 	@# mpy-cross-all
 	@wget --quiet --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
+
+
+# ----
+# lftp
+# ----
+
+# On Windows, you might want to install "lftp" through "Chocolatey" by invoking "choco install lftp".
+# Path to "lftp.exe" would be at C:\ProgramData\chocolatey\bin\lftp.exe then.
+$(eval lftp_unix := lftp)
+$(eval lftp_windows := /mnt/c/ProgramData/chocolatey/bin/lftp.exe)
+
+LFTP_UNIX := $(shell which $(lftp_unix))
+LFTP_WINDOWS := $(or $(and $(wildcard $(lftp_windows)),1),0)
+
+ifneq ($(LFTP_UNIX),)
+	lftp_bin := $(LFTP_UNIX)
+endif
+ifeq ($(LFTP_WINDOWS),1)
+	lftp_bin := $(lftp_windows)
+endif
+
+check-lftp:
+	@echo "INFO: Checking for existance of the \"lftp\" program at \"$(lftp_bin)\""
+	@test -n "$(lftp_bin)" -a -e "$(lftp_bin)" || (echo "\nERROR: \"lftp\" program not found.\nPlease install it on your machine.\n"; exit 1)
+
+lftp: check-lftp
+
+	@# Invoke lftp, platform agnostic
+	$(lftp_bin) -u micro,python ${mcu_port} < ${lftp_recipe}
+
+	@# Path to "lftp.exe" would be at C:\ProgramData\chocolatey\bin\lftp.exe then.
+	@echo "lftp status: $$?"

@@ -16,9 +16,6 @@ $(eval miniterm     := $(venv3path)/bin/miniterm.py)
 
 $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 
-$(eval github-release := ./bin/github-release)
-$(eval mpy-cross-all := ./bin/mpy_cross_all.py)
-
 
 # ------------------
 # Python virtualenvs
@@ -91,4 +88,13 @@ notify:
 	@echo "$(status): $(message)"
 	@if test "${RUNNING_IN_HELL}" != "true"; then \
 		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
+	fi
+
+confirm:
+	@# Prompt the user to confirm action.
+	$(eval retval := $(shell bash -c 'read -s -p "PROMPT: $(text) [y/n] " outcome; echo $$outcome'))
+	@echo
+
+	@if test "$(retval)" != "y"; then \
+		exit 1; \
 	fi

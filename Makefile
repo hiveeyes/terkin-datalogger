@@ -108,9 +108,9 @@ ip-address:
 ## Compile all library files using mpy-cross
 mpy-compile: mpy-cross-setup
 
-	@echo 'INFO: Ahead-of-time compiling to .mpy bytecode'
+	@echo "INFO: Ahead-of-time compiling to .mpy bytecode"
 
-	@echo 'INFO: Populating folder "lib-mpy"'
+	@echo "INFO: Populating folder \"lib-mpy\""
 	@rm -rf lib-mpy
 
 	@$(python2) $(mpy-cross-all) --out lib-mpy dist-packages
@@ -127,17 +127,18 @@ recycle-ng: install-ng
 	@# Conditionally
 	@#$(MAKE) sleep
 
-	@# Prompt the user for action.
-	$(eval retval := $(shell bash -c 'read -s -p "Restart device using the HTTP API [y/n]? " outcome; echo $$outcome'))
-	@if test "$(retval)" = "y"; then \
-		echo; \
-		$(MAKE) restart-device; \
-	else \
-		echo; \
-	fi
+	@# Restart device using HTTP server after prompting the user for confirmation.
+	echo
+	echo "ADVICE: It is crucial all files have been transferred successfully before restarting the device."
+	echo "Otherwise, chances are high the program will crash after restart."
+	echo
+	@$(MAKE) confirm text="Restart device using the HTTP API?"
+
+	$(MAKE) restart-device
 
 ## Upload program and settings and restart attached to REPL
 sketch-and-run: install-sketch reset-device-attached
+
 
 
 # ------------------
@@ -152,14 +153,10 @@ install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
 		$(MAKE) mpy-compile; \
-		lftp -u micro,python ${mcu_port} < tools/upload-mpy.lftprc; \
+		$(MAKE) lftp lftp_recipe=tools/upload-mpy.lftprc; \
 	else \
-		lftp -u micro,python ${mcu_port} < tools/upload-all.lftprc; \
+		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
 	fi
-
-	@# TODO: Use lftp.exe on Windows at C:\ProgramData\chocolatey\bin\lftp.exe
-	@# Installed through chocolatey by "choco install lftp".
-	@echo "lftp status: $$?"
 
 ## Install all files to the device, using best method
 install-ng: check-mcu-port
