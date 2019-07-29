@@ -10,6 +10,11 @@ $(eval rshell_options  := --port $(mcu_port) --user micro --password python --bu
 list-serials:
 	@$(rshell) --list
 
+
+# -------------
+# REPL / rshell
+# -------------
+
 ## Reset port or even USB subsystem
 reset-port:
 ifeq ($(RUNNING_IN_HELL),true)

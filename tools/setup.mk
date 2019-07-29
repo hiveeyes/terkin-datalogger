@@ -11,7 +11,7 @@ download-requirements:
 	$(python3) -m upip install -p $(target_dir) -r requirements-mpy.txt
 
 
-    ## Utilities
+	## Utility libraries
 
 	# Install "os.path" under the different name "os_path"
 	@test -e $(target_dir)/os_path.py || $(fetch) $(target_dir) --output-document=$(target_dir)/os_path.py https://raw.githubusercontent.com/pfalcon/pycopy-lib/7ba2231/os.path/os/path.py

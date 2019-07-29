@@ -57,7 +57,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
             try:
 
                 if sensor_info.get('enabled') is False:
-                    log.info('Sensor with id={} and type={} is disabled, '
+                    log.info('Sensor with id "{}" and type "{}" is disabled, '
                              'skipping registration'.format(sensor_id, sensor_type))
                     continue
 

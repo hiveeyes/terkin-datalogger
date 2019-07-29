@@ -85,17 +85,10 @@ format-flash: check-mcu-port
 	@if test "$(retval)" = "y"; then \
 		echo; \
 		\
-		echo Creating LittleFS filesystem; \
-		$(rshell) $(rshell_options) --quiet repl pyboard 'import pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~'; \
-		\
-		echo Formatting filesystem; \
-		$(rshell) $(rshell_options) --quiet repl pyboard 'import os ~ os.fsformat(\"/flash\") ~'; \
-		\
-		echo Resetting device; \
-		$(rshell) $(rshell_options) --quiet repl pyboard 'import machine ~ machine.reset() ~'; \
-	else \
-		echo; \
+		echo Creating and formatting LittleFS filesystem; \
+		$(rshell) $(rshell_options) --quiet repl pyboard 'import os, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ os.fsformat(\"/flash\") ~'; \
 	fi
+	@echo
 
 ## Erase flash filesystem
 erase-fs: check-mcu-port
@@ -106,6 +99,5 @@ erase-fs: check-mcu-port
 		\
 		echo Erasing filesystem; \
 		$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs; \
-	else \
-		echo; \
 	fi
+	@echo

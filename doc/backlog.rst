@@ -68,6 +68,8 @@ Ideas
     pycopy-collections==0.1.3
     pycopy-collections.defaultdict==0.3
 
+- MQTT authentication with URI parameter and email address as username does not work
+- Build release packages like https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/releases
 
 
 Prio 1

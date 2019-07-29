@@ -19,7 +19,10 @@ $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 $(eval github-release := ./bin/github-release)
 $(eval mpy-cross-all := ./bin/mpy_cross_all.py)
 
-# Setup Python virtualenv
+
+# ------------------
+# Python virtualenvs
+# -------------------
 setup-virtualenv2:
 	@test -e $(python2) || `command -v virtualenv` --python=python2 --no-site-packages $(venv2path)
 
@@ -75,3 +78,17 @@ push:
 
 install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
+
+
+
+# -------------
+# Miscellaneous
+# -------------
+sleep:
+	@sleep 1
+
+notify:
+	@echo "$(status): $(message)"
+	@if test "${RUNNING_IN_HELL}" != "true"; then \
+		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
+	fi

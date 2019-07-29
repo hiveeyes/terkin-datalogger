@@ -98,6 +98,7 @@ Development
 - Add ``mpy-cross-util.py``
 - Add ahead-of-time compilation using ``mpy-cross``
   through ``make recycle-ng MPY_CROSS=true``
+- Refactoring, documentation, cleanups, naming things
 
 
 2019-06-22 0.5.1

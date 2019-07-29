@@ -36,6 +36,27 @@ check-mcu-port:
         exit 1; \
 	fi
 
+## Restart device using the HTTP API
+restart-device:
+	$(eval ip_address := $(shell cat .terkin/floatip))
+
+	@# Notify user about the power cycling.
+	@$(MAKE) notify status=INFO message="Restarting device at IP address $(ip_address) using HTTP API"
+
+	@# Send restart command to HTTP API
+	@# TODO: If this fails, maybe reset automatically using the serial interface.
+	$(eval response := $(shell http --check-status --timeout=3 POST "http://$(ip_address)/restart" 2> /dev/null || (echo "Your command failed with $$?")))
+
+	@# Evaluate response
+	@if test "${response}" = "ACK"; then \
+		$(MAKE) notify status=SUCCESS message="Device restart acknowledged. Please wait some seconds for reboot."; \
+	else \
+		$(MAKE) notify status=ERROR message="Device restart using HTTP API failed. Try using a different method."; \
+	fi
+
+	@# TODO: Actually check if device becomes available again before signalling readyness.
+	@echo "Ready."
+
 
 # ===========
 # Compilation
