@@ -106,6 +106,7 @@ Development
 - Add colors to ``mpy-mk``
 - Add note about installing ``pycom-fwtool-cli`` on Linux. Thanks, weef.
 - ``mpy-mk``: Improve operating system detection
+- ``mpy-mk``: Streamline user interface
 
 
 2019-06-22 0.5.1

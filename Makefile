@@ -63,6 +63,21 @@ include tools/pycom.mk
 include tools/micropython.mk
 
 
+# ----
+# Help
+# ----
+.DEFAULT_GOAL := help
+
+help: show-rules
+	@echo "$$(tput bold)Documentation:$$(tput sgr0)"
+	@echo
+	@echo "Please check https://community.hiveeyes.org/t/operate-the-terkin-datalogger-sandbox/2332 "
+	@echo "in order to get an idea how to operate this software sandbox."
+	@echo
+	@echo "Have fun!"
+	@echo
+
+
 # -----
 # Setup
 # -----
@@ -108,9 +123,9 @@ ip-address:
 ## Compile all library files using mpy-cross
 mpy-compile: mpy-cross-setup
 
-	@echo "INFO: Ahead-of-time compiling to .mpy bytecode"
+	@echo "$(INFO) Ahead-of-time compiling to .mpy bytecode"
 
-	@echo "INFO: Populating folder \"lib-mpy\""
+	@echo "$(INFO) Populating folder \"lib-mpy\""
 	@rm -rf lib-mpy
 
 	@$(python2) $(mpy-cross-all) --out lib-mpy dist-packages
@@ -128,10 +143,12 @@ recycle-ng: install-ng
 	@#$(MAKE) sleep
 
 	@# Restart device using HTTP server after prompting the user for confirmation.
-	echo
-	echo "ADVICE: It is crucial all files have been transferred successfully before restarting the device."
-	echo "Otherwise, chances are high the program will crash after restart."
-	echo
+	@echo
+	@echo "$(WARNING) It is crucial all files have been transferred successfully before restarting the device."
+	@echo "          Otherwise, chances are high the program will crash after restart."
+	@echo
+	@echo "$(ADVICE) You might want to check the output of the file transfer process above for any errors."
+	@echo
 	@$(MAKE) confirm text="Restart device using the HTTP API?"
 
 	$(MAKE) restart-device
@@ -162,7 +179,7 @@ install-ftp:
 install-ng: check-mcu-port
 
 	@# User notification
-	@$(MAKE) notify status=INFO message="Uploading MicroPython code to device"
+	@$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device"
 
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
@@ -171,7 +188,7 @@ install-ng: check-mcu-port
 	fi
 
 	@# User notification
-	@$(MAKE) notify status=INFO message="MicroPython code upload finished"
+	@$(MAKE) notify status=OK status_ansi="$(OK)" message="MicroPython code upload finished"
 
 install-requirements: check-mcu-port
 	$(rshell) $(rshell_options) mkdir /flash/dist-packages

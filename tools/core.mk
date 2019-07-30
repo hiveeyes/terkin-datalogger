@@ -2,6 +2,14 @@
 # Environment
 # -----------
 
+# Better safe than sorry
+export LANG=en_US
+
+# Ignore deprecation warnings in Python
+# https://stackoverflow.com/questions/879173/how-to-ignore-deprecation-warnings-in-python/879249
+export PYTHONWARNINGS=ignore:Deprecation
+
+# Define content of virtualenvs
 $(eval venv2path    := .venv2)
 $(eval pip2         := $(venv2path)/bin/pip)
 $(eval python2      := $(venv2path)/bin/python)
@@ -98,20 +106,38 @@ sleep:
 	@sleep 1
 
 notify:
-	@echo "$(status): $(message)"
+
+	@if test "${status_ansi}" != ""; then \
+		echo "$(status_ansi) $(message)"; \
+    else \
+		echo "$(status) $(message)"; \
+	fi
+
 	@if test "${RUNNING_IN_HELL}" != "true" -a "${RUNNING_IN_WSL}" != "true"; then \
 		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
 	fi
 
-confirm:
-	@# Prompt the user to confirm action.
-	$(eval retval := $(shell bash -c 'read -s -p "PROMPT: $(text) [y/n] " outcome; echo $$outcome'))
-	@echo
+prompt_yesno:
+	$(eval retval := $(shell bash -c 'read -s -p " [y/n] " outcome; echo $$outcome'))
+	@echo $(retval)
 
 	@if test "$(retval)" != "y"; then \
 		exit 1; \
 	fi
 
+confirm:
+	@# Prompt the user to confirm action.
+	@printf "$(CONFIRM) $(text)"
+	@$(MAKE) prompt_yesno
+
+
+# Variable debugging.
+# https://blog.jgc.org/2015/04/the-one-line-you-should-add-to-every.html
+## It allows you to quickly get the value of any makefile variable, e.g. "make print-MCU_PORT"
+print-%: ; @echo $*=$($*)
+
+
+# Colors!
 # http://jamesdolan.blogspot.com/2009/10/color-coding-makefile-output.html
 NO_COLOR=\x1b[0m
 GREEN_COLOR=\x1b[32;01m
@@ -120,8 +146,9 @@ ORANGE_COLOR=\x1b[38;5;208m
 YELLOW_COLOR=\x1b[33;01m
 CYAN_COLOR=\x1b[36;01m
 
-OK=$(GREEN_COLOR)[OK]$(NO_COLOR)
-INFO=$(RED_COLOR)[INFO]   $(NO_COLOR)
+OK=$(GREEN_COLOR)[OK]     $(NO_COLOR)
+INFO=$(NO_COLOR)[INFO]   $(NO_COLOR)
 ERROR=$(RED_COLOR)[ERROR]  $(NO_COLOR)
 WARNING=$(ORANGE_COLOR)[WARNING]$(NO_COLOR)
 ADVICE=$(CYAN_COLOR)[ADVICE] $(NO_COLOR)
+CONFIRM=$(YELLOW_COLOR)[CONFIRM]$(NO_COLOR)

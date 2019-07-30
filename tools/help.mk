@@ -1,12 +1,10 @@
-.DEFAULT_GOAL := help
-
 # See <https://gist.github.com/klmr/575726c7e05d8780505a> for explanation.
 # See also
 # - https://swcarpentry.github.io/make-novice/08-self-doc/
 # - https://www.kisphp.com/linux/tutorials/self-documenting-makefile
-.PHONY: help
+.PHONY: show-rules
 
-help:
+show-rules:
 	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
 	@echo
 	@sed -n -e "/^## / { \

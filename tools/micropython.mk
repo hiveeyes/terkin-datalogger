@@ -112,7 +112,7 @@ ifeq ($(LFTP_WINDOWS),1)
 endif
 
 check-lftp:
-	@echo "INFO: Checking for existance of the \"lftp\" program at \"$(lftp_bin)\""
+	@echo "$(INFO) Checking for existance of the \"lftp\" program at \"$(lftp_bin)\""
 	@test -n "$(lftp_bin)" -a -e "$(lftp_bin)" || (echo "\nERROR: \"lftp\" program not found.\nPlease install it on your machine.\n"; exit 1)
 
 lftp: check-lftp

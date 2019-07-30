@@ -24,7 +24,7 @@ endif
 
 check-pycom-fwtool:
 	@if test "${pycom_fwtool_cli}" != ""; then \
-		echo "INFO: Found Pycom Firmware Updater at \"$(pycom_fwtool_cli)\""; \
+		echo "$(OK) Found Pycom Firmware Updater at \"$(pycom_fwtool_cli)\""; \
 	else \
 		echo; \
 		echo "$(ERROR) Pycom Firmware Updater not found"; \
@@ -41,11 +41,11 @@ check-pycom-fwtool:
 check-firmware-upgrade-port:
 	@if test "${mcu_port_type}" = "ip"; then \
 		echo; \
-		echo "ERROR: Unable to install firmware over IP"; \
+		echo "$(ERROR) Unable to install firmware over IP"; \
 		echo; \
-		echo "ADVICE: Please adjust the \"MCU_PORT\" environment variable to point to a serial device spec like"; \
+		echo "$(ADVICE) Please adjust the \"MCU_PORT\" environment variable to point to a serial device spec like"; \
 		echo; \
-		echo "    export MCU_PORT=/dev/cu.usbmodemPy002342   # reka"; \
+		echo "              export MCU_PORT=/dev/cu.usbmodemPy002342   # reka"; \
 		echo; \
 		exit 1; \
 	fi
@@ -84,7 +84,7 @@ chip_id: check-mcu-port
 ## Install Pycom firmware on device
 install-pycom-firmware: install-pycom-firmware-preflight download-pycom-firmware
 	echo "INFO: Installing firmware \"$(pycom_firmware_file)\""
-	"$(pycom_fwtool_cli)" --verbose --port "$(pycom_firmware_port)" flash --tar "dist-firmwares/$(pycom_firmware_file)"
+	$(pycom_fwtool_cli) --verbose --port "$(pycom_firmware_port)" flash --tar "dist-firmwares/$(pycom_firmware_file)"
 
 ## Format flash filesystem with LittleFS
 format-flash: check-mcu-port
@@ -97,6 +97,7 @@ format-flash: check-mcu-port
 
 	@echo Creating and formatting LittleFS filesystem
 	$(rshell) $(rshell_options) --quiet repl pyboard 'import os, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ os.fsformat(\"/flash\") ~'
+	@echo
 
 ## Erase flash filesystem
 erase-fs: check-mcu-port
