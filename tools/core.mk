@@ -139,12 +139,17 @@ print-%: ; @echo $*=$($*)
 
 # Colors!
 # http://jamesdolan.blogspot.com/2009/10/color-coding-makefile-output.html
+# http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 NO_COLOR=\x1b[0m
+MAGENTA_DARK_COLOR=\x1b[35m
 GREEN_COLOR=\x1b[32;01m
 RED_COLOR=\x1b[31;01m
 ORANGE_COLOR=\x1b[38;5;208m
 YELLOW_COLOR=\x1b[33;01m
 CYAN_COLOR=\x1b[36;01m
+BOLD=\x1b[1m
+UNDERLINE=\x1b[4m
+REVERSED=\x1b[7m
 
 OK=$(GREEN_COLOR)[OK]     $(NO_COLOR)
 INFO=$(NO_COLOR)[INFO]   $(NO_COLOR)
@@ -152,3 +157,11 @@ ERROR=$(RED_COLOR)[ERROR]  $(NO_COLOR)
 WARNING=$(ORANGE_COLOR)[WARNING]$(NO_COLOR)
 ADVICE=$(CYAN_COLOR)[ADVICE] $(NO_COLOR)
 CONFIRM=$(YELLOW_COLOR)[CONFIRM]$(NO_COLOR)
+
+
+colors:
+	@echo "$(MAGENTA_DARK_COLOR)Magenta 8$(NO_COLOR)"
+	@echo "$(YELLOW_COLOR)Bright Yellow 16$(NO_COLOR)"
+	@echo "$(ORANGE_COLOR)Orange 256$(NO_COLOR)"
+	@echo "$$(tput setaf 6)Cyan (tput)$$(tput sgr0)"
+	@echo "$$(tput setaf 6)$$(tput bold)Cyan Bold (tput)$$(tput sgr0)"

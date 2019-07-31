@@ -110,6 +110,7 @@ Development
 - Another attempt at touch button wakeup
 - mpy-mk: Improve cross compilation
 - sensors: Use BME280 library by robert-hh
+- mpy-mk: Add "make colors" for colored output testing on Windows
 
 
 2019-06-22 0.5.1
