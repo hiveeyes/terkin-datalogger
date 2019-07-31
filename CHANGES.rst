@@ -112,6 +112,7 @@ Development
 - sensors: Use BME280 library by robert-hh
 - mpy-mk: Add "make colors" for colored output testing on Windows
 - Make MicroTerkin Agent compatible with Python3.5
+- Attempt to automate installation of the modem firmware (WIP)
 
 
 2019-06-22 0.5.1

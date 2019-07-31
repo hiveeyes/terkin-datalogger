@@ -107,3 +107,42 @@ erase-fs: check-mcu-port
 
 	@echo Erasing filesystem
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
+
+
+# ==============================
+# Sequans modem firmware updater
+# ==============================
+
+# Sequans CAT-M1 firmware vs. Sequans NB-IoT firmware
+# Firmware upgrade via UART Serial Interface
+# https://github.com/pycom/pycom-libraries/tree/master/lib/sqnsupgrade#via-uart-serial-interface
+# https://ptrace.hiveeyes.org/sqns/
+
+## Put Sequans modem into recovery mode to prepare firmware upgrade
+prepare-modem-upgrade:
+	@echo
+	@echo "$(INFO) As soon as the modem is in recovery mode, it will be ready for a full firmware ugprade."
+	@echo "          It will signal recovery mode state by lighting up the LED in bright white."
+	@echo "          Then, disconnect from the REPL using CTRL+X or CTRL+]"
+	@echo "          and continue the upgrade process by invoking \"make install-modem-nb1\""
+	@echo
+	$(rshell) $(rshell_options) --quiet repl '~ import sqnsupgrade ~ sqnsupgrade.info() ~ sqnsupgrade.uart(True)'
+
+install-modem-nb1:
+	$(eval sqns_firmware_url := "https://ptrace.hiveeyes.org/sqns/NB1-41019/NB1-41019.dup")
+	$(eval sqns_firmware_file := $(shell basename $(sqns_firmware_url)))
+
+	$(eval target_dir := ./dist-firmwares)
+	$(eval fetch := wget --quiet --no-clobber --unlink)
+
+	@$(fetch) --directory-prefix=$(target_dir) https://ptrace.hiveeyes.org/sqns/NB1-41019/NB1-41019.dup | true
+	@$(fetch) --directory-prefix=$(target_dir) https://ptrace.hiveeyes.org/sqns/NB1-41019/updater.elf | true
+
+	$(eval firmware_full_path := $(shell pwd)/$(target_dir)/$(sqns_firmware_file))
+	$(eval updater_full_path := $(shell pwd)/$(target_dir)/updater.elf)
+	@echo "firmware_full_path: ${firmware_full_path}"
+
+	$(eval sqns_dir := ./dist-firmwares/sqnsupgrade)
+	@#PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', '$(updater_full_path)', debug=True)"
+	PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', debug=True)"
+	@#PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', debug=True)"

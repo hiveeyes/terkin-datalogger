@@ -91,3 +91,14 @@ download-requirements:
 
 	# Install Pytrack Board Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/0f123c7/pytrack/lib/pytrack.py
+
+
+    ## sqnsupgrade
+	$(eval sqns_dir := ./dist-firmwares/sqnsupgrade)
+	mkdir -p $(sqns_dir)
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnsbr.py
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnsbrz.py
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnscodec.py
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnscrc.py
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnstp.py
+	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnsupgrade.py
