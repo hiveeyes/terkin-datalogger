@@ -392,6 +392,25 @@ class TerkinDatalogger:
         # Location: Right side.
         self.button_manager.setup_touchpad('P23', name='Touch6', location='Module-Right-Top-4th')
 
+        # Location: Right side.
+        # ValueError: invalid pin for touchpad
+        """
+        P18 and P17 are able to wake up on rising and falling edge. These two pins have internal
+        pull-ups configurable by software (Pull-downs if needed must be added externally)
+
+        -- https://docs.pycom.io/gitbook/assets/deepsleep-pinout.pdf
+
+
+        ext0 External Wake-up Source
+        RTC controller contains logic to trigger wake-up when one particular pin is set to
+        a predefined logic level. That pin can be one of RTC GPIOs 0,2,4,12-15,25-27,32-39.
+
+        -- https://lastminuteengineers.com/esp32-deep-sleep-wakeup-sources/#ext0-external-wakeup-source
+
+        """
+        #self.button_manager.setup_touchpad('P17', name='TouchX', location='Module-Right-Bottom-5th')
+        #self.button_manager.setup_touchpad('P18', name='TouchY', location='Module-Right-Bottom-6th')
+
         # Will yield ``ValueError: Touch pad error``.
         #self.button_manager.setup_touchpad('P20', name='Touch8', location='Module-Right-Top-7th')
         #self.button_manager.setup_touchpad('P19', name='Touch9', location='Module-Right-Top-8th')

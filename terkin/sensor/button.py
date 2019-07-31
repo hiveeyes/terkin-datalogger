@@ -40,13 +40,16 @@ class ButtonManager:
         self.alarm = Timer.Alarm(self.check, ms=self.check_interval_ms, periodic=True)
 
     def setup_touchpad(self, pin, name, location):
-        button = Button(
-            name=name,
-            location=location,
-            adapter=TouchPad(pin, name, sensitivity=1000, duration=500),
-        )
-        log.info('Setting up %s', button)
-        self.buttons.append(button)
+        try:
+            button = Button(
+                name=name,
+                location=location,
+                adapter=TouchPad(pin, name, sensitivity=1000, duration=500),
+            )
+            log.info('Setting up %s', button)
+            self.buttons.append(button)
+        except:
+            log.exception('Setting up button on pin {} failed'.format(pin))
 
     def check(self, alarm):
         for button in self.buttons:
