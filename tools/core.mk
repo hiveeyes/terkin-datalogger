@@ -160,8 +160,14 @@ CONFIRM=$(YELLOW_COLOR)[CONFIRM]$(NO_COLOR)
 
 
 colors:
+	@echo --- 1st ---
 	@echo "$(MAGENTA_DARK_COLOR)Magenta 8$(NO_COLOR)"
 	@echo "$(YELLOW_COLOR)Bright Yellow 16$(NO_COLOR)"
 	@echo "$(ORANGE_COLOR)Orange 256$(NO_COLOR)"
 	@echo "$$(tput setaf 6)Cyan (tput)$$(tput sgr0)"
 	@echo "$$(tput setaf 6)$$(tput bold)Cyan Bold (tput)$$(tput sgr0)"
+
+	@echo --- 2nd ---
+	@printf "$(MAGENTA_DARK_COLOR)Magenta 8$(NO_COLOR)\n"
+	@printf "$(YELLOW_COLOR)Bright Yellow 16$(NO_COLOR)\n"
+	@printf "$(ORANGE_COLOR)Orange 256$(NO_COLOR)\n"
