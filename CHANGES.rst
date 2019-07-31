@@ -105,9 +105,10 @@ Development
   - Improve Windows compatibility for the ``ng`` series of commands
 - Add colors to ``mpy-mk``
 - Add note about installing ``pycom-fwtool-cli`` on Linux. Thanks, weef.
-- ``mpy-mk``: Improve operating system detection
-- ``mpy-mk``: Streamline user interface
+- mpy-mk: Improve operating system detection
+- mpy-mk: Streamline user interface
 - Another attempt at touch button wakeup
+- mpy-mk: Improve cross compilation
 
 
 2019-06-22 0.5.1

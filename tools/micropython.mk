@@ -85,10 +85,11 @@ reset-ampy:
 
 mpy-cross-setup: setup-virtualenv2
 
-	@# mpy-cross
+	@echo "$(INFO) Installing mpy-cross"
 	@$(pip2) --quiet install mpy-cross==1.9.4
 
-	@# mpy-cross-all
+	@echo "$(INFO) Installing mpy-cross-all"
+	@mkdir -p ./bin
 	@wget --quiet --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
 
 

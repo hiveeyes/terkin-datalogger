@@ -133,14 +133,14 @@ mpy-compile: mpy-cross-setup
 	@$(python2) $(mpy-cross-all) --out lib-mpy/terkin terkin
 	@$(python2) $(mpy-cross-all) --out lib-mpy/hiveeyes hiveeyes
 
+	@echo "$(INFO) Size of lib-mpy"
+	@du -sch lib-mpy
+
 ## Upload framework, program and settings and restart attached to REPL
 recycle: install-framework install-sketch reset-device-attached
 
 ## Upload framework, program and settings and restart device
 recycle-ng: install-ng
-
-	@# Conditionally
-	@#$(MAKE) sleep
 
 	@# Restart device using HTTP server after prompting the user for confirmation.
 	@echo
@@ -169,7 +169,8 @@ install: install-requirements install-framework install-sketch
 install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
-		$(MAKE) mpy-compile; \
+		$(MAKE) mpy-compile && \
+		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
 		$(MAKE) lftp lftp_recipe=tools/upload-mpy.lftprc; \
 	else \
 		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
@@ -178,12 +179,10 @@ install-ftp:
 ## Install all files to the device, using best method
 install-ng: check-mcu-port
 
-	@# User notification
-	@$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device"
-
 	@if test "${mcu_port_type}" = "ip"; then \
 		$(MAKE) install-ftp; \
 	elif test "${mcu_port_type}" = "usb"; then \
+		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using USB" \
 		$(MAKE) install; \
 	fi
 
