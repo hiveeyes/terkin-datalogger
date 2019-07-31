@@ -109,6 +109,7 @@ Development
 - mpy-mk: Streamline user interface
 - Another attempt at touch button wakeup
 - mpy-mk: Improve cross compilation
+- sensors: Use BME280 library by robert-hh
 
 
 2019-06-22 0.5.1

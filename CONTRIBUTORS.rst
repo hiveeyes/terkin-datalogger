@@ -35,6 +35,7 @@ people are doing on the foundation infrastructure the software is leveraging.
 - Daniel Campora for the Pycom MQTT package.
 - David Gerber <https://github.com/geda>, Robert H. <https://github.com/robert-hh> and
   Anthony Hinsinger <https://github.com/atoy40> for the HX711 driver.
+- Robert H. <https://github.com/robert-hh> for the BME280 driver.
 - Paweł Zadrożny <https://github.com/pawelzny> for the `Dotty Dict`_ package.
 - Sebastian Meiling <https://github.com/smlng> for the ``PyCayenneLPP`` package.
 - Dominik Kapusta <https://github.com/ayoy> for many inspirations
