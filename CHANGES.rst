@@ -111,6 +111,7 @@ Development
 - mpy-mk: Improve cross compilation
 - sensors: Use BME280 library by robert-hh
 - mpy-mk: Add "make colors" for colored output testing on Windows
+- Make MicroTerkin Agent compatible with Python3.5
 
 
 2019-06-22 0.5.1

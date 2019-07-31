@@ -49,7 +49,7 @@ class NetworkWatch:
                 ip_address = socket.gethostbyname(hostname)
                 if waiting:
                     sys.stderr.write('\n')
-                log.info(f'Hostname "{hostname}" found at IP address "{ip_address}"')
+                log.info('Hostname "{hostname}" found at IP address "{ip_address}"'.format(**locals()))
                 return ip_address
 
             except socket.gaierror as ex:
@@ -67,7 +67,7 @@ class NetworkWatch:
 
             else:
                 waiting = True
-                log.info(f'Waiting for hostname "{hostname}" to appear on your local network')
+                log.info('Waiting for hostname "{hostname}" to appear on your local network'.format(**locals()))
 
             count +=1
             time.sleep(self.INTERVAL)
@@ -78,7 +78,7 @@ class NetworkWatch:
             try:
                 ip_address = self.wait_hostname(hostname)
             except Exception as ex:
-                log.exception(f'Attempt to wait for hostname "{hostname} failed')
+                log.exception('Attempt to wait for hostname "{hostname} failed'.format(**locals()))
             time.sleep(1)
 
 
@@ -126,7 +126,7 @@ class NetworkMonitor:
         :param destination: Network to scan.
         :param delay: How long to delay before starting the network scan.
         """
-        log.info(f'Sending ARP ping request to {destination}')
+        log.info('Sending ARP ping request to {destination}'.format(**locals()))
         # "srp" means: Send and receive packets at layer 2.
         ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=destination), timeout=10, verbose=self.VERBOSITY)
         return ans, unans
@@ -190,7 +190,7 @@ class NetworkMonitor:
         member.ip = pkt[ARP].psrc
 
         # Found a device of interest.
-        log.info(f'Found device at {member}')
+        log.info('Found device at {member}'.format(**locals()))
         self.device_action(member)
 
     def device_action(self, member):
@@ -226,8 +226,8 @@ class NetworkMonitor:
 
         -- https://scapy.readthedocs.io/en/latest/usage.html#simplistic-arp-monitor
         """
-        log.info(f'Waiting for any devices having MAC address prefixes of {self.mac_prefixes} '
-                 f'to appear on your local network')
+        log.info('Waiting for any devices having MAC address prefixes of {} '
+                 'to appear on your local network'.format(self.mac_prefixes))
         #sniff(prn=self.arp_monitor_callback, filter="arp", store=0)
         sniff(prn=self.check_esp32, filter="arp", store=0)
 
@@ -235,17 +235,17 @@ class NetworkMonitor:
         # echo 'maintenance.enable()' | ncat --udp 192.168.178.20 666
         port = 666
 
-        log.info(f'Connecting to device mode server at {member.ip}:{port}')
+        log.info('Connecting to device mode server at {}:{}'.format(member.ip, port))
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setblocking(False)
         s.connect((member.ip, port))
 
         if self.mode == DeviceMode.maintenance:
-            log.info(f'Pulling {member.ip} into maintenance mode')
+            log.info('Pulling {} into maintenance mode'.format(member.ip))
             s.send(b'maintenance.enable()')
 
         elif self.mode == DeviceMode.field:
-            log.info(f'Releasing {member.ip} from maintenance mode')
+            log.info('Releasing {} from maintenance mode'.format(member.ip))
             s.send(b'maintenance.disable()')
 
 
@@ -284,7 +284,7 @@ def get_local_networks():
                         addresses.append(address_cidr)
 
                     except:
-                        log.debug(f'Ignoring address {address}. IPv4 only.')
+                        log.debug('Ignoring address {address}. IPv4 only.'.format(**locals()))
 
     return addresses
 
@@ -313,10 +313,10 @@ def boot_monitor(monitor):
     notify_user(APP_NAME, welcome_message)
 
     networks = get_local_networks()
-    log.info(f'IP networks found: {networks}')
+    log.info('IP networks found: {networks}'.format(**locals()))
 
     for network in networks:
-        log.info(f'Discovering devices already connected to IP network {network}')
+        log.info('Discovering devices already connected to IP network {network}'.format(**locals()))
         monitor.arp_discover_background(network)
 
     monitor.arp_monitor()
@@ -331,7 +331,7 @@ def run_monitor(command, mac_prefixes):
     elif command == 'monitor':
         pass
     else:
-        log.error(f'Command "{command}" not implemented')
+        log.error('Command "{command}" not implemented'.format(**locals()))
         return
 
     boot_monitor(monitor)
@@ -359,13 +359,16 @@ def notify_user(title, text):
     if sys.platform == 'linux':
         # https://pypi.org/project/py-notifier/#description
         # https://github.com/YuriyLisovskiy/pynotifier
-        from pynotifier import Notification
-        Notification(
-            title=title,
-            description=text,
-            duration=5,  # Duration in seconds
-            urgency=Notification.URGENCY_NORMAL
-        ).send()
+        try:
+            from pynotifier import Notification
+            Notification(
+                title=title,
+                description=text,
+                duration=5,  # Duration in seconds
+                urgency=Notification.URGENCY_NORMAL
+            ).send()
+        except:
+            pass
 
     elif sys.platform == 'darwin':
         try:
@@ -373,10 +376,13 @@ def notify_user(title, text):
             import pync
             pync.notify(text, title=title)
         except:
-            # https://stackoverflow.com/questions/17651017/python-post-osx-notification/41318195#41318195
-            os.system("""
-            osascript -e 'display notification "{}" with title "{}"'
-            """.format(text, title))
+            try:
+                # https://stackoverflow.com/questions/17651017/python-post-osx-notification/41318195#41318195
+                os.system("""
+                osascript -e 'display notification "{}" with title "{}"'
+                """.format(text, title))
+            except:
+                pass
 
     elif sys.platform.startswith('win'):
         # https://github.com/malja/zroya
@@ -440,4 +446,4 @@ if __name__ == '__main__':
 
 
 #hosts = mon.discover_hosts('192.168.178.0/24')
-#log.info(f'Hosts found: {hosts}')
+#log.info('Hosts found: {hosts}'.format(**locals()))
