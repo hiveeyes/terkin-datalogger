@@ -90,7 +90,7 @@ setup: setup-environment download-requirements
 # -----------------------
 
 setup-terkin-agent:
-	$(pip3) install -r requirements-terkin-agent.txt
+	$(pip3) install --pre --requirement requirements-terkin-agent.txt
 
 .PHONY: terkin-agent
 ## Run the MicroTerkin Agent, e.g. "make terkin-agent action=maintain"
