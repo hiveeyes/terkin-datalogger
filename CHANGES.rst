@@ -111,9 +111,10 @@ Development
 - mpy-mk: Improve cross compilation
 - sensors: Use BME280 library by robert-hh
 - mpy-mk: Add "make colors" for colored output testing on Windows
-- Make MicroTerkin Agent compatible with Python3.5
-- Attempt to automate installation of the modem firmware (WIP)
-- Fix ``scapy`` dependency woes
+- Make MicroTerkin Agent compatible with Python3.5. Thanks, `@rohlan`_.
+- Attempt to automate installation of the modem firmware (WIP). Thanks, `@rohlan`_.
+- Gracefully ignore missing "py-notifier" package on Linux. Thanks, `@rohlan`_.
+- Fix ``scapy`` dependency woes. Thanks, `@rohlan`_.
 
 
 2019-06-22 0.5.1

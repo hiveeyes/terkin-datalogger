@@ -17,6 +17,8 @@ Prio 0
 
 Ideas
 -----
+- Make "make help" point to "Operate the"
+- wget ftp.exe
 - [o] Leave maintenance mode after 10 minutes
 - [o] Configure ARP-ping timeout for "terkin.py"
   https://community.hiveeyes.org/t/running-terkin-py-on-windows/2273/31
@@ -70,6 +72,7 @@ Ideas
 
 - MQTT authentication with URI parameter and email address as username does not work
 - Build release packages like https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/releases
+- Windows bundle containing mpy-mk, make.exe, wget.exe, lftp.exe, pycom-fwtool-cli.exe
 
 
 Prio 1
