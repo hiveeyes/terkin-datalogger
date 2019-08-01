@@ -227,6 +227,10 @@ ratrack: check-mcu-port
 # Releasing
 # ---------
 
+build-annapurna:
+	docker run -v `pwd`/dist-packages:/opt/frozen -it goinvent/pycom-fw build FIPY annapurna-0.6.0dev2 v1.20.0.rc12.1 idf_v3.1
+
+
 #release-and-publish: release publish-release
 
 # Release this piece of software.

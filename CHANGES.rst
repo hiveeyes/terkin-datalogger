@@ -115,6 +115,8 @@ Development
 - Attempt to automate installation of the modem firmware (WIP). Thanks, `@rohlan`_.
 - Gracefully ignore missing "py-notifier" package on Linux. Thanks, `@rohlan`_.
 - Fix ``scapy`` dependency woes. Thanks, `@rohlan`_.
+- Add tools for building firmware images for ESP32 based on Pycom MicroPython.
+  Thanks, `@emmanuel-florent`_.
 
 
 2019-06-22 0.5.1
@@ -401,3 +403,4 @@ Development
 .. _@ayoy: https://github.com/ayoy
 .. _@pinguin999: https://github.com/pinguin999
 .. _@rohlan: https://github.com/rohlan
+.. _@emmanuel-florent: https://github.com/emmanuel-florent

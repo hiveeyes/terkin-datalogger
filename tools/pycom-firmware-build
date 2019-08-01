@@ -1,0 +1,78 @@
+#!/bin/bash
+# https://github.com/pycom/pycom-libraries/tree/master/pycom-docker-fw-build
+
+boards="WIPY LOPY SIPY GPY FIPY LOPY4"
+
+function usage() {
+  echo "Usage:"
+  echo " $0 board-type version-code [micropython-sigfox-git-tag] [esp-idf-git-tag]"
+  echo ""
+  echo "where board-type in $boards and version-code is a tag for output file"
+  echo ""
+  exit 1
+}
+
+function prepare_dev() {
+  echo "Checkout $1 $2 board version-code"
+
+  if [ ! -z "$1" ]
+  then
+    cd /opt/pycom-micropython-sigfox
+    # fetch all branches
+    git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+      # try to find branch revision $1
+    if  git pull ; git rev-list $1.. >/dev/null
+
+    then
+        echo "Checkout "
+    else
+        exit 1
+    fi
+    cd /opt/pycom-micropython-sigfox
+    git checkout $1
+    cd mpy-cross && make clean && make && cd ..
+    git submodule update --init
+  fi
+
+  if [ ! -z "$2" ]
+    then
+      cd /opt/pycom-esp-idf;
+      # fetch all branches
+      git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+      # try to find branch revision $2
+      if  git rev-list $2.. >/dev/null
+
+      then
+          echo ""
+          # branch exists
+      else
+         # branch does not exists
+          exit
+      fi
+      cd /opt/pycom-esp-idf
+      git checkout $2
+      git submodule update --init
+    fi
+}
+
+function build() {
+  BOARD=$1
+  PROJECT=$2
+  export PATH=$PATH:/opt/xtensa-esp32-elf/bin/
+  export IDF_PATH=/opt/pycom-esp-idf
+  board=`echo "$BOARD" | tr '[:upper:]' '[:lower:]'`
+  cd /opt/pycom-micropython-sigfox/esp32/ &&
+  make clean BOARD=$BOARD &&
+  cd ../mpy-cross && make clean && make && cd ../esp32  &&
+  cp /opt/frozen/*.py ./frozen/Base/ &&
+  mv ./frozen/Base/main.py ./frozen/Base/_main.py
+  make release BOARD=$BOARD RELEASE_DIR=/tmp
+  mv /tmp/*.tar.gz /opt/frozen/$board-firmware-$PROJECT.tar.gz
+  echo "Firmware $board-firmware-$PROJECT.tar.gz ready !"
+}
+
+[[ $boards =~ (^|[[:space:]])$1($|[[:space:]]) ]] &&
+        echo "#goinvent " ||
+  usage
+prepare_dev $3 $4
+build $1 $2
