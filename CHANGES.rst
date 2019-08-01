@@ -117,6 +117,7 @@ Development
 - Fix ``scapy`` dependency woes. Thanks, `@rohlan`_.
 - Add tools for building firmware images for ESP32 based on Pycom MicroPython.
   Thanks, `@emmanuel-florent`_.
+- onewire.py: Use library optimized for timing and with enabled CRC checks by `@robert-hh`_, thanks!
 
 
 2019-06-22 0.5.1

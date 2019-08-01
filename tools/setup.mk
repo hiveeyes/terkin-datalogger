@@ -75,8 +75,13 @@ download-requirements:
 	# https://github.com/micropython/micropython/tree/master/drivers
 	mkdir -p $(target_dir)/onewire
 	touch $(target_dir)/onewire/__init__.py
-	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/60f2592/examples/DS18X20/onewire.py
 
+	# Vanilla onewire.py
+	#$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/60f2592/examples/DS18X20/onewire.py
+
+	# Optimize timing, enable CRC check and slim the code #62
+	# https://github.com/pycom/pycom-libraries/pull/62
+	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/dabce8d9cc8cf3b9849446000d811a39c53b6093/examples/DS18X20/onewire.py
 
     ## Ratrack
 
