@@ -93,7 +93,6 @@ Development
 - Refactor and improve DS18B20 settings, reading and processing
 - Improve prettified sensor readings log output
 - Improve HTTP API
-- Adjust waiting time after resetting 1-Wire bus
 - Improve initialization robustness with bus device objects
 - Add ``mpy-cross-util.py``
 - Add ahead-of-time compilation using ``mpy-cross``
