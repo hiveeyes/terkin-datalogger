@@ -174,7 +174,7 @@ class TerkinDatalogger:
             # Run downstream mainloop handlers.
             self.loop()
 
-            # Yup.
+            # Give the system some breath.
             machine.idle()
 
     def loop(self):

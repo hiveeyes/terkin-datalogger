@@ -126,9 +126,13 @@ prepare-modem-upgrade:
 	@echo "          Then, disconnect from the REPL using CTRL+X or CTRL+]"
 	@echo "          and continue the upgrade process by invoking \"make install-modem-nb1\""
 	@echo
+	@$(MAKE) confirm text="Put Sequans Modem into recovery state? ARE YOU REALLY SURE?"
 	$(rshell) $(rshell_options) --quiet repl '~ import sqnsupgrade ~ sqnsupgrade.info() ~ sqnsupgrade.uart(True)'
 
 install-modem-nb1:
+
+	@$(MAKE) confirm text="Install NB1 firmware on Sequans Modem? ARE YOU REALLY SURE?"
+
 	$(eval sqns_firmware_url := "https://ptrace.hiveeyes.org/sqns/NB1-41019/NB1-41019.dup")
 	$(eval sqns_firmware_file := $(shell basename $(sqns_firmware_url)))
 
@@ -146,3 +150,11 @@ install-modem-nb1:
 	@#PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', '$(updater_full_path)', debug=True)"
 	PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', debug=True)"
 	@#PYTHONPATH=$(sqns_dir) $(python3) -c "import sqnsupgrade; sqnsupgrade.run('${mcu_port}', '$(firmware_full_path)', debug=True)"
+
+modem-info:
+	@echo Inquiring modem info
+	$(rshell) $(rshell_options) --quiet repl pyboard 'import sqnsupgrade ~ sqnsupgrade.info(verbose=True, debug=True)'
+
+modem-version:
+	@echo Inquiring modem version
+	$(rshell) $(rshell_options) --quiet repl pyboard 'import network ~ lte=network.LTE() ~ print(lte.send_at_cmd(\"ATI1\").split(\"\\r\\n\"))'

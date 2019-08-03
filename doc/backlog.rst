@@ -73,7 +73,7 @@ Ideas
 - MQTT authentication with URI parameter and email address as username does not work
 - Build release packages like https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/releases
 - Windows bundle containing mpy-mk, make.exe, wget.exe, lftp.exe, pycom-fwtool-cli.exe
-
+- Implement soft-reset using sys.exit(), see https://docs.pycom.io/gettingstarted/programming/safeboot/
 
 Prio 1
 ======
