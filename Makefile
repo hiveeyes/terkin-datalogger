@@ -61,6 +61,7 @@ include tools/release.mk
 include tools/terkin.mk
 include tools/pycom.mk
 include tools/micropython.mk
+include tools/bluetooth.mk
 
 
 # ----

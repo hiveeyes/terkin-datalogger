@@ -42,6 +42,12 @@ download-requirements:
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
 
+	# Install BLE GATTS Wrapper for Pycom devices
+	# https://github.com/cmisztur/pycom-ble-gatt-wrapper
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/cmisztur/pycom-ble-gatt-wrapper/1deab094cf91d33dfe833b686db90e6ac00ce577/L99_BLEGATTS.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/cmisztur/pycom-ble-gatt-wrapper/1deab094cf91d33dfe833b686db90e6ac00ce577/L99_BLEGATTSCharacteristic.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/cmisztur/pycom-ble-gatt-wrapper/1deab094cf91d33dfe833b686db90e6ac00ce577/L99_BLEGATTSService.py
+
 
     ## Telemetry
 
