@@ -69,8 +69,8 @@ class WiFiManager:
         self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
-        for _ in range(2):
-            log.info("WiFi STA: Connecting to configured networks: %s", list(networks_known))
+        for attempt in range(2):
+            log.info("WiFi STA: Connecting to configured networks: %s. Attempt: #%s", list(networks_known), attempt + 1)
             try:
                 self.connect_stations(networks_known)
                 break
@@ -147,11 +147,11 @@ class WiFiManager:
 
         network_name = network['ssid']
 
-        log.info('WiFi STA: Prepare connecting to network "{}"'.format(network_name))
+        log.info('WiFi STA: Getting auth mode for network "{}"'.format(network_name))
 
         auth_mode = self.get_auth_mode(network_name)
 
-        log.info('WiFi STA: Attempt connecting to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
+        log.info('WiFi STA: Preparing connection to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
 
         password = network['password']
 
@@ -175,7 +175,7 @@ class WiFiManager:
         network_timeout = network.get('timeout', 15.0)
 
         # Set interval how often to poll for WiFi connectivity.
-        network_poll_interval = 800
+        network_poll_interval = 500
 
         # Connect to WiFi station.
         log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name, network_timeout))
