@@ -121,6 +121,7 @@ Development
 - First steps with LTE (WIP)
 - Be more graceful when starting network services
 - Wrap "station.isconnected()" to mitigate unhandled exceptions on timeout errors
+- Extend default watchdog timeout to 60 seconds
 
 
 2019-06-22 0.5.1

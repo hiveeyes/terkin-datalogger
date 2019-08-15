@@ -31,7 +31,7 @@ main = {
         'enabled': False,
 
         # Watchdog timeout in milliseconds.
-        'timeout': 20000,
+        'timeout': 60000,
     },
 
     # Configure backup.
