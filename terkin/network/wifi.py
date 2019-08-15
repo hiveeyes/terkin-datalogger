@@ -69,14 +69,16 @@ class WiFiManager:
         self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
-        log.info("WiFi STA: Directly connecting to configured networks: %s", list(networks_known))
-        try:
-            self.connect_stations(networks_known)
+        for _ in range(2):
+            log.info("WiFi STA: Connecting to configured networks: %s", list(networks_known))
+            try:
+                self.connect_stations(networks_known)
+                break
 
-        except:
-            # Remark: AP mode currently always enabled.
-            #log.warning('WiFi: Switching to AP mode not implemented yet')
-            pass
+            except:
+                # Remark: AP mode currently always enabled.
+                #log.warning('WiFi: Switching to AP mode not implemented yet')
+                pass
 
         # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
@@ -137,8 +139,8 @@ class WiFiManager:
             description = 'Please check your WiFi configuration for one of the ' \
                           'station candidates {}.'.format(len(network_names))
             log.error('{}. {}'.format(message, description))
-            log.warning('Todo: We might want to switch to AP mode here or alternatively '
-                        'buffer telemetry data to flash to be scheduled for transmission later.')
+            log.warning('Todo: We might want to buffer telemetry data to '
+                        'flash memory to be scheduled for transmission later.')
             raise WiFiException(message)
 
     def connect_station(self, network):
