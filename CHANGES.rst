@@ -119,6 +119,7 @@ Development
 - onewire.py: Use library optimized for timing and with enabled CRC checks by `@robert-hh`_, thanks!
 - First steps with BLE (WIP)
 - First steps with LTE (WIP)
+- Be more graceful when starting network services
 
 
 2019-06-22 0.5.1

@@ -204,11 +204,17 @@ class TerkinDevice:
 
         # Start UDP server for pulling device into maintenance mode.
         if self.settings.get('services.api.modeserver.enabled', False):
-            self.networking.start_modeserver()
+            try:
+                self.networking.start_modeserver()
+            except:
+                log.exception('Starting mode server failed')
 
         # Start HTTP server
         if self.settings.get('services.api.http.enabled', False):
-            self.networking.start_httpserver()
+            try:
+                self.networking.start_httpserver()
+            except:
+                log.exception('Starting HTTP server failed')
 
     def create_telemetry_adapter(self, telemetry_target):
         # Create adapter object.
