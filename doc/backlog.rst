@@ -9,6 +9,7 @@ Datalogger
 
 Prio 0
 ======
+- [o] Move UDP mode server to mininet already
 - [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
 - [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
 - [o] https://community.hiveeyes.org/t/loggen-von-daten-und-error-warning-events-auf-sd/2279
@@ -74,6 +75,18 @@ Ideas
 - Build release packages like https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/releases
 - Windows bundle containing mpy-mk, make.exe, wget.exe, lftp.exe, pycom-fwtool-cli.exe
 - Implement soft-reset using sys.exit(), see https://docs.pycom.io/gettingstarted/programming/safeboot/
+- Add https://forum.pycom.io/topic/3926/ble-att-wrapper
+- Write a characteristic user descriptor
+    - https://stackoverflow.com/questions/33328272/adding-characteristic-user-description-to-custom-c-ble-gatt-service
+    - https://github.com/moovel/gatt-server/blob/master/README.md#implementing-services-with-ggk
+    - https://github.com/adafruit/Adafruit_nRF52_Arduino/blob/68400a76662af268829e3c6c66ae62ac02eaae76/libraries/Bluefruit52Lib/src/BLECharacteristic.cpp#L316-L344
+    - https://github.com/pycom/pycom-micropython-sigfox/blob/master/esp32/mods/modbt.c#L1276-L1290
+
+- Use "hupper" for watching files
+- Remark about "LTE only with antenna"
+  https://forum.pycom.io/topic/4721/working-lte-connection-in-germany/13
+
+
 
 Prio 1
 ======
