@@ -183,12 +183,12 @@ class WiFiManager:
 
         # Wait for station network to arrive.
         # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
-        retries = int(network_timeout / (network_poll_interval / 1000.0))
-        while not self.is_connected() and retries > 0:
+        checks = int(network_timeout / (network_poll_interval / 1000.0))
+        while not self.is_connected() and checks > 0:
 
-            retries -= 1
+            checks -= 1
 
-            log.info('WiFi STA: Waiting for network "{}" to come up, {} retries left'.format(network_name, retries))
+            log.info('WiFi STA: Waiting for network "{}" to come up, {} checks left'.format(network_name, checks))
 
             # Feed watchdog.
             self.manager.device.watchdog.feed()
