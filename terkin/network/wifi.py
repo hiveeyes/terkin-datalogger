@@ -49,7 +49,7 @@ class WiFiManager:
         self.station.init()
 
         # Check WiFi connectivity.
-        if self.station.isconnected():
+        if self.is_connected():
 
             log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
             self.print_short_status()
@@ -65,7 +65,7 @@ class WiFiManager:
         # Prepare information about known WiFi networks.
         networks_known = frozenset([station['ssid'] for station in self.stations])
 
-        log.info("WiFi STA: Starting interface")
+        log.info("WiFi STA+AP: Starting interface")
         self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
@@ -74,7 +74,9 @@ class WiFiManager:
             self.connect_stations(networks_known)
 
         except:
-            log.warning('WiFi: Switching to AP mode not implemented yet')
+            # Remark: AP mode currently always enabled.
+            #log.warning('WiFi: Switching to AP mode not implemented yet')
+            pass
 
         # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
@@ -83,6 +85,13 @@ class WiFiManager:
         # TOOD: Make default channel configurable
         self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
         """
+
+    def is_connected(self):
+        try:
+            return self.station.isconnected()
+        except:
+            log.exception('Invoking "isconnected" failed')
+            return False
 
     def power_off(self):
         """
@@ -120,7 +129,7 @@ class WiFiManager:
             except Exception:
                 log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
 
-        if not self.station.isconnected():
+        if not self.is_connected():
 
             self.forget_network(network_name)
 
@@ -173,7 +182,7 @@ class WiFiManager:
         # Wait for station network to arrive.
         # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
         retries = int(network_timeout / (network_poll_interval / 1000.0))
-        while not self.station.isconnected() and retries > 0:
+        while not self.is_connected() and retries > 0:
 
             retries -= 1
 
@@ -188,7 +197,7 @@ class WiFiManager:
             # Don't busy-wait.
             time.sleep_ms(network_poll_interval)
 
-        if not self.station.isconnected():
+        if not self.is_connected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
 
         # Inform about networking status.
