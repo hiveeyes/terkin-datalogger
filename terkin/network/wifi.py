@@ -24,6 +24,10 @@ class WiFiManager:
         self.station = None
 
     def start(self):
+
+        # Todo: Propagate more parameters here, e.g. for using an external antenna.
+        self.station = WLAN()
+
         _thread.start_new_thread(self.start_real, ())
 
     def start_real(self):
@@ -31,9 +35,6 @@ class WiFiManager:
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
         """
-
-        # Todo: Propagate more parameters here, e.g. for using an external antenna.
-        self.station = WLAN()
 
         #if machine.reset_cause() == machine.SOFT_RESET:
         #   print("WiFi STA: Network connection after SOFT_RESET.")
@@ -50,6 +51,8 @@ class WiFiManager:
         self.print_address_status()
 
         # Setup network interface.
+        log.info("WiFi STA+AP: Starting interface")
+        self.station.mode(WLAN.STA_AP)
         self.station.init()
 
         # Check WiFi connectivity.
@@ -62,15 +65,13 @@ class WiFiManager:
             time.sleep(0.25)
 
             # Inform about networking status.
+            self.print_short_status()
             self.print_address_status()
 
             return True
 
         # Prepare information about known WiFi networks.
         networks_known = frozenset([station['ssid'] for station in self.stations])
-
-        log.info("WiFi STA+AP: Starting interface")
-        self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
         attempt = 0
@@ -257,17 +258,20 @@ class WiFiManager:
 
         # Inquire visible networks.
         log.info("WiFi STA: Scanning for networks")
-        stations_available = self.station.scan()
+        try:
+            stations_available = self.station.scan()
+        except OSError as ex:
+            if 'Scan operation Failed' in str(ex):
+                log.exception('WiFi STA: Scanning for networks failed')
+                self.station.init()
+
+        # Collect SSIDs of available stations.
         networks_found = frozenset([e.ssid for e in stations_available])
 
         # Print names/SSIDs of networks found.
         log.info("WiFi STA: Networks available: %s", list(networks_found))
 
         return stations_available
-
-        # Compute set of effective networks by intersecting known with found ones.
-        #network_candidates = list(networks_found & networks_known)
-        #log.info("WiFi STA: Network candidates: %s", network_candidates)
 
     def get_ssid(self):
         return self.station.ssid()

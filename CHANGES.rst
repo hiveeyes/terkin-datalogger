@@ -129,6 +129,7 @@ Development
 - Improve LED signalling
 - Parallelize networking subsystem
 - Prepare real "light sleep" (WIP)
+- Attempt to reset WiFi connection if scanning fails
 
 
 2019-06-22 0.5.1
