@@ -31,7 +31,7 @@ Miscellaneous
       File "/flash/lib/terkin/configuration.py", line 12, in <module>
       File "/flash/lib/terkin/util.py", line 151, in <module>
     NameError: name 'contextmanager' is not defined
-- Pull modeserver into MiniNet
+- Pull modeserver into MiniNet. Add reboot functionality to modeserver.
 - Implicitly connect to network on ``make recycle-ng``
 - Automatically connect to console if device is discovered
 - https://github.com/Bucknalla/balena-pycom-ota
@@ -66,11 +66,21 @@ Miscellaneous
 - Remark about "LTE only with antenna"
   https://forum.pycom.io/topic/4721/working-lte-connection-in-germany/13
 - [o] Move UDP mode server to mininet already
+- http://docs.micropython.org/en/v1.9.3/esp8266/library/btree.html
 
 
 
 Prio 0.9
 ========
+- [o] When multiple networks of the same name exist, use the one with the better RSSI::
+
+    INFO:  WiFi STA: Scanning for networks
+    INFO:  WiFi STA: Networks found ['GartenNetzwerk', 'GartenNetzwerk', 'Vodafone-7982', 'hausbuch', 'zrwguests', 'HITRON-9A60']
+    INFO:  WiFi STA: Connecting to "GartenNetzwerk"
+    INFO:  WiFi STA: Connected to "GartenNetzwerk"
+    INFO:  WiFi STA: Connecting to "GartenNetzwerk"
+    INFO:  WiFi STA: Connected to "GartenNetzwerk"
+
 - [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
 - [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
 - [o] https://community.hiveeyes.org/t/loggen-von-daten-und-error-warning-events-auf-sd/2279
