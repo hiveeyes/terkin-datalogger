@@ -132,6 +132,7 @@ Development
 - Attempt to reset WiFi connection if scanning fails
 - Add "mboot", the universal MicroPython bootloader
 - Reconfigure watchdog when connecting the device using MiniNet
+- Propagate platform information for implementing platform switch conditions
 
 
 2019-06-22 0.5.1

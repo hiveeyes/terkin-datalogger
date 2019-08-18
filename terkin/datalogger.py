@@ -3,10 +3,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-
 import machine
-
-from copy import deepcopy
 from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
@@ -21,9 +18,13 @@ log = logging.getLogger(__name__)
 
 class ApplicationInfo:
 
-    def __init__(self, name=None, version=None, settings=None, application=None):
+    def __init__(self, name=None, version=None, settings=None, application=None, platform_info=None):
+
         self.name = name
         self.version = version
+
+        self.platform_info = platform_info
+
         self.settings = settings
         self.application = application
 
@@ -48,7 +49,7 @@ class TerkinDatalogger:
     # For the singleton factory.
     __instance__ = None
 
-    def __init__(self, settings):
+    def __init__(self, settings, platform_info=None):
 
         # Fulfill singleton factory.
         TerkinDatalogger.__instance__ = self
@@ -59,7 +60,7 @@ class TerkinDatalogger:
 
         self.application_info = ApplicationInfo(
             name=self.name, version=self.version, settings=self.settings,
-            application=self)
+            application=self, platform_info=platform_info)
 
         # Configure logging.
         logging_enabled = self.settings.get('main.logging.enabled', False)
