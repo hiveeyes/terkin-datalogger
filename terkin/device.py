@@ -122,15 +122,6 @@ class TerkinDevice:
         pycom.heartbeat(rgb_led_heartbeat)
         pycom.heartbeat_on_boot(rgb_led_heartbeat)
 
-        # Alternative signalling.
-        # Todo: Run this in a separate thread in order not to delay execution of main program flow.
-        if not rgb_led_heartbeat:
-            for _ in range(2):
-                pycom.rgbled(0x001100)
-                time.sleep(0.15)
-                pycom.rgbled(0x000000)
-                time.sleep(0.10)
-
     def power_off_lte_modem(self):
         """
         We don't use LTE yet.
@@ -139,6 +130,7 @@ class TerkinDevice:
         https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
         """
 
+    def blink_led(self, color, count=1):
         import pycom
 
         """
@@ -176,6 +168,11 @@ class TerkinDevice:
             bluetooth.deinit()
         except:
             log.exception('Shutting down Bluetooth failed')
+        for _ in range(count):
+            pycom.rgbled(color)
+            time.sleep(0.15)
+            pycom.rgbled(0x000000)
+            time.sleep(0.10)
 
     def start_telemetry(self):
         log.info('Starting telemetry')

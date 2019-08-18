@@ -102,6 +102,12 @@ class TerkinDatalogger:
         # Start the watchdog for sanity.
         self.device.watchdog.start()
 
+        # Configure RGB-LED according to settings.
+        self.device.configure_rgb_led()
+
+        # Alternateive startup signalling: 2x green.
+        self.device.blink_led(0x001000, count=2)
+
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # Todo: Revisit where this should actually go.
         # The modem driver takes about six seconds to initialize, so adjust the watchdog accordingly.
@@ -112,9 +118,6 @@ class TerkinDatalogger:
         self.device.watchdog.resume()
 
         log.info('Starting %s', self.application_info.fullname)
-
-        # Configure RGB-LED according to settings.
-        self.device.configure_rgb_led()
 
         # Dump configuration settings.
         log_configuration = self.settings.get('main.logging.configuration', False)
@@ -183,6 +186,7 @@ class TerkinDatalogger:
         """
 
         #log.info('Terkin loop')
+        self.device.blink_led(0x000010)
 
         # Read sensors.
         readings = self.read_sensors()
