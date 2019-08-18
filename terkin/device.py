@@ -60,14 +60,19 @@ class TerkinDevice:
         try:
             self.networking.start_wifi()
 
-            # Wait for network interface to come up.
-            self.networking.wait_for_nic()
-
-            self.status.networking = True
-
-        except WiFiException:
+        except Exception:
             log.error('Network connectivity not available, WiFi failed')
             self.status.networking = False
+
+        # Wait for network stack to come up.
+        try:
+            self.networking.wait_for_ip_stack(timeout=10)
+            self.status.networking = True
+            self.networking.start_services()
+        except:
+            log.error('IP stack not available')
+            self.status.networking = False
+
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
@@ -122,52 +127,8 @@ class TerkinDevice:
         pycom.heartbeat(rgb_led_heartbeat)
         pycom.heartbeat_on_boot(rgb_led_heartbeat)
 
-    def power_off_lte_modem(self):
-        """
-        We don't use LTE yet.
-
-        https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
-        https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
-        """
-
     def blink_led(self, color, count=1):
         import pycom
-
-        """
-        if not pycom.lte_modem_en_on_boot():
-            log.info('Skip turning off LTE modem')
-            return
-        """
-
-        log.info('Turning off LTE modem')
-        try:
-            from network import LTE
-
-            # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
-            #log.info('Enabling LTE modem on boot')
-            #pycom.lte_modem_en_on_boot(True)
-
-            log.info('Turning off LTE modem on boot')
-            pycom.lte_modem_en_on_boot(False)
-
-            log.info('Invoking LTE.deinit()')
-            lte = LTE()
-            lte.deinit()
-
-        except:
-            log.exception('Shutting down LTE modem failed')
-
-    def power_off_bluetooth(self):
-        """
-        We don't use Bluetooth yet.
-        """
-        log.info('Turning off Bluetooth')
-        try:
-            from network import Bluetooth
-            bluetooth = Bluetooth()
-            bluetooth.deinit()
-        except:
-            log.exception('Shutting down Bluetooth failed')
         for _ in range(count):
             pycom.rgbled(color)
             time.sleep(0.15)
@@ -196,22 +157,6 @@ class TerkinDevice:
 
             except:
                 log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
-
-    def start_network_services(self):
-
-        # Start UDP server for pulling device into maintenance mode.
-        if self.settings.get('services.api.modeserver.enabled', False):
-            try:
-                self.networking.start_modeserver()
-            except:
-                log.exception('Starting mode server failed')
-
-        # Start HTTP server
-        if self.settings.get('services.api.http.enabled', False):
-            try:
-                self.networking.start_httpserver()
-            except:
-                log.exception('Starting HTTP server failed')
 
     def create_telemetry_adapter(self, telemetry_target):
         # Create adapter object.
@@ -297,6 +242,52 @@ class TerkinDevice:
 
     def power_off(self):
         self.networking.stop()
+
+    def power_off_lte_modem(self):
+        """
+        We don't use LTE yet.
+
+        https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
+        https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
+        """
+
+        import pycom
+
+        """
+        if not pycom.lte_modem_en_on_boot():
+            log.info('Skip turning off LTE modem')
+            return
+        """
+
+        log.info('Turning off LTE modem')
+        try:
+            from network import LTE
+
+            # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
+            #log.info('Enabling LTE modem on boot')
+            #pycom.lte_modem_en_on_boot(True)
+
+            log.info('Turning off LTE modem on boot')
+            pycom.lte_modem_en_on_boot(False)
+
+            log.info('Invoking LTE.deinit()')
+            lte = LTE()
+            lte.deinit()
+
+        except:
+            log.exception('Shutting down LTE modem failed')
+
+    def power_off_bluetooth(self):
+        """
+        We don't use Bluetooth yet.
+        """
+        log.info('Turning off Bluetooth')
+        try:
+            from network import Bluetooth
+            bluetooth = Bluetooth()
+            bluetooth.deinit()
+        except:
+            log.exception('Shutting down Bluetooth failed')
 
     def hibernate(self, interval, deepsleep=False):
 

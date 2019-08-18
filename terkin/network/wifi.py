@@ -5,9 +5,10 @@
 import time
 import machine
 import binascii
+import _thread
 from network import WLAN
 from terkin import logging
-from terkin.util import format_mac_address
+from terkin.util import format_mac_address, backoff_time, Stopwatch
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +24,9 @@ class WiFiManager:
         self.station = None
 
     def start(self):
+        _thread.start_new_thread(self.start_real, ())
+
+    def start_real(self):
         """
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
@@ -69,16 +73,28 @@ class WiFiManager:
         self.station.mode(WLAN.STA_AP)
 
         # Attempt to connect to known/configured networks.
-        for attempt in range(2):
-            log.info("WiFi STA: Connecting to configured networks: %s. Attempt: #%s", list(networks_known), attempt + 1)
-            try:
-                self.connect_stations(networks_known)
-                break
+        attempt = 0
+        while True:
 
-            except:
-                # Remark: AP mode currently always enabled.
-                #log.warning('WiFi: Switching to AP mode not implemented yet')
-                pass
+            delay = 1
+
+            if self.is_connected():
+                attempt = 0
+
+            else:
+                log.info("WiFi STA: Connecting to configured networks: %s. Attempt: #%s", list(networks_known), attempt + 1)
+                try:
+                    self.connect_stations(networks_known)
+
+                except:
+                    log.exception('WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
+                    delay = backoff_time(attempt, minimum=1, maximum=600)
+                    log.info('WiFi STA: Retrying in {} seconds'.format(delay))
+
+                attempt += 1
+
+            machine.idle()
+            time.sleep(delay)
 
         # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
         """
@@ -90,10 +106,18 @@ class WiFiManager:
 
     def is_connected(self):
         try:
-            return self.station.isconnected()
+            # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
+            if self.station is not None and self.station.isconnected():
+                ssid = self.get_ssid()
+                if ssid[0] is not None:
+                    ip_address = self.get_ip_address()
+                    if ip_address is not None and ip_address != '0.0.0.0':
+                        return True
+
         except:
-            log.exception('Invoking "isconnected" failed')
-            return False
+            log.exception('Invoking "is_connected" failed')
+
+        return False
 
     def power_off(self):
         """
@@ -174,30 +198,12 @@ class WiFiManager:
         # Obtain timeout value.
         network_timeout = network.get('timeout', 15.0)
 
-        # Set interval how often to poll for WiFi connectivity.
-        network_poll_interval = 500
-
         # Connect to WiFi station.
         log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name, network_timeout))
         self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
 
-        # Wait for station network to arrive.
-        # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
-        checks = int(network_timeout / (network_poll_interval / 1000.0))
-        while not self.is_connected() and checks > 0:
-
-            checks -= 1
-
-            log.info('WiFi STA: Waiting for network "{}" to come up, {} checks left'.format(network_name, checks))
-
-            # Feed watchdog.
-            self.manager.device.watchdog.feed()
-
-            # Save power while waiting.
-            machine.idle()
-
-            # Don't busy-wait.
-            time.sleep_ms(network_poll_interval)
+        # Wait for network to arrive.
+        self.wait_for_connection(network_timeout)
 
         if not self.is_connected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
@@ -208,9 +214,46 @@ class WiFiManager:
 
         return True
 
-    def scan_stations(self):
+    def wait_for_connection(self, timeout=15.0):
+        """
+        Wait for network to arrive.
+        """
 
-        self.manager.device.watchdog.feed()
+        # Set interval how often to poll for WiFi connectivity.
+        network_poll_interval = 250
+
+        # How many checks to make.
+        checks = int(timeout / (network_poll_interval / 1000.0))
+
+        # Stopwatch for keeping track of time.
+        stopwatch = Stopwatch()
+
+        do_report = True
+        while not self.is_connected():
+
+            delta = stopwatch.elapsed()
+            eta = timeout - delta
+
+            if checks <= 0 or eta <= 0:
+                break
+
+            # Report about the progress each 3 seconds.
+            if int(delta) % 3 == 0:
+                if do_report:
+                    log.info('WiFi STA: Waiting for network to come up within {} seconds'.format(eta))
+                    do_report = False
+            else:
+                do_report = True
+
+            # Save power while waiting.
+            machine.idle()
+
+            # Don't busy-wait.
+            time.sleep_ms(network_poll_interval)
+
+            checks -= 1
+
+    def scan_stations(self):
 
         # Inquire visible networks.
         log.info("WiFi STA: Scanning for networks")
@@ -233,7 +276,7 @@ class WiFiManager:
         try:
             return self.station.ifconfig()[0]
         except:
-            pass
+            log.exception('Unable to get device ip address')
 
     def get_auth_mode(self, network_name):
 

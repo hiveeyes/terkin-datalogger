@@ -127,6 +127,7 @@ Development
   - Don't run "mpy-cross-setup" on each invocation of "mpy-compile"
   - Don't clobber "mpy_cross_all.py"
 - Improve LED signalling
+- Parallelize networking subsystem
 
 
 2019-06-22 0.5.1

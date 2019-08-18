@@ -228,3 +228,49 @@ def get_last_stacktrace():
     exc = sys.exc_info()[1]
     sys.print_exception(exc, buf)
     return buf.getvalue()
+
+
+def random_from_crypto():
+    # https://forum.pycom.io/topic/1378/solved-how-to-get-random-number-in-a-range/6
+    # https://github.com/micropython/micropython-lib/blob/master/random/random.py
+    import crypto
+    r = crypto.getrandbits(32)
+    return ((r[0]<<24) + (r[1]<<16) + (r[2]<<8) + r[3]) / 4294967295.0
+
+
+def randint(a, b):
+    """Return random integer in range [a, b], including both end points."""
+    return random_from_crypto() * (b - a) + a
+
+
+def backoff_time(n, minimum=1, maximum=600):
+    # https://en.wikipedia.org/wiki/Exponential_backoff
+    # https://cloud.google.com/storage/docs/exponential-backoff
+    # https://cloud.google.com/iot/docs/how-tos/exponential-backoff
+    # https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/iot/api-client/mqtt_example/cloudiot_mqtt_example.py
+    # https://stackoverflow.com/questions/27438273/exponential-backoff-time-sleep-with-random-randint0-1000-1000
+    random_delta = randint(0, 1000) / 1000.0
+    delay = min(max((2 ** n) + random_delta, minimum), maximum)
+    return delay
+
+
+class Stopwatch:
+
+    def __init__(self):
+        from machine import Timer
+        self.chrono = Timer.Chrono()
+        self.chrono.start()
+        self.begin = self.chrono.read()
+
+    def elapsed(self):
+        return self.chrono.read() - self.begin
+
+
+class Eggtimer:
+
+    def __init__(self, duration):
+        self.duration = duration
+        self.stopwatch = Stopwatch()
+
+    def expired(self):
+        return self.stopwatch.elapsed() >= self.duration

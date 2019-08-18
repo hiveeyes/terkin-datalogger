@@ -137,13 +137,16 @@ class TerkinDatalogger:
         # Hello world.
         self.device.print_bootscreen()
 
-        # Bootstrap infrastructure.
-        self.device.start_networking()
+        # Start networking and telemetry subsystems.
 
         # Conditionally start network services and telemetry if networking is available.
-        if self.device.status.networking:
-            self.device.start_telemetry()
-            self.device.start_network_services()
+        try:
+            self.device.start_networking()
+        except Exception:
+            log.exception('Networking subsystem failed')
+            self.status.networking = False
+
+        self.device.start_telemetry()
 
         # Todo: Signal readyness by publishing information about the device (Microhomie).
         # e.g. ``self.device.publish_properties()``
