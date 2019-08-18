@@ -13,7 +13,19 @@ class MiniNet:
 
     def __init__(self):
         print('INFO:  Starting MiniNet')
+        self.reconfigure_watchdog()
         self.station = network.WLAN()
+
+    def reconfigure_watchdog(self, timeout_seconds=600):
+        try:
+            from machine import WDT
+            watchdog_timeout = timeout_seconds
+            watchdog_timeout_effective = watchdog_timeout * 1000
+            wdt = WDT(timeout=watchdog_timeout_effective)
+            wdt.init(watchdog_timeout_effective)
+            print('INFO:  Reconfigured watchdog to {} seconds'.format(watchdog_timeout))
+        except:
+            pass
 
     def activate_wifi_ap(self):
         """
@@ -56,7 +68,11 @@ class MiniNet:
         nets = self.station.scan()
         ssids = [net.ssid for net in nets]
 
+        # TODO: Sort networks by RSSI.
+        #networks = [{'ssid': net.ssid, 'rssi': net.rssi} for net in nets]
+
         print('INFO:  WiFi STA: Networks found {}'.format(ssids))
+
         for net in nets:
             if net.ssid == ssid:
                 print('INFO:  WiFi STA: Connecting to "{}"'.format(ssid))

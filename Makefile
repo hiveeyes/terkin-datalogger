@@ -106,8 +106,8 @@ provide-wifi:
 
 ## Load the MiniNet module to the device and start a WiFi STA connection.
 connect-wifi:
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
+	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib/mininet_wip.py
+	@$(rshell) $(rshell_options) --quiet repl "~ from mininet_wip import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
 	@echo
 
 ## Load the MiniNet module to the device and get IP address.
