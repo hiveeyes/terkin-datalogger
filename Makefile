@@ -83,7 +83,7 @@ help: show-rules
 # Setup
 # -----
 ## Prepare sandbox environment and download requirements
-setup: setup-environment download-requirements
+setup: setup-environment download-requirements mpy-cross-setup
 
 
 # -----------------------
@@ -122,7 +122,7 @@ ip-address:
 # -----------------------------
 
 ## Compile all library files using mpy-cross
-mpy-compile: mpy-cross-setup
+mpy-compile:
 
 	@echo "$(INFO) Ahead-of-time compiling to .mpy bytecode"
 

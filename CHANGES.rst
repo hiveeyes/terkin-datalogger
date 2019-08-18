@@ -123,6 +123,9 @@ Development
 - Wrap "station.isconnected()" to mitigate unhandled exceptions on timeout errors
 - Extend default watchdog timeout to 60 seconds
 - Try two times to connect to WiFi station
+- Makefile improvements
+  - Don't run "mpy-cross-setup" on each invocation of "mpy-compile"
+  - Don't clobber "mpy_cross_all.py"
 
 
 2019-06-22 0.5.1
