@@ -3,8 +3,6 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-from machine import Touch
-
 from terkin import logging
 
 """
@@ -57,6 +55,7 @@ class TouchPad:
         self.setup()
 
     def setup(self):
+        from machine import Touch
         self.touch = Touch(self.pin)
         self.touch.init_value(self.sensitivity)
 

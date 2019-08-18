@@ -10,7 +10,6 @@ import machine
 
 from mboot import MicroPythonPlatform
 from terkin import logging
-from terkin.pycom import MachineResetCause
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
 from terkin.watchdog import Watchdog
@@ -121,20 +120,21 @@ class TerkinDevice:
         """
         https://docs.pycom.io/tutorials/all/rgbled.html
         """
-        import pycom
-
-        # Enable or disable heartbeat.
-        rgb_led_heartbeat = self.settings.get('main.rgb_led.heartbeat', True)
-        pycom.heartbeat(rgb_led_heartbeat)
-        pycom.heartbeat_on_boot(rgb_led_heartbeat)
+        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+            import pycom
+            # Enable or disable heartbeat.
+            rgb_led_heartbeat = self.settings.get('main.rgb_led.heartbeat', True)
+            pycom.heartbeat(rgb_led_heartbeat)
+            pycom.heartbeat_on_boot(rgb_led_heartbeat)
 
     def blink_led(self, color, count=1):
-        import pycom
-        for _ in range(count):
-            pycom.rgbled(color)
-            time.sleep(0.15)
-            pycom.rgbled(0x000000)
-            time.sleep(0.10)
+        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+            import pycom
+            for _ in range(count):
+                pycom.rgbled(color)
+                time.sleep(0.15)
+                pycom.rgbled(0x000000)
+                time.sleep(0.10)
 
     def start_telemetry(self):
         log.info('Starting telemetry')
@@ -217,8 +217,9 @@ class TerkinDevice:
         add()
 
         # System memory info (in bytes)
-        machine.info()
-        add()
+        if hasattr(machine, 'info'):
+            machine.info()
+            add()
 
         # TODO: Python runtime information.
         add('{:8}: {}'.format('Python', sys.version))
@@ -333,7 +334,11 @@ class TerkinDevice:
                 time.sleep(interval)
 
     def resume(self):
-        log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
+        try:
+            from terkin.pycom import MachineResetCause
+            log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
+        except:
+            log.warning('Could not determine reset cause')
 
     def set_wakeup_mode(self):
 

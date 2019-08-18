@@ -44,8 +44,8 @@ class WiFiManager:
         #    return True
 
         # Save the default ssid and auth for restoring AP mode later
-        original_ssid = self.station.ssid()
-        original_auth = self.station.auth()
+        #original_ssid = self.station.ssid()
+        #original_auth = self.station.auth()
 
         # Inform about networking status.
         self.print_address_status()
