@@ -289,7 +289,7 @@ class TerkinDevice:
         except:
             log.exception('Shutting down Bluetooth failed')
 
-    def hibernate(self, interval, deepsleep=False):
+    def hibernate(self, interval, lightsleep=False, deepsleep=False):
 
         #logging.enable_logging()
 
@@ -310,8 +310,6 @@ class TerkinDevice:
 
         else:
 
-            log.info('Waiting for {} seconds'.format(interval))
-
             # Adjust watchdog for interval.
             self.watchdog.adjust_for_interval(interval)
 
@@ -324,12 +322,14 @@ class TerkinDevice:
             # machine.sleep(int(interval * 1000))
             machine.idle()
 
-            # Normal wait.
-            time.sleep(interval)
+            if lightsleep:
+                log.info('Entering light sleep for {} seconds'.format(interval))
+                machine.sleep(int(interval * 1000))
 
-            # Light sleep.
-            # TODO: Implement light sleep.
-            #machine.sleep(int(interval * 1000))
+            else:
+                # Normal wait.
+                log.info('Waiting for {} seconds'.format(interval))
+                time.sleep(interval)
 
     def resume(self):
         log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())

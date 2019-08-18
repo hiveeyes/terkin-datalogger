@@ -105,7 +105,7 @@ class TerkinDatalogger:
         # Configure RGB-LED according to settings.
         self.device.configure_rgb_led()
 
-        # Alternateive startup signalling: 2x green.
+        # Alternative startup signalling: 2 x green.
         self.device.blink_led(0x001000, count=2)
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
@@ -189,6 +189,9 @@ class TerkinDatalogger:
         """
 
         #log.info('Terkin loop')
+
+        # Alternative loop signalling: 1 x blue.
+        # https://forum.pycom.io/topic/2067/brightness-of-on-board-led/7
         self.device.blink_led(0x000010)
 
         # Read sensors.
@@ -214,11 +217,13 @@ class TerkinDatalogger:
         Sleep until the next measurement cycle.
         """
 
+        lightsleep = self.settings.get('main.lightsleep', False)
         deepsleep = self.settings.get('main.deepsleep', False)
         interval = self.get_sleep_time()
 
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:
+            lightsleep = False
             deepsleep = False
             log.info('Device is in maintenance mode. Skipping deep sleep and '
                      'adjusting interval to {} seconds'.format(interval))
@@ -234,7 +239,7 @@ class TerkinDatalogger:
                 self.device.power_off()
 
             # Send device to deep sleep.
-            self.device.hibernate(interval, deepsleep=deepsleep)
+            self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
 
         # When hibernation fails, fall back to regular "time.sleep".
         except:

@@ -128,6 +128,7 @@ Development
   - Don't clobber "mpy_cross_all.py"
 - Improve LED signalling
 - Parallelize networking subsystem
+- Prepare real "light sleep" (WIP)
 
 
 2019-06-22 0.5.1
