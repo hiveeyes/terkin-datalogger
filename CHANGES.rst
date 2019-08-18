@@ -130,6 +130,7 @@ Development
 - Parallelize networking subsystem
 - Prepare real "light sleep" (WIP)
 - Attempt to reset WiFi connection if scanning fails
+- Add "mboot", the universal MicroPython bootloader
 
 
 2019-06-22 0.5.1

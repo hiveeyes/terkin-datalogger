@@ -8,6 +8,7 @@ import time
 
 import machine
 
+from mboot import MicroPythonPlatform
 from terkin import logging
 from terkin.pycom import MachineResetCause
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
