@@ -133,6 +133,7 @@ Development
 - Add "mboot", the universal MicroPython bootloader
 - Reconfigure watchdog when connecting the device using MiniNet
 - Propagate platform information for implementing platform switch conditions
+- Transfer "mboot" bootloader and "mininet" module
 
 
 2019-06-22 0.5.1

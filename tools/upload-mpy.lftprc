@@ -10,6 +10,9 @@ set ftp:list-empty-ok true
 set mirror:exclude-regex "\.(py)$|\.(pyc)$|__pycache__"
 set mirror:overwrite true
 
+cd /flash/lib
+mirror --reverse --use-cache --file=lib/mboot.py --file=lib/mininet.py
+
 cd /flash
 mirror --reverse --delete --use-cache lib-mpy
 mirror --reverse --use-cache --file=settings.py --file=boot.py --file=main.py
