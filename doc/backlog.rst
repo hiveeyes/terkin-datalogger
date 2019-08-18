@@ -7,36 +7,18 @@ Hiveeyes MicroPython Datalogger backlog
 Datalogger
 **********
 
-Prio 0
-======
-- [o] Move UDP mode server to mininet already
-- [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
-- [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
-- [o] https://community.hiveeyes.org/t/loggen-von-daten-und-error-warning-events-auf-sd/2279
-- [o] https://community.hiveeyes.org/t/http-und-webbasierte-konfiguration-fur-terkin-datenlogger-captive-portal/2270
-- [o] https://community.hiveeyes.org/t/kontinuierliche-verbesserungen-des-terkin-datenloggers-600er/2121
 
-Ideas
------
-- Make "make help" point to "Operate the"
+Miscellaneous
+=============
 - wget ftp.exe
 - [o] Leave maintenance mode after 10 minutes
 - [o] Configure ARP-ping timeout for "terkin.py"
   https://community.hiveeyes.org/t/running-terkin-py-on-windows/2273/31
 - [o] Add more information to ``make help``
-- https://github.com/lucien2k/sonoff-python
 - Output network config on each cycle in non-deepsleep mode
 - Client wrapper for Terkin HTTP API. e.g. sync files, upload config, restart
   What about ``terkinctl``?
-- When putting files on the device, maybe stop the program!?
-- Check out
-    - https://github.com/jczic/xAsyncSockets
-    - https://xasyncsockets.hc2.fr/
-- https://pypi.org/project/picotui/1.0/
-- https://github.com/pfalcon/picoweb
-  https://github.com/pfalcon/pycopy-lib/tree/master/uasyncio
-- https://github.com/pycom/pycom-libraries/blob/master/examples/OTA/OTA_server.py
-- Pull modeserver into MiniNet
+- When putting files on the device, maybe halt the program!?
 - Check out switching to
     - https://github.com/peterhinch/micropython-mqtt
     - https://github.com/yutter/micropython-mqtt
@@ -49,11 +31,9 @@ Ideas
       File "/flash/lib/terkin/configuration.py", line 12, in <module>
       File "/flash/lib/terkin/util.py", line 151, in <module>
     NameError: name 'contextmanager' is not defined
+- Pull modeserver into MiniNet
 - Implicitly connect to network on ``make recycle-ng``
 - Automatically connect to console if device is discovered
-- Implement real light sleep
-  "in light sleep mode the current consumption on a Lopy is 3.5 mA with RTC peripherals ON"
-  https://forum.pycom.io/topic/3351/new-development-firmware-release-v1-19-0-b1/3
 - https://github.com/Bucknalla/balena-pycom-ota
 - Detect file transfer errors::
 
@@ -85,8 +65,17 @@ Ideas
 - Use "hupper" for watching files
 - Remark about "LTE only with antenna"
   https://forum.pycom.io/topic/4721/working-lte-connection-in-germany/13
+- [o] Move UDP mode server to mininet already
 
 
+
+Prio 0.9
+========
+- [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
+- [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
+- [o] https://community.hiveeyes.org/t/loggen-von-daten-und-error-warning-events-auf-sd/2279
+- [o] https://community.hiveeyes.org/t/http-und-webbasierte-konfiguration-fur-terkin-datenlogger-captive-portal/2270
+- [o] https://community.hiveeyes.org/t/kontinuierliche-verbesserungen-des-terkin-datenloggers-600er/2121
 
 Prio 1
 ======
@@ -357,6 +346,12 @@ Done
     - [x] Turn off serial interface completely
     - [x] Tame LED-RGB
 - [x] Activate Watchdog Timer
+- [x] ``make recycle-ng`` needs network!?
+- [x] WiFi.is_connected would also return True when AP is up!!!
+- [x] Make "make help" point to "Operate the ..."
+- [x] Implement real "light sleep"
+  "in light sleep mode the current consumption on a Lopy is 3.5 mA with RTC peripherals ON"
+  https://forum.pycom.io/topic/3351/new-development-firmware-release-v1-19-0-b1/3
 
 
 
