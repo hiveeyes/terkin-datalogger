@@ -5,6 +5,10 @@ Hiveeyes MicroPython Datalogger CHANGES
 
 Development
 ===========
+
+
+2019-07-19 0.6.0
+================
 - Explicitly ``deinit()`` LTE modem on each startup
 - Fix ``settings.example-bob.py``. Thanks, `@MKO1640`_ and `@ClemensGruber`_.
 - Improve formatting of BEEP telemetry field mapping for BOB
@@ -135,6 +139,7 @@ Development
 - Propagate platform information for implementing platform switch conditions
 - Transfer "mboot" bootloader and "mininet" module
 - Start making Terkin platform-agnostic. Thanks, Markus!
+- Add release archives with frozen modules compatible to Pycom MicroPython
 
 
 2019-06-22 0.5.1

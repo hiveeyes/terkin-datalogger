@@ -31,33 +31,73 @@ prepare-release:
 
 	@# Define directories.
 	$(eval build_dir := ./build)
-	$(eval work_dir := $(build_dir)/$(releasename))
 	$(eval dist_dir := ./dist)
 
+	@# Define platform.
+	$(eval platform := pycom)
+
+create-source-archives: prepare-release
+
+	$(eval artefact := $(releasename)-source)
+
+	@# Define directories.
+	$(eval work_dir := $(build_dir)/$(artefact))
+
 	@# Define archive names.
-	$(eval tarfile := $(dist_dir)/$(releasename).tar.gz)
-	$(eval zipfile := $(dist_dir)/$(releasename).zip)
+	$(eval tarfile_source := $(dist_dir)/$(artefact).tar.gz)
+	$(eval zipfile_source := $(dist_dir)/$(artefact).zip)
 
-create-release-archives: prepare-release
-
-	@echo "Baking release artefacts for $(releasename)"
+	@echo "Baking source release artefacts for $(artefact)"
 
     # Remove release bundle archives.
-	@rm -f $(tarfile)
-	@rm -f $(zipfile)
+	@rm -f $(tarfile_source)
+	@rm -f $(zipfile_source)
 
     # Populate build directory.
 	@mkdir -p $(work_dir)
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
+
 	@cp -r dist-packages lib boot.py main.py settings.example*.py $(work_dir)
 	@cp -r hiveeyes terkin $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
-	tar -czf $(tarfile) -C $(build_dir) $(releasename)
-	(cd $(build_dir); zip -r ../$(zipfile) $(releasename))
+	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
+	(cd $(build_dir); zip -9 -r ../$(zipfile_source) $(artefact))
 
-publish-release: prepare-release check-github-release create-release-archives
+create-mpy-archives: prepare-release
+
+	$(eval artefact := $(releasename)-$(platform)-mpy)
+
+	@# Define directories.
+	$(eval work_dir := $(build_dir)/$(artefact))
+
+	@# Define archive names.
+	$(eval tarfile_source := $(dist_dir)/$(artefact).tar.gz)
+	$(eval zipfile_source := $(dist_dir)/$(artefact).zip)
+
+	@echo "Baking source release artefacts for $(artefact)"
+
+    # Remove release bundle archives.
+	@rm -f $(tarfile_source)
+	@rm -f $(zipfile_source)
+
+    # Populate build directory.
+	@mkdir -p $(work_dir)
+	@rm -r $(work_dir)
+	@mkdir -p $(work_dir)
+	@mkdir -p $(work_dir)/lib
+
+	@cp -r lib-mpy boot.py main.py settings.example*.py $(work_dir)
+	@cp -r lib/mboot.py lib/mininet.py $(work_dir)/lib
+
+    # Create .tar.gz and .zip archives.
+	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
+	(cd $(build_dir); zip -9 -r ../$(zipfile_source) $(artefact))
+
+build-release: prepare-release check-github-release create-source-archives create-mpy-archives
+
+publish-release: build-release
 
 	@echo "Uploading release artefacts for $(releasename) to GitHub"
 
@@ -69,5 +109,5 @@ publish-release: prepare-release check-github-release create-release-archives
 	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
 
     # Upload release artifacts.
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile)) --file $(tarfile) --replace
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile)) --file $(zipfile) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
