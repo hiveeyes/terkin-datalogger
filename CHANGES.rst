@@ -7,7 +7,7 @@ Development
 ===========
 
 
-2019-07-19 0.6.0
+2019-08-19 0.6.0
 ================
 - Explicitly ``deinit()`` LTE modem on each startup
 - Fix ``settings.example-bob.py``. Thanks, `@MKO1640`_ and `@ClemensGruber`_.
