@@ -17,10 +17,8 @@ Have fun!
 print('[main.py] INFO: Loading settings')
 import settings
 
-print('[main.py] INFO: Loading modules')
+print('[main.py] INFO: Starting logging')
 from terkin import logging
-
-print('[main.py] INFO: Getting logger')
 log = logging.getLogger(__name__)
 
 
@@ -33,6 +31,7 @@ def main():
     print('[main.py] INFO: Starting Terkin Datalogger')
     global bootloader
     global datalogger
+    print('[main.py] INFO: Loading modules')
     from hiveeyes.datalogger import HiveeyesDatalogger
     datalogger = HiveeyesDatalogger(settings, platform_info=bootloader.platform_info)
     datalogger.setup()

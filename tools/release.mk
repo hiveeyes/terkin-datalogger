@@ -73,14 +73,14 @@ create-mpy-archives: prepare-release
 	$(eval work_dir := $(build_dir)/$(artefact))
 
 	@# Define archive names.
-	$(eval tarfile_source := $(dist_dir)/$(artefact).tar.gz)
-	$(eval zipfile_source := $(dist_dir)/$(artefact).zip)
+	$(eval tarfile_mpy := $(dist_dir)/$(artefact).tar.gz)
+	$(eval zipfile_mpy := $(dist_dir)/$(artefact).zip)
 
 	@echo "Baking source release artefacts for $(artefact)"
 
     # Remove release bundle archives.
-	@rm -f $(tarfile_source)
-	@rm -f $(zipfile_source)
+	@rm -f $(tarfile_mpy)
+	@rm -f $(zipfile_mpy)
 
     # Populate build directory.
 	@mkdir -p $(work_dir)
@@ -92,12 +92,12 @@ create-mpy-archives: prepare-release
 	@cp -r lib/mboot.py lib/mininet.py $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
-	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
-	(cd $(build_dir); zip -9 -r ../$(zipfile_source) $(artefact))
+	tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)
+	(cd $(build_dir); zip -9 -r ../$(zipfile_mpy) $(artefact))
 
-build-release: prepare-release check-github-release create-source-archives create-mpy-archives
+build-release: prepare-release create-source-archives create-mpy-archives
 
-publish-release: build-release
+publish-release: check-github-release build-release
 
 	@echo "Uploading release artefacts for $(releasename) to GitHub"
 
@@ -106,8 +106,13 @@ publish-release: build-release
 
     # Create Release.
 	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --draft
-	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version)
 
-    # Upload release artifacts.
+	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) || true
+
+    # Upload source release artifacts.
 	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
 	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
+
+    # Upload mpy release artifacts.
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile_mpy)) --file $(tarfile_mpy) --replace
+	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
