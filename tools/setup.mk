@@ -5,7 +5,7 @@ download-requirements:
 	$(eval fetch := wget --quiet --no-clobber --directory-prefix)
 
 	# Install "upip", the PyPI package manager for MicroPython.
-	$(pip3) install pycopy-cpython-upip
+	$(pip3) install "pycopy-cpython-upip==1.2.6"
 
 	# Install all required packages listed in file "requirements-mpy.txt".
 	$(python3) -m upip install -p $(target_dir) -r requirements-mpy.txt
