@@ -28,11 +28,14 @@ $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 # ------------------
 # Python virtualenvs
 # -------------------
-setup-virtualenv2:
-	@test -e $(python2) || `command -v virtualenv` --python=python2 --no-site-packages $(venv2path)
+check-virtualenv:
+	@$(MAKE) check-program program="virtualenv" hint="Install on Debian-based systems using 'apt install python-virtualenv python3-virtualenv' or use the package manager of your choice"
 
-setup-virtualenv3:
-	@test -e $(python3) || `command -v virtualenv` --python=python3 --no-site-packages $(venv3path)
+setup-virtualenv2: check-virtualenv
+	@test -e $(python2) && virtualenv --python=python2 --no-site-packages $(venv2path)
+
+setup-virtualenv3: check-virtualenv
+	@test -e $(python3) && virtualenv --python=python3 --no-site-packages $(venv3path)
 	$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3
@@ -129,6 +132,13 @@ confirm:
 	@# Prompt the user to confirm action.
 	@printf "$(CONFIRM) $(text)"
 	@$(MAKE) prompt_yesno
+
+check-program:
+	@if test "$(shell command -v $(program))" = ""; then \
+		echo "ERROR: \"$(program)\" program not installed."; \
+        echo "HINT: $(hint)"; \
+		exit 1; \
+	fi
 
 
 # Variable debugging.

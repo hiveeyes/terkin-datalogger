@@ -6,6 +6,7 @@ Hiveeyes MicroPython Datalogger CHANGES
 Development
 ===========
 - Fix sandbox installation issue by nailing pycopy-cpython-upip to 1.2.6
+- Improve sanity checks for sandbox setup
 
 
 2019-08-19 0.6.0

@@ -11,8 +11,10 @@ ifeq ($(mcu_port),)
 endif
 
 # Fall back to value from .terkin/floatip
-ifeq ($(mcu_port),)
-    $(eval mcu_port := $(shell cat '.terkin/floatip'))
+ifneq (,$(wildcard ./.terkin))
+    ifeq ($(mcu_port),)
+        $(eval mcu_port := $(shell cat '.terkin/floatip'))
+    endif
 endif
 
 # Set default options for rshell
@@ -29,16 +31,16 @@ endif
 
 # Sanity-check MCU_PORT
 check-mcu-port:
-	@#echo Connecting via port type $(mcu_port_type)
-	@echo "Device port: ${mcu_port_type} => ${mcu_port}"
 	@if test "${mcu_port}" = ""; then \
-        echo "MCU port could not be obtained, please set MCU_PORT environment variable or populate .terkin/floatip"; \
-        exit 1; \
+		echo "ERROR: MCU port could not be obtained, please set the \"MCU_PORT\" environment variable or populate the \".terkin/floatip\" file."; \
+		exit 1; \
+	else \
+		echo "Device port: ${mcu_port_type} => ${mcu_port}"; \
 	fi
 
 ## Restart device using the HTTP API
 restart-device:
-	$(eval ip_address := $(shell cat .terkin/floatip))
+	$(eval ip_address := $(mcu_port))
 
 	@# Notify user about the power cycling.
 	@$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Restarting device at IP address $(ip_address) using HTTP API"
