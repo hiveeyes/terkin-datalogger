@@ -2,12 +2,17 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import sys
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 # Keep track of time since boot.
-_chrono = None
+from terkin.util import GenericChronometer, PycomChronometer
+if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+    _chrono = PycomChronometer()
+else:
+    _chrono = GenericChronometer()
 
 
 class TimedLogRecord(logging.LogRecord):
@@ -16,7 +21,7 @@ class TimedLogRecord(logging.LogRecord):
         try:
             self.tdelta = _chrono.read()
         except:
-            self.tdelta = None
+            self.tdelta = 0
 
 
 class ExtendedLogger(Logger):
@@ -33,13 +38,6 @@ class ExtendedLogger(Logger):
 
 
 def getLogger(name=None, level=logging.INFO):
-    global _chrono
-
-    # Keep track of time since boot.
-    if _chrono is None:
-        from machine import Timer
-        _chrono = Timer.Chrono()
-        _chrono.start()
 
     if name is None:
         name = "root"

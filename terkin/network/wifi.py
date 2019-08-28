@@ -22,6 +22,11 @@ class WiFiManager:
         self.stations = self.settings.get('networking.wifi.stations')
         self.station = None
 
+        # Stopwatch for keeping track of time.
+        log.info('Starting stopwatch')
+        self.stopwatch = Stopwatch()
+        log.info('Started stopwatch successfully')
+
     def start(self):
 
         # Todo: Propagate more parameters here, e.g. for using an external antenna.
@@ -186,6 +191,7 @@ class WiFiManager:
             log.error('{}. {}'.format(message, description))
             log.warning('Todo: We might want to buffer telemetry data to '
                         'flash memory to be scheduled for transmission later.')
+
             raise WiFiException(message)
 
     def connect_station(self, network):
@@ -246,13 +252,12 @@ class WiFiManager:
         # How many checks to make.
         checks = int(timeout / (network_poll_interval / 1000.0))
 
-        # Stopwatch for keeping track of time.
-        stopwatch = Stopwatch()
+        self.stopwatch.reset()
 
         do_report = True
         while not self.is_connected():
 
-            delta = stopwatch.elapsed()
+            delta = self.stopwatch.elapsed()
             eta = timeout - delta
 
             if checks <= 0 or eta <= 0:

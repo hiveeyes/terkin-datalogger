@@ -11,6 +11,7 @@ Development
 - Import microWebSrv only when enabling HTTP service to save memory
 - Make WiFi work in non-threaded environments again
 - Improve MiniNet WiFi connectivity
+- Improve logging timestamping
 
 
 2019-08-19 0.6.0

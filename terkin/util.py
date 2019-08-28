@@ -257,13 +257,51 @@ def backoff_time(n, minimum=1, maximum=600):
 class Stopwatch:
 
     def __init__(self):
+        self.chronometer = GenericChronometer()
+        self.begin = self.chronometer.read()
+
+    def elapsed(self):
+        return self.chronometer.read() - self.begin
+
+    def reset(self):
+        self.chronometer.reset()
+
+
+class GenericChronometer:
+    """
+    A millisecond chronometer implemented with vanilla MicroPython.
+    https://micropython.readthedocs.io/en/latest/pyboard/tutorial/timer.html#making-a-microsecond-counter
+    """
+
+    def __init__(self):
+        import time
+        self.start = time.ticks_ms()
+
+    def read(self):
+        import time
+        return time.ticks_diff(time.ticks_ms(), self.start) / 1000.0
+
+    def reset(self):
+        import time
+        self.start = time.ticks_ms()
+
+
+class PycomChronometer:
+    """
+    A chronometer implemented with Pycom MicroPython.
+    https://docs.pycom.io/firmwareapi/pycom/machine/timer/
+    """
+
+    def __init__(self):
         from machine import Timer
         self.chrono = Timer.Chrono()
         self.chrono.start()
-        self.begin = self.chrono.read()
 
-    def elapsed(self):
-        return self.chrono.read() - self.begin
+    def read(self):
+        return self.chrono.read()
+
+    def reset(self):
+        self.chrono.reset()
 
 
 class Eggtimer:
