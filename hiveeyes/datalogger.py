@@ -12,9 +12,6 @@
 #
 from terkin import logging
 from terkin.datalogger import TerkinDatalogger
-from hiveeyes.sensor_hx711 import HX711Sensor
-from hiveeyes.sensor_ds18x20 import DS18X20Sensor
-from hiveeyes.sensor_bme280 import BME280Sensor
 
 log = logging.getLogger(__name__)
 
@@ -89,6 +86,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
             log.info("Skipping HX711 device on pins {}/{}".format(settings['pin_dout'], settings['pin_pdsck']))
             return
 
+        from hiveeyes.sensor_hx711 import HX711Sensor
         hx711_sensor = HX711Sensor(settings=settings)
         hx711_sensor.set_address(settings.get('number', settings.get('address', 0)))
         hx711_sensor.register_pin('dout', settings['pin_dout'])
@@ -110,6 +108,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         """
         Setup and register the DS18X20  sensor component with your data logger.
         """
+        from hiveeyes.sensor_ds18x20 import DS18X20Sensor
 
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
         sensor = DS18X20Sensor(settings=settings)
@@ -132,6 +131,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
             log.info("Skipping BME280 device {} on bus {}".format(hex(settings['address']), bus.name))
             return
 
+        from hiveeyes.sensor_bme280 import BME280Sensor
         sensor = BME280Sensor(settings=settings)
         if 'address' in settings:
             sensor.set_address(settings['address'])
