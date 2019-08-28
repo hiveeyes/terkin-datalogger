@@ -19,6 +19,7 @@ Development
 - Defer loading modules for sensors at runtime to save memory
 - Load the ADC module for "SystemBatteryLevel" at runtime
 - Fix missing ADC module import
+- Process DS18B20 addresses case insensitive
 
 
 2019-08-19 0.6.0

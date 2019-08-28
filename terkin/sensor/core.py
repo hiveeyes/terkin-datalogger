@@ -210,13 +210,14 @@ class OneWireBus(AbstractBus):
             log.exception('1-Wire hardware driver failed')
 
     def scan_devices(self):
-        """
-        Resetting the 1-Wire device in case of leftovers
-        """
+
+        # Reset the 1-Wire device in case of leftovers.
         self.adapter.reset()
+
         # TODO: Tune this further?
         time.sleep(1)
-        # Scan for 1-Wire devices and populate `devices`.
+
+        # Scan for 1-Wire devices and remember them.
         # TODO: Refactor things specific to DS18x20 devices elsewhere.
         self.devices = [rom for rom in self.adapter.scan() if rom[0] == 0x10 or rom[0] == 0x28]
         log.info("Found {} 1-Wire (DS18x20) devices: {}".format(len(self.devices), self.get_devices_ascii()))
@@ -235,7 +236,7 @@ class OneWireBus(AbstractBus):
         # Compute ASCII representation of device address.
         if isinstance(address, (bytearray, bytes)):
             address = hexlify(address).decode()
-        return address
+        return address.lower()
 
 
 class I2CBus(AbstractBus):

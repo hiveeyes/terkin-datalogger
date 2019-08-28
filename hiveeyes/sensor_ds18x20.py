@@ -121,7 +121,7 @@ class DS18X20Sensor(AbstractSensor):
 
         # Get device-specific settings from configuration.
         for device_settings in self.settings.get('devices', []):
-            if device_settings['address'] == address:
+            if device_settings['address'].lower() == address:
                 return device_settings
 
         return {}

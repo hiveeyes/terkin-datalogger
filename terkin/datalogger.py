@@ -365,9 +365,10 @@ class TerkinDatalogger:
                 # TODO: Attach settings directly to its reading, while actually reading it.
                 if 'devices' in sensor.settings:
                     for device_settings in sensor.settings['devices']:
-                        if device_settings['address'] in key:
+                        device_address = device_settings['address'].lower()
+                        if device_address in key:
                             if hasattr(sensor, 'get_device_description'):
-                                device_description = sensor.get_device_description(device_settings['address'])
+                                device_description = sensor.get_device_description(device_address)
                                 if device_description:
                                     richdata[key]['description'] = device_description
 

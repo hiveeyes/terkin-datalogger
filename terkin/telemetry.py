@@ -649,6 +649,7 @@ class BeepBobTopology(IdentityTopology):
         mapping = self.settings.get('sensor_telemetry_map')
         mapping['key'] = 'key'
         for sensor_field, telemetry_field in mapping.items():
+            sensor_field = sensor_field.lower()
             if sensor_field in data:
                 egress_data[telemetry_field] = data[sensor_field]
 
