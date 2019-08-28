@@ -32,6 +32,7 @@ people are doing on the foundation infrastructure the software is leveraging.
 
 - Damien George, Paul Sokolovsky, Dave Hylands, @stinos and all other
   `MicroPython core developers`_ and `micropython-lib`_ authors.
+- Paul Sokolovsky for improving MicroPython through the Pycopy fork.
 - All contributors to `pycom-micropython-sigfox`_ and `pycom-libraries`_.
 - Daniel Campora for the Pycom MQTT package.
 - David Gerber <https://github.com/geda>, Robert H. <https://github.com/robert-hh> and

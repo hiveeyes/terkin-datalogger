@@ -13,6 +13,7 @@ Development
 - Improve MiniNet WiFi connectivity
 - Improve logging timestamping
 - Improve sandbox tooling robustness
+- Upgrade to pycopy-cpython-upip==1.3.3 again. Thanks, Paul!
 
 
 2019-08-19 0.6.0
