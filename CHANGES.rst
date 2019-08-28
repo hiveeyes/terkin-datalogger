@@ -9,6 +9,7 @@ Development
 - Improve sanity checks for sandbox setup
 - Improve RGB-LED signalling
 - Import microWebSrv only when enabling HTTP service to save memory
+- Make WiFi work in non-threaded environments again
 
 
 2019-08-19 0.6.0

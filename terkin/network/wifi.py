@@ -5,7 +5,6 @@
 import time
 import machine
 import binascii
-import _thread
 from network import WLAN
 from terkin import logging
 from terkin.util import format_mac_address, backoff_time, Stopwatch
@@ -28,9 +27,15 @@ class WiFiManager:
         # Todo: Propagate more parameters here, e.g. for using an external antenna.
         self.station = WLAN()
 
-        _thread.start_new_thread(self.start_real, ())
+        self.start_interface()
 
-    def start_real(self):
+        try:
+            import _thread
+            _thread.start_new_thread(self.stay_connected, ())
+        except ImportError:
+            self.connect_once()
+
+    def start_interface(self):
         """
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
@@ -70,6 +75,29 @@ class WiFiManager:
 
             return True
 
+    def enable_ap(self):
+        # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
+        """
+        log.info('WiFi: Switching to AP mode')
+        # WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT
+        # TOOD: Make default channel configurable
+        self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
+        """
+        pass
+
+    def connect_once(self):
+
+        # Prepare information about known WiFi networks.
+        networks_known = frozenset([station['ssid'] for station in self.stations])
+
+        try:
+            self.connect_stations(networks_known)
+
+        except:
+            log.exception('WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
+
+    def stay_connected(self):
+
         # Prepare information about known WiFi networks.
         networks_known = frozenset([station['ssid'] for station in self.stations])
 
@@ -96,14 +124,6 @@ class WiFiManager:
 
             machine.idle()
             time.sleep(delay)
-
-        # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
-        """
-        log.info('WiFi: Switching to AP mode')
-        # WLAN.AP, original_ssid, original_auth, WLAN.INT_ANT
-        # TOOD: Make default channel configurable
-        self.station.init(mode=WLAN.AP, ssid=original_ssid, auth=original_auth, channel=6, antenna=WLAN.INT_ANT)
-        """
 
     def is_connected(self):
         try:
@@ -162,7 +182,7 @@ class WiFiManager:
 
             message = 'WiFi STA: Connecting to any network candidate failed'
             description = 'Please check your WiFi configuration for one of the ' \
-                          'station candidates {}.'.format(len(network_names))
+                          '{} station candidates.'.format(len(network_names))
             log.error('{}. {}'.format(message, description))
             log.warning('Todo: We might want to buffer telemetry data to '
                         'flash memory to be scheduled for transmission later.')
