@@ -50,7 +50,12 @@ main = {
 
     # Configure RGB-LED.
     'rgb_led': {
+
+        # Use the builtin heartbeat blink pattern. Default: True.
         'heartbeat': True,
+
+        # Activate the Terkin blink pattern. Will disable the builtin heartbeat pattern when enabled.
+        'terkin': False,
     },
 
 }

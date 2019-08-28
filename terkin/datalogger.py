@@ -65,6 +65,7 @@ class TerkinDatalogger:
         # Configure logging.
         logging_enabled = self.settings.get('main.logging.enabled', False)
         if not logging_enabled:
+            log.info('Disabling logging to save bytes')
             logging.disable_logging()
 
         # Initialize transient storage.
@@ -107,7 +108,7 @@ class TerkinDatalogger:
         self.device.configure_rgb_led()
 
         # Alternative startup signalling: 2 x green.
-        self.device.blink_led(0x001000, count=2)
+        self.device.blink_led(0x000b00, count=2)
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # Todo: Revisit where this should actually go.
@@ -193,7 +194,7 @@ class TerkinDatalogger:
 
         # Alternative loop signalling: 1 x blue.
         # https://forum.pycom.io/topic/2067/brightness-of-on-board-led/7
-        self.device.blink_led(0x000010)
+        self.device.blink_led(0x00000b, count=2)
 
         # Read sensors.
         readings = self.read_sensors()
@@ -205,7 +206,13 @@ class TerkinDatalogger:
         self.device.run_gc()
 
         # Transmit data.
-        self.transmit_readings(readings)
+        transmission_success = self.transmit_readings(readings)
+
+        # Signal transmission outcome.
+        if transmission_success:
+            self.device.blink_led(0x00000b)
+        else:
+            self.device.blink_led(0x0b0000)
 
         # Run the garbage collector.
         self.device.run_gc()

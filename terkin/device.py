@@ -124,17 +124,22 @@ class TerkinDevice:
             import pycom
             # Enable or disable heartbeat.
             rgb_led_heartbeat = self.settings.get('main.rgb_led.heartbeat', True)
+            terkin_blink_pattern = self.settings.get('main.rgb_led.terkin', False)
+            if terkin_blink_pattern:
+                rgb_led_heartbeat = False
             pycom.heartbeat(rgb_led_heartbeat)
             pycom.heartbeat_on_boot(rgb_led_heartbeat)
 
     def blink_led(self, color, count=1):
         if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
             import pycom
-            for _ in range(count):
-                pycom.rgbled(color)
-                time.sleep(0.15)
-                pycom.rgbled(0x000000)
-                time.sleep(0.10)
+            terkin_blink_pattern = self.settings.get('main.rgb_led.terkin', False)
+            if terkin_blink_pattern:
+                for _ in range(count):
+                    pycom.rgbled(color)
+                    time.sleep(0.15)
+                    pycom.rgbled(0x000000)
+                    time.sleep(0.10)
 
     def start_telemetry(self):
         log.info('Starting telemetry')
