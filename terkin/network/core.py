@@ -7,7 +7,6 @@ import time
 import socket
 import machine
 from terkin import logging
-from terkin.api.http import TerkinHttpApi
 from terkin.network.ip import UdpServer
 from terkin.network.lora import LoRaManager
 from terkin.network.wifi import WiFiManager
@@ -126,6 +125,7 @@ class NetworkManager:
         """
         Start HTTP server for managing the device.
         """
+        from terkin.api.http import TerkinHttpApi
         storage = self.device.application_info.application.storage
         http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
         http_api.start()

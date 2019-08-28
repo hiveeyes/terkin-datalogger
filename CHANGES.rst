@@ -8,6 +8,7 @@ Development
 - Fix sandbox installation issue by nailing pycopy-cpython-upip to 1.2.6
 - Improve sanity checks for sandbox setup
 - Improve RGB-LED signalling
+- Import microWebSrv only when enabling HTTP service to save memory
 
 
 2019-08-19 0.6.0
