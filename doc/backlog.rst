@@ -67,11 +67,22 @@ Miscellaneous
   https://forum.pycom.io/topic/4721/working-lte-connection-in-germany/13
 - [o] Move UDP mode server to mininet already
 - http://docs.micropython.org/en/v1.9.3/esp8266/library/btree.html
-
+- Use wait_for_nic from MicroWifi
+- Investigate crashes on Pycom from using ``time.ticks_ms()`` when running multithreaded
 
 
 Prio 0.9
 ========
+::
+
+    [main.py] INFO: Starting Terkin Datalogger
+       18.3435 [terkin.configuration     ] INFO   : Starting TerkinConfiguration on path "/flash"
+       18.3644 [terkin.configuration     ] INFO   : Ensuring existence of backup directory at "/flash/backup"
+    Unhandled exception in thread started by <bound_method>
+    Traceback (most recent call last):
+      File "network/ip.py", line 24, in start_real
+    OSError: Network card not available
+
 - [o] When multiple networks of the same name exist, use the one with the better RSSI::
 
     INFO:  WiFi STA: Scanning for networks
@@ -80,6 +91,11 @@ Prio 0.9
     INFO:  WiFi STA: Connected to "GartenNetzwerk"
     INFO:  WiFi STA: Connecting to "GartenNetzwerk"
     INFO:  WiFi STA: Connected to "GartenNetzwerk"
+
+- [o] Enable logging when in maintenance mode
+- [o] If logging is disabled, either log nothing at all or
+    Ensuring existence of backup directory at "/flash/backup"
+- [o] https://forum.pycom.io/topic/3425/new-beta-firmware-updater-1-15-2-b0
 
 - [o] https://community.hiveeyes.org/t/backlog-terkin-datenlogger-fur-bob/2277
 - [o] https://community.hiveeyes.org/t/remote-logging-zur-ferndiagnose-fur-den-terkin-datenlogger/2280
