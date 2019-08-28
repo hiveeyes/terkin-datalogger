@@ -8,7 +8,6 @@ import socket
 import machine
 from terkin import logging
 from terkin.network.ip import UdpServer
-from terkin.network.lora import LoRaManager
 from terkin.network.wifi import WiFiManager
 from terkin.util import format_exception, Eggtimer
 
@@ -24,7 +23,7 @@ class NetworkManager:
         self.device.watchdog.feed()
 
         self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
-        self.lora_manager = LoRaManager(manager=self, settings=self.settings)
+        self.lora_manager = None
         self.mode_server = None
 
     def stop(self):
@@ -35,6 +34,8 @@ class NetworkManager:
         self.wifi_manager.start()
 
     def start_lora(self):
+        from terkin.network.lora import LoRaManager
+        self.lora_manager = LoRaManager(manager=self, settings=self.settings)
         self.lora_manager.start()
 
     def wait_for_ip_stack(self, timeout=5):
