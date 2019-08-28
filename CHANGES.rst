@@ -17,6 +17,7 @@ Development
 - Add basic recycle task for uploading the code to the Pyboard D
 - Start LoRa on demand to reduce memory consumption
 - Defer loading modules for sensors at runtime to save memory
+- Load the ADC module for "SystemBatteryLevel" at runtime
 
 
 2019-08-19 0.6.0

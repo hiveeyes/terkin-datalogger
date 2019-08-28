@@ -3,7 +3,7 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-from machine import ADC, enable_irq, disable_irq
+from machine import enable_irq, disable_irq
 from micropython import const
 from terkin import logging
 
@@ -117,6 +117,7 @@ class SystemBatteryLevel:
         assert type(self.resistor_r2) is int, 'VCC Error: Voltage divider resistor value "resistor_r2" invalid'
 
         # ADC channel used for sampling the raw value.
+        from machine import ADC
         try:
             self.adc = ADC(id=0)
         except TypeError:
