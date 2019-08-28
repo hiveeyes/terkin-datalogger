@@ -12,6 +12,7 @@ Development
 - Make WiFi work in non-threaded environments again
 - Improve MiniNet WiFi connectivity
 - Improve logging timestamping
+- Improve sandbox tooling robustness
 
 
 2019-08-19 0.6.0

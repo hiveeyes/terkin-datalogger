@@ -32,7 +32,7 @@ download-requirements:
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/v1.1.1/dotty_dict/dotty_dict.py
 
 
-    ## API
+	## API
 
 	# Install MicroWebSrv and MicroDNSSrv libraries
 	# https://github.com/jczic/MicroWebSrv
@@ -49,7 +49,7 @@ download-requirements:
 	#$(fetch) $(target_dir) https://raw.githubusercontent.com/cmisztur/pycom-ble-gatt-wrapper/1deab094cf91d33dfe833b686db90e6ac00ce577/L99_BLEGATTSService.py
 
 
-    ## Telemetry
+	## Telemetry
 
 	# Install "micropython-urllib.parse" without "micropython-re-pcre"
 	# to avoid collision with libraries shipped as Pycom builtins.
@@ -70,7 +70,7 @@ download-requirements:
 	rm -rf $(tmpdir)
 
 
-    ## Sensors
+	## Sensors
 
 	# Install BME280 Libary
 	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
@@ -89,7 +89,8 @@ download-requirements:
 	# https://github.com/pycom/pycom-libraries/pull/62
 	$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/dabce8d9cc8cf3b9849446000d811a39c53b6093/examples/DS18X20/onewire.py
 
-    ## Ratrack
+
+	## Ratrack
 
 	# Install Pycoproc Libary
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/681302a4/lib/pycoproc/pycoproc.py
@@ -104,7 +105,7 @@ download-requirements:
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/0f123c7/pytrack/lib/pytrack.py
 
 
-    ## sqnsupgrade
+	## sqnsupgrade
 	$(eval sqns_dir := ./dist-firmwares/sqnsupgrade)
 	mkdir -p $(sqns_dir)
 	$(fetch) $(sqns_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/96af79be7abcfca9f41a240decc6bd50b55bf5c4/lib/sqnsupgrade/sqnsbr.py

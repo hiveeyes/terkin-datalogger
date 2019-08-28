@@ -91,7 +91,7 @@ mpy-cross-setup: setup-virtualenv2
 
 	@echo "$(INFO) Installing mpy-cross-all"
 	@mkdir -p ./bin
-	@wget --quiet --no-clobber --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
+	@wget --quiet --unlink --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
 
 
 # ----

@@ -96,7 +96,7 @@ format-flash: check-mcu-port
 	@$(MAKE) confirm text="Format /flash on the device with LittleFS? THIS WILL DESTROY DATA ON YOUR DEVICE."
 
 	@echo Creating and formatting LittleFS filesystem
-	$(rshell) $(rshell_options) --quiet repl pyboard 'import os, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ os.fsformat(\"/flash\") ~'
+	$(rshell) $(rshell_options) --quiet repl pyboard 'import uos, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ uos.fsformat(\"/flash\") ~'
 	@echo
 
 ## Erase flash filesystem

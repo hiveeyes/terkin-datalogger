@@ -152,7 +152,7 @@ recycle-ng: install-ng
 	@echo
 	@$(MAKE) confirm text="Restart device using the HTTP API?"
 
-	$(MAKE) restart-device
+	@$(MAKE) restart-device
 
 ## Upload program and settings and restart attached to REPL
 sketch-and-run: install-sketch reset-device-attached
