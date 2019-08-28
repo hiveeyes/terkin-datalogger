@@ -42,7 +42,7 @@ class MiniNet:
         print('INFO:  WiFi AP:  Starting access point')
         self.station.mode(network.WLAN.AP)
 
-    def connect_wifi_sta(self, ssid, password, timeout=3000):
+    def connect_wifi_sta(self, ssid, password, timeout=10000):
         """
         https://docs.pycom.io/firmwareapi/pycom/network/wlan/
         https://mike632t.wordpress.com/2017/04/11/connecting-my-wipy-to-my-wifi/
@@ -75,20 +75,11 @@ class MiniNet:
 
         for net in nets:
             if net.ssid == ssid:
-                print('INFO:  WiFi STA: Connecting to "{}"'.format(ssid))
-                self.station.connect(net.ssid, auth=(net.sec, password), timeout=timeout)
-
-                try:
-                    while not self.station.isconnected():
-                        # Save power while waiting
-                        machine.idle()
-                        time.sleep_ms(250)
-                    print('INFO:  WiFi STA: Connected to "{}"'.format(ssid))
-
-                except Exception as ex:
-                    print('ERROR: WiFi STA: Connecting to "{}" failed. Please check SSID and PASSWORD.\n'.format(ssid, ex))
+                # Try to connect twice.
+                if self.connect_wifi_sta_single(ssid, net.sec, password, timeout=timeout):
                     break
-
+                if self.connect_wifi_sta_single(ssid, net.sec, password, timeout=timeout):
+                    break
 
         # Enable telnet and FTP server with new settings
         #server.init(login=('<user>', '<password>'), timeout=600)
@@ -109,6 +100,25 @@ class MiniNet:
 
         print()
         print('Note: Press CTRL+X or Ctrl+] to detach from the REPL')
+
+    def connect_wifi_sta_single(self, ssid, authmode, password, timeout=10000):
+
+        print('INFO:  WiFi STA: Connecting to "{}"'.format(ssid))
+        self.station.connect(ssid, auth=(authmode, password), timeout=timeout)
+
+        try:
+            # FIXME: This is a candidate for an infinite loop.
+            while not self.station.isconnected():
+                # Save power while waiting
+                machine.idle()
+                time.sleep_ms(250)
+
+            print('INFO:  WiFi STA: Connected to "{}"'.format(ssid))
+
+            return True
+
+        except Exception as ex:
+            print('ERROR: WiFi STA: Connecting to "{}" failed. Please check SSID and PASSWORD.\n{}'.format(ssid, ex))
 
     def wait_for_nic(self, retries=5):
         attempts = 0

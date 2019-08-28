@@ -10,6 +10,7 @@ Development
 - Improve RGB-LED signalling
 - Import microWebSrv only when enabling HTTP service to save memory
 - Make WiFi work in non-threaded environments again
+- Improve MiniNet WiFi connectivity
 
 
 2019-08-19 0.6.0
