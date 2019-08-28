@@ -14,6 +14,7 @@ Development
 - Improve logging timestamping
 - Improve sandbox tooling robustness
 - Upgrade to pycopy-cpython-upip==1.3.3 again. Thanks, Paul!
+- Add basic recycle task for uploading the code to the Pyboard D
 
 
 2019-08-19 0.6.0

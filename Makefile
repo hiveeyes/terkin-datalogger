@@ -157,6 +157,20 @@ recycle-ng: install-ng
 ## Upload program and settings and restart attached to REPL
 sketch-and-run: install-sketch reset-device-attached
 
+## Pyboard-D transfer
+pyboard-install:
+	@if test -e "/Volumes/PYBFLASH"; then \
+		rsync -auv dist-packages lib hiveeyes terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+	else \
+		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \
+		exit 1; \
+	fi
+
+pyboard-reset:
+	diskutil unmount /Volumes/PYBFLASH || true
+	$(MAKE) reset-device sleep sleep console
+
+pyboard-recycle: pyboard-install pyboard-reset
 
 
 # ------------------
