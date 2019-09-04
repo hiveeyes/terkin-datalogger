@@ -1,8 +1,9 @@
 # https://github.com/pycom/pycom-libraries/tree/master/pycom-docker-fw-build
 
-FROM ubuntu:bionic
+FROM debian:buster-slim
 
-RUN apt-get update && apt-get -y install wget git build-essential python python-serial && \
+RUN apt-get update && \ 
+    apt-get -y install wget git build-essential python python-serial python-virtualenv python3-virtualenv && \
     mkdir /opt/frozen/ && cd /opt && \
     wget -q https://dl.espressif.com/dl/xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz && \
     tar -xzvf xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz  && \
