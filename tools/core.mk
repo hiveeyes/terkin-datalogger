@@ -134,7 +134,7 @@ confirm:
 	@$(MAKE) prompt_yesno
 
 check-program:
-	@if test "$(shell command -v $(program))" != ""; then \
+	@if test "$(shell command -v $(program))" = ""; then \
 		echo "ERROR: \"$(program)\" program not installed."; \
         echo "HINT: $(hint)"; \
 		exit 1; \
