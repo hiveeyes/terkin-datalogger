@@ -1,0 +1,28 @@
+version: '3.7'
+
+
+services:
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer:/data
+
+  hiveeyes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: debian/buster-slim
+    container_name: hiveeyes
+    restart: unless-stopped
+    volumes:
+      - ../hiveeyes-micropython-firmware:/opt/hiveeyes-micropython-firmware
+    stdin_open: true
+    tty: true
+
+
