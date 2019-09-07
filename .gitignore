@@ -13,3 +13,6 @@ settings.py
 /build
 /bin
 .terkin
+/.pio
+/.vscode
+/portainer
