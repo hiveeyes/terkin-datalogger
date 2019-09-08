@@ -11,6 +11,7 @@ from shutil import copyfileobj
 from terkin import logging
 from terkin.backup import backup_file
 from terkin.util import ensure_directory
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -20,8 +21,12 @@ class TerkinConfiguration:
     A flexible configuration manager.
     """
 
-    CONFIG_PATH = '/flash'
-    BACKUP_PATH = '/flash/backup'
+    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        CONFIG_PATH = '/flash'
+        BACKUP_PATH = '/flash/backup'
+    else:
+        CONFIG_PATH = '/'
+        BACKUP_PATH = '/backup'
 
     # Strip some settings when displaying configuration values
     # to prevent leaking sensible information into log files.

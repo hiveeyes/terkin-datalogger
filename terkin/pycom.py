@@ -25,28 +25,51 @@ class MachineResetCause:
     Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
     """
 
-    reset_causes = {
-        machine.PWRON_RESET: 'PWRON',
-        machine.HARD_RESET: 'HARD',
-        machine.WDT_RESET: 'WDT',
-        machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
-        machine.SOFT_RESET: 'SOFT',
-        machine.BROWN_OUT_RESET: 'BROWN_OUT'
-    }
+    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        reset_causes = {
+            machine.PWRON_RESET: 'PWRON',
+            machine.HARD_RESET: 'HARD',
+            machine.WDT_RESET: 'WDT',
+            machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
+            machine.SOFT_RESET: 'SOFT',
+            machine.BROWN_OUT_RESET: 'BROWN_OUT'
+        }
 
-    wakeup_reasons = {
-        machine.PIN_WAKE: 'PIN',
-        machine.PWRON_WAKE: 'PWRON',
-        machine.RTC_WAKE: 'RTC',
-        machine.ULP_WAKE: 'ULP',
-        # machine.WLAN_WAKE: 'WLAN',
-    }
+        wakeup_reasons = {
+            machine.PIN_WAKE: 'PIN',
+            machine.PWRON_WAKE: 'PWRON',
+            machine.RTC_WAKE: 'RTC',
+            machine.ULP_WAKE: 'ULP',
+            machine.WLAN_WAKE: 'WLAN',
+        }
+
+    else:
+        reset_causes = {
+            machine.PWRON_RESET: 'PWRON',
+            machine.HARD_RESET: 'HARD',
+            machine.WDT_RESET: 'WDT',
+            machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
+            machine.SOFT_RESET: 'SOFT',
+            #machine.BROWN_OUT_RESET: 'BROWN_OUT'
+        }
+    
+        wakeup_reasons = {
+            machine.PIN_WAKE: 'PIN',
+            #machine.PWRON_WAKE: 'PWRON',
+            #machine.RTC_WAKE: 'RTC',
+            machine.ULP_WAKE: 'ULP',
+            machine.WLAN_WAKE: 'WLAN',
+        }
+
 
     @classmethod
     def humanize(cls):
 
         reset_cause_magic = machine.reset_cause()
-        wakeup_reason_magic, _ = machine.wake_reason()
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            wakeup_reason_magic, _ = machine.wake_reason()
+        else:
+            wakeup_reason_magic = machine.wake_reason()
 
         log.debug('Reset cause: %s', reset_cause_magic)
         log.debug('Wakeup reason: %s', wakeup_reason_magic)

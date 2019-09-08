@@ -12,6 +12,7 @@ from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
 from terkin.util import dformat, gc_disabled, ddformat
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -116,7 +117,8 @@ class TerkinDatalogger:
         self.device.watchdog.reconfigure_minimum_timeout(15000)
         if not self.settings.get('main.fastboot', False):
             self.device.power_off_lte_modem()
-        self.device.power_off_bluetooth()
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            self.device.power_off_bluetooth()
         self.device.watchdog.resume()
 
         log.info('Starting %s', self.application_info.fullname)
@@ -286,7 +288,7 @@ class TerkinDatalogger:
 
         system_sensors = [
             SystemMemoryFree,
-            SystemTemperature,
+            #SystemTemperature,
             SystemBatteryLevel,
             SystemUptime,
         ]

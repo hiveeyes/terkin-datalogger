@@ -8,6 +8,7 @@ import binascii
 from network import WLAN
 from terkin import logging
 from terkin.util import format_mac_address, backoff_time, Stopwatch
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -371,7 +372,10 @@ class WiFiManager:
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
-        mac_address = self.humanize_mac_addresses(self.station.mac())
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            mac_address = self.humanize_mac_addresses(self.station.mac())
+        else:
+            mac_address = self.humanize_mac_addresses(self.config('mac'))
         ifconfig = self.station.ifconfig()
         log.info('WiFi STA: Networking address (MAC): %s', mac_address)
         log.info('WiFi STA: Networking address (IP):  %s', ifconfig)
@@ -400,7 +404,7 @@ class SystemWiFiMetrics:
 
     def read(self):
 
-        if self.station is None:
+        if (self.station is None) or (sys.platform == 'esp32'):
             return
 
         stats = {

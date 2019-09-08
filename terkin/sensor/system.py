@@ -3,9 +3,10 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-from machine import enable_irq, disable_irq
+from machine import ADC, enable_irq, disable_irq
 from micropython import const
 from terkin import logging
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -122,31 +123,41 @@ class SystemBatteryLevel:
             self.adc = ADC(id=0)
         except TypeError:
             from machine import Pin
-            self.adc = ADC(Pin(self.pin))
-
+            if type(self.pin) == str:
+                self.adc = ADC(Pin(int(self.pin[1:])))
+            else:
+                self.adc = ADC(Pin(self.pin))
+                
     def read(self):
         """
         Acquire vbatt reading by sampling ADC.
         """
-
-        # Power on ADC.
-        self.adc.init()
-
-        log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
-
-        # Sample ADC a few times.
         # Todo: Make attenuation factor configurable.
+
         from machine import ADC
-        adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
+        # Sample ADC a few times.
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
         i = 0
-        irq_state = disable_irq()
-        while i < self.adc_sample_count:
-            sample = adc_channel()
-            adc_samples[i] = sample
-            adc_mean += sample
-            i += 1
+        log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
+
+        # read samples
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            self.adc.init()
+            adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
+            irq_state = disable_irq()
+            while i < self.adc_sample_count:
+                sample = adc_channel()
+                adc_samples[i] = sample
+                adc_mean += sample
+                i += 1
+        else:
+            self.adc.atten(ADC.ATTN_6DB)
+            irq_state = disable_irq()
+            while i < self.adc_sample_count:
+                adc_samples[i] = self.adc.read()
+                adc_mean += adc_samples[i]
+                i += 1        
         enable_irq(irq_state)
 
         adc_mean /= self.adc_sample_count
@@ -155,8 +166,12 @@ class SystemBatteryLevel:
             adc_variance += (sample - adc_mean) ** 2
         adc_variance /= (self.adc_sample_count - 1)
 
-        raw_voltage = adc_channel.value_to_voltage(4095)
-        mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            raw_voltage = adc_channel.value_to_voltage(4095)
+            mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
+        else:   # TODO: make this work for esp32
+            raw_voltage = 0.0
+            mean_voltage = 0.0
         mean_variance = (adc_variance * 10 ** 6) // (adc_mean ** 2)
 
         # log.debug("ADC readings. count=%u:\n%s" %(self.adc_sample_count, str(adc_samples)))
@@ -166,11 +181,15 @@ class SystemBatteryLevel:
         log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
         resistor_sum = self.resistor_r1 + self.resistor_r2
-        voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
+        else:   # TODO: make this work for esp32
+            voltage_millivolt = 0.0            
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.
-        adc_channel.deinit()
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            adc_channel.deinit()
 
         log.debug('Battery level: {}'.format(voltage_volt))
 
