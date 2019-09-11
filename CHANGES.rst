@@ -23,6 +23,7 @@ Development
 - Port to ESP32 WROVER with MicroPython 1.11. Thanks, Markus!
 - Fix network status flag
 - Improve cross-compilation tooling re. Pycom vs. pyboard-D
+- Display HTTP egress payload in log output on INFO level
 
 
 2019-08-19 0.6.0

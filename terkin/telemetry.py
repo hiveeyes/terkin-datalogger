@@ -331,7 +331,7 @@ class TelemetryTransportHTTP:
         Submit telemetry data using HTTP POST request
         """
         log.info('Sending HTTP request to %s', self.uri)
-        log.debug('Payload:     %s', request_data['payload'])
+        log.info('Payload:     %s', request_data['payload'])
 
         import urequests
         response = urequests.post(self.uri, data=request_data['payload'], headers={'Content-Type': self.content_type})
