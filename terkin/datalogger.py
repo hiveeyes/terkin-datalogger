@@ -147,7 +147,7 @@ class TerkinDatalogger:
             self.device.start_networking()
         except Exception:
             log.exception('Networking subsystem failed')
-            self.status.networking = False
+            self.device.status.networking = False
 
         self.device.start_telemetry()
 
