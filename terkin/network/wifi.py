@@ -23,6 +23,7 @@ class WiFiManager:
         self.platform_info = self.manager.device.application_info.platform_info
 
         # WIFI settings.
+        self.phy = self.settings.get('networking.wifi.phy', {})
         self.stations = self.settings.get('networking.wifi.stations')
         self.station = None
 
@@ -65,7 +66,8 @@ class WiFiManager:
         self.print_address_status()
 
         # Setup network interface.
-        log.info("WiFi STA+AP: Starting interface")
+        log.info("WiFi: Starting interface")
+        self.configure_antenna()
         self.station.mode(WLAN.STA_AP)
         self.station.init()
 
@@ -83,6 +85,26 @@ class WiFiManager:
             self.print_address_status()
 
             return True
+
+    def configure_antenna(self):
+        # https://community.hiveeyes.org/t/signalstarke-des-wlan-reicht-nicht/2541/11
+        # https://docs.pycom.io/firmwareapi/pycom/network/wlan/
+
+        antenna_external = self.phy.get('antenna_external', False)
+        if antenna_external:
+            antenna_pin = self.phy.get('antenna_pin')
+            log.info('WiFi: Using external antenna on pin %s', antenna_pin)
+
+            # To use an external antenna, set P12 as output pin.
+            from machine import Pin
+            Pin(antenna_pin, mode=Pin.OUT)(True)
+
+            # Configure external WiFi antenna.
+            self.station.antenna(WLAN.EXT_ANT)
+
+        else:
+            log.info('WiFi: Using internal antenna')
+            self.station.antenna(WLAN.INT_ANT)
 
     def enable_ap(self):
         # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.

@@ -82,6 +82,13 @@ interfaces = {
 # Networking configuration.
 networking = {
     'wifi': {
+
+        # WiFi interface configuration.
+        'phy': {
+            'antenna_external': False,
+            'antenna_pin': 'P12',
+        },
+
         # WiFi stations to connect to in STA mode.
         'stations': [
 
