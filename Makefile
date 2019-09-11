@@ -122,20 +122,26 @@ ip-address: check-mcu-port
 # -----------------------------
 
 ## Compile all library files using mpy-cross
-mpy-compile:
+mpy-compile: check-mpy-version
 
-	@echo "$(INFO) Ahead-of-time compiling to .mpy bytecode"
+	$(eval MPY_EMITTER := bytecode)
 
-	@echo "$(INFO) Populating folder \"lib-mpy\""
-	@rm -rf lib-mpy
+	@echo "$(INFO) Ahead-of-time compiling to .mpy $(MPY_EMITTER)"
 
-	@$(python2) $(mpy-cross-all) --out lib-mpy dist-packages
-	@$(python2) $(mpy-cross-all) --out lib-mpy lib
-	@$(python2) $(mpy-cross-all) --out lib-mpy/terkin terkin
-	@$(python2) $(mpy-cross-all) --out lib-mpy/hiveeyes hiveeyes
+	$(eval mpy_path := lib-mpy-$(MPY_VERSION)-$(MPY_EMITTER))
 
-	@echo "$(INFO) Size of lib-mpy"
-	@du -sch lib-mpy
+	@echo "$(INFO) Populating folder \"$(mpy_path)\""
+	@rm -rf $(mpy_path)
+
+	# @$(MAKE) mpy-cross what="--out $(mpy_path) -X emit=$(MPY_EMITTER) dist-packages"
+
+	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
+	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
+	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
+	@$(MAKE) mpy-cross what="--out $(mpy_path)/hiveeyes hiveeyes"
+
+	@echo "$(INFO) Size of $(mpy_path):"
+	@du -sch $(mpy_path)
 
 ## Upload framework, program and settings and restart attached to REPL
 recycle: install-framework install-sketch reset-device-attached
@@ -159,16 +165,26 @@ sketch-and-run: install-sketch reset-device-attached
 
 ## Pyboard-D transfer
 pyboard-install:
+
+	@$(MAKE) mpy-compile
+
+	# Inactive
+	@#rsync -auv dist-packages lib-mpy hiveeyes terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+
 	@if test -e "/Volumes/PYBFLASH"; then \
-		rsync -auv dist-packages lib hiveeyes terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+		rsync -auv lib/mboot.py lib/mininet.py /Volumes/PYBFLASH/lib; \
+		rsync -auv lib-mpy-$(MPY_VERSION)/* /Volumes/PYBFLASH/lib-mpy; \
+		rsync -auv boot.py main.py settings.py /Volumes/PYBFLASH; \
 	else \
 		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \
 		exit 1; \
 	fi
 
 pyboard-reset:
-	diskutil unmount /Volumes/PYBFLASH || true
-	$(MAKE) reset-device sleep sleep console
+	@diskutil unmount /Volumes/PYBFLASH || true
+	@$(MAKE) reset-device
+	@sleep 2
+	@$(MAKE) console
 
 pyboard-recycle: pyboard-install pyboard-reset
 
@@ -184,9 +200,9 @@ install: install-requirements install-framework install-sketch
 install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
-		$(MAKE) mpy-compile && \
+		$(MAKE) mpy-compile version=1.9.4 && \
 		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
-		$(MAKE) lftp lftp_recipe=tools/upload-mpy.lftprc; \
+		$(MAKE) lftp lftp_recipe=tools/upload-mpy-1.9.4.lftprc; \
 	else \
 		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
 	fi

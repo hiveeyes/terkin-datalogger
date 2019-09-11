@@ -22,6 +22,7 @@ Development
 - Process DS18B20 addresses case insensitive
 - Port to ESP32 WROVER with MicroPython 1.11. Thanks, Markus!
 - Fix network status flag
+- Improve cross-compilation tooling re. Pycom vs. pyboard-D
 
 
 2019-08-19 0.6.0

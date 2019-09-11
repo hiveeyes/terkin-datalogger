@@ -63,7 +63,7 @@ class MicroPythonBootloader:
 
         if self.platform_info.vendor == MicroPythonPlatform.Pycom:
             # Extend by path containing frozen modules.
-            sys.path[0:0] = ['/flash/lib-mpy']
+            sys.path[0:0] = ['/flash/lib-mpy-1.9.4-bytecode']
             # Extend by all paths required for running the sandboxed firmware.
             sys.path.extend(['/flash/dist-packages', '/flash/terkin', '/flash/hiveeyes'])
         else:
