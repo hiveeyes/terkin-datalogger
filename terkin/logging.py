@@ -2,7 +2,7 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import sys
+import sys, utime
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -18,11 +18,13 @@ else:
 class TimedLogRecord(logging.LogRecord):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
-            self.tdelta = _chrono.read()
-        except:
-            self.tdelta = 0
-
+        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+            try:
+                self.tdelta = _chrono.read()
+            except:
+                self.tdelta = None
+        else:
+            self.tdelta = utime.time()
 
 class ExtendedLogger(Logger):
 
