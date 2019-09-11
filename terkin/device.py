@@ -73,7 +73,6 @@ class TerkinDevice:
             log.error('IP stack not available')
             self.status.networking = False
 
-
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
             try:
@@ -288,6 +287,11 @@ class TerkinDevice:
         """
         We don't use Bluetooth yet.
         """
+
+        if self.application_info.platform_info.vendor == MicroPythonPlatform.Vanilla:
+            log.warning('FIXME: Skip touching Bluetooth on vanilla MicroPython platforms')
+            return
+
         log.info('Turning off Bluetooth')
         try:
             from network import Bluetooth

@@ -20,6 +20,7 @@ Development
 - Load the ADC module for "SystemBatteryLevel" at runtime
 - Fix missing ADC module import
 - Process DS18B20 addresses case insensitive
+- Port to ESP32 WROVER with MicroPython 1.11. Thanks, Markus!
 
 
 2019-08-19 0.6.0

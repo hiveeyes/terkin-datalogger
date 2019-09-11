@@ -6,6 +6,8 @@ import os
 import sys
 import uio
 
+from mboot import MicroPythonPlatform
+
 
 def to_base64(bytes):
     """Encode bytes to base64 encoded string"""
@@ -231,7 +233,8 @@ def get_last_stacktrace():
 
 
 def random_from_crypto():
-    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+    platform_info = get_platform_info()
+    if platform_info.vendor == MicroPythonPlatform.Pycom:
         # https://forum.pycom.io/topic/1378/solved-how-to-get-random-number-in-a-range/6
         # https://github.com/micropython/micropython-lib/blob/master/random/random.py
         import crypto
@@ -239,7 +242,7 @@ def random_from_crypto():
     else:
         import urandom
         r = urandom.getrandbits(32)
-    return ((r[0]<<24) + (r[1]<<16) + (r[2]<<8) + r[3]) / 4294967295.0
+    return ((r[0] << 24) + (r[1] << 16) + (r[2] << 8) + r[3]) / 4294967295.0
 
 def randint(a, b):
     """Return random integer in range [a, b], including both end points."""
@@ -315,3 +318,8 @@ class Eggtimer:
 
     def expired(self):
         return self.stopwatch.elapsed() >= self.duration
+
+
+def get_platform_info():
+    from __main__ import bootloader
+    return bootloader.platform_info

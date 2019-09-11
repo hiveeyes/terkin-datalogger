@@ -6,9 +6,10 @@ import time
 import machine
 import binascii
 from network import WLAN
+
+from mboot import MicroPythonPlatform
 from terkin import logging
-from terkin.util import format_mac_address, backoff_time, Stopwatch
-import sys
+from terkin.util import format_mac_address, backoff_time, Stopwatch, get_platform_info
 
 log = logging.getLogger(__name__)
 
@@ -18,6 +19,8 @@ class WiFiManager:
     def __init__(self, manager, settings):
         self.manager = manager
         self.settings = settings
+
+        self.platform_info = self.manager.device.application_info.platform_info
 
         # WIFI settings.
         self.stations = self.settings.get('networking.wifi.stations')
@@ -372,11 +375,20 @@ class WiFiManager:
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
-            mac_address = self.humanize_mac_addresses(self.station.mac())
+
+        # Get MAC address.
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            mac_address = self.station.mac()
         else:
-            mac_address = self.humanize_mac_addresses(self.config('mac'))
+            mac_address = self.config('mac')
+
+        # Make MAC address human readable.
+        mac_address = self.humanize_mac_addresses(mac_address)
+
+        # Get IP address.
         ifconfig = self.station.ifconfig()
+
+        # Display MAC- and IP-address configuration.
         log.info('WiFi STA: Networking address (MAC): %s', mac_address)
         log.info('WiFi STA: Networking address (IP):  %s', ifconfig)
 
@@ -404,7 +416,10 @@ class SystemWiFiMetrics:
 
     def read(self):
 
-        if (self.station is None) or (sys.platform == 'esp32'):
+        platform_info = get_platform_info()
+
+        if platform_info.vendor == MicroPythonPlatform.Vanilla:
+            log.warning('FIXME: Skipping SystemWiFiMetrics on vanilla MicroPython platforms')
             return
 
         stats = {

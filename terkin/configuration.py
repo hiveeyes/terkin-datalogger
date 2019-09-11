@@ -2,18 +2,27 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import os_path
 import json
 import types
+import os_path
 from copy import deepcopy
 from dotty_dict import dotty
+from mboot import MicroPythonPlatform
 from shutil import copyfileobj
 from terkin import logging
 from terkin.backup import backup_file
-from terkin.util import ensure_directory
-import sys
+from terkin.util import ensure_directory, get_platform_info
 
 log = logging.getLogger(__name__)
+
+
+platform_info = get_platform_info()
+if platform_info.vendor == MicroPythonPlatform.Pycom:
+    CONFIG_PATH = '/flash'
+    BACKUP_PATH = '/flash/backup'
+else:
+    CONFIG_PATH = '/'
+    BACKUP_PATH = '/backup'
 
 
 class TerkinConfiguration:
@@ -21,12 +30,8 @@ class TerkinConfiguration:
     A flexible configuration manager.
     """
 
-    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
-        CONFIG_PATH = '/flash'
-        BACKUP_PATH = '/flash/backup'
-    else:
-        CONFIG_PATH = '/'
-        BACKUP_PATH = '/backup'
+    CONFIG_PATH = CONFIG_PATH
+    BACKUP_PATH = BACKUP_PATH
 
     # Strip some settings when displaying configuration values
     # to prevent leaking sensible information into log files.

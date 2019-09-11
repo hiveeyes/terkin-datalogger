@@ -49,8 +49,7 @@ class MicroPythonBootloader:
     def __init__(self):
         self.platform_info = PlatformInfo()
 
-    @staticmethod
-    def extend_syspath():
+    def extend_syspath(self):
         """
         Extend Python module search path.
         Dependency modules are shipped through the "dist-packages" folder.
@@ -62,13 +61,15 @@ class MicroPythonBootloader:
         # Vanilla Pycom MicroPython: ['', '/flash', '/flash/lib']
         # Vanilla MicroPython: ['', '/lib']
 
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
             # Extend by path containing frozen modules.
             sys.path[0:0] = ['/flash/lib-mpy']
             # Extend by all paths required for running the sandboxed firmware.
             sys.path.extend(['/flash/dist-packages', '/flash/terkin', '/flash/hiveeyes'])
         else:
-            # Extend by all paths required for running the sandboxed firmware. esp32 has no /flash
+            # Extend by path containing frozen modules.
+            sys.path[0:0] = ['/lib-mpy']
+            # Extend by all paths required for running the sandboxed firmware.
             sys.path.extend(['/dist-packages', '/terkin', '/hiveeyes'])
 
 
