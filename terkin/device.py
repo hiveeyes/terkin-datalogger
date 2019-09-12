@@ -39,8 +39,11 @@ class TerkinDevice:
         self.watchdog = Watchdog(device=self, settings=self.settings)
 
         # Conditionally enable terminal on UART0. Default: False.
-        self.terminal = Terminal(self.settings)
-        self.terminal.start()
+        try:
+            self.terminal = Terminal(self.settings)
+            self.terminal.start()
+        except Exception as ex:
+            log.exc(ex, 'Enabling Terminal failed')
 
         self.device_id = get_device_id()
 
@@ -257,9 +260,8 @@ class TerkinDevice:
         https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
         """
 
-        import pycom
-
         """
+        import pycom
         if not pycom.lte_modem_en_on_boot():
             log.info('Skip turning off LTE modem')
             return
@@ -267,6 +269,7 @@ class TerkinDevice:
 
         log.info('Turning off LTE modem')
         try:
+            import pycom
             from network import LTE
 
             # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
@@ -397,7 +400,6 @@ class Terminal:
         # Conditionally enable terminal on UART0. Default: False.
         # https://forum.pycom.io/topic/1224/disable-console-to-uart0-to-use-uart0-for-other-purposes
         uart0_enabled = self.settings.get('interfaces.uart0.terminal', False)
-        import os
         if uart0_enabled:
             from machine import UART
             self.uart = UART(0, 115200)
@@ -417,7 +419,6 @@ class Terminal:
         """
         Shut down Terminal and UART0 interface.
         """
-        import os
         os.dupterm(None)
         self.deinit()
 

@@ -2,9 +2,8 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import sys
 import time
-from machine import ADC, enable_irq, disable_irq
+from machine import enable_irq, disable_irq
 from micropython import const
 
 from mboot import MicroPythonPlatform

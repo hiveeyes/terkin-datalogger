@@ -7,7 +7,7 @@ import types
 import os_path
 from copy import deepcopy
 from dotty_dict import dotty
-from mboot import MicroPythonPlatform
+from mboot import McuFamily, MicroPythonPlatform
 from shutil import copyfileobj
 from terkin import logging
 from terkin.backup import backup_file
@@ -17,12 +17,12 @@ log = logging.getLogger(__name__)
 
 
 platform_info = get_platform_info()
-if platform_info.vendor == MicroPythonPlatform.Pycom:
-    CONFIG_PATH = '/flash'
-    BACKUP_PATH = '/flash/backup'
-else:
+if platform_info.mcu == McuFamily.ESP32 and platform_info.vendor == MicroPythonPlatform.Vanilla:
     CONFIG_PATH = '/'
     BACKUP_PATH = '/backup'
+else:
+    CONFIG_PATH = '/flash'
+    BACKUP_PATH = '/flash/backup'
 
 
 class TerkinConfiguration:

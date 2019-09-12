@@ -42,6 +42,10 @@ class PlatformInfo:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonPlatform.Pycom
 
+        if sys.platform in ['pyboard']:
+            self.mcu = McuFamily.STM32
+            self.vendor = MicroPythonPlatform.Vanilla
+
 
 class MicroPythonBootloader:
 

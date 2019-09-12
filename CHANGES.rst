@@ -26,6 +26,7 @@ Development
 - Display HTTP egress payload in log output on INFO level
 - Add option to use external WiFi antenna
 - Improve sandbox tooling for pyboard-D
+- Make some adjustments for running on pyboard-D
 
 
 2019-08-19 0.6.0
