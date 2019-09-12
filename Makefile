@@ -173,14 +173,14 @@ pyboard-install:
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/mboot.py lib/mininet.py /Volumes/PYBFLASH/lib; \
-		rsync -auv lib-mpy-$(MPY_VERSION)/* /Volumes/PYBFLASH/lib-mpy; \
+		rsync -auv lib-mpy-$(MPY_VERSION)-bytecode /Volumes/PYBFLASH; \
 		rsync -auv boot.py main.py settings.py /Volumes/PYBFLASH; \
 	else \
 		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \
 		exit 1; \
 	fi
 
-pyboard-reset:
+pyboard-reset: check-mcu-port-strict
 	@diskutil unmount /Volumes/PYBFLASH || true
 	@$(MAKE) reset-device
 	@sleep 2

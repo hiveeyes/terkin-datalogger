@@ -6,7 +6,6 @@
 Universal MicroPython bootloader.
 """
 
-
 class McuFamily:
 
     STM32 = 1
@@ -61,17 +60,19 @@ class MicroPythonBootloader:
         # Vanilla Pycom MicroPython: ['', '/flash', '/flash/lib']
         # Vanilla MicroPython: ['', '/lib']
 
+        # Extend by path containing frozen modules.
         if self.platform_info.vendor == MicroPythonPlatform.Pycom:
-            # Extend by path containing frozen modules.
-            sys.path[0:0] = ['/flash/lib-mpy-1.9.4-bytecode']
-            # Extend by all paths required for running the sandboxed firmware.
+            bytecode_path = 'lib-mpy-1.9.4-bytecode'
+        else:
+            bytecode_path = 'lib-mpy-1.11-bytecode'
+
+        # Extend by all paths required for running the sandboxed firmware.
+        if '/flash' in sys.path:
+            sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
             sys.path.extend(['/flash/dist-packages', '/flash/terkin', '/flash/hiveeyes'])
         else:
-            # Extend by path containing frozen modules.
-            sys.path[0:0] = ['/lib-mpy']
-            # Extend by all paths required for running the sandboxed firmware.
+            sys.path[0:0] = ['/{}'.format(bytecode_path)]
             sys.path.extend(['/dist-packages', '/terkin', '/hiveeyes'])
-
 
         """
         # Experiments.

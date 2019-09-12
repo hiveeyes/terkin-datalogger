@@ -25,6 +25,7 @@ Development
 - Improve cross-compilation tooling re. Pycom vs. pyboard-D
 - Display HTTP egress payload in log output on INFO level
 - Add option to use external WiFi antenna
+- Improve sandbox tooling for pyboard-D
 
 
 2019-08-19 0.6.0
