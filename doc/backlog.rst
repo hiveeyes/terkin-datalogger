@@ -8,8 +8,15 @@ Datalogger
 **********
 
 
-Miscellaneous
-=============
+Prio 0.7
+========
+- Sensor-Mapping for @clemens, @wtf and @mko
+- Rename "busses" to "buses"
+- Use WLAN power_save, see https://docs.pycom.io/firmwareapi/pycom/network/wlan/
+
+
+Prio 0.8
+========
 - wget ftp.exe
 - [o] Leave maintenance mode after 10 minutes
 - [o] Configure ARP-ping timeout for "terkin.py"
@@ -378,6 +385,7 @@ Done
 - [x] Implement real "light sleep"
   "in light sleep mode the current consumption on a Lopy is 3.5 mA with RTC peripherals ON"
   https://forum.pycom.io/topic/3351/new-development-firmware-release-v1-19-0-b1/3
+- [x] Add configuration for external WiFi antenna
 
 
 
