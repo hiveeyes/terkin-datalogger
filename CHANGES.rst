@@ -29,6 +29,7 @@ Development
 - Pyboard D-series: Make the source tree compatible with Genuine MicroPython
 - Adjust slightly for running on Pycom devices again
 - WiFi adjustments for Pyboard-D
+- Appropriately compute sleep time, resolve #4
 
 
 2019-08-19 0.6.0

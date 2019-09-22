@@ -12,7 +12,7 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.util import dformat, gc_disabled, ddformat
+from terkin.util import dformat, gc_disabled, ddformat, GenericChronometer
 
 log = logging.getLogger(__name__)
 
@@ -81,6 +81,8 @@ class TerkinDatalogger:
         # Initialize sensor domain.
         self.sensor_manager = SensorManager()
 
+        self.duty_chrono = GenericChronometer()
+
     @staticmethod
     def getInstance(settings=None):
         """
@@ -98,6 +100,8 @@ class TerkinDatalogger:
         pass
 
     def start(self):
+
+        self.duty_chrono.reset()
 
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
@@ -193,6 +197,9 @@ class TerkinDatalogger:
         Main duty cycle loop.
         """
 
+        if not self.settings.get('main.deepsleep', False):
+            self.duty_chrono.reset()
+
         #log.info('Terkin loop')
 
         # Alternative loop signalling: 1 x blue.
@@ -275,8 +282,12 @@ class TerkinDatalogger:
         if self.device.status.maintenance is True:
             interval = self.settings.get('main.interval.maintenance')
 
-        # FIXME
-        sleep_time = interval
+        # Compute sleeping duration from measurement interval and elapsed time.
+        elapsed = self.duty_chrono.read()
+        sleep_time = interval - elapsed
+
+        if sleep_time <= 0:
+            sleep_time = interval
 
         return sleep_time
 
