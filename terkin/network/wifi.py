@@ -36,6 +36,23 @@ class WiFiManager:
 
         self.start_interface()
 
+        # Check WiFi connectivity.
+        if self.is_connected():
+
+            log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
+            self.print_short_status()
+
+            # Give system some breath.
+            #time.sleep(0.25)
+
+            # Inform about networking status.
+            #self.print_short_status()
+            self.print_address_status()
+
+            return
+
+        self.manager.device.run_gc()
+
         try:
             import _thread
             _thread.start_new_thread(self.stay_connected, ())
@@ -81,21 +98,6 @@ class WiFiManager:
             self.station.init()
         else:
             self.station.active(True)
-
-        # Check WiFi connectivity.
-        if self.is_connected():
-
-            log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
-            self.print_short_status()
-
-            # Give system some breath.
-            time.sleep(0.25)
-
-            # Inform about networking status.
-            self.print_short_status()
-            self.print_address_status()
-
-            return True
 
     def configure_antenna(self):
         # https://community.hiveeyes.org/t/signalstarke-des-wlan-reicht-nicht/2541/11
@@ -239,11 +241,13 @@ class WiFiManager:
 
         network_name = network['ssid']
 
-        log.info('WiFi STA: Getting auth mode for network "{}"'.format(network_name))
+        log.info('WiFi STA: Preparing connection to network "{}"'.format(network_name))
 
-        auth_mode = self.get_auth_mode(network_name)
-
-        log.info('WiFi STA: Preparing connection to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
+        auth_mode = None
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            log.info('WiFi STA: Getting auth mode')
+            auth_mode = self.get_auth_mode(network_name)
+            log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
 
         password = network['password']
 
@@ -492,8 +496,16 @@ class SystemWiFiMetrics:
         platform_info = get_platform_info()
 
         if platform_info.vendor == MicroPythonPlatform.Vanilla:
-            log.warning('FIXME: Skipping SystemWiFiMetrics on this platform')
-            return
+            stats = {
+                'system.wifi.channel': self.station.config('channel'),
+            }
+
+            try:
+                stats['system.wifi.rssi'] = self.station.status('rssi')
+            except:
+                pass
+
+            return stats
 
         stats = {
             'system.wifi.bandwidth': self.station.bandwidth(),

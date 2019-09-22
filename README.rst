@@ -80,6 +80,32 @@ watching its log output, we collected some excerpts at
 `Running the Hiveeyes MicroPython Datalogger`_.
 
 
+*********
+Platforms
+*********
+Beautified output of ``os.uname()`` output the datalogger has been tested on.
+
+Pycom FiPy::
+
+    Python  : 3.4.0
+    lorawan : 1.0.2
+    machine : FiPy with ESP32
+    nodename: FiPy
+    release : 1.20.0.rc11
+    sigfox  : 1.0.1
+    sysname : FiPy
+    version : v1.9.4-0a38f88 on 2019-05-14
+
+PYBOARD-D SF2::
+
+    Python  : 3.4.0
+    machine : PYBD-SF2W with STM32F722IEK
+    nodename: pyboard
+    release : 1.11.0
+    sysname : pyboard
+    version : v1.11-328-gd96391aca on 2019-09-21
+
+
 ***************
 Getting started
 ***************
