@@ -72,7 +72,7 @@ class WiFiManager:
         if self.platform_info.vendor == MicroPythonPlatform.Pycom:
             self.station = network.WLAN()
         else:
-            log.info('WiFi STA: Will exclusively use STA mode on this platform')
+            log.info('WiFi STA: Will exclusively use STA mode on this platform. AP mode not implemented yet.')
             self.station = network.WLAN(network.STA_IF)
 
         #if machine.reset_cause() == machine.SOFT_RESET:
@@ -103,11 +103,16 @@ class WiFiManager:
         # https://community.hiveeyes.org/t/signalstarke-des-wlan-reicht-nicht/2541/11
         # https://docs.pycom.io/firmwareapi/pycom/network/wlan/
 
+        antenna_external = self.phy.get('antenna_external', False)
+
         if not hasattr(self.station, 'antenna'):
-            log.warning('WiFi: Unable to configure antenna on this platform')
+            # Select antenna, 0=chip, 1=external.
+            antenna_value = 0
+            if antenna_external:
+                antenna_value = 1
+            self.station.config(antenna=antenna_value)
             return
 
-        antenna_external = self.phy.get('antenna_external', False)
         if antenna_external:
             antenna_pin = self.phy.get('antenna_pin')
             log.info('WiFi: Using external antenna on pin %s', antenna_pin)

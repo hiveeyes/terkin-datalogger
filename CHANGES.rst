@@ -31,6 +31,7 @@ Development
 - WiFi adjustments for Pyboard-D
 - Appropriately compute sleep time, resolve #4
 - Make ``make setup`` more platform-agnostic, resolve #20
+- Add external antenna option for vanilla MicroPython
 
 
 2019-08-19 0.6.0
