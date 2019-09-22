@@ -43,7 +43,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Backward compatibility.
         if sensor_infos is None:
-            sensor_infos = self.settings.get('sensors.registry').values()
+            sensor_infos = self.settings.get('sensors.registry', {}).values()
 
         for sensor_info in sensor_infos:
             sensor_id = sensor_info.get('id', sensor_info.get('key'))

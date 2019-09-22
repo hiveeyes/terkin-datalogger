@@ -123,6 +123,9 @@ class SystemBatteryLevel:
 
     def setup(self, settings):
 
+        if settings.get('sensors.system.vcc') is None:
+            return False
+
         self.pin = settings.get('sensors.system.vcc.pin')
         self.resistor_r1 = settings.get('sensors.system.vcc.resistor_r1')
         self.resistor_r2 = settings.get('sensors.system.vcc.resistor_r2')

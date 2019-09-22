@@ -34,6 +34,7 @@ Development
 - Add external antenna option for vanilla MicroPython
 - Use trimmed-down settings.py for PYBD
 - Add configuration settings overlay per ``settings-user.json``
+- Improve robustness with minimal configuration for PYBD
 
 
 2019-08-19 0.6.0

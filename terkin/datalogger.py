@@ -163,7 +163,7 @@ class TerkinDatalogger:
 
         # Setup sensors.
         self.device.watchdog.feed()
-        bus_settings = self.settings.get('sensors.busses')
+        bus_settings = self.settings.get('sensors.busses', [])
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
 
@@ -368,6 +368,8 @@ class TerkinDatalogger:
 
             # Feed the watchdog.
             self.device.watchdog.feed()
+
+            self.device.run_gc()
 
         # Debugging: Print sensor data before running telemetry.
         prettify_log = self.settings.get('sensors.prettify_log', False)
