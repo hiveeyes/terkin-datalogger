@@ -131,6 +131,9 @@ mpy-compile: check-mpy-version check-mpy-target
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; \
+	fi
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/hiveeyes hiveeyes"
@@ -159,7 +162,7 @@ recycle-ng: install-ng
 sketch-and-run: install-sketch reset-device-attached
 
 ## Pyboard-D transfer
-pyboard-install:
+pyboard-install: check-mpy-version check-mpy-target
 
 	@$(MAKE) mpy-compile
 
@@ -168,7 +171,7 @@ pyboard-install:
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/mboot.py lib/mininet.py /Volumes/PYBFLASH/lib; \
-		rsync -auv lib-mpy-$(MPY_VERSION)-bytecode /Volumes/PYBFLASH; \
+		rsync -auv lib-mpy-$(MPY_VERSION)-$(MPY_TARGET) /Volumes/PYBFLASH; \
 		rsync -auv boot.py main.py settings.py /Volumes/PYBFLASH; \
 	else \
 		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \

@@ -27,6 +27,8 @@ Development
 - Add option to use external WiFi antenna
 - Pyboard D-series: Improve sandbox tooling
 - Pyboard D-series: Make the source tree compatible with Genuine MicroPython
+- Adjust slightly for running on Pycom devices again
+
 
 2019-08-19 0.6.0
 ================
