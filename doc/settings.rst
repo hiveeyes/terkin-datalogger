@@ -29,7 +29,7 @@ Configuration settings can be set at runtime.
 
 By code::
 
-    self.settings['main.foo.bar'] = 'bazqux'
+    self.settings['main.interval.field'] = 42.42
 
 By HTTP::
 
