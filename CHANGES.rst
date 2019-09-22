@@ -32,6 +32,7 @@ Development
 - Appropriately compute sleep time, resolve #4
 - Make ``make setup`` more platform-agnostic, resolve #20
 - Add external antenna option for vanilla MicroPython
+- Use trimmed-down settings.py for PYBD
 
 
 2019-08-19 0.6.0
