@@ -121,8 +121,8 @@ class TerkinHttpApi:
             elif format == 'python':
                 return httpResponse.WriteResponseFileAttachment('/flash/settings.py', 'settings.py', headers=TerkinHttpApi.headers)
 
-        except:
-            log.exception('GET settings request failed')
+        except Exception as ex:
+            log.exc(ex, 'GET settings request failed')
             return httpResponse.WriteResponseError(400)
 
         return httpResponse.WriteResponseNotFound()
@@ -150,8 +150,8 @@ class TerkinHttpApi:
                 TerkinHttpApi.settings.save('settings.py', buffer)
                 return TerkinHttpApi.respond_text(httpResponse, 'ACK')
 
-        except:
-            log.exception('PUT settings request failed')
+        except Exception as ex:
+            log.exc(ex, 'PUT settings request failed')
             return httpResponse.WriteResponseError(500)
 
         return httpResponse.WriteResponseNotFound()
@@ -166,8 +166,8 @@ class TerkinHttpApi:
             log.info('Configuration setting "{}" is "{}"'.format(name, value))
             return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
 
-        except:
-            log.exception('GET setting request failed')
+        except Exception as ex:
+            log.exc(ex, 'GET setting request failed')
             return httpResponse.WriteResponseError(500)
 
     @MicroWebSrv.route('/api/v1/setting', 'PUT')
@@ -183,8 +183,8 @@ class TerkinHttpApi:
             log.info('Re-reading configuration setting "{}" as "{}"'.format(name, value))
             return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
 
-        except:
-            log.exception('PUT setting request failed')
+        except Exception as ex:
+            log.exc(ex, 'PUT setting request failed')
             return httpResponse.WriteResponseError(500)
 
     @MicroWebSrv.route('/api/v1/reading/last', 'GET')
@@ -192,8 +192,8 @@ class TerkinHttpApi:
         try:
             return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=TerkinHttpApi.storage.last_reading)
 
-        except:
-            log.exception('GET last reading request failed')
+        except Exception as ex:
+            log.exc(ex, 'GET last reading request failed')
             return httpResponse.WriteResponseError(500)
 
         return httpResponse.WriteResponseNotFound()

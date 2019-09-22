@@ -63,25 +63,30 @@ class TerkinDevice:
         try:
             self.networking.start_wifi()
 
-        except Exception:
-            log.error('Network connectivity not available, WiFi failed')
+        except Exception as ex:
+            log.exc(ex, 'Starting WiFi networking failed')
             self.status.networking = False
+            return
 
         # Wait for network stack to come up.
         try:
-            self.networking.wait_for_ip_stack(timeout=10)
+            self.networking.wait_for_ip_stack(timeout=5)
             self.status.networking = True
-            self.networking.start_services()
-        except:
-            log.error('IP stack not available')
+        except Exception as ex:
+            log.exc(ex, 'IP stack not available')
             self.status.networking = False
+
+        try:
+            self.networking.start_services()
+        except Exception as ex:
+            log.exc(ex, 'Starting network services failed')
 
         # Initialize LoRa device.
         if self.settings.get('networking.lora.antenna_attached'):
             try:
                 self.networking.start_lora()
-            except:
-                log.exception('Unable to start LoRa subsystem')
+            except Exception as ex:
+                log.exc(ex, 'Unable to start LoRa subsystem')
         else:
             log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                      "ATTENTION: Running LoRa without antenna will wreck your device.")
@@ -116,7 +121,8 @@ class TerkinDevice:
         log.info('Start curating the garbage collector')
         gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
         gc.collect()
-        log.info('Curating the garbage collector finished')
+        #log.info('Curating the garbage collector finished')
+        log.info('Curating the garbage collector finished. Free memory: %s', gc.mem_free())
 
     def configure_rgb_led(self):
         """
@@ -163,8 +169,8 @@ class TerkinDevice:
                 self.create_telemetry_adapter(telemetry_target)
                 self.watchdog.feed()
 
-            except:
-                log.exception('Creating telemetry adapter failed for target: %s', telemetry_target)
+            except Exception as ex:
+                log.exc(ex, 'Creating telemetry adapter failed for target: %s', telemetry_target)
 
     def create_telemetry_adapter(self, telemetry_target):
         # Create adapter object.
@@ -219,11 +225,15 @@ class TerkinDevice:
         add('=' * len(title))
 
         # Machine runtime information.
-        add('CPU freq     {} MHz'.format(machine.freq() / 1000000))
+        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+            frequency = machine.freq() / 1000000
+        else:
+            frequency = machine.freq()[0] / 1000000
+        add('CPU freq     {} MHz'.format(frequency))
         add('Device id    {}'.format(self.device_id))
         add()
 
-        # System memory info (in bytes)
+        # System memory info (in bytes).
         if hasattr(machine, 'info'):
             machine.info()
             add()
@@ -283,8 +293,8 @@ class TerkinDevice:
             lte = LTE()
             lte.deinit()
 
-        except:
-            log.exception('Shutting down LTE modem failed')
+        except Exception as ex:
+            log.exc(ex, 'Shutting down LTE modem failed')
 
     def power_off_bluetooth(self):
         """
@@ -300,8 +310,8 @@ class TerkinDevice:
             from network import Bluetooth
             bluetooth = Bluetooth()
             bluetooth.deinit()
-        except:
-            log.exception('Shutting down Bluetooth failed')
+        except Exception as ex:
+            log.exc(ex, 'Shutting down Bluetooth failed')
 
     def hibernate(self, interval, lightsleep=False, deepsleep=False):
 

@@ -70,7 +70,7 @@ class HX711Sensor(AbstractSensor):
             return True
 
         except Exception as ex:
-            log.exception('HX711 hardware driver failed')
+            log.exc(ex, 'HX711 hardware driver failed')
 
     def read(self):
         if self.loadcell is None:

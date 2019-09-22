@@ -75,7 +75,9 @@ class HiveeyesDatalogger(TerkinDatalogger):
                                 'Sensor settings:\n{}'.format(sensor_id, sensor_info))
 
             except Exception as ex:
-                log.exception('Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+                log.exc(ex, 'Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+
+            self.device.run_gc()
 
     def add_hx711_sensor(self, settings):
         """

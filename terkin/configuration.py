@@ -58,8 +58,8 @@ class TerkinConfiguration:
         try:
             log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
             ensure_directory(self.BACKUP_PATH)
-        except:
-            log.exception('Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
+        except Exception as ex:
+            log.exc(ex, 'Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
 
     def __getitem__(self, key, default=None):
         return self.get(key, default=default)
@@ -84,7 +84,7 @@ class TerkinConfiguration:
         try:
             self.add_real(data)
         except Exception as ex:
-            log.exception('Reading configuration settings failed')
+            log.exc(ex, 'Reading configuration settings failed')
 
     def add_real(self, data):
         if isinstance(data, types.ModuleType):

@@ -111,8 +111,8 @@ class TelemetryAdapter:
         # using the designated encoder.
         try:
             data = self.transform(data)
-        except:
-            log.exception('Transmission transform for topology "%s" failed', self.topology_name)
+        except Exception as ex:
+            log.exc(ex, 'Transmission transform for topology "%s" failed', self.topology_name)
             return False
 
         try:
@@ -126,7 +126,7 @@ class TelemetryAdapter:
             if self.offline:
                 log.warning(message)
             else:
-                log.exception(message)
+                log.exc(ex, message)
 
         return False
 
@@ -500,7 +500,7 @@ class MQTTAdapter:
             self.driver_class = MQTTClient
 
         except Exception as ex:
-            log.exception('Loading MQTT module failed')
+            log.exc(ex, 'Loading MQTT module failed')
             raise
 
     def ensure_connection(self):
@@ -522,7 +522,7 @@ class MQTTAdapter:
             # FIXME: Evaluate exception. "MQTTException: 5" means "Authentication/Authorization failed".
             self.connected = False
             message = 'Connecting to MQTT broker at {} failed: {}'.format(self.server, format_exception(ex))
-            log.exception(message)
+            log.exc(ex, message)
             raise TelemetryAdapterError(message)
 
         return self.connected
@@ -544,7 +544,7 @@ class MQTTAdapter:
         except OSError as ex:
 
             message = 'MQTT publishing failed'
-            log.exception(message)
+            log.exc(ex, message)
 
             # Signal connection error in order to reconnect on next submission attempt.
             # [Errno 104] ECONNRESET

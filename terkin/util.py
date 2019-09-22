@@ -17,7 +17,7 @@ def to_base64(bytes):
 
 
 def format_exception(ex):
-    return '{}: {}'.format(ex.__class__.__name__, ex)
+    return '{}: {}'.format(ex.__class__.__name__, str(ex))
 
 
 def get_device_id():

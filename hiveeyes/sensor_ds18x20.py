@@ -31,7 +31,7 @@ class DS18X20Sensor(AbstractSensor):
             return True
 
         except Exception as ex:
-            log.exception('DS18X20 hardware driver failed')
+            log.exc(ex, 'DS18X20 hardware driver failed')
 
     def read(self):
 
@@ -80,8 +80,8 @@ class DS18X20Sensor(AbstractSensor):
             log.info('Reading DS18X20 device "{}"'.format(address))
             try:
                 value = self.driver.read_temp_async(device)
-            except:
-                log.exception("Reading DS18X20 device {} failed".format(address))
+            except Exception as ex:
+                log.exc(ex, "Reading DS18X20 device {} failed".format(address))
                 continue
 
             # Evaluate device response.
@@ -100,8 +100,8 @@ class DS18X20Sensor(AbstractSensor):
                     # Add value to telemetry message.
                     data[fieldname] = value
 
-                except:
-                    log.exception('Processing data from DS18X20 device "{}" failed'.format(address))
+                except Exception as ex:
+                    log.exc(ex, 'Processing data from DS18X20 device "{}" failed'.format(address))
                     continue
 
             else:

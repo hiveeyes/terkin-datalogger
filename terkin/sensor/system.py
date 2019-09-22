@@ -23,6 +23,9 @@ class SystemMemoryFree:
     Read free memory in bytes.
     """
 
+    def enabled(self):
+        return True
+
     def read(self):
         import gc
         value = gc.mem_free()
@@ -40,6 +43,10 @@ class SystemTemperature:
     - https://github.com/espressif/esp-idf/issues/146
     - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
     """
+
+    def enabled(self):
+        import machine
+        return hasattr(machine, 'temperature')
 
     def read(self):
         import machine
@@ -111,6 +118,9 @@ class SystemBatteryLevel:
         # Reference to platform ADC object.
         self.adc = None
 
+    def enabled(self):
+        return True
+
     def setup(self, settings):
 
         self.pin = settings.get('sensors.system.vcc.pin')
@@ -127,10 +137,7 @@ class SystemBatteryLevel:
             self.adc = ADC(id=0)
         except TypeError:
             from machine import Pin
-            if type(self.pin) == str:
-                self.adc = ADC(Pin(int(self.pin[1:])))
-            else:
-                self.adc = ADC(Pin(self.pin))
+            self.adc = ADC(Pin(self.pin))
                 
     def read(self):
         """
@@ -218,6 +225,9 @@ class SystemUptime:
     """
 
     start_time = time.time()
+
+    def enabled(self):
+        return True
 
     def read(self):
         now = time.time()

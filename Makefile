@@ -122,20 +122,15 @@ ip-address: check-mcu-port
 # -----------------------------
 
 ## Compile all library files using mpy-cross
-mpy-compile: check-mpy-version
+mpy-compile: check-mpy-version check-mpy-target
 
-	$(eval MPY_EMITTER := bytecode)
+	@echo "$(INFO) Ahead-of-time compiling to .mpy $(MPY_TARGET)"
 
-	@echo "$(INFO) Ahead-of-time compiling to .mpy $(MPY_EMITTER)"
-
-	$(eval mpy_path := lib-mpy-$(MPY_VERSION)-$(MPY_EMITTER))
+	$(eval mpy_path := lib-mpy-$(MPY_VERSION)-$(MPY_TARGET))
 
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
-	# @$(MAKE) mpy-cross what="--out $(mpy_path) -X emit=$(MPY_EMITTER) dist-packages"
-
-	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/hiveeyes hiveeyes"

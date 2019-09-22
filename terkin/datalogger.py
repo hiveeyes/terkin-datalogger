@@ -111,6 +111,8 @@ class TerkinDatalogger:
         # Alternative startup signalling: 2 x green.
         self.device.blink_led(0x000b00, count=2)
 
+        self.device.run_gc()
+
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # Todo: Revisit where this should actually go.
         # The modem driver takes about six seconds to initialize, so adjust the watchdog accordingly.
@@ -145,8 +147,8 @@ class TerkinDatalogger:
         # Conditionally start network services and telemetry if networking is available.
         try:
             self.device.start_networking()
-        except Exception:
-            log.exception('Networking subsystem failed')
+        except Exception as ex:
+            log.exc(ex, 'Networking subsystem failed')
             self.device.status.networking = False
 
         self.device.start_telemetry()
@@ -251,8 +253,8 @@ class TerkinDatalogger:
             self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
 
         # When hibernation fails, fall back to regular "time.sleep".
-        except:
-            log.exception('Failed to hibernate, falling back to regular sleep')
+        except Exception as ex:
+            log.exc(ex, 'Failed to hibernate, falling back to regular sleep')
             # Todo: Emit error message here.
             log.info('Sleeping for {} seconds'.format(interval))
             time.sleep(interval)
@@ -293,16 +295,23 @@ class TerkinDatalogger:
         ]
 
         for sensor_factory in system_sensors:
-            sensor = sensor_factory()
-            if hasattr(sensor, 'setup') and callable(sensor.setup):
-                sensor.setup(self.settings)
-            self.sensor_manager.register_sensor(sensor)
+            sensor_name = sensor_factory.__name__
+            try:
+                sensor = sensor_factory()
+                if not sensor.enabled():
+                    log.info('Sensor %s not enabled, skipping', sensor_name)
+                    continue
+                if hasattr(sensor, 'setup') and callable(sensor.setup):
+                    sensor.setup(self.settings)
+                self.sensor_manager.register_sensor(sensor)
+            except Exception as ex:
+                log.exc(ex, 'Registering system sensor "%s" failed', sensor_name)
 
         # Add WiFi metrics.
         try:
             self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.wifi_manager.station))
-        except:
-            log.exception('Enabling SystemWiFiMetrics sensor failed')
+        except Exception as ex:
+            log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
 
     def read_sensors(self):
         """
