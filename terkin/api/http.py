@@ -140,15 +140,18 @@ class TerkinHttpApi:
 
             if content_type.startswith('application/json'):
                 data = httpClient.ReadRequestContentAsJSON()
-                TerkinHttpApi.settings.save('settings.json', json.dumps(data))
+                TerkinHttpApi.settings.save('settings-user.json', json.dumps(data))
                 return TerkinHttpApi.respond_text(httpResponse, 'ACK')
 
             elif content_type.startswith('text/plain') or content_type.startswith('application/octet-stream'):
+                """
                 buffer = TerkinHttpApi.read_request(httpClient)
                 #print('body:')
                 #print(body)
                 TerkinHttpApi.settings.save('settings.py', buffer)
                 return TerkinHttpApi.respond_text(httpResponse, 'ACK')
+                """
+                return httpResponse.WriteResponseError(400)
 
         except Exception as ex:
             log.exc(ex, 'PUT settings request failed')

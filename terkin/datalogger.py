@@ -58,6 +58,7 @@ class TerkinDatalogger:
         # Obtain configuration settings.
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
+        self.settings.add_user_file()
 
         self.application_info = ApplicationInfo(
             name=self.name, version=self.version, settings=self.settings,
