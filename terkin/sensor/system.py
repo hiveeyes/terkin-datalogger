@@ -124,6 +124,7 @@ class SystemBatteryLevel:
         except TypeError:
             from machine import Pin
             if type(self.pin) == str:
+                print(self.pin)
                 self.adc = ADC(Pin(int(self.pin[1:])))
             else:
                 self.adc = ADC(Pin(self.pin))

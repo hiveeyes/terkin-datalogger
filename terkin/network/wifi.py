@@ -372,6 +372,7 @@ class WiFiManager:
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
+        #global bootloader
         if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
             mac_address = self.humanize_mac_addresses(self.station.mac())
         else:

@@ -3,6 +3,7 @@
 # License: GNU General Public License, Version 3
 import machine
 from terkin import logging
+import sys
 
 log = logging.getLogger(__name__)
 
