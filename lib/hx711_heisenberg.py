@@ -126,8 +126,8 @@ class WeightReading:
         #self.raw_short = self.raw
         try:
             self.kg = round((self.raw - self.offset) / self.scale, 3)
-        except:
-            log.exception('Computing kg value failed')
+        except Exception as ex:
+            log.exc(ex, 'Computing kg value failed')
 
     def get_data(self):
         return self.__dict__

@@ -2,18 +2,27 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import os_path
 import json
 import types
+import os_path
 from copy import deepcopy
 from dotty_dict import dotty
+from mboot import McuFamily, MicroPythonPlatform
 from shutil import copyfileobj
 from terkin import logging
 from terkin.backup import backup_file
-from terkin.util import ensure_directory
-import sys
+from terkin.util import ensure_directory, get_platform_info, deepupdate
 
 log = logging.getLogger(__name__)
+
+
+platform_info = get_platform_info()
+if platform_info.mcu == McuFamily.ESP32 and platform_info.vendor == MicroPythonPlatform.Vanilla:
+    CONFIG_PATH = '/'
+    BACKUP_PATH = '/backup'
+else:
+    CONFIG_PATH = '/flash'
+    BACKUP_PATH = '/flash/backup'
 
 
 class TerkinConfiguration:
@@ -21,12 +30,10 @@ class TerkinConfiguration:
     A flexible configuration manager.
     """
 
-    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
-        CONFIG_PATH = '/flash'
-        BACKUP_PATH = '/flash/backup'
-    else:
-        CONFIG_PATH = '/'
-        BACKUP_PATH = '/backup'
+    CONFIG_PATH = CONFIG_PATH
+    BACKUP_PATH = BACKUP_PATH
+
+    USER_SETTINGS_FILE = 'settings-user.json'
 
     # Strip some settings when displaying configuration values
     # to prevent leaking sensible information into log files.
@@ -46,15 +53,20 @@ class TerkinConfiguration:
     ]
 
     def __init__(self):
+
         self.store = dotty()
+        self.overlay = dotty()
+
+        self.record = True
+
         log.info('Starting TerkinConfiguration on path "{}"'.format(self.CONFIG_PATH))
         #os.stat(self.CONFIG_PATH)
 
         try:
             log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
             ensure_directory(self.BACKUP_PATH)
-        except:
-            log.exception('Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
+        except Exception as ex:
+            log.exc(ex, 'Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
 
     def __getitem__(self, key, default=None):
         return self.get(key, default=default)
@@ -70,16 +82,22 @@ class TerkinConfiguration:
 
     def set(self, key, value):
         self.store[key] = value
+        if self.record:
+            self.overlay[key] = value
+            self.save(self.USER_SETTINGS_FILE, json.dumps(self.overlay.to_dict()))
         return value
 
     def setdefault(self, key, default=None):
+        # TODO: Add recording functionality.
         return self.store.setdefault(key, default=default)
 
     def add(self, data):
+        self.record = False
         try:
             self.add_real(data)
         except Exception as ex:
-            log.exception('Reading configuration settings failed')
+            log.exc(ex, 'Reading configuration settings failed')
+        self.record = True
 
     def add_real(self, data):
         if isinstance(data, types.ModuleType):
@@ -113,6 +131,33 @@ class TerkinConfiguration:
     def to_dict(self):
         return dict(self.store.to_dict())
 
+    def add_user_file(self):
+        data = self.load(self.USER_SETTINGS_FILE)
+        log.info('User settings: %s', data)
+        if data is not None:
+            self.overlay.update(data)
+            deepupdate(self.store, self.overlay)
+
+    def load(self, filename):
+        """
+        Load configuration file.
+        """
+        # Protect against directory traversals.
+        filename = os_path.basename(filename)
+
+        # Absolute path to configuration file.
+        filepath = os_path.join(self.CONFIG_PATH, filename)
+
+        log.info('Reading configuration file {}'.format(filepath))
+        try:
+            with open(filepath, "r") as instream:
+                payload = instream.read()
+                data = json.loads(payload)
+                return data
+
+        except Exception as ex:
+            log.exc(ex, 'Reading configuration from "{}" failed'.format(filepath))
+
     def save(self, filename, instream):
         """
         Save configuration file, with rotating backup.
@@ -143,5 +188,6 @@ class TerkinConfiguration:
                 outstream.write(instream)
             else:
                 copyfileobj(instream, outstream)
+            outstream.flush()
 
         uos.sync()

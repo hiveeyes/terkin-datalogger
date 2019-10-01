@@ -3,12 +3,16 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-from machine import ADC, enable_irq, disable_irq
+from machine import enable_irq, disable_irq
 from micropython import const
+
+from mboot import MicroPythonPlatform
 from terkin import logging
-import sys
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
+
 
 # Todo: Make this configurable.
 #log.setLevel(logging.DEBUG)
@@ -18,6 +22,9 @@ class SystemMemoryFree:
     """
     Read free memory in bytes.
     """
+
+    def enabled(self):
+        return True
 
     def read(self):
         import gc
@@ -36,6 +43,10 @@ class SystemTemperature:
     - https://github.com/espressif/esp-idf/issues/146
     - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
     """
+
+    def enabled(self):
+        import machine
+        return hasattr(machine, 'temperature')
 
     def read(self):
         import machine
@@ -107,7 +118,13 @@ class SystemBatteryLevel:
         # Reference to platform ADC object.
         self.adc = None
 
+    def enabled(self):
+        return True
+
     def setup(self, settings):
+
+        if settings.get('sensors.system.vcc') is None:
+            return False
 
         self.pin = settings.get('sensors.system.vcc.pin')
         self.resistor_r1 = settings.get('sensors.system.vcc.resistor_r1')
@@ -143,7 +160,7 @@ class SystemBatteryLevel:
         log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # read samples
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if platform_info.vendor == MicroPythonPlatform.Pycom:
             self.adc.init()
             adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
             irq_state = disable_irq()
@@ -167,10 +184,11 @@ class SystemBatteryLevel:
             adc_variance += (sample - adc_mean) ** 2
         adc_variance /= (self.adc_sample_count - 1)
 
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if platform_info.vendor == MicroPythonPlatform.Pycom:
             raw_voltage = adc_channel.value_to_voltage(4095)
             mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
-        else:   # TODO: make this work for esp32
+        else:
+            # FIXME: Make this work for vanilla ESP32.
             raw_voltage = 0.0
             mean_voltage = 0.0
         mean_variance = (adc_variance * 10 ** 6) // (adc_mean ** 2)
@@ -182,14 +200,15 @@ class SystemBatteryLevel:
         log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
         resistor_sum = self.resistor_r1 + self.resistor_r2
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if platform_info.vendor == MicroPythonPlatform.Pycom:
             voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
-        else:   # TODO: make this work for esp32
+        else:
+            # FIXME: Make this work for vanilla ESP32.
             voltage_millivolt = 0.0            
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if platform_info.vendor == MicroPythonPlatform.Pycom:
             adc_channel.deinit()
 
         log.debug('Battery level: {}'.format(voltage_volt))
@@ -213,6 +232,9 @@ class SystemUptime:
     """
 
     start_time = time.time()
+
+    def enabled(self):
+        return True
 
     def read(self):
         now = time.time()

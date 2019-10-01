@@ -4,6 +4,7 @@
 # License: GNU General Public License, Version 3
 import time
 import machine
+
 from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
@@ -11,8 +12,7 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.util import dformat, gc_disabled, ddformat
-from mboot import MicroPythonPlatform
+from terkin.util import dformat, gc_disabled, ddformat, GenericChronometer
 
 log = logging.getLogger(__name__)
 
@@ -58,6 +58,7 @@ class TerkinDatalogger:
         # Obtain configuration settings.
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
+        self.settings.add_user_file()
 
         self.application_info = ApplicationInfo(
             name=self.name, version=self.version, settings=self.settings,
@@ -81,6 +82,8 @@ class TerkinDatalogger:
         # Initialize sensor domain.
         self.sensor_manager = SensorManager()
 
+        self.duty_chrono = GenericChronometer()
+
     @staticmethod
     def getInstance(settings=None):
         """
@@ -99,6 +102,8 @@ class TerkinDatalogger:
 
     def start(self):
 
+        self.duty_chrono.reset()
+
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -110,6 +115,8 @@ class TerkinDatalogger:
 
         # Alternative startup signalling: 2 x green.
         self.device.blink_led(0x000b00, count=2)
+
+        self.device.run_gc()
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # Todo: Revisit where this should actually go.
@@ -146,9 +153,9 @@ class TerkinDatalogger:
         # Conditionally start network services and telemetry if networking is available.
         try:
             self.device.start_networking()
-        except Exception:
-            log.exception('Networking subsystem failed')
-            self.status.networking = False
+        except Exception as ex:
+            log.exc(ex, 'Networking subsystem failed')
+            self.device.status.networking = False
 
         self.device.start_telemetry()
 
@@ -157,7 +164,7 @@ class TerkinDatalogger:
 
         # Setup sensors.
         self.device.watchdog.feed()
-        bus_settings = self.settings.get('sensors.busses')
+        bus_settings = self.settings.get('sensors.busses', [])
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
 
@@ -191,6 +198,9 @@ class TerkinDatalogger:
         """
         Main duty cycle loop.
         """
+
+        if not self.settings.get('main.deepsleep', False):
+            self.duty_chrono.reset()
 
         #log.info('Terkin loop')
 
@@ -252,8 +262,8 @@ class TerkinDatalogger:
             self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
 
         # When hibernation fails, fall back to regular "time.sleep".
-        except:
-            log.exception('Failed to hibernate, falling back to regular sleep')
+        except Exception as ex:
+            log.exc(ex, 'Failed to hibernate, falling back to regular sleep')
             # Todo: Emit error message here.
             log.info('Sleeping for {} seconds'.format(interval))
             time.sleep(interval)
@@ -274,8 +284,12 @@ class TerkinDatalogger:
         if self.device.status.maintenance is True:
             interval = self.settings.get('main.interval.maintenance')
 
-        # FIXME
-        sleep_time = interval
+        # Compute sleeping duration from measurement interval and elapsed time.
+        elapsed = self.duty_chrono.read()
+        sleep_time = interval - elapsed
+
+        if sleep_time <= 0:
+            sleep_time = interval
 
         return sleep_time
 
@@ -288,22 +302,29 @@ class TerkinDatalogger:
 
         system_sensors = [
             SystemMemoryFree,
-            #SystemTemperature,
+            SystemTemperature,
             SystemBatteryLevel,
             SystemUptime,
         ]
 
         for sensor_factory in system_sensors:
-            sensor = sensor_factory()
-            if hasattr(sensor, 'setup') and callable(sensor.setup):
-                sensor.setup(self.settings)
-            self.sensor_manager.register_sensor(sensor)
+            sensor_name = sensor_factory.__name__
+            try:
+                sensor = sensor_factory()
+                if not sensor.enabled():
+                    log.info('Sensor %s not enabled, skipping', sensor_name)
+                    continue
+                if hasattr(sensor, 'setup') and callable(sensor.setup):
+                    sensor.setup(self.settings)
+                self.sensor_manager.register_sensor(sensor)
+            except Exception as ex:
+                log.exc(ex, 'Registering system sensor "%s" failed', sensor_name)
 
         # Add WiFi metrics.
         try:
             self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.wifi_manager.station))
-        except:
-            log.exception('Enabling SystemWiFiMetrics sensor failed')
+        except Exception as ex:
+            log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
 
     def read_sensors(self):
         """
@@ -348,6 +369,8 @@ class TerkinDatalogger:
 
             # Feed the watchdog.
             self.device.watchdog.feed()
+
+            self.device.run_gc()
 
         # Debugging: Print sensor data before running telemetry.
         prettify_log = self.settings.get('sensors.prettify_log', False)

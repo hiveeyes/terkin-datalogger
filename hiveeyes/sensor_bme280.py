@@ -34,7 +34,7 @@ class BME280Sensor(AbstractSensor):
             return True
 
         except Exception as ex:
-            log.exception('BME280 hardware driver failed')
+            log.exc(ex, 'BME280 hardware driver failed')
 
     def read(self):
 

@@ -12,7 +12,7 @@ contributed to this software in one way or another.
 * Diren Senger <diren@uni-bremen.de>
 * Dominik Kapusta <https://github.com/ayoy>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
-* Markus <https://community.hiveeyes.org/u/poesel>
+* Markus <https://github.com/poesel>
 * Michael Kurzweil <https://flowers4bees.org/>
 * Ralf Lindlein <https://github.com/walterheisenberg>
 * Richard Pobering <richard@hiveeyes.org>

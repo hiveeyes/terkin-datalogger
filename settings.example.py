@@ -4,8 +4,6 @@
 main = {
 
     # Measurement intervals in seconds.
-    # Todo: Please note this is not the _real thing_ yet at it will just use
-    #       this value to apply to ``time.sleep()`` after each duty cycle.
     'interval': {
 
         # Apply this interval if device is in field mode.
@@ -82,6 +80,13 @@ interfaces = {
 # Networking configuration.
 networking = {
     'wifi': {
+
+        # WiFi interface configuration.
+        'phy': {
+            'antenna_external': False,
+            'antenna_pin': 'P12',
+        },
+
         # WiFi stations to connect to in STA mode.
         'stations': [
 

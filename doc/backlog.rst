@@ -8,8 +8,15 @@ Datalogger
 **********
 
 
-Miscellaneous
-=============
+Prio 0.7
+========
+- Sensor-Mapping for @clemens, @wtf and @mko
+- Rename "busses" to "buses"
+- Use WLAN power_save, see https://docs.pycom.io/firmwareapi/pycom/network/wlan/
+- Rename "mboot.py", this name is already taken by the native MicroPython bootloader
+
+Prio 0.8
+========
 - wget ftp.exe
 - [o] Leave maintenance mode after 10 minutes
 - [o] Configure ARP-ping timeout for "terkin.py"
@@ -185,8 +192,6 @@ Prio 1.3
     - system: rssi, cycles
     - observations: all the data
 - [o] Report about to how many telemetry targets data will be sent
-- [o] Properly calculate sleep time from interval and duty cycle duration
-- [o] Connect to Beep
 - [o] Follow up with
     - https://community.hiveeyes.org/t/terkin-for-micropython/233/10
     - https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
@@ -378,6 +383,9 @@ Done
 - [x] Implement real "light sleep"
   "in light sleep mode the current consumption on a Lopy is 3.5 mA with RTC peripherals ON"
   https://forum.pycom.io/topic/3351/new-development-firmware-release-v1-19-0-b1/3
+- [x] Add configuration for external WiFi antenna
+- [x] Properly calculate sleep time from interval and duty cycle duration
+- [x] Connect to Beep
 
 
 

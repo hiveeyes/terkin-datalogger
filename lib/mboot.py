@@ -6,7 +6,6 @@
 Universal MicroPython bootloader.
 """
 
-
 class McuFamily:
 
     STM32 = 1
@@ -43,14 +42,17 @@ class PlatformInfo:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonPlatform.Pycom
 
+        if sys.platform in ['pyboard']:
+            self.mcu = McuFamily.STM32
+            self.vendor = MicroPythonPlatform.Vanilla
+
 
 class MicroPythonBootloader:
 
     def __init__(self):
         self.platform_info = PlatformInfo()
 
-    @staticmethod
-    def extend_syspath():
+    def extend_syspath(self):
         """
         Extend Python module search path.
         Dependency modules are shipped through the "dist-packages" folder.
@@ -62,15 +64,19 @@ class MicroPythonBootloader:
         # Vanilla Pycom MicroPython: ['', '/flash', '/flash/lib']
         # Vanilla MicroPython: ['', '/lib']
 
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
-            # Extend by path containing frozen modules.
-            sys.path[0:0] = ['/flash/lib-mpy']
-            # Extend by all paths required for running the sandboxed firmware.
+        # Extend by path containing frozen modules.
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            bytecode_path = 'lib-mpy-1.9.4-pycom'
+        else:
+            bytecode_path = 'lib-mpy-1.11-bytecode'
+
+        # Extend by all paths required for running the sandboxed firmware.
+        if '/flash' in sys.path:
+            sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
             sys.path.extend(['/flash/dist-packages', '/flash/terkin', '/flash/hiveeyes'])
         else:
-            # Extend by all paths required for running the sandboxed firmware. esp32 has no /flash
+            sys.path[0:0] = ['/{}'.format(bytecode_path)]
             sys.path.extend(['/dist-packages', '/terkin', '/hiveeyes'])
-
 
         """
         # Experiments.

@@ -43,7 +43,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
 
         # Backward compatibility.
         if sensor_infos is None:
-            sensor_infos = self.settings.get('sensors.registry').values()
+            sensor_infos = self.settings.get('sensors.registry', {}).values()
 
         for sensor_info in sensor_infos:
             sensor_id = sensor_info.get('id', sensor_info.get('key'))
@@ -75,7 +75,9 @@ class HiveeyesDatalogger(TerkinDatalogger):
                                 'Sensor settings:\n{}'.format(sensor_id, sensor_info))
 
             except Exception as ex:
-                log.exception('Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+                log.exc(ex, 'Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+
+            self.device.run_gc()
 
     def add_hx711_sensor(self, settings):
         """

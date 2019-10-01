@@ -5,10 +5,11 @@
 import time
 import machine
 import binascii
-from network import WLAN
+import network
+
+from mboot import MicroPythonPlatform
 from terkin import logging
-from terkin.util import format_mac_address, backoff_time, Stopwatch
-import sys
+from terkin.util import format_mac_address, backoff_time, Stopwatch, get_platform_info
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +20,10 @@ class WiFiManager:
         self.manager = manager
         self.settings = settings
 
+        self.platform_info = self.manager.device.application_info.platform_info
+
         # WIFI settings.
+        self.phy = self.settings.get('networking.wifi.phy', {})
         self.stations = self.settings.get('networking.wifi.stations')
         self.station = None
 
@@ -30,10 +34,24 @@ class WiFiManager:
 
     def start(self):
 
-        # Todo: Propagate more parameters here, e.g. for using an external antenna.
-        self.station = WLAN()
-
         self.start_interface()
+
+        # Check WiFi connectivity.
+        if self.is_connected():
+
+            log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
+            self.print_short_status()
+
+            # Give system some breath.
+            #time.sleep(0.25)
+
+            # Inform about networking status.
+            #self.print_short_status()
+            self.print_address_status()
+
+            return
+
+        self.manager.device.run_gc()
 
         try:
             import _thread
@@ -43,9 +61,19 @@ class WiFiManager:
 
     def start_interface(self):
         """
+        Genuine MicroPython:
+        https://docs.micropython.org/en/latest/library/network.WLAN.html
+
+        Pycom MicroPython:
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
         """
+
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            self.station = network.WLAN()
+        else:
+            log.info('WiFi STA: Will exclusively use STA mode on this platform. AP mode not implemented yet.')
+            self.station = network.WLAN(network.STA_IF)
 
         #if machine.reset_cause() == machine.SOFT_RESET:
         #   print("WiFi STA: Network connection after SOFT_RESET.")
@@ -62,24 +90,43 @@ class WiFiManager:
         self.print_address_status()
 
         # Setup network interface.
-        log.info("WiFi STA+AP: Starting interface")
-        self.station.mode(WLAN.STA_AP)
-        self.station.init()
+        log.info("WiFi: Starting interface")
 
-        # Check WiFi connectivity.
-        if self.is_connected():
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            self.configure_antenna()
+            self.station.mode(network.WLAN.STA_AP)
+            self.station.init()
+        else:
+            self.station.active(True)
 
-            log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
-            self.print_short_status()
+    def configure_antenna(self):
+        # https://community.hiveeyes.org/t/signalstarke-des-wlan-reicht-nicht/2541/11
+        # https://docs.pycom.io/firmwareapi/pycom/network/wlan/
 
-            # Give system some breath.
-            time.sleep(0.25)
+        antenna_external = self.phy.get('antenna_external', False)
 
-            # Inform about networking status.
-            self.print_short_status()
-            self.print_address_status()
+        if not hasattr(self.station, 'antenna'):
+            # Select antenna, 0=chip, 1=external.
+            antenna_value = 0
+            if antenna_external:
+                antenna_value = 1
+            self.station.config(antenna=antenna_value)
+            return
 
-            return True
+        if antenna_external:
+            antenna_pin = self.phy.get('antenna_pin')
+            log.info('WiFi: Using external antenna on pin %s', antenna_pin)
+
+            # To use an external antenna, set P12 as output pin.
+            from machine import Pin
+            Pin(antenna_pin, mode=Pin.OUT)(True)
+
+            # Configure external WiFi antenna.
+            self.station.antenna(network.WLAN.EXT_ANT)
+
+        else:
+            log.info('WiFi: Using internal antenna')
+            self.station.antenna(network.WLAN.INT_ANT)
 
     def enable_ap(self):
         # Todo: Reenable WiFi AP mode in the context of an "initial configuration" mode.
@@ -99,8 +146,8 @@ class WiFiManager:
         try:
             self.connect_stations(networks_known)
 
-        except:
-            log.exception('WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
+        except Exception as ex:
+            log.exc(ex, 'WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
 
     def stay_connected(self):
 
@@ -121,8 +168,8 @@ class WiFiManager:
                 try:
                     self.connect_stations(networks_known)
 
-                except:
-                    log.exception('WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
+                except Exception as ex:
+                    log.exc(ex, 'WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
                     delay = backoff_time(attempt, minimum=1, maximum=600)
                     log.info('WiFi STA: Retrying in {} seconds'.format(delay))
 
@@ -141,8 +188,8 @@ class WiFiManager:
                     if ip_address is not None and ip_address != '0.0.0.0':
                         return True
 
-        except:
-            log.exception('Invoking "is_connected" failed')
+        except Exception as ex:
+            log.exc(ex, 'Invoking "is_connected" failed')
 
         return False
 
@@ -159,8 +206,8 @@ class WiFiManager:
             try:
                 log.info('Turning off WiFi')
                 self.station.deinit()
-            except:
-                log.exception('Turning off WiFi failed')
+            except Exception as ex:
+                log.exc(ex, 'Turning off WiFi failed')
 
     def connect_stations(self, network_names):
 
@@ -179,8 +226,8 @@ class WiFiManager:
                 if self.connect_station(network_selected):
                     break
 
-            except Exception:
-                log.exception('WiFi STA: Connecting to "{}" failed'.format(network_name))
+            except Exception as ex:
+                log.exc(ex, 'WiFi STA: Connecting to "{}" failed'.format(network_name))
 
         if not self.is_connected():
 
@@ -199,11 +246,13 @@ class WiFiManager:
 
         network_name = network['ssid']
 
-        log.info('WiFi STA: Getting auth mode for network "{}"'.format(network_name))
+        log.info('WiFi STA: Preparing connection to network "{}"'.format(network_name))
 
-        auth_mode = self.get_auth_mode(network_name)
-
-        log.info('WiFi STA: Preparing connection to network "{}" with auth mode "{}"'.format(network_name, auth_mode))
+        auth_mode = None
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            log.info('WiFi STA: Getting auth mode')
+            auth_mode = self.get_auth_mode(network_name)
+            log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
 
         password = network['password']
 
@@ -227,8 +276,13 @@ class WiFiManager:
         network_timeout = network.get('timeout', 15.0)
 
         # Connect to WiFi station.
-        log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name, network_timeout))
-        self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name,
+                                                                                               network_timeout))
+            self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
+        else:
+            log.info('WiFi STA: Starting connection to "{}"'.format(network_name))
+            self.station.connect(network_name, password)
 
         # Wait for network to arrive.
         self.wait_for_connection(network_timeout)
@@ -286,13 +340,18 @@ class WiFiManager:
         log.info("WiFi STA: Scanning for networks")
         try:
             stations_available = self.station.scan()
-        except OSError as ex:
-            if 'Scan operation Failed' in str(ex):
-                log.exception('WiFi STA: Scanning for networks failed')
-                self.station.init()
+        except Exception as ex:
+            log.exc(ex, 'WiFi STA: Scanning for networks failed')
+            #if 'Scan operation Failed' in str(ex):
+            #    self.station.init()
+            return []
 
         # Collect SSIDs of available stations.
-        networks_found = frozenset([e.ssid for e in stations_available])
+        # (ssid, bssid, channel, RSSI, authmode, hidden)
+        try:
+            networks_found = frozenset([station.ssid for station in stations_available])
+        except AttributeError:
+            networks_found = frozenset([station[0] for station in stations_available])
 
         # Print names/SSIDs of networks found.
         log.info("WiFi STA: Networks available: %s", list(networks_found))
@@ -300,13 +359,16 @@ class WiFiManager:
         return stations_available
 
     def get_ssid(self):
-        return self.station.ssid()
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            return self.station.ssid()
+        else:
+            return self.station.config('essid')
 
     def get_ip_address(self):
         try:
             return self.station.ifconfig()[0]
-        except:
-            log.exception('Unable to get device ip address')
+        except Exception as ex:
+            log.exc(ex, 'Unable to get device ip address')
 
     def get_auth_mode(self, network_name):
 
@@ -323,26 +385,45 @@ class WiFiManager:
 
         # Fall back to find out WiFi STA auth mode by network scan.
         if auth_mode is None:
+
             log.info('WiFi STA: Unknown auth mode for network "%s", invoking WiFi scan', network_name)
             wifi_neighbourhood = self.scan_stations()
 
-            #log.info('WiFi STA: Neighbourhood is %s', wifi_neighbourhood)
-            for e in wifi_neighbourhood:
-                if e.ssid == network_name:
-                    auth_mode = e.sec
+            # log.info('WiFi STA: Neighbourhood is %s', wifi_neighbourhood)
+
+            for station in wifi_neighbourhood:
+
+                # (ssid, bssid, channel, RSSI, authmode, hidden)
+                log.debug('Station: %s', station)
+
+                try:
+                    ssid = station.ssid
+                except AttributeError:
+                    ssid = station[0].decode()
+
+                if ssid == network_name:
+                    try:
+                        auth_mode = station.sec
+                    except AttributeError:
+                        auth_mode = station[4]
                     break
 
-            if not auth_mode:
+            if auth_mode is None:
                 message = 'WiFi STA: Unable to inquire auth mode for network "{}"'.format(network_name)
                 log.warning(message)
                 raise WiFiException(message)
 
-            log.info('WiFi STA: Storing auth mode into NVRAM with key=%s, value=%s', auth_mode_nvs_key, auth_mode)
             try:
                 import pycom
-                pycom.nvs_set(auth_mode_nvs_key, auth_mode)
-            except:
-                log.exception('WiFi STA: Storing auth mode into NVRAM failed')
+
+                log.info('WiFi STA: Storing auth mode into NVRAM with key=%s, value=%s', auth_mode_nvs_key, auth_mode)
+                try:
+                    pycom.nvs_set(auth_mode_nvs_key, auth_mode)
+                except Exception as ex:
+                    log.exc(ex, 'WiFi STA: Storing auth mode into NVRAM failed')
+
+            except ImportError:
+                pass
 
         return auth_mode
 
@@ -355,7 +436,11 @@ class WiFiManager:
         """
         import hashlib
         import ubinascii
-        digest = ubinascii.hexlify(hashlib.sha512(ssid).digest()).decode()
+        try:
+            hashfun = hashlib.sha512
+        except AttributeError:
+            hashfun = hashlib.sha256
+        digest = ubinascii.hexlify(hashfun(ssid).digest()).decode()
         identifier = 'wa.{}'.format(digest[15:27])
         return identifier
 
@@ -372,12 +457,20 @@ class WiFiManager:
         log.info('WiFi STA: Connected to "{}" with IP address "{}"'.format(self.get_ssid(), self.get_ip_address()))
 
     def print_address_status(self):
-        #global bootloader
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
-            mac_address = self.humanize_mac_addresses(self.station.mac())
+
+        # Get MAC address.
+        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+            mac_address = self.station.mac()
         else:
-            mac_address = self.humanize_mac_addresses(self.config('mac'))
+            mac_address = self.station.config('mac')
+
+        # Make MAC address human readable.
+        mac_address = self.humanize_mac_addresses(mac_address)
+
+        # Get IP address.
         ifconfig = self.station.ifconfig()
+
+        # Display MAC- and IP-address configuration.
         log.info('WiFi STA: Networking address (MAC): %s', mac_address)
         log.info('WiFi STA: Networking address (IP):  %s', ifconfig)
 
@@ -405,8 +498,19 @@ class SystemWiFiMetrics:
 
     def read(self):
 
-        if (self.station is None) or (sys.platform == 'esp32'):
-            return
+        platform_info = get_platform_info()
+
+        if platform_info.vendor == MicroPythonPlatform.Vanilla:
+            stats = {
+                'system.wifi.channel': self.station.config('channel'),
+            }
+
+            try:
+                stats['system.wifi.rssi'] = self.station.status('rssi')
+            except:
+                pass
+
+            return stats
 
         stats = {
             'system.wifi.bandwidth': self.station.bandwidth(),

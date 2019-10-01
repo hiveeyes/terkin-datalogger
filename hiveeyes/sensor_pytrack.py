@@ -35,24 +35,24 @@ class PytrackSensor(AbstractSensor):
         try:
             from pytrack import Pytrack
             self.sensor = Pytrack(i2c=self.bus.adapter)
-        except:
-            log.exception('Pytrack hardware driver failed')
+        except Exception as ex:
+            log.exc(ex, 'Pytrack hardware driver failed')
             raise
 
         # Initialize the L76GNS sensor driver.
         try:
             from L76GNSV4 import L76GNSS
             self.l76 = L76GNSS(pytrack=self.sensor, timeout=5)
-        except:
-            log.exception('Pytrack L76GNSS hardware driver failed')
+        except Exception as ex:
+            log.exc(ex, 'Pytrack L76GNSS hardware driver failed')
             raise
 
         # Initialize the LIS2HH12 sensor driver.
         try:
             from LIS2HH12 import LIS2HH12
             self.lis2hh12 = LIS2HH12(pysense=self.sensor)
-        except:
-            log.exception('Pytrack LIS2HH12 hardware driver failed')
+        except Exception as ex:
+            log.exc(ex, 'Pytrack LIS2HH12 hardware driver failed')
             raise
 
     def read(self):
@@ -88,8 +88,8 @@ class PytrackSensor(AbstractSensor):
         # Call this to start the machinery and actually get a fix.
         try:
             self.l76.coordinates()
-        except Exception as e:
-            log.exception("Could not read coordinates")
+        except Exception as ex:
+            log.exc(ex, "Could not read coordinates")
             raise
 
         # Only read values when having a fix.
@@ -107,8 +107,8 @@ class PytrackSensor(AbstractSensor):
         # Read position.
         try:
             location = self.l76.get_location(MSL=True)
-        except Exception as e:
-            log.exception("Could not read location from L76 GNSS")
+        except Exception as ex:
+            log.exc(ex, "Could not read location from L76 GNSS")
 
         try:
             data['longitude'] = float(location.get('longitude'))

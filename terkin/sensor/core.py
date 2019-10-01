@@ -53,8 +53,8 @@ class SensorManager:
 
             try:
                 self.setup_bus(bus_settings)
-            except:
-                log.exception('Registering bus failed. settings={}'.format(bus_settings))
+            except Exception as ex:
+                log.exc(ex, 'Registering bus failed. settings={}'.format(bus_settings))
 
     def setup_bus(self, bus_settings):
         bus_family = bus_settings.get('family')
@@ -90,8 +90,8 @@ class SensorManager:
                 log.info('Sending {} to sensor {}'.format(action, sensorname))
                 try:
                     getattr(sensor, action)()
-                except:
-                    log.exception('Sending {} to sensor {} failed'.format(action, sensorname))
+                except Exception as ex:
+                    log.exc(ex, 'Sending {} to sensor {} failed'.format(action, sensorname))
 
     def power_toggle_busses(self, action):
         for busname, bus in self.busses.items():
@@ -99,8 +99,8 @@ class SensorManager:
                 log.info('Sending {} to bus {}'.format(action, busname))
                 try:
                     getattr(bus, action)()
-                except:
-                    log.exception('Sending {} to sensor {} failed'.format(action, busname))
+                except Exception as ex:
+                    log.exc(ex, 'Sending {} to sensor {} failed'.format(action, busname))
 
 
 class AbstractSensor:
@@ -207,7 +207,7 @@ class OneWireBus(AbstractBus):
             self.scan_devices()
 
         except Exception as ex:
-            log.exception('1-Wire hardware driver failed')
+            log.exc(ex, '1-Wire hardware driver failed')
 
     def scan_devices(self):
 
@@ -252,7 +252,7 @@ class I2CBus(AbstractBus):
             self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
             self.scan_devices()
         except Exception as ex:
-            log.exception('I2C hardware driver failed')
+            log.exc(ex, 'I2C hardware driver failed')
 
     def scan_devices(self):
         self.devices = self.adapter.scan()

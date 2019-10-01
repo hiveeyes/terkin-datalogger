@@ -1,0 +1,10 @@
+{
+  "main": {
+    "interval": {
+      "field": 5.0
+    }
+  },
+  "foo": {
+    "bar": "bazqux"
+  }
+}

@@ -48,8 +48,8 @@ class ButtonManager:
             )
             log.info('Setting up %s', button)
             self.buttons.append(button)
-        except:
-            log.exception('Setting up button on pin {} failed'.format(pin))
+        except Exception as ex:
+            log.exc(ex, 'Setting up button on pin {} failed'.format(pin))
 
     def check(self, alarm):
         for button in self.buttons:
@@ -59,6 +59,6 @@ class ButtonManager:
                 if button.adapter.is_pressed() and not button.adapter.just_pressed():
                     log.info('{} pressed'.format(button))
                     button.adapter.set_press()
-            except:
+            except Exception as ex:
                 button.enabled = False
-                log.exception('Checking {} failed'.format(button))
+                log.exc(ex, 'Checking {} failed'.format(button))

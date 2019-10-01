@@ -42,7 +42,7 @@ class NetworkManager:
 
         eggtimer = Eggtimer(duration=timeout)
 
-        log.info('Waiting for network stack')
+        log.info('Waiting for the network stack to come up within %s seconds', timeout)
         while not eggtimer.expired():
 
             self.device.watchdog.feed()
@@ -53,7 +53,8 @@ class NetworkManager:
                 return True
 
             except OSError as ex:
-                log.warning('Network stack not available', format_exception(ex))
+                #log.warning('Network stack not available: %s', format_exception(ex))
+                pass
 
             # Report about progress.
             sys.stderr.write('.')
@@ -101,15 +102,15 @@ class NetworkManager:
         if self.settings.get('services.api.modeserver.enabled', False):
             try:
                 self.start_modeserver()
-            except:
-                log.exception('Starting mode server failed')
+            except Exception as ex:
+                log.exc(ex, 'Starting mode server failed')
 
         # Start HTTP server
         if self.settings.get('services.api.http.enabled', False):
             try:
                 self.start_httpserver()
-            except:
-                log.exception('Starting HTTP server failed')
+            except Exception as ex:
+                log.exc(ex, 'Starting HTTP server failed')
 
     def start_modeserver(self):
         """

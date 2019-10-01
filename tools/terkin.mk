@@ -29,13 +29,20 @@ ifneq ($(mcu_port),)
     endif
 endif
 
-# Sanity-check MCU_PORT
+# Sanity-check effective MCU_PORT
 check-mcu-port:
 	@if test "${mcu_port}" = ""; then \
 		echo "ERROR: MCU port could not be obtained, please set the \"MCU_PORT\" environment variable or populate the \".terkin/floatip\" file."; \
 		exit 1; \
 	else \
 		echo "Device port: ${mcu_port_type} => ${mcu_port}"; \
+	fi
+
+# Sanity-check USB MCU_PORT
+check-mcu-port-strict:
+	@if test "${MCU_PORT}" = ""; then \
+		echo "ERROR: MCU port could not be obtained, please set the \"MCU_PORT\" environment variable."; \
+		exit 1; \
 	fi
 
 ## Restart device using the HTTP API

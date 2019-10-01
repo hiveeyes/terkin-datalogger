@@ -5,6 +5,10 @@
 import os
 import sys
 import uio
+import copy
+import collections
+
+from mboot import MicroPythonPlatform
 
 
 def to_base64(bytes):
@@ -15,7 +19,7 @@ def to_base64(bytes):
 
 
 def format_exception(ex):
-    return '{}: {}'.format(ex.__class__.__name__, ex)
+    return '{}: {}'.format(ex.__class__.__name__, str(ex))
 
 
 def get_device_id():
@@ -231,7 +235,8 @@ def get_last_stacktrace():
 
 
 def random_from_crypto():
-    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+    platform_info = get_platform_info()
+    if platform_info.vendor == MicroPythonPlatform.Pycom:
         # https://forum.pycom.io/topic/1378/solved-how-to-get-random-number-in-a-range/6
         # https://github.com/micropython/micropython-lib/blob/master/random/random.py
         import crypto
@@ -239,7 +244,7 @@ def random_from_crypto():
     else:
         import urandom
         r = urandom.getrandbits(32)
-    return ((r[0]<<24) + (r[1]<<16) + (r[2]<<8) + r[3]) / 4294967295.0
+    return ((r[0] << 24) + (r[1] << 16) + (r[2] << 8) + r[3]) / 4294967295.0
 
 def randint(a, b):
     """Return random integer in range [a, b], including both end points."""
@@ -315,3 +320,89 @@ class Eggtimer:
 
     def expired(self):
         return self.stopwatch.elapsed() >= self.duration
+
+
+def get_platform_info():
+    from __main__ import bootloader
+    return bootloader.platform_info
+
+
+def dict_merge(dct, merge_dct, add_keys=True):
+    """
+    Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
+    updating only top-level keys, dict_merge recurses down into dicts nested
+    to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
+    ``dct``.
+
+    This version will return a copy of the dictionary and leave the original
+    arguments untouched.
+
+    The optional argument ``add_keys``, determines whether keys which are
+    present in ``merge_dict`` but not ``dct`` should be included in the
+    new dict.
+
+    Args:
+        dct (dict) onto which the merge is executed
+        merge_dct (dict): dct merged into dct
+        add_keys (bool): whether to add new keys
+
+    Returns:
+        dict: updated dict
+
+    Resources:
+        https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+
+    """
+    dct = dct.copy()
+    if not add_keys:
+        merge_dct = {
+            k: merge_dct[k]
+            for k in set(dct).intersection(set(merge_dct))
+        }
+
+    for k, v in merge_dct.items():
+        if (k in dct and isinstance(dct[k], dict)
+                and isinstance(merge_dct[k], collections.Mapping)):
+            dct[k] = dict_merge(dct[k], merge_dct[k], add_keys=add_keys)
+        else:
+            dct[k] = merge_dct[k]
+
+    return dct
+
+
+# Copyright Ferry Boender, released under the MIT license.
+# https://www.electricmonk.nl/log/2017/05/07/merging-two-python-dictionaries-by-deep-updating/
+def deepupdate(target, src):
+    """
+    Deep update target dict with src
+    For each k,v in src: if k doesn't exist in target, it is deep copied from
+    src to target. Otherwise, if v is a list, target[k] is extended with
+    src[k]. If v is a set, target[k] is updated with v, If v is a dict,
+    recursively deep-update it.
+
+    Examples:
+
+    >>> t = {'name': 'Ferry', 'hobbies': ['programming', 'sci-fi']}
+    >>> deepupdate(t, {'hobbies': ['gaming']})
+    >>> print t
+    {'name': 'Ferry', 'hobbies': ['programming', 'sci-fi', 'gaming']}
+
+    """
+    for k, v in src.items():
+        if type(v) == list:
+            if not k in target:
+                target[k] = copy.deepcopy(v)
+            else:
+                target[k].extend(v)
+        elif type(v) == dict:
+            if not k in target:
+                target[k] = copy.deepcopy(v)
+            else:
+                deepupdate(target[k], v)
+        elif type(v) == set:
+            if not k in target:
+                target[k] = v.copy()
+            else:
+                target[k].update(v.copy())
+        else:
+            target[k] = copy.copy(v)

@@ -2,10 +2,13 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import machine
+
+from mboot import MicroPythonPlatform
 from terkin import logging
-import sys
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 
 class MachineResetCause:
@@ -26,7 +29,7 @@ class MachineResetCause:
     Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
     """
 
-    if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+    if platform_info.vendor == MicroPythonPlatform.Pycom:
         reset_causes = {
             machine.PWRON_RESET: 'PWRON',
             machine.HARD_RESET: 'HARD',
@@ -53,7 +56,7 @@ class MachineResetCause:
             machine.SOFT_RESET: 'SOFT',
             #machine.BROWN_OUT_RESET: 'BROWN_OUT'
         }
-    
+
         wakeup_reasons = {
             machine.PIN_WAKE: 'PIN',
             #machine.PWRON_WAKE: 'PWRON',
@@ -67,7 +70,7 @@ class MachineResetCause:
     def humanize(cls):
 
         reset_cause_magic = machine.reset_cause()
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if platform_info.vendor == MicroPythonPlatform.Pycom:
             wakeup_reason_magic, _ = machine.wake_reason()
         else:
             wakeup_reason_magic = machine.wake_reason()

@@ -2,13 +2,20 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import sys
+import utime
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
+from mboot import MicroPythonPlatform
+from terkin.util import GenericChronometer, PycomChronometer, get_platform_info
 
 # Keep track of time since boot.
-from terkin.util import GenericChronometer
-_chrono = GenericChronometer()
+platform_info = get_platform_info()
+if platform_info.vendor == MicroPythonPlatform.Pycom:
+    _chrono = PycomChronometer()
+else:
+    _chrono = GenericChronometer()
 
 
 class TimedLogRecord(logging.LogRecord):
@@ -17,7 +24,8 @@ class TimedLogRecord(logging.LogRecord):
         try:
             self.tdelta = _chrono.read()
         except:
-            self.tdelta = None
+            self.tdelta = 0
+
 
 class ExtendedLogger(Logger):
 

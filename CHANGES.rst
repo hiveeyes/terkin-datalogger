@@ -20,6 +20,21 @@ Development
 - Load the ADC module for "SystemBatteryLevel" at runtime
 - Fix missing ADC module import
 - Process DS18B20 addresses case insensitive
+- Port to ESP32 WROVER with MicroPython 1.11. Thanks, Markus!
+- Fix network status flag
+- Improve cross-compilation tooling re. Pycom vs. pyboard-D
+- Display HTTP egress payload in log output on INFO level
+- Add option to use external WiFi antenna
+- Pyboard D-series: Improve sandbox tooling
+- Pyboard D-series: Make the source tree compatible with Genuine MicroPython
+- Adjust slightly for running on Pycom devices again
+- WiFi adjustments for Pyboard-D
+- Appropriately compute sleep time, resolve #4
+- Make ``make setup`` more platform-agnostic, resolve #20
+- Add external antenna option for vanilla MicroPython
+- Use trimmed-down settings.py for PYBD
+- Add configuration settings overlay per ``settings-user.json``
+- Improve robustness with minimal configuration for PYBD
 
 
 2019-08-19 0.6.0

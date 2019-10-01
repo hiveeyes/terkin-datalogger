@@ -84,13 +84,37 @@ reset-ampy:
 # Ahead of time compilation
 # -------------------------
 
+check-mpy-version:
+	@if test "$(MPY_VERSION)" = ""; then \
+		echo "ERROR: Variable \"MPY_VERSION\" unset or empty."; \
+		exit 1; \
+	fi
+
+check-mpy-target:
+	@if test "$(MPY_TARGET)" = ""; then \
+		echo "ERROR: Variable \"MPY_TARGET\" unset or empty."; \
+		exit 1; \
+	fi
+
+mpy-cross: check-mpy-version check-mpy-target
+	PYTHONPATH=bin/mpy-cross/$(MPY_VERSION) $(python2) $(mpy-cross-all) --target $(MPY_TARGET) $(what)
+
+
 mpy-cross-setup: setup-virtualenv2
 
-	@echo "$(INFO) Installing mpy-cross"
-	@$(pip2) --quiet install mpy-cross==1.9.4
+	@mkdir -p bin/mpy-cross
+
+	@echo "$(INFO) Installing mpy-cross for MicroPython 1.9.4"
+	@$(pip2) --quiet install --target=bin/mpy-cross/1.9.4 --upgrade mpy-cross==1.9.4
+
+	@# @echo "$(INFO) Installing mpy-cross for MicroPython 1.10"
+	@# @$(pip2) --quiet install --target=bin/mpy-cross/1.10 --upgrade mpy-cross==1.10
+
+	@echo "$(INFO) Installing mpy-cross for MicroPython 1.11"
+	@$(pip2) --quiet install --target=bin/mpy-cross/1.11 --upgrade mpy-cross==1.11
 
 	@echo "$(INFO) Installing mpy-cross-all"
-	@mkdir -p ./bin
+	@mkdir -p bin
 	@wget --quiet --unlink --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py
 
 

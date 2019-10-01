@@ -19,7 +19,7 @@ It can be used to
 *************
 Configuration
 *************
-The HTTP API can be enabled by using this in``settings.py``::
+The HTTP API can be enabled by using this in ``settings.py``::
 
     # General settings.
     main = {
