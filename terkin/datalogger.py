@@ -319,7 +319,7 @@ class TerkinDatalogger:
                     sensor.setup(self.settings)
                 self.sensor_manager.register_sensor(sensor)
             except Exception as ex:
-                log.exc(ex, ' "%s" failed', sensor_name)
+                log.exc(ex, 'Registering system sensor "%s" failed', sensor_name)
 
         # Add WiFi metrics.
         try:
