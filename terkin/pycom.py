@@ -12,21 +12,22 @@ platform_info = get_platform_info()
 
 
 class MachineResetCause:
-    """
-    Machine reset cause and wakeup reason definitions.
-
+    """Machine reset cause and wakeup reason definitions.
+    
     Will produce nice log messages like these.
-
+    
     - Coming from power on / hard reset::
-
+    
         {'reset_cause': {'code': 0, 'message': 'PWRON'}, 'wakeup_reason': {'code': 0, 'message': 'PWRON'}}
-
+    
     - Coming from deep sleep::
-
+    
         {'reset_cause': {'code': 3, 'message': 'DEEPSLEEP'}, 'wakeup_reason': {'code': 2, 'message': 'RTC'}}
-
+    
     Works on Pycom MicroPython 1.20.0.rc11, YMMV.
     Pycom MicroPython 1.20.0.rc11 [v1.9.4-0a38f88] on 2019-05-14; FiPy with ESP32, published on 14 May 2019
+
+
     """
 
     if platform_info.vendor == MicroPythonPlatform.Pycom:
@@ -68,6 +69,7 @@ class MachineResetCause:
 
     @classmethod
     def humanize(cls):
+        """ """
 
         reset_cause_magic = machine.reset_cause()
         if platform_info.vendor == MicroPythonPlatform.Pycom:

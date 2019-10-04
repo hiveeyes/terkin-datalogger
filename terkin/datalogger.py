@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 
 
 class ApplicationInfo:
+    """ """
 
     def __init__(self, name=None, version=None, settings=None, application=None, platform_info=None):
 
@@ -31,10 +32,12 @@ class ApplicationInfo:
 
     @property
     def fullname(self):
+        """ """
         return '{} {}'.format(self.name, self.version)
 
 
 class TransientStorage:
+    """ """
 
     def __init__(self):
         self.last_reading = {}
@@ -42,6 +45,7 @@ class TransientStorage:
 
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
+    """ """
 
     # Application metadata.
     name = 'Terkin MicroPython Datalogger'
@@ -86,8 +90,10 @@ class TerkinDatalogger:
 
     @staticmethod
     def getInstance(settings=None):
-        """
-        Singleton factory.
+        """Singleton factory.
+
+        :param settings:  (Default value = None)
+
         """
         if TerkinDatalogger.__instance__ is None:
             if settings is None:
@@ -98,9 +104,11 @@ class TerkinDatalogger:
         return TerkinDatalogger.__instance__
 
     def setup(self):
+        """ """
         pass
 
     def start(self):
+        """ """
 
         self.duty_chrono.reset()
 
@@ -174,6 +182,7 @@ class TerkinDatalogger:
         self.start_mainloop()
 
     def start_mainloop(self):
+        """ """
 
         # Todo: Refactor by using timers.
 
@@ -194,9 +203,7 @@ class TerkinDatalogger:
             machine.idle()
 
     def loop(self):
-        """
-        Main duty cycle loop.
-        """
+        """Main duty cycle loop."""
 
         if not self.settings.get('main.deepsleep', False):
             self.duty_chrono.reset()
@@ -232,9 +239,7 @@ class TerkinDatalogger:
         self.sleep()
 
     def sleep(self):
-        """
-        Sleep until the next measurement cycle.
-        """
+        """Sleep until the next measurement cycle."""
 
         lightsleep = self.settings.get('main.lightsleep', False)
         deepsleep = self.settings.get('main.deepsleep', False)
@@ -268,6 +273,7 @@ class TerkinDatalogger:
             time.sleep(interval)
 
     def get_sleep_time(self):
+        """ """
         interval = self.settings.get('main.interval', 60.0)
 
         # Configuration switchover backward compatibility / defaults.
@@ -293,9 +299,7 @@ class TerkinDatalogger:
         return sleep_time
 
     def register_sensors(self):
-        """
-        Add system sensors.
-        """
+        """Add system sensors."""
 
         log.info('Registering system sensors')
 
@@ -326,9 +330,7 @@ class TerkinDatalogger:
             log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
 
     def read_sensors(self):
-        """
-        Read sensors
-        """
+        """Read sensors"""
 
         # Collect observations.
         data = {}
@@ -381,6 +383,13 @@ class TerkinDatalogger:
         return data
 
     def record_reading(self, sensor, reading, richdata):
+        """
+
+        :param sensor: 
+        :param reading: 
+        :param richdata: 
+
+        """
         for key, value in reading.items():
             richdata[key] = {'value': value}
             if hasattr(sensor, 'settings') and 'description' in sensor.settings:
@@ -397,7 +406,11 @@ class TerkinDatalogger:
                                     richdata[key]['description'] = device_description
 
     def transmit_readings(self, data):
-        """Transmit data"""
+        """Transmit data
+
+        :param data: 
+
+        """
 
         # TODO: Optionally disable telemetry.
         if self.device.telemetry is None:
@@ -419,6 +432,7 @@ class TerkinDatalogger:
         return success
 
     def start_buttons(self):
+        """ """
 
         # RGB-LED: 2
         # POWER-ENABLE: 3

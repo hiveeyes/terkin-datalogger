@@ -7,18 +7,21 @@ Universal MicroPython bootloader.
 """
 
 class McuFamily:
+    """ """
 
     STM32 = 1
     ESP32 = 2
 
 
 class MicroPythonPlatform:
+    """ """
 
     Vanilla = 1
     Pycom = 2
 
 
 class PlatformInfo:
+    """ """
 
     def __init__(self):
 
@@ -29,6 +32,7 @@ class PlatformInfo:
         self.resolve_platform()
 
     def resolve_platform(self):
+        """ """
 
         import sys
 
@@ -48,16 +52,18 @@ class PlatformInfo:
 
 
 class MicroPythonBootloader:
+    """ """
 
     def __init__(self):
         self.platform_info = PlatformInfo()
 
     def extend_syspath(self):
-        """
-        Extend Python module search path.
+        """Extend Python module search path.
         Dependency modules are shipped through the "dist-packages" folder.
         Please populate this folder appropriately as shown above before
         expecting anything to work.
+
+
         """
         import sys
 

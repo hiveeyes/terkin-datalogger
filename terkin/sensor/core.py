@@ -14,34 +14,54 @@ log.setLevel(logging.DEBUG)
 
 
 class SensorManager:
-    """
-    Manages all busses and sensors.
-    """
+    """Manages all busses and sensors."""
 
     def __init__(self):
         self.sensors = []
         self.busses = {}
 
     def register_sensor(self, sensor):
+        """
+
+        :param sensor: 
+
+        """
         self.sensors.append(sensor)
 
     def register_bus(self,  bus):
+        """
+
+        :param bus: 
+
+        """
         bus_name = bus.name
         log.info('Registering bus "%s"', bus_name)
         self.busses[bus_name] = bus
 
     def get_bus_by_name(self, name):
+        """
+
+        :param name: 
+
+        """
         log.info('Trying to find bus by name "%s"', name)
         bus = self.busses.get(name)
         log.info('Found bus by name "%s": %s', name, bus)
         return bus
 
     def get_sensor_by_name(self, name):
+        """
+
+        :param name: 
+
+        """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
     def setup_busses(self, busses_settings):
-        """
-        Register configured I2C, OneWire and SPI busses.
+        """Register configured I2C, OneWire and SPI busses.
+
+        :param busses_settings: 
+
         """
         log.info("Starting all busses %s", busses_settings)
         for bus_settings in busses_settings:
@@ -57,6 +77,11 @@ class SensorManager:
                 log.exc(ex, 'Registering bus failed. settings={}'.format(bus_settings))
 
     def setup_bus(self, bus_settings):
+        """
+
+        :param bus_settings: 
+
+        """
         bus_family = bus_settings.get('family')
 
         if bus_family == BusType.OneWire:
@@ -76,14 +101,21 @@ class SensorManager:
             log.error("Invalid bus configuration: %s", bus_settings)
 
     def power_on(self):
+        """ """
         self.power_toggle_busses('power_on')
         self.power_toggle_sensors('power_on')
 
     def power_off(self):
+        """ """
         self.power_toggle_sensors('power_off')
         self.power_toggle_busses('power_off')
 
     def power_toggle_sensors(self, action):
+        """
+
+        :param action: 
+
+        """
         for sensor in self.sensors:
             sensorname = sensor.__class__.__name__
             if hasattr(sensor, action):
@@ -94,6 +126,11 @@ class SensorManager:
                     log.exc(ex, 'Sending {} to sensor {} failed'.format(action, sensorname))
 
     def power_toggle_busses(self, action):
+        """
+
+        :param action: 
+
+        """
         for busname, bus in self.busses.items():
             if hasattr(bus, action):
                 log.info('Sending {} to bus {}'.format(action, busname))
@@ -104,9 +141,7 @@ class SensorManager:
 
 
 class AbstractSensor:
-    """
-    Abstract sensor container, containing meta data as readings.
-    """
+    """Abstract sensor container, containing meta data as readings."""
 
     SENSOR_NOT_INITIALIZED = object()
 
@@ -128,41 +163,71 @@ class AbstractSensor:
         self.pins = {}
 
     def start(self):
+        """ """
         raise NotImplementedError("Must be implemented in sensor driver")
 
     def set_address(self, address):
+        """
+
+        :param address: 
+
+        """
         self.address = address
 
     def register_pin(self, name, pin):
+        """
+
+        :param name: 
+        :param pin: 
+
+        """
         self.pins[name] = pin
 
     def register_parameter(self, name, parameter):
+        """
+
+        :param name: 
+        :param parameter: 
+
+        """
         self.parameter[name] = parameter
 
     def acquire_bus(self, bus):
+        """
+
+        :param bus: 
+
+        """
         self.bus = bus
 
     def read(self):
+        """ """
         raise NotImplementedError()
 
     def format_fieldname(self, name, address):
+        """
+
+        :param name: 
+        :param address: 
+
+        """
         fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
         return fieldname
 
     def serialize(self):
+        """ """
         return dict(serialize_som(self.__dict__, stringify=['bus']))
 
 
 class BusType:
+    """ """
 
     I2C = 'i2c'
     OneWire = 'onewire'
 
 
 class AbstractBus:
-    """
-    A blueprint for all bus objects.
-    """
+    """A blueprint for all bus objects."""
 
     type = None
 
@@ -180,12 +245,20 @@ class AbstractBus:
 
     @property
     def name(self):
+        """ """
         return str(self.type) + ":" + str(self.number)
 
     def register_pin(self, name, pin):
+        """
+
+        :param name: 
+        :param pin: 
+
+        """
         self.pins[name] = pin
 
     def serialize(self):
+        """ """
         info = dict(serialize_som(self.__dict__))
         # FIXME: Why is that?
         info.update({'name': self.name, 'type': self.type})
@@ -193,13 +266,12 @@ class AbstractBus:
 
 
 class OneWireBus(AbstractBus):
-    """
-    Initialize the 1-Wire hardware driver and represent as bus object.
-    """
+    """Initialize the 1-Wire hardware driver and represent as bus object."""
 
     type = BusType.OneWire
 
     def start(self):
+        """ """
         # Todo: Improve error handling.
         try:
             from onewire.onewire import OneWire
@@ -210,6 +282,7 @@ class OneWireBus(AbstractBus):
             log.exc(ex, '1-Wire hardware driver failed')
 
     def scan_devices(self):
+        """ """
 
         # Reset the 1-Wire device in case of leftovers.
         self.adapter.reset()
@@ -223,9 +296,11 @@ class OneWireBus(AbstractBus):
         log.info("Found {} 1-Wire (DS18x20) devices: {}".format(len(self.devices), self.get_devices_ascii()))
 
     def get_devices_ascii(self):
+        """ """
         return list(map(self.device_address_ascii, self.devices))
 
     def serialize(self):
+        """ """
         info = super().serialize()
         if 'devices' in info:
             info['devices'] = self.get_devices_ascii()
@@ -233,6 +308,11 @@ class OneWireBus(AbstractBus):
 
     @staticmethod
     def device_address_ascii(address):
+        """
+
+        :param address: 
+
+        """
         # Compute ASCII representation of device address.
         if isinstance(address, (bytearray, bytes)):
             address = hexlify(address).decode()
@@ -240,13 +320,12 @@ class OneWireBus(AbstractBus):
 
 
 class I2CBus(AbstractBus):
-    """
-    Initialize the I2C hardware driver and represent as bus object.
-    """
+    """Initialize the I2C hardware driver and represent as bus object."""
 
     type = BusType.I2C
 
     def start(self):
+        """ """
         # Todo: Improve error handling.
         try:
             self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
@@ -255,24 +334,29 @@ class I2CBus(AbstractBus):
             log.exc(ex, 'I2C hardware driver failed')
 
     def scan_devices(self):
+        """ """
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
 
     def power_off(self):
-        """
-        Turn off the I2C peripheral.
-
+        """Turn off the I2C peripheral.
+        
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
+
+
         """
         log.info('Turning off I2C bus {}'.format(self.name))
         self.adapter.deinit()
 
 
 def serialize_som(thing, stringify=None):
-    """
-    Serialize the sensor object model to a representation
+    """Serialize the sensor object model to a representation
     suitable to be served for the device API.
+
+    :param thing: 
+    :param stringify:  (Default value = None)
+
     """
     stringify = stringify or []
 

@@ -17,20 +17,17 @@ log = logging.getLogger(__name__)
 
 
 class HiveeyesDatalogger(TerkinDatalogger):
-    """
-    Yet another data logger. This time for MicroPython.
-    """
+    """Yet another data logger. This time for MicroPython."""
 
     # Naming things.
     name = 'Hiveeyes MicroPython Datalogger'
 
     def setup(self):
+        """ """
         super().setup()
 
     def register_sensors(self):
-        """
-        Add your sensors here.
-        """
+        """Add your sensors here."""
 
         # First, spin up the built-in sensors.
         super().register_sensors()
@@ -80,8 +77,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
             self.device.run_gc()
 
     def add_hx711_sensor(self, settings):
-        """
-        Setup and register the HX711 sensor component with your data logger.
+        """Setup and register the HX711 sensor component with your data logger.
+
+        :param settings: 
+
         """
 
         if settings.get('enabled') is False:
@@ -107,8 +106,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
         self.sensor_manager.register_sensor(hx711_sensor)
 
     def add_ds18x20_sensor(self, settings):
-        """
-        Setup and register the DS18X20  sensor component with your data logger.
+        """Setup and register the DS18X20  sensor component with your data logger.
+
+        :param settings: 
+
         """
         from hiveeyes.sensor_ds18x20 import DS18X20Sensor
 
@@ -123,8 +124,10 @@ class HiveeyesDatalogger(TerkinDatalogger):
         self.sensor_manager.register_sensor(sensor)
 
     def add_bme280_sensor(self, settings):
-        """
-        Setup and register the DS18X20  sensor component with your data logger.
+        """Setup and register the DS18X20  sensor component with your data logger.
+
+        :param settings: 
+
         """
 
         bus = self.sensor_manager.get_bus_by_name(settings['bus'])
@@ -146,9 +149,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         self.sensor_manager.register_sensor(sensor)
 
     def loop(self):
-        """
-        Loop function. Do what I mean.
-        """
+        """Loop function. Do what I mean."""
 
         # It's your turn.
         #log.info('Hiveeyes loop')

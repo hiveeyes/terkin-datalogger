@@ -39,6 +39,7 @@ log = logging.getLogger(__name__)
 
 
 class HX711Heisenberg(HX711):
+    """ """
 
     def __init__(self, dout, pd_sck, gain=128):
         super().__init__(dout, pd_sck, gain)
@@ -46,6 +47,11 @@ class HX711Heisenberg(HX711):
         self.time_constant = 0.9
 
     def set_gain_inactive(self, gain):
+        """
+
+        :param gain: 
+
+        """
         if gain is 128:
             self.GAIN = 1
         elif gain is 64:
@@ -67,8 +73,10 @@ class HX711Heisenberg(HX711):
         log.info('Gain & initial value set')
 
     def read_median(self, times=8):
-        """
-        Acquire multiple readings and return median.
+        """Acquire multiple readings and return median.
+
+        :param times:  (Default value = 8)
+
         """
         lst = []
         # Fixme: Think about feeding the watchdog here.
@@ -85,34 +93,57 @@ class HX711Heisenberg(HX711):
             return (sortedLst[index] + sortedLst[index + 1])/2.0
 
     def get_avgkg(self, times=3):
+        """
+
+        :param times:  (Default value = 3)
+
+        """
         return round(self.get_value(times) / self.SCALE, 3)
 
     def get_lpkg(self):
+        """ """
         self.filtered += self.time_constant * (self.read() - self.filtered)
         return round((self.filtered - self.OFFSET) / self.SCALE, 3)
 
     def get_reading(self):
+        """ """
         value = self.read_median()
         reading = WeightReading(value, self.OFFSET, self.SCALE)
         return reading
 
     def tare(self, times=15):
+        """
+
+        :param times:  (Default value = 15)
+
+        """
         sum = self.read_average(times)
         self.set_offset(sum)
         log.debug('OFFSET = ' + str(sum))
 
     def set_scale(self, scale=None):
+        """
+
+        :param scale:  (Default value = None)
+
+        """
         if scale is None:
             return self.SCALE
         self.SCALE = scale
 
     def set_offset(self, offset=None):
+        """
+
+        :param offset:  (Default value = None)
+
+        """
         if offset is None:
             return self.OFFSET
         self.OFFSET = offset
 
 
 class WeightReading:
+    """ """
 
     def __init__(self, rawvalue, offset, scale):
         self.raw = rawvalue
@@ -123,6 +154,7 @@ class WeightReading:
         self.compute()
 
     def compute(self):
+        """ """
         #self.raw_short = self.raw
         try:
             self.kg = round((self.raw - self.offset) / self.scale, 3)
@@ -130,4 +162,5 @@ class WeightReading:
             log.exc(ex, 'Computing kg value failed')
 
     def get_data(self):
+        """ """
         return self.__dict__

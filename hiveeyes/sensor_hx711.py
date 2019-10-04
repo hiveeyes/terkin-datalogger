@@ -9,13 +9,14 @@ log = logging.getLogger(__name__)
 
 
 class HX711Sensor(AbstractSensor):
-    """
-    A generic HX711 sensor component wrapping possibly
+    """A generic HX711 sensor component wrapping possibly
     different hardware driver variants.
-
+    
     After some boring parameter juggling, this sensors'
     ``read()`` method actually calls the hardware driver
     using ``self.loadcell.read_median()``.
+
+
     """
 
     def __init__(self, settings=None):
@@ -29,6 +30,11 @@ class HX711Sensor(AbstractSensor):
         self.loadcell = None
 
     def select_driver(self, name='gerber'):
+        """
+
+        :param name:  (Default value = 'gerber')
+
+        """
 
         # Use vanilla HX711 library by David Gerber.
         if name == 'gerber':
@@ -46,6 +52,7 @@ class HX711Sensor(AbstractSensor):
         self.driver_class = HX711
 
     def start(self):
+        """ """
 
         # Hardware parameters and configuration settings.
         pin_dout = self.pins['dout']
@@ -73,6 +80,7 @@ class HX711Sensor(AbstractSensor):
             log.exc(ex, 'HX711 hardware driver failed')
 
     def read(self):
+        """ """
         if self.loadcell is None:
             return self.SENSOR_NOT_INITIALIZED
 
@@ -95,9 +103,11 @@ class HX711Sensor(AbstractSensor):
         return effective_data
 
     def power_on(self):
+        """ """
         log.info('Powering up HX711')
         self.loadcell.power_up()
 
     def power_off(self):
+        """ """
         log.info('Powering down HX711')
         self.loadcell.power_down()

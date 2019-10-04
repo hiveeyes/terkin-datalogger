@@ -13,14 +13,18 @@ log = logging.getLogger(__name__)
 
 
 class DS18X20Sensor(AbstractSensor):
-    """
-    A generic DS18B20 sensor component.
-    """
+    """A generic DS18B20 sensor component."""
 
     def acquire_bus(self, bus):
+        """
+
+        :param bus: 
+
+        """
         self.bus = bus
 
     def start(self):
+        """ """
         if self.bus is None:
             raise KeyError("Bus missing for DS18X20Sensor")
 
@@ -34,6 +38,7 @@ class DS18X20Sensor(AbstractSensor):
             log.exc(ex, 'DS18X20 hardware driver failed')
 
     def read(self):
+        """ """
 
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
@@ -52,6 +57,7 @@ class DS18X20Sensor(AbstractSensor):
         return data
 
     def start_reading(self):
+        """ """
 
         log.info('Start conversion for DS18X20 devices on bus "{}"'.format(self.bus.name))
         effective_devices = []
@@ -72,6 +78,11 @@ class DS18X20Sensor(AbstractSensor):
         return effective_devices
 
     def read_devices(self, devices):
+        """
+
+        :param devices: 
+
+        """
 
         data = {}
         for device in devices:
@@ -110,11 +121,23 @@ class DS18X20Sensor(AbstractSensor):
         return data
 
     def get_setting(self, address, name, default=None):
+        """
+
+        :param address: 
+        :param name: 
+        :param default:  (Default value = None)
+
+        """
         settings = self.get_device_settings(address)
         value = settings.get(name, default)
         return value
 
     def get_device_settings(self, address):
+        """
+
+        :param address: 
+
+        """
 
         # Compute ASCII representation of device address.
         address = OneWireBus.device_address_ascii(address)
@@ -127,5 +150,10 @@ class DS18X20Sensor(AbstractSensor):
         return {}
 
     def get_device_description(self, address):
+        """
+
+        :param address: 
+
+        """
         device_settings = self.get_device_settings(address)
         return device_settings.get('description')

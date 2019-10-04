@@ -14,9 +14,7 @@ log = logging.getLogger(__name__)
 
 
 class TelemetryManager:
-    """
-    Manage a number of telemetry adapters.
-    """
+    """Manage a number of telemetry adapters."""
 
     def __init__(self):
         self.adapters = []
@@ -24,9 +22,19 @@ class TelemetryManager:
         self.failure_count = {}
 
     def add_adapter(self, adapter):
+        """
+
+        :param adapter: 
+
+        """
         self.adapters.append(adapter)
 
     def transmit(self, data):
+        """
+
+        :param data: 
+
+        """
         outcomes = {}
         for adapter in self.adapters:
 
@@ -41,9 +49,10 @@ class TelemetryManager:
 
 
 class TelemetryAdapter:
-    """
-    Telemetry node client: Network participant API
+    """Telemetry node client: Network participant API
     Todo: Implement exponential backoff instead of MAX_FAILURES.
+
+
     """
 
     MAX_FAILURES = 3
@@ -70,6 +79,7 @@ class TelemetryAdapter:
         self.failure_count = 0
 
     def setup(self):
+        """ """
 
         # Resolve designated topology.
         self.topology = self.topology_factory()
@@ -83,6 +93,7 @@ class TelemetryAdapter:
         self.client = self.client_factory()
 
     def client_factory(self):
+        """ """
         client = TelemetryClient(self.channel_uri,
                                  format=self.format,
                                  content_encoding=self.content_encoding,
@@ -90,14 +101,25 @@ class TelemetryAdapter:
         return client
 
     def topology_factory(self):
+        """ """
         return TelemetryTopologyFactory(name=self.topology_name, adapter=self).create()
 
     def format_uri(self, **kwargs):
+        """
+
+        :param **kwargs: 
+
+        """
         data = copy(self.address)
         data.update(kwargs)
         return self.topology.uri_template.format(**data)
 
     def transmit(self, data):
+        """
+
+        :param data: 
+
+        """
 
         self.device.watchdog.feed()
 
@@ -131,6 +153,11 @@ class TelemetryAdapter:
         return False
 
     def transform(self, data):
+        """
+
+        :param data: 
+
+        """
 
         # Add predefined "data_more" to telemetry message.
         data.update(self.data_more)
@@ -148,6 +175,7 @@ class TelemetryAdapter:
         return data
 
     def is_online(self):
+        """ """
 
         # Short-cut online/offline state.
         return True
@@ -156,17 +184,20 @@ class TelemetryAdapter:
         #return self.failure_count < self.MAX_FAILURES
 
     def record_error(self):
+        """ """
         self.failure_count += 1
 
     def reset_errors(self):
+        """ """
         self.failure_count = 0
 
 
 class CSVTelemetryAdapter(TelemetryAdapter):
-    """
-    Telemetry node client: Network participant API.
-
+    """Telemetry node client: Network participant API.
+    
     This will make your node talk CSV.
+
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -174,15 +205,22 @@ class CSVTelemetryAdapter(TelemetryAdapter):
         self.format = TelemetryClient.FORMAT_CSV
 
     def transmit(self, data, **kwargs):
+        """
+
+        :param data: 
+        :param **kwargs: 
+
+        """
         uri = self.format_uri(**kwargs)
         log.info('Telemetry channel URI for CSV: %s', uri)
         return self.client.transmit(data, uri=uri, serialize=False)
 
 
 class TelemetryClient:
-    """
-    A flexible telemetry data client wrapping access to
+    """A flexible telemetry data client wrapping access to
     different transport adapters and serialization mechanisms.
+
+
     """
 
     TRANSPORT_HTTP = 'http'
@@ -221,6 +259,11 @@ class TelemetryClient:
             self.transport = TelemetryClient.TRANSPORT_MQTT
 
     def serialize(self, data):
+        """
+
+        :param data: 
+
+        """
 
         # Serialize payload.
         if self.format == TelemetryClient.FORMAT_URLENCODED:
@@ -248,6 +291,13 @@ class TelemetryClient:
         return payload
 
     def transmit(self, data, uri=None, serialize=True):
+        """
+
+        :param data: 
+        :param uri:  (Default value = None)
+        :param serialize:  (Default value = True)
+
+        """
 
         # Submit telemetry data using HTTP POST request
         # Serialization: x-www-form-urlencoded
@@ -279,6 +329,11 @@ class TelemetryClient:
         return handler.send(request)
 
     def get_handler(self, uri):
+        """
+
+        :param uri: 
+
+        """
 
         if uri in self.handlers:
             return self.handlers[uri]
@@ -301,6 +356,7 @@ class TelemetryClient:
 
 
 class TelemetryTransportHTTP:
+    """ """
 
     def __init__(self, uri, format):
 
@@ -313,6 +369,7 @@ class TelemetryTransportHTTP:
         self.resolve_content_type()
 
     def resolve_content_type(self):
+        """ """
 
         if self.format == TelemetryClient.FORMAT_URLENCODED:
             self.content_type = 'application/x-www-form-urlencoded'
@@ -327,8 +384,10 @@ class TelemetryTransportHTTP:
             raise ValueError('Unknown serialization format for TelemetryTransportHTTP: {}'.format(format))
 
     def send(self, request_data):
-        """
-        Submit telemetry data using HTTP POST request
+        """Submit telemetry data using HTTP POST request
+
+        :param request_data: 
+
         """
         log.info('Sending HTTP request to %s', self.uri)
         log.info('Payload:     %s', request_data['payload'])
@@ -343,6 +402,7 @@ class TelemetryTransportHTTP:
 
 
 class TelemetryTransportTTN:
+    """ """
 
     def __init__(self, size=100):
         raise NotImplementedError('Yadda.')
@@ -357,20 +417,25 @@ class TelemetryTransportTTN:
         self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
 
     def send(self, request_data):
+        """
+
+        :param request_data: 
+
+        """
         # TODO: Raise exception if submission failed.
         raise NotImplementedError('Yadda.')
 
 
 class TelemetryTransportMQTT:
-    """
-    MQTT transport for Terkin Telemetry.
-
+    """MQTT transport for Terkin Telemetry.
+    
     This is currently based on the "Pycom MicroPython MQTT module" just called ``mqtt.py``.
     https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
-
+    
     Originally, this was based on the "umqtt.robust" library::
-
+    
         micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
+
 
     """
 
@@ -403,6 +468,7 @@ class TelemetryTransportMQTT:
         self.ensure_connection()
 
     def ensure_connection(self):
+        """ """
         # Create one MQTTAdapter instance per target host:port.
         if self.target.netloc not in self.connections:
             # TODO: Add more parameters to MQTTAdapter here.
@@ -422,9 +488,15 @@ class TelemetryTransportMQTT:
         return self.connections.get(self.target.netloc)
 
     def get_connection(self):
+        """ """
         return self.ensure_connection()
 
     def send(self, request_data):
+        """
+
+        :param request_data: 
+
+        """
 
         # Evaluate and handle defunctness.
         if self.defunct:
@@ -463,13 +535,14 @@ class TelemetryTransportMQTT:
 
 
 class MQTTAdapter:
-    """
-    MQTT adapter wrapping the lowlevel MQTT driver.
+    """MQTT adapter wrapping the lowlevel MQTT driver.
     Handles a single connection to an MQTT broker.
-
+    
     TODO: Try to make this module reasonably compatible again
           by becoming an adapter for different implementations.
           E.g., what about Paho?
+
+
     """
 
     def __init__(self, client_id, server, port=0, username=None, password=None):
@@ -528,6 +601,14 @@ class MQTTAdapter:
         return self.connected
 
     def publish(self, topic, payload, retain=False, qos=1):
+        """
+
+        :param topic: 
+        :param payload: 
+        :param retain:  (Default value = False)
+        :param qos:  (Default value = 1)
+
+        """
 
         # Try to (re-)connect to MQTT broker.
         self.ensure_connection()
@@ -557,9 +638,7 @@ class MQTTAdapter:
 
 
 class TelemetryTopology:
-    """
-    Define **how** to communicate using Telemetry.
-    """
+    """Define **how** to communicate using Telemetry."""
 
     NULL = 'null'
     MQTTKIT = 'mqttkit'
@@ -567,12 +646,14 @@ class TelemetryTopology:
 
 
 class TelemetryTopologyFactory:
+    """ """
 
     def __init__(self, name=None, adapter=None):
         self.name = name
         self.adapter = adapter
 
     def create(self):
+        """ """
 
         if self.name is None or self.name == TelemetryTopology.NULL:
             return IdentityTopology()
@@ -588,31 +669,38 @@ class TelemetryTopologyFactory:
 
 
 class IdentityTopology:
-    """
-    Apply no kind of transformation to telemetry payload
+    """Apply no kind of transformation to telemetry payload
     and provide Base for derivatives of me.
+
+
     """
     uri_template = u'{base_uri}'
     uri_suffixes = None
 
     @property
     def name(self):
+        """ """
         return self.__class__.__name__
 
     def encode(self, data):
+        """
+
+        :param data: 
+
+        """
         return data
 
 
 class BeepBobTopology(IdentityTopology):
-    """
-    Define how to communicate with BEEP for BOB.
-
+    """Define how to communicate with BEEP for BOB.
+    
     https://en.wikipedia.org/wiki/Bebop
-
+    
     - https://beep.nl/
     - https://github.com/beepnl/BEEP
     - https://hiverize.org/
     - https://bee-observer.org/
+
 
     """
     uri_template = u'{base_uri}'
@@ -623,14 +711,13 @@ class BeepBobTopology(IdentityTopology):
         self.settings = self.adapter.device.settings
 
     def encode(self, data):
-        """
-        Encode telemetry data matching the BEEP-BOB interface.
-
+        """Encode telemetry data matching the BEEP-BOB interface.
+        
         https://gist.github.com/vkuhlen/51f7968266659f37d076bd66d57cdbbd
         https://github.com/Hiverize/FiPy/blob/master/logger/beep.py
-
+        
         Example::
-
+        
             {
                 't': 22.66734,
                 'h': 52.41612,
@@ -641,6 +728,8 @@ class BeepBobTopology(IdentityTopology):
                 't_i_3': 23.125,
                 't_i_4': 23.1875
             }
+
+        :param data: 
 
         """
 
@@ -657,19 +746,20 @@ class BeepBobTopology(IdentityTopology):
 
 
 class MqttKitTopology(IdentityTopology):
-    """
-    This defines how to communicate in WAN scenarios having a decent
+    """This defines how to communicate in WAN scenarios having a decent
     number of devices rolled out. While this would cover even earth-scale
     addressing scenarios, it will also give you peace of mind in smaller
     setups like multi-project or multi-tenant scenarios. Even for single
     users, the infinite number of available channels is very convenient
     for ad hoc operation scenarios.
-
+    
     - https://getkotori.org/
     - https://getkotori.org/docs/applications/mqttkit.html
-
+    
     - https://hiveeyes.org/
     - https://hiveeyes.org/docs/system/acquisition/
+
+
     """
     uri_template = u'{base_uri}/{realm}/{network}/{gateway}/{node}'
     uri_suffixes = {
@@ -679,16 +769,20 @@ class MqttKitTopology(IdentityTopology):
 
 
 class TelemetryTransportError(Exception):
+    """ """
     pass
 
 
 class TelemetryAdapterError(Exception):
+    """ """
     pass
 
 
 def to_cayenne_lpp(data):
-    """
-    Serialize plain data dictionary to binary CayenneLPP format.
+    """Serialize plain data dictionary to binary CayenneLPP format.
+
+    :param data: 
+
     """
 
     from cayennelpp import LppFrame

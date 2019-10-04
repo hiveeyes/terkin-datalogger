@@ -16,13 +16,12 @@ log.setLevel(logging.DEBUG)
 
 
 def backup_file(filename, backup_path, backup_count):
-    """
-    Backup file using a rotation mechanism.
+    """Backup file using a rotation mechanism.
 
-    :param filename:
-    :param backup_path:
-    :param backup_count:
-    :return:
+    :param filename: param backup_path:
+    :param backup_count: return:
+    :param backup_path: 
+
     """
 
     # Sanity checks.
@@ -43,10 +42,11 @@ def backup_file(filename, backup_path, backup_count):
 
 
 class RotatingFile:
-    """
-    A rotating file handler like RotatingFileHandler.
-
+    """A rotating file handler like RotatingFileHandler.
+    
     From logging.handlers.
+
+
     """
 
     def __init__(self, filename, backup_count=0):
@@ -54,7 +54,11 @@ class RotatingFile:
         self.backup_count = backup_count
 
     def write(self, buffer):
-        """Write to file."""
+        """Write to file.
+
+        :param buffer: 
+
+        """
         if self.backup_count:
 
             # Remove the oldest backup file if it is there.
@@ -82,6 +86,12 @@ class RotatingFile:
         uos.sync()
 
     def rename_file(self, oldfile, newfile):
+        """
+
+        :param oldfile: 
+        :param newfile: 
+
+        """
         #log.info('Renaming backup file {} to {}'.format(oldfile, newfile))
         try:
             os.rename(oldfile, newfile)
