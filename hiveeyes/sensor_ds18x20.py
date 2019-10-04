@@ -11,6 +11,11 @@ from terkin.sensor.core import OneWireBus
 
 log = logging.getLogger(__name__)
 
+from mboot import MicroPythonPlatform
+from terkin.util import get_platform_info
+platform_info = get_platform_info()
+
+
 
 class DS18X20Sensor(AbstractSensor):
     """
@@ -26,7 +31,10 @@ class DS18X20Sensor(AbstractSensor):
 
         # Initialize the DS18x20 hardware driver.
         try:
-            from onewire.onewire import DS18X20
+            if platform_info.vendor == MicroPythonPlatform.Vanilla:
+                from ds18x20 import DS18X20
+            else:
+                from onewire.onewire import DS18X20
             self.driver = DS18X20(self.bus.adapter)
             return True
 

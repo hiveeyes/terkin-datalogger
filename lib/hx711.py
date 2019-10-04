@@ -8,6 +8,9 @@ from machine import Pin, enable_irq, disable_irq, idle
 
 log = logging.getLogger(__name__)
 
+from mboot import MicroPythonPlatform
+from terkin.util import get_platform_info
+platform_info = get_platform_info()
 
 class HX711:
     """
@@ -19,8 +22,14 @@ class HX711:
     def __init__(self, dout, pd_sck, gain=128):
 
         # Define two pins for clock and data.
-        self.pSCK = Pin(pd_sck, mode=Pin.OUT)
-        self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_UP)
+        if type(pd_sck) == str:
+            self.pSCK = Pin(int(pd_sck[1:]), mode=Pin.OUT)
+        else:
+            self.pSCK = Pin(pd_sck, mode=Pin.OUT)
+        if type(dout) == str:
+            self.pOUT = Pin(int(dout[1:]), mode=Pin.IN, pull=Pin.PULL_UP)
+        else:
+            self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_UP)
 
         self.initialized = False
 
@@ -158,7 +167,10 @@ class HX711:
 
         # Unfreeze pin hold when coming from deep sleep.
         # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
-        self.pSCK.hold(False)
+        if platform_info.vendor == MicroPythonPlatform.Vanilla:
+            self.pSCK.init(mode=Pin.OUT)     # not sure if we need this
+        else:
+            self.pSCK.hold(False)
 
         log.info('HX711 power up')
         self.pSCK.value(False)

@@ -8,6 +8,10 @@ from machine import Pin, I2C
 
 from terkin import logging
 
+from mboot import McuFamily, MicroPythonPlatform
+from terkin.util import get_platform_info
+platform_info = get_platform_info()
+
 log = logging.getLogger(__name__)
 
 log.setLevel(logging.DEBUG)
@@ -202,8 +206,11 @@ class OneWireBus(AbstractBus):
     def start(self):
         # Todo: Improve error handling.
         try:
-            from onewire.onewire import OneWire
-            self.adapter = OneWire(Pin(self.pins['data']))
+            from onewire import OneWire
+            if type(self.pins['data']) == str:
+                self.adapter = OneWire(Pin(int(self.pins['data'][1:])))
+            else:
+                self.adapter = OneWire(Pin(self.pins['data']))
             self.scan_devices()
 
         except Exception as ex:
@@ -249,7 +256,10 @@ class I2CBus(AbstractBus):
     def start(self):
         # Todo: Improve error handling.
         try:
-            self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+            if platform_info.vendor == MicroPythonPlatform.Vanilla:
+                self.adapter = I2C(self.number, sda = Pin(int(self.pins['sda'][1:])), scl = Pin(int(self.pins['scl'][1:])), freq=100000)
+            else:
+                self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
             self.scan_devices()
         except Exception as ex:
             log.exc(ex, 'I2C hardware driver failed')

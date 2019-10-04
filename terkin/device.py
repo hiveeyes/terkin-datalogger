@@ -8,7 +8,7 @@ import time
 
 import machine
 
-from mboot import MicroPythonPlatform
+from mboot import MicroPythonPlatform, McuFamily
 from terkin import logging
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
@@ -225,10 +225,11 @@ class TerkinDevice:
         add('=' * len(title))
 
         # Machine runtime information.
-        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
-            frequency = machine.freq() / 1000000
-        else:
+        if self.application_info.platform_info.mcu == McuFamily.STM32:
             frequency = machine.freq()[0] / 1000000
+        else:
+            frequency = machine.freq() / 1000000
+        
         add('CPU freq     {} MHz'.format(frequency))
         add('Device id    {}'.format(self.device_id))
         add()

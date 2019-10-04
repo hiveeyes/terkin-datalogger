@@ -23,7 +23,7 @@ class SystemMemoryFree:
     Read free memory in bytes.
     """
 
-    def enabled(self):
+    def enabled(self,settings):
         return True
 
     def read(self):
@@ -44,7 +44,7 @@ class SystemTemperature:
     - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
     """
 
-    def enabled(self):
+    def enabled(self, settings):
         import machine
         return hasattr(machine, 'temperature')
 
@@ -118,8 +118,8 @@ class SystemBatteryLevel:
         # Reference to platform ADC object.
         self.adc = None
 
-    def enabled(self):
-        return True
+    def enabled(self, settings):
+        return settings.get('sensors.system.enabled')
 
     def setup(self, settings):
 
@@ -141,7 +141,6 @@ class SystemBatteryLevel:
         except TypeError:
             from machine import Pin
             if type(self.pin) == str:
-                print(self.pin)
                 self.adc = ADC(Pin(int(self.pin[1:])))
             else:
                 self.adc = ADC(Pin(self.pin))
@@ -233,7 +232,7 @@ class SystemUptime:
 
     start_time = time.time()
 
-    def enabled(self):
+    def enabled(self,settings):
         return True
 
     def read(self):

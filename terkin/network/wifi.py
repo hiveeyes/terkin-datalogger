@@ -11,6 +11,8 @@ from mboot import MicroPythonPlatform
 from terkin import logging
 from terkin.util import format_mac_address, backoff_time, Stopwatch, get_platform_info
 
+platform_info = get_platform_info()
+
 log = logging.getLogger(__name__)
 
 
@@ -202,7 +204,7 @@ class WiFiManager:
         """
 
         # WiFi
-        if self.station:
+        if self.station and platform_info.vendor == MicroPythonPlatform.Pycom:
             try:
                 log.info('Turning off WiFi')
                 self.station.deinit()
@@ -498,17 +500,15 @@ class SystemWiFiMetrics:
 
     def read(self):
 
-        platform_info = get_platform_info()
-
         if platform_info.vendor == MicroPythonPlatform.Vanilla:
-            stats = {
-                'system.wifi.channel': self.station.config('channel'),
-            }
-
             try:
-                stats['system.wifi.rssi'] = self.station.status('rssi')
+                stats = {
+                    'system.wifi.rssi': self.station.config('rssi'),
+                }
             except:
-                pass
+                stats = {
+                    'system.wifi.rssi': '-99',
+                }
 
             return stats
 

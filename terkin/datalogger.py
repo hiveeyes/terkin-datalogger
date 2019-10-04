@@ -13,6 +13,7 @@ from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
 from terkin.util import dformat, gc_disabled, ddformat, GenericChronometer
+from mboot import MicroPythonPlatform
 
 log = logging.getLogger(__name__)
 
@@ -311,14 +312,14 @@ class TerkinDatalogger:
             sensor_name = sensor_factory.__name__
             try:
                 sensor = sensor_factory()
-                if not sensor.enabled():
+                if not sensor.enabled(self.settings):
                     log.info('Sensor %s not enabled, skipping', sensor_name)
                     continue
                 if hasattr(sensor, 'setup') and callable(sensor.setup):
                     sensor.setup(self.settings)
                 self.sensor_manager.register_sensor(sensor)
             except Exception as ex:
-                log.exc(ex, 'Registering system sensor "%s" failed', sensor_name)
+                log.exc(ex, ' "%s" failed', sensor_name)
 
         # Add WiFi metrics.
         try:

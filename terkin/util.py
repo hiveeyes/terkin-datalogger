@@ -241,10 +241,11 @@ def random_from_crypto():
         # https://github.com/micropython/micropython-lib/blob/master/random/random.py
         import crypto
         r = crypto.getrandbits(32)
+        return r / 4294967295.0
     else:
         import urandom
         r = urandom.getrandbits(32)
-    return ((r[0] << 24) + (r[1] << 16) + (r[2] << 8) + r[3]) / 4294967295.0
+        return ((r[0] << 24) + (r[1] << 16) + (r[2] << 8) + r[3]) / 4294967295.0
 
 def randint(a, b):
     """Return random integer in range [a, b], including both end points."""

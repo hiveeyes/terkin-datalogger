@@ -97,6 +97,7 @@ class HiveeyesDatalogger(TerkinDatalogger):
         hx711_sensor.register_parameter('offset', settings['offset'])
         hx711_sensor.register_parameter('gain', settings.get('gain', 128))
         hx711_sensor.select_driver('heisenberg')
+        #hx711_sensor.select_driver('gerber')
 
         # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
 
