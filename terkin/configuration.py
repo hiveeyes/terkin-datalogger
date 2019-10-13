@@ -115,19 +115,21 @@ class TerkinConfiguration:
             log.info('Section "{}": {}'.format(key, json.dumps(thing)))
 
     def purge_sensible_settings(self, thing):
-        for key, value in thing.items():
+        try:    # non-iterable values need no check
+            for key, value in thing.items():
 
-            if isinstance(value, dict):
-                self.purge_sensible_settings(value)
+                if isinstance(value, dict):
+                    self.purge_sensible_settings(value)
 
-            elif isinstance(value, list):
-                for item in value:
-                    self.purge_sensible_settings(item)
+                elif isinstance(value, list):
+                    for item in value:
+                        self.purge_sensible_settings(item)
 
-            if key in self.protected_settings:
-                value = '## redacted ##'
-                thing[key] = value
-
+                if key in self.protected_settings:
+                    value = '## redacted ##'
+                    thing[key] = value
+        except:
+            pass
     def to_dict(self):
         return dict(self.store.to_dict())
 
