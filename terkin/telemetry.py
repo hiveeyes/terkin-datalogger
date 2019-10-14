@@ -549,7 +549,7 @@ class MQTTAdapter:
             # Signal connection error in order to reconnect on next submission attempt.
             # [Errno 104] ECONNRESET
             # [Errno 113] ECONNABORTED
-            if ex.errno in [104, 113]:
+            if hasattr(ex, 'errno') and ex.errno in [104, 113]:
                 self.connected = False
 
             message = '{}: {}'.format(message, ex)
