@@ -192,4 +192,6 @@ class TerkinConfiguration:
                 copyfileobj(instream, outstream)
             outstream.flush()
 
-        uos.sync()
+        # only STM32 and CC3200 (WiPy1) have uos.sync()
+        if platform_info.mcu == McuFamily.STM32 or platform_info.vendor == MicroPythonPlatform.Pycom:
+            uos.sync()
