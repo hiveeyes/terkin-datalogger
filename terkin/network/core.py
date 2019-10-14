@@ -99,14 +99,14 @@ class NetworkManager:
     def start_services(self):
 
         # Start UDP server for pulling device into maintenance mode.
-        if self.settings.get('services.api.modeserver.enabled', True):
+        if self.settings.get('services.api.modeserver.enabled', False):
             try:
                 self.start_modeserver()
             except Exception as ex:
                 log.exc(ex, 'Starting mode server failed')
 
         # Start HTTP server
-        if self.settings.get('services.api.http.enabled', True):
+        if self.settings.get('services.api.http.enabled', False):
             try:
                 self.start_httpserver()
             except Exception as ex:
