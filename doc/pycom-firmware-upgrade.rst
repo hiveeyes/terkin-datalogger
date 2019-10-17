@@ -11,7 +11,7 @@ Install recent firmware for FiPy::
     make list-serials
     export MCU_PORT=/dev/cu.usbmodemPy001711    # libero
 
-    # Erase flash on device completely.
+    # Erase device completely.
     make erase-device
 
     # Download and install firmware.
@@ -20,10 +20,11 @@ Install recent firmware for FiPy::
 
 Install specific firmware for FiPy::
 
-    # Built by @robert-hh.
-    make install-pycom-firmware pycom_firmware_file=FiPy-1.20.1.r1.tar.gz
+    # Built by @robert-hh. Confirmed good.
+    make install-pycom-firmware pycom_firmware_file=FiPy-1.20.1.r1-robert.tar.gz
 
-    # Embeds "FiPy-1.20.1.r1-application.elf".
+    # Embeds "FiPy-1.20.1.r1-application.elf". Crashes frequently.
+    # See https://community.hiveeyes.org/t/running-software-on-the-recent-pycom-firmware-release-1-20-1/2611/7.
     make install-pycom-firmware pycom_firmware_file=FiPy-1.20.1.r1-rebundled.tar.gz
 
 
