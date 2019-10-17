@@ -50,7 +50,19 @@ check-firmware-upgrade-port:
 		exit 1; \
 	fi
 
-install-pycom-firmware-preflight: check-pycom-fwtool check-firmware-upgrade-port
+check-mcu-device:
+	@if test "${MCU_DEVICE}" = ""; then \
+		echo; \
+		echo "$(ERROR) Missing MCU_DEVICE=FiPy|WiPy|LoPy"; \
+		echo; \
+		echo "$(ADVICE) Please adjust the \"MCU_DEVICE\" environment variable like"; \
+		echo; \
+		echo "              export MCU_DEVICE=FiPy"; \
+		echo; \
+		exit 1; \
+	fi
+
+install-pycom-firmware-preflight: check-pycom-fwtool check-firmware-upgrade-port check-mcu-device
 	@# Ask the user to confirm firmware installation.
 	@$(MAKE) confirm text="Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(pycom_firmware_port)\""
 
@@ -60,22 +72,21 @@ install-pycom-firmware-preflight: check-pycom-fwtool check-firmware-upgrade-port
 # ===========================
 
 # FIXME: Expand this to more hardware
-pycom_firmware_file := FiPy-1.20.0.rc11.tar.gz
+pycom_firmware_file := $(MCU_DEVICE)-1.20.0.rc13.tar.gz
 
 # Download Pycom firmware to your workstation
 download-pycom-firmware:
 
 	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-firmwares)
-	@#$(eval fetch := wget --no-clobber --unlink --directory-prefix)
-	$(eval fetch := wget --no-clobber --unlink)
+	$(eval fetch := wget --no-clobber --unlink --directory-prefix)
 
 	@mkdir -p $(target_dir)
-	@#$(fetch) $(target_dir) https://github.com/pycom/pycom-micropython-sigfox/releases/download/v1.20.0.rc12/FiPy-1.20.0.rc12-application.elf
+	$(fetch) $(target_dir) https://packages.hiveeyes.org/hiveeyes/foss/pycom/$(pycom_firmware_file)
 
-	$(eval url := "https://software.pycom.io/downloads/$(pycom_firmware_file)")
-	@echo "INFO: Downloading firmware from \"$(url)\""
-	$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) "$(url)" | true
+	@#$(eval url := "https://software.pycom.io/downloads/$(pycom_firmware_file)")
+	@#@echo "INFO: Downloading firmware from \"$(url)\""
+	@#$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) "$(url)" | true
 
 ## Display chip_id
 chip_id: check-mcu-port
@@ -103,10 +114,20 @@ format-flash: check-mcu-port
 erase-fs: check-mcu-port
 
 	@# Ask the user to confirm erasing.
-	@$(MAKE) confirm text="Erase the filesystem on the device? THIS WILL DESTROY DATA ON YOUR DEVICE."
+	@$(MAKE) confirm text="Erase the filesystem on the device? THIS WILL DESTROY FILESYSTEM DATA ON YOUR DEVICE."
 
 	@echo Erasing filesystem
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
+
+
+## Erase flash filesystem
+erase-device: check-mcu-port
+
+	@# Ask the user to confirm erasing.
+	@$(MAKE) confirm text="Erase the complete device? THIS WILL DESTROY ALL DATA ON YOUR DEVICE."
+
+	@echo Erasing filesystem
+	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_all
 
 
 # ==============================

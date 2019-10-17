@@ -2,13 +2,29 @@
 Pycom firmware upgrade
 ######################
 
-::
+**********
+In a hurry
+**********
+Install recent firmware for FiPy::
 
-    # Install FiPy-1.20.0.rc11.tar.gz (default)
+    # Investigate and define serial port.
+    make list-serials
+    export MCU_PORT=/dev/cu.usbmodemPy001711    # libero
+
+    # Erase flash on device completely.
+    make erase-device
+
+    # Download and install firmware.
+    export MCU_DEVICE=FiPy
     make install-pycom-firmware
 
-    # Install recent firmware for WiPy
-    make install-pycom-firmware pycom_firmware_file=WiPy-1.20.0.rc11.tar.gz
+Install specific firmware for FiPy::
+
+    # Built by @robert-hh.
+    make install-pycom-firmware pycom_firmware_file=FiPy-1.20.1.r1.tar.gz
+
+    # Embeds "FiPy-1.20.1.r1-application.elf".
+    make install-pycom-firmware pycom_firmware_file=FiPy-1.20.1.r1-rebundled.tar.gz
 
 
 ************

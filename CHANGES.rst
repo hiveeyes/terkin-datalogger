@@ -35,6 +35,7 @@ Development
 - Use trimmed-down settings.py for PYBD
 - Add configuration settings overlay per ``settings-user.json``
 - Improve robustness with minimal configuration for PYBD
+- Improve instructions for Pycom firmware bundling and installation
 
 
 2019-08-19 0.6.0
