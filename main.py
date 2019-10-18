@@ -28,7 +28,7 @@ datalogger = None
 
 def main():
     """Start the data logger application."""
-    print('[main.py] INFO: Starting Terkin Datalogger')
+    print('[main.py] INFO: Loading Terkin Datalogger')
     global bootloader
     global datalogger
     print('[main.py] INFO: Loading modules')

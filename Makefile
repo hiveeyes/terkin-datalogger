@@ -199,9 +199,9 @@ install: install-requirements install-framework install-sketch
 install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
-		$(MAKE) mpy-compile version=1.9.4 && \
+		$(MAKE) mpy-compile && \
 		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
-		$(MAKE) lftp lftp_recipe=tools/upload-mpy-1.9.4.lftprc; \
+		$(MAKE) lftp lftp_recipe=tools/upload-mpy-$(MPY_VERSION).lftprc; \
 	else \
 		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
 	fi

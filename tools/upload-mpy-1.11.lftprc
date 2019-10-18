@@ -14,5 +14,5 @@ cd /flash/lib
 mirror --reverse --use-cache --file=lib/mboot.py --file=lib/mininet.py
 
 cd /flash
-mirror --reverse --delete --use-cache lib-mpy-1.9.4-pycom
+mirror --reverse --delete --use-cache lib-mpy-1.11-pycom
 mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py

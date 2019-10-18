@@ -36,6 +36,7 @@ Development
 - Add configuration settings overlay per ``settings-user.json``
 - Improve robustness with minimal configuration for PYBD
 - Improve instructions for Pycom firmware bundling and installation
+- Adjust sandbox infrastructure for Pycom MicroPython 1.11
 
 
 2019-08-19 0.6.0

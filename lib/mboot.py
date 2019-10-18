@@ -66,7 +66,10 @@ class MicroPythonBootloader:
 
         # Extend by path containing frozen modules.
         if self.platform_info.vendor == MicroPythonPlatform.Pycom:
-            bytecode_path = 'lib-mpy-1.9.4-pycom'
+            if sys.implementation[1] == (1, 11, 0):
+                bytecode_path = 'lib-mpy-1.11-pycom'
+            else:
+                bytecode_path = 'lib-mpy-1.9.4-pycom'
         else:
             bytecode_path = 'lib-mpy-1.11-bytecode'
 
@@ -88,4 +91,4 @@ class MicroPythonBootloader:
         #sys.path.extend(['terkin', 'hiveeyes'])
         """
 
-        print('[mboot] INFO: Python module search path is:', sys.path)
+        print('[mboot]   INFO: Python module search path is:', sys.path)
