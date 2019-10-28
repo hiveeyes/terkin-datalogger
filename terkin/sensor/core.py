@@ -202,7 +202,7 @@ class OneWireBus(AbstractBus):
     def start(self):
         # Todo: Improve error handling.
         try:
-            from onewire.onewire import OneWire
+            from onewire import OneWire
             self.adapter = OneWire(Pin(self.pins['data']))
             self.scan_devices()
 

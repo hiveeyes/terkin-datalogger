@@ -26,7 +26,7 @@ class DS18X20Sensor(AbstractSensor):
 
         # Initialize the DS18x20 hardware driver.
         try:
-            from onewire.onewire import DS18X20
+            from onewire import DS18X20
             self.driver = DS18X20(self.bus.adapter)
             return True
 
