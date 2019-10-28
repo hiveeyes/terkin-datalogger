@@ -561,7 +561,7 @@ class TelemetryTopology:
     Define **how** to communicate using Telemetry.
     """
 
-    NULL = 'null'
+    NONE = 'null'
     MQTTKIT = 'mqttkit'
     BEEP_BOB = 'beep-bob'
 
@@ -574,7 +574,7 @@ class TelemetryTopologyFactory:
 
     def create(self):
 
-        if self.name is None or self.name == TelemetryTopology.NULL:
+        if self.name is None or self.name == TelemetryTopology.NONE:
             return IdentityTopology()
 
         elif self.name == TelemetryTopology.BEEP_BOB:

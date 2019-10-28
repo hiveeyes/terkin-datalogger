@@ -38,6 +38,7 @@ Development
 - Improve instructions for Pycom firmware bundling and installation
 - Adjust sandbox infrastructure for Pycom MicroPython 1.11
 - Fix import path of ``onewire`` module
+- Fix weird error when freezing modules
 
 
 2019-08-19 0.6.0
