@@ -38,7 +38,7 @@ class PlatformInfo:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonPlatform.Vanilla
 
-        if sys.platform in ['WiPy', 'LoPy', 'GPy', 'FiPy']:
+        if sys.platform in ['WiPy', 'LoPy', 'LoPy4', 'GPy', 'FiPy']:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonPlatform.Pycom
 
