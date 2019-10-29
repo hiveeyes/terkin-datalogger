@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class NetworkManager:
+    """ """
 
     def __init__(self, device, settings):
         self.device = device
@@ -27,18 +28,26 @@ class NetworkManager:
         self.mode_server = None
 
     def stop(self):
+        """ """
         if self.device.status.maintenance is not True:
             self.wifi_manager.power_off()
 
     def start_wifi(self):
+        """ """
         self.wifi_manager.start()
 
     def start_lora(self):
+        """ """
         from terkin.network.lora import LoRaManager
         self.lora_manager = LoRaManager(manager=self, settings=self.settings)
         self.lora_manager.start()
 
     def wait_for_ip_stack(self, timeout=5):
+        """
+
+        :param timeout:  (Default value = 5)
+
+        """
 
         eggtimer = Eggtimer(duration=timeout)
 
@@ -68,6 +77,11 @@ class NetworkManager:
         raise NetworkUnavailable('Could not connect to WiFi network')
 
     def wait_for_nic(self, timeout=5):
+        """
+
+        :param timeout:  (Default value = 5)
+
+        """
 
         eggtimer = Eggtimer(duration=timeout)
 
@@ -97,6 +111,7 @@ class NetworkManager:
         raise NetworkUnavailable('Could not connect to WiFi network')
 
     def start_services(self):
+        """ """
 
         # Start UDP server for pulling device into maintenance mode.
         if self.settings.get('services.api.modeserver.enabled', False):
@@ -113,9 +128,7 @@ class NetworkManager:
                 log.exc(ex, 'Starting HTTP server failed')
 
     def start_modeserver(self):
-        """
-        Start UDP server for pulling device into maintenance mode.
-        """
+        """Start UDP server for pulling device into maintenance mode."""
         #ip = self.wifi_manager.get_ip_address()
         ip = '0.0.0.0'
         port = 666
@@ -124,15 +137,19 @@ class NetworkManager:
         self.mode_server.start(self.handle_modeserver)
 
     def start_httpserver(self):
-        """
-        Start HTTP server for managing the device.
-        """
+        """Start HTTP server for managing the device."""
         from terkin.api.http import TerkinHttpApi
         storage = self.device.application_info.application.storage
         http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
         http_api.start()
 
     def handle_modeserver(self, data, addr):
+        """
+
+        :param data: 
+        :param addr: 
+
+        """
 
         message = data.decode()
 
@@ -148,4 +165,5 @@ class NetworkManager:
 
 
 class NetworkUnavailable(Exception):
+    """ """
     pass

@@ -8,6 +8,7 @@ log = logging.getLogger(__name__)
 
 
 class UdpServer:
+    """ """
 
     def __init__(self, ip, port):
         self.ip = ip
@@ -15,11 +16,17 @@ class UdpServer:
         self.callback = None
 
     def start(self, callback=None):
+        """
+
+        :param callback:  (Default value = None)
+
+        """
         self.callback = callback
         import _thread
         _thread.start_new_thread(self.start_real, ())
 
     def start_real(self):
+        """ """
         import socket
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -31,6 +38,12 @@ class UdpServer:
             s.sendto(data, addr)
 
     def receive_handler(self, data, addr):
+        """
+
+        :param data: 
+        :param addr: 
+
+        """
         log.info('UdpServer received {} from {}'.format(data, addr))
         if callable(self.callback):
             self.callback(data, addr)

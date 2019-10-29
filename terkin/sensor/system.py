@@ -19,36 +19,39 @@ platform_info = get_platform_info()
 
 
 class SystemMemoryFree:
-    """
-    Read free memory in bytes.
-    """
+    """Read free memory in bytes."""
 
     def enabled(self):
+        """ """
         return True
 
     def read(self):
+        """ """
         import gc
         value = gc.mem_free()
         return {'system.memfree': value}
 
 
 class SystemTemperature:
-    """
-    Read the internal temperature of the MCU.
-
+    """Read the internal temperature of the MCU.
+    
     - https://docs.micropython.org/en/latest/esp32/quickref.html#general-board-control
     - https://github.com/micropython/micropython-esp32/issues/33
     - https://github.com/micropython/micropython/pull/3933
     - https://github.com/micropython/micropython-esp32/pull/192
     - https://github.com/espressif/esp-idf/issues/146
     - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
+
+
     """
 
     def enabled(self):
+        """ """
         import machine
         return hasattr(machine, 'temperature')
 
     def read(self):
+        """ """
         import machine
 
         rawvalue = machine.temperature()
@@ -66,35 +69,35 @@ class SystemTemperature:
 
 
 class SystemBatteryLevel:
-    """
-    Read the battery level by sampling the ADC on a pin connected
+    """Read the battery level by sampling the ADC on a pin connected
     to a voltage divider. As the Pycom expansion board is using
     Pin 16, this is also used on other boards as kind of a convention.
-
+    
     Implementation
     ==============
     Written by Dominik Kapusta <https://github.com/ayoy>. Thanks!
     Improved by Andreas Motl <https://github.com/amotl>.
-
+    
     License
     =======
     The MIT License (MIT)
-
+    
     Copyright (c) 2018 Dominik Kapusta
-
+    
     - https://kapusta.cc/2018/02/02/air-quality-monitor-revisited/
     - https://github.com/ayoy/upython-aq-monitor/blob/lora/lib/adc.py
-
+    
     Documentation
     =============
     - https://docs.pycom.io/firmwareapi/pycom/machine/adc
     - https://docs.pycom.io/tutorials/all/adc
-
+    
     More resources
     ==============
     - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
     - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
     - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
+
 
     """
 
@@ -119,9 +122,15 @@ class SystemBatteryLevel:
         self.adc = None
 
     def enabled(self):
+        """ """
         return True
 
     def setup(self, settings):
+        """
+
+        :param settings: 
+
+        """
 
         if settings.get('sensors.system.vcc') is None:
             return False
@@ -143,9 +152,7 @@ class SystemBatteryLevel:
             self.adc = ADC(Pin(self.pin))
                 
     def read(self):
-        """
-        Acquire vbatt reading by sampling ADC.
-        """
+        """Acquire vbatt reading by sampling ADC."""
         # Todo: Make attenuation factor configurable.
 
         from machine import ADC
@@ -213,26 +220,27 @@ class SystemBatteryLevel:
         return reading
 
     def power_off(self):
-        """
-        Shut down ADC.
-        """
+        """Shut down ADC."""
         log.info('Turning off ADC')
         self.adc.deinit()
 
 
 class SystemUptime:
     """
-    Return system time and uptime in seconds.
 
-    https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
+
+    :returns: https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
+
     """
 
     start_time = time.time()
 
     def enabled(self):
+        """ """
         return True
 
     def read(self):
+        """ """
         now = time.time()
         uptime = time.ticks_ms() / 1000.0
         runtime = now - self.start_time
@@ -245,31 +253,34 @@ class SystemUptime:
 
 
 class SystemHallSensor:
-    """
-    - https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
+    """- https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
     - https://github.com/micropython/micropython-esp32/pull/211
     - https://www.esp32.com/viewtopic.php?t=481
+
+
     """
     pass
 
 
 class SystemMemoryPeeker:
-    """
-    ``machine.mem32[]``
-
+    """``machine.mem32[]``
+    
     - https://github.com/micropython/micropython-esp32/pull/192#issuecomment-334631994
+
+
     """
     pass
 
 
 class ADC2:
-    """
-    ::
-
+    """::
+    
         adc = machine.ADC(machine.Pin(35))
         adc.atten(machine.ADC.ATTN_11DB)
-
+    
     - https://github.com/micropython/micropython-esp32/issues/33
     - https://www.esp32.com/viewtopic.php?t=955
+
+
     """
     pass

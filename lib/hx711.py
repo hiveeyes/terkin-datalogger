@@ -10,10 +10,11 @@ log = logging.getLogger(__name__)
 
 
 class HX711:
-    """
-    Baseline driver for the HX711 by David Gerber, with modifications.
-
+    """Baseline driver for the HX711 by David Gerber, with modifications.
+    
     https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf
+
+
     """
 
     def __init__(self, dout, pd_sck, gain=128):
@@ -34,6 +35,11 @@ class HX711:
         self.set_gain(gain)
 
     def set_gain(self, gain):
+        """
+
+        :param gain: 
+
+        """
         if gain is 128:
             self.GAIN = 1
         elif gain is 64:
@@ -42,12 +48,14 @@ class HX711:
             self.GAIN = 2
 
     def is_ready(self):
+        """ """
         return self.pOUT() == 0
 
     def initialize(self):
-        """
-        Power and initialize the chip.
+        """Power and initialize the chip.
         Wait for becoming ready.
+
+
         """
         if not self.initialized:
 
@@ -63,6 +71,7 @@ class HX711:
             return True
 
     def wait_ready(self):
+        """ """
         retries = 10000
         #log.info('Waiting for device to become ready')
         while not self.is_ready():
@@ -73,23 +82,24 @@ class HX711:
         #log.info('Device ready')
 
     def read(self):
-        """
-        This chip has a non-standard serial protocol.
-
+        """This chip has a non-standard serial protocol.
+        
         Serial Interface
         ----------------
         Pin PD_SCK and DOUT are used for data retrieval, input selection,
         gain selection and power down controls.
-
+        
         When output data is not ready for retrieval, digital output pin DOUT
         is high. Serial clock input PD_SCK should be low. When DOUT goes to
         low, it indicates data is ready for retrieval.
-
+        
         By applying 25~27 positive clock pulses at the PD_SCK pin, data is
         shifted out from the DOUT output pin. Each PD_SCK pulse shifts out
         one bit, starting with the MSB bit first, until all 24 bits are
         shifted out. The 25th pulse at PD_SCK input will pull DOUT pin back
         to high.
+
+
         """
 
         # Initialize the hardware once.
@@ -118,43 +128,77 @@ class HX711:
         return result
 
     def read_average(self, times=3):
+        """
+
+        :param times:  (Default value = 3)
+
+        """
         sum = 0
         for i in range(times):
             sum += self.read()
         return sum / times
 
     def read_lowpass(self):
+        """ """
         if self.filtered is None:
             self.filtered = self.read()
         self.filtered += self.time_constant * (self.read() - self.filtered)
         return self.filtered
 
     def get_value(self, times=3):
+        """
+
+        :param times:  (Default value = 3)
+
+        """
         return self.read_average(times) - self.OFFSET
 
     def get_units(self, times=3):
+        """
+
+        :param times:  (Default value = 3)
+
+        """
         return self.get_value(times) / self.SCALE
 
     def tare(self, times=15):
+        """
+
+        :param times:  (Default value = 15)
+
+        """
         sum = self.read_average(times)
         self.set_offset(sum)
 
     def set_scale(self, scale):
+        """
+
+        :param scale: 
+
+        """
         self.SCALE = scale
 
     def set_offset(self, offset):
+        """
+
+        :param offset: 
+
+        """
         self.OFFSET = offset
 
     def set_time_constant(self, time_constant = None):
+        """
+
+        :param time_constant:  (Default value = None)
+
+        """
         if time_constant is None:
             return self.time_constant
         elif 0 < time_constant < 1.0:
             self.time_constant = time_constant
 
     def power_up(self):
-        """
-        When PD_SCK Input is low, chip is in normal working mode.
-        """
+        """When PD_SCK Input is low, chip is in normal working mode."""
 
         # Unfreeze pin hold when coming from deep sleep.
         # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
@@ -167,9 +211,10 @@ class HX711:
         #self.initialize()
 
     def power_down(self):
-        """
-        When PD_SCK pin changes from low to high and stays at
+        """When PD_SCK pin changes from low to high and stays at
         high for longer than 60µs, HX711 enters power down mode.
+
+
         """
         log.info('HX711 power down')
         state = disable_irq()
@@ -184,4 +229,5 @@ class HX711:
 
 
 class DeviceNotFound(Exception):
+    """ """
     pass

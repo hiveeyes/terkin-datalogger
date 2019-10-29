@@ -9,9 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class PytrackSensor(AbstractSensor):
-    """
-    A Pytrack sensor component.
-    """
+    """A Pytrack sensor component."""
 
     def __init__(self):
         super().__init__()
@@ -25,9 +23,7 @@ class PytrackSensor(AbstractSensor):
         self.lis2hh12 = None
 
     def start(self):
-        """
-        Getting the bus
-        """
+        """Getting the bus"""
         if self.bus is None:
             raise KeyError("I2C bus missing")
 
@@ -56,6 +52,7 @@ class PytrackSensor(AbstractSensor):
             raise
 
     def read(self):
+        """ """
         data = {}
         #log.info('Acquire reading from Pytrack')
         data['battery_voltage'] = float(self.sensor.read_battery_voltage())
@@ -70,6 +67,7 @@ class PytrackSensor(AbstractSensor):
         return data
 
     def read_lis2hh12(self):
+        """ """
 
         data = {}
 
@@ -82,6 +80,7 @@ class PytrackSensor(AbstractSensor):
         return data
 
     def read_l76gns(self):
+        """ """
 
         data = {}
 

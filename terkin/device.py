@@ -18,15 +18,14 @@ log = logging.getLogger(__name__)
 
 
 class DeviceStatus:
-    """
-    Object holding device status information.
-    """
+    """Object holding device status information."""
     def __init__(self):
         self.maintenance = False
         self.networking = False
 
 
 class TerkinDevice:
+    """ """
 
     def __init__(self, application_info):
 
@@ -53,6 +52,7 @@ class TerkinDevice:
         self.rtc = None
 
     def start_networking(self):
+        """ """
         log.info('Starting networking')
 
         from terkin.network import NetworkManager, WiFiException
@@ -95,9 +95,7 @@ class TerkinDevice:
         #self.networking.print_status()
 
     def start_rtc(self):
-        """
-        The RTC is used to keep track of the date and time.
-        """
+        """The RTC is used to keep track of the date and time."""
         # https://docs.pycom.io/firmwareapi/pycom/machine/rtc.html
         # https://medium.com/@chrismisztur/pycom-uasyncio-installation-94931fc71283
         import time
@@ -110,12 +108,13 @@ class TerkinDevice:
         log.info('RTC: %s', self.rtc.now())
 
     def run_gc(self):
-        """
-        Curate the garbage collector.
+        """Curate the garbage collector.
         https://docs.pycom.io/firmwareapi/micropython/gc.html
-
+        
         For a "quick fix", issue the following periodically.
         https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329/9
+
+
         """
         import gc
         log.info('Start curating the garbage collector')
@@ -125,9 +124,7 @@ class TerkinDevice:
         log.info('Curating the garbage collector finished. Free memory: %s', gc.mem_free())
 
     def configure_rgb_led(self):
-        """
-        https://docs.pycom.io/tutorials/all/rgbled.html
-        """
+        """https://docs.pycom.io/tutorials/all/rgbled.html"""
         if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
             import pycom
             # Enable or disable heartbeat.
@@ -139,6 +136,12 @@ class TerkinDevice:
             pycom.heartbeat_on_boot(rgb_led_heartbeat)
 
     def blink_led(self, color, count=1):
+        """
+
+        :param color: 
+        :param count:  (Default value = 1)
+
+        """
         if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
             import pycom
             terkin_blink_pattern = self.settings.get('main.rgb_led.terkin', False)
@@ -150,6 +153,7 @@ class TerkinDevice:
                     time.sleep(0.10)
 
     def start_telemetry(self):
+        """ """
         log.info('Starting telemetry')
 
         self.telemetry = TelemetryManager()
@@ -173,6 +177,11 @@ class TerkinDevice:
                 log.exc(ex, 'Creating telemetry adapter failed for target: %s', telemetry_target)
 
     def create_telemetry_adapter(self, telemetry_target):
+        """
+
+        :param telemetry_target: 
+
+        """
         # Create adapter object.
         telemetry_adapter = TelemetryAdapter(
             device=self,
@@ -190,6 +199,7 @@ class TerkinDevice:
         self.telemetry.add_adapter(telemetry_adapter)
 
     def enable_serial(self):
+        """ """
         # Disable these two lines if you don't want serial access.
         # The Pycom forum tells us that this is already incorporated into
         # more recent firmwares, so this is probably a thing of the past.
@@ -198,11 +208,12 @@ class TerkinDevice:
         pass
 
     def print_bootscreen(self):
-        """
-        Print bootscreen.
-
+        """Print bootscreen.
+        
         This contains important details about your device
         and the operating system running on it.
+
+
         """
 
         if not self.settings.get('main.logging.enabled', False):
@@ -213,6 +224,11 @@ class TerkinDevice:
         buffer = StringIO()
 
         def add(item=''):
+            """
+
+            :param item:  (Default value = '')
+
+            """
             buffer.write(item)
             buffer.write('\n')
 
@@ -260,14 +276,16 @@ class TerkinDevice:
         log.info('\n' + buffer.getvalue())
 
     def power_off(self):
+        """ """
         self.networking.stop()
 
     def power_off_lte_modem(self):
-        """
-        We don't use LTE yet.
-
+        """We don't use LTE yet.
+        
         https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
         https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
+
+
         """
 
         """
@@ -297,9 +315,7 @@ class TerkinDevice:
             log.exc(ex, 'Shutting down LTE modem failed')
 
     def power_off_bluetooth(self):
-        """
-        We don't use Bluetooth yet.
-        """
+        """We don't use Bluetooth yet."""
 
         if self.application_info.platform_info.vendor == MicroPythonPlatform.Vanilla:
             log.warning('FIXME: Skip touching Bluetooth on vanilla MicroPython platforms')
@@ -314,6 +330,13 @@ class TerkinDevice:
             log.exc(ex, 'Shutting down Bluetooth failed')
 
     def hibernate(self, interval, lightsleep=False, deepsleep=False):
+        """
+
+        :param interval: 
+        :param lightsleep:  (Default value = False)
+        :param deepsleep:  (Default value = False)
+
+        """
 
         #logging.enable_logging()
 
@@ -356,6 +379,7 @@ class TerkinDevice:
                 time.sleep(interval)
 
     def resume(self):
+        """ """
         try:
             from terkin.pycom import MachineResetCause
             log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
@@ -363,6 +387,7 @@ class TerkinDevice:
             log.warning('Could not determine reset cause')
 
     def set_wakeup_mode(self):
+        """ """
 
         # Set wake up parameters.
         """
@@ -398,15 +423,14 @@ class TerkinDevice:
 
 
 class Terminal:
+    """ """
 
     def __init__(self, settings):
         self.settings = settings
         self.uart = None
 
     def start(self):
-        """
-        Start Terminal on UART0 interface.
-        """
+        """Start Terminal on UART0 interface."""
         # Conditionally enable terminal on UART0. Default: False.
         # https://forum.pycom.io/topic/1224/disable-console-to-uart0-to-use-uart0-for-other-purposes
         uart0_enabled = self.settings.get('interfaces.uart0.terminal', False)
@@ -419,23 +443,17 @@ class Terminal:
             self.shutdown()
 
     def stop(self):
-        """
-        Shut down.
-        """
+        """Shut down."""
         log.info('Shutting down Terminal')
         self.shutdown()
 
     def shutdown(self):
-        """
-        Shut down Terminal and UART0 interface.
-        """
+        """Shut down Terminal and UART0 interface."""
         os.dupterm(None)
         self.deinit()
 
     def deinit(self):
-        """
-        Shut down UART0 interface.
-        """
+        """Shut down UART0 interface."""
         if self.uart:
             log.info('Shutting down UART0')
             self.uart.deinit()

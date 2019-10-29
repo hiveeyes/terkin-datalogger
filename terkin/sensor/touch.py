@@ -38,9 +38,7 @@ log = logging.getLogger(__name__)
 
 
 class TouchPad:
-    """
-    From https://docs.pycom.io/tutorials/all/touch.html
-    """
+    """From https://docs.pycom.io/tutorials/all/touch.html"""
 
     def __init__(self, pin, name, sensitivity, duration):
         self.name = name
@@ -55,16 +53,19 @@ class TouchPad:
         self.setup()
 
     def setup(self):
+        """ """
         from machine import Touch
         self.touch = Touch(self.pin)
         self.touch.init_value(self.sensitivity)
 
     def read(self):
+        """ """
         value = self.touch.read()
         log.debug('value: %s %s', self.name, value)
         return value
 
     def is_pressed(self):
+        """ """
         # Todo: Review these magic values ``* 2 / 3``.
         threshold = self.touch.init_value() * 2 / 3
         if self.read() < threshold:
@@ -74,6 +75,7 @@ class TouchPad:
         return self.pressed
 
     def just_pressed(self):
+        """ """
         now = time.ticks_ms()
         if now - self.last_press < self.duration:
             return True
@@ -81,4 +83,5 @@ class TouchPad:
             return False
 
     def set_press(self):
+        """ """
         self.last_press = time.ticks_ms()

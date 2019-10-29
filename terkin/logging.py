@@ -19,6 +19,7 @@ else:
 
 
 class TimedLogRecord(logging.LogRecord):
+    """ """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
@@ -28,8 +29,16 @@ class TimedLogRecord(logging.LogRecord):
 
 
 class ExtendedLogger(Logger):
+    """ """
 
     def log(self, level, msg, *args):
+        """
+
+        :param level: 
+        :param msg: 
+        :param *args: 
+
+        """
         if level >= (self.level or _level):
             record = TimedLogRecord(
                 self.name, level, None, None, msg, args, None, None, None
@@ -41,6 +50,12 @@ class ExtendedLogger(Logger):
 
 
 def getLogger(name=None, level=logging.INFO):
+    """
+
+    :param name:  (Default value = None)
+    :param level:  (Default value = logging.INFO)
+
+    """
 
     if name is None:
         name = "root"
@@ -63,6 +78,12 @@ def getLogger(name=None, level=logging.INFO):
 
 
 def noop(*args, **kwargs):
+    """
+
+    :param *args: 
+    :param **kwargs: 
+
+    """
     return
 
 
@@ -73,10 +94,12 @@ loggers_backup = {
 
 
 def disable_logging():
+    """ """
     Logger.log = noop
     ExtendedLogger.log = noop
 
 
 def enable_logging():
+    """ """
     Logger.log = loggers_backup['Logger']
     ExtendedLogger.log = loggers_backup['ExtendedLogger']

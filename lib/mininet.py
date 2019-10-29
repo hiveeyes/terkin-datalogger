@@ -10,6 +10,7 @@ import network
 
 
 class MiniNet:
+    """ """
 
     def __init__(self):
         print('INFO:  Starting MiniNet')
@@ -17,6 +18,11 @@ class MiniNet:
         self.station = network.WLAN()
 
     def reconfigure_watchdog(self, timeout_seconds=600):
+        """
+
+        :param timeout_seconds:  (Default value = 600)
+
+        """
         try:
             from machine import WDT
             watchdog_timeout = timeout_seconds
@@ -28,9 +34,7 @@ class MiniNet:
             pass
 
     def activate_wifi_ap(self):
-        """
-        https://docs.pycom.io/firmwareapi/pycom/network/wlan/
-        """
+        """https://docs.pycom.io/firmwareapi/pycom/network/wlan/"""
 
         #self.station = network.WLAN(mode=network.WLAN.STA)
         try:
@@ -43,9 +47,13 @@ class MiniNet:
         self.station.mode(network.WLAN.AP)
 
     def connect_wifi_sta(self, ssid, password, timeout=10000):
-        """
-        https://docs.pycom.io/firmwareapi/pycom/network/wlan/
+        """https://docs.pycom.io/firmwareapi/pycom/network/wlan/
         https://mike632t.wordpress.com/2017/04/11/connecting-my-wipy-to-my-wifi/
+
+        :param ssid: 
+        :param password: 
+        :param timeout:  (Default value = 10000)
+
         """
 
         # Duplicate output on UART
@@ -102,6 +110,14 @@ class MiniNet:
         print('Note: Press CTRL+X or Ctrl+] to detach from the REPL')
 
     def connect_wifi_sta_single(self, ssid, authmode, password, timeout=10000):
+        """
+
+        :param ssid: 
+        :param authmode: 
+        :param password: 
+        :param timeout:  (Default value = 10000)
+
+        """
 
         print('INFO:  WiFi STA: Connecting to "{}"'.format(ssid))
         self.station.connect(ssid, auth=(authmode, password), timeout=timeout)
@@ -121,6 +137,11 @@ class MiniNet:
             print('ERROR: WiFi STA: Connecting to "{}" failed. Please check SSID and PASSWORD.\n{}'.format(ssid, ex))
 
     def wait_for_nic(self, retries=5):
+        """
+
+        :param retries:  (Default value = 5)
+
+        """
         attempts = 0
         while attempts < retries:
             try:
@@ -136,4 +157,5 @@ class MiniNet:
         print('Network interface ready')
 
     def get_ip_address(self):
+        """ """
         return self.station.ifconfig()[0]

@@ -8,13 +8,14 @@ log = logging.getLogger(__name__)
 
 
 class Watchdog:
-    """
-    The watchdog timer (WDT) is used to restart the system when the
+    """The watchdog timer (WDT) is used to restart the system when the
     application crashes and ends up into a non recoverable state. After
     enabling, the application must "feed" the watchdog periodically to
     prevent the timeout from expiring and resetting the system.
-
+    
     https://docs.pycom.io/firmwareapi/pycom/machine/wdt/
+
+
     """
 
     def __init__(self, device=None, settings=None):
@@ -27,6 +28,7 @@ class Watchdog:
         self.timeout = self.settings.get('main.watchdog.timeout', 10000)
 
     def start(self):
+        """ """
 
         if not self.enabled:
             log.info('Skipping watchdog timer (WDT)')
@@ -42,20 +44,23 @@ class Watchdog:
         self.feed()
 
     def resume(self):
+        """ """
         log.info('Resuming watchdog')
         self.suspended = False
         self.reconfigure_minimum_timeout(self.timeout)
 
     def suspend(self):
-        """
-        Disabling a started watchdog is not possible, so let's
+        """Disabling a started watchdog is not possible, so let's
         just configure it to an ultra large timeout value.
+
+
         """
         log.info('Suspending watchdog')
         self.suspended = True
         self.reconfigure_minimum_timeout(999999999)
 
     def feed(self):
+        """ """
 
         if not self.enabled:
             return
@@ -74,6 +79,11 @@ class Watchdog:
         self.wdt.feed()
 
     def reconfigure_minimum_timeout(self, timeout):
+        """
+
+        :param timeout: 
+
+        """
         if not self.enabled:
             return
         if timeout >= self.timeout:
@@ -81,6 +91,11 @@ class Watchdog:
             self.wdt.init(timeout)
 
     def adjust_for_interval(self, interval):
+        """
+
+        :param interval: 
+
+        """
         if self.enabled and not self.suspended:
             watchdog_timeout = self.timeout / 1000.0
             if watchdog_timeout - 2 < interval:

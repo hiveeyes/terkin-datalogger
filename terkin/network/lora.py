@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class LoRaManager:
+    """ """
 
     def __init__(self, manager, settings):
         self.manager = manager
@@ -20,6 +21,7 @@ class LoRaManager:
         #self.generated_device_eui = binascii.hexlify(LoRa().mac())
 
     def start(self):
+        """ """
         self.start_lora_join()
         self.wait_for_lora_join(42)
 
@@ -31,6 +33,7 @@ class LoRaManager:
             log.error("[LoRa] Could not join network")
 
     def start_lora_join(self):
+        """ """
 
         from network import LoRa
 
@@ -55,6 +58,11 @@ class LoRaManager:
             self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
 
     def wait_for_lora_join(self, attempts):
+        """
+
+        :param attempts: 
+
+        """
         self.lora_joined = None
         for i in range(0, attempts):
             while not self.lora.has_joined():
@@ -77,6 +85,7 @@ class LoRaManager:
         return self.lora_joined
 
     def create_lora_socket(self):
+        """ """
         # create a lora socket
 
         self.lora_socket = None
@@ -100,6 +109,11 @@ class LoRaManager:
         return self.lora_socket
 
     def lora_send(self, payload):
+        """
+
+        :param payload: 
+
+        """
         success = self.socket.send(payload)
         for i in range(0,2):
             #pycom.rgbled(0x00000f) # green
@@ -109,6 +123,7 @@ class LoRaManager:
         return success
 
     def lora_receive(self):
+        """ """
         rx, port = self.socket.recvfrom(256)
         if rx:
             #pycom.rgbled(0x000f00) # green

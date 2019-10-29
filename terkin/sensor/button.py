@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class Button:
+    """ """
     def __init__(self, name, location, adapter):
         self.name = name
         self.location = location
@@ -19,6 +20,7 @@ class Button:
 
     @property
     def pin(self):
+        """ """
         return self.adapter.pin
 
     def __str__(self):
@@ -26,6 +28,7 @@ class Button:
 
 
 class ButtonManager:
+    """ """
 
     check_interval_ms = 10
 
@@ -40,6 +43,13 @@ class ButtonManager:
         self.alarm = Timer.Alarm(self.check, ms=self.check_interval_ms, periodic=True)
 
     def setup_touchpad(self, pin, name, location):
+        """
+
+        :param pin: 
+        :param name: 
+        :param location: 
+
+        """
         try:
             button = Button(
                 name=name,
@@ -52,6 +62,11 @@ class ButtonManager:
             log.exc(ex, 'Setting up button on pin {} failed'.format(pin))
 
     def check(self, alarm):
+        """
+
+        :param alarm: 
+
+        """
         for button in self.buttons:
             if not button.enabled:
                 continue

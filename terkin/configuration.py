@@ -26,9 +26,7 @@ else:
 
 
 class TerkinConfiguration:
-    """
-    A flexible configuration manager.
-    """
+    """A flexible configuration manager."""
 
     CONFIG_PATH = CONFIG_PATH
     BACKUP_PATH = BACKUP_PATH
@@ -78,9 +76,21 @@ class TerkinConfiguration:
         del self.store[key]
 
     def get(self, key, default=None):
+        """
+
+        :param key: 
+        :param default:  (Default value = None)
+
+        """
         return self.store.get(key, default=default)
 
     def set(self, key, value):
+        """
+
+        :param key: 
+        :param value: 
+
+        """
         self.store[key] = value
         if self.record:
             self.overlay[key] = value
@@ -88,10 +98,21 @@ class TerkinConfiguration:
         return value
 
     def setdefault(self, key, default=None):
+        """
+
+        :param key: 
+        :param default:  (Default value = None)
+
+        """
         # TODO: Add recording functionality.
         return self.store.setdefault(key, default=default)
 
     def add(self, data):
+        """
+
+        :param data: 
+
+        """
         self.record = False
         try:
             self.add_real(data)
@@ -100,6 +121,11 @@ class TerkinConfiguration:
         self.record = True
 
     def add_real(self, data):
+        """
+
+        :param data: 
+
+        """
         if isinstance(data, types.ModuleType):
             blacklist = ['__name__', '__file__', '__class__']
             for key in dir(data):
@@ -108,6 +134,7 @@ class TerkinConfiguration:
                 self.store[key] = value
 
     def dump(self):
+        """ """
         log.info('Configuration settings:')
         for key, value in self.store.items():
             thing = deepcopy(value)
@@ -115,6 +142,11 @@ class TerkinConfiguration:
             log.info('Section "{}": {}'.format(key, json.dumps(thing)))
 
     def purge_sensible_settings(self, thing):
+        """
+
+        :param thing: 
+
+        """
         for key, value in thing.items():
 
             if isinstance(value, dict):
@@ -129,9 +161,11 @@ class TerkinConfiguration:
                 thing[key] = value
 
     def to_dict(self):
+        """ """
         return dict(self.store.to_dict())
 
     def add_user_file(self):
+        """ """
         data = self.load(self.USER_SETTINGS_FILE)
         log.info('User settings: %s', data)
         if data is not None:
@@ -139,8 +173,10 @@ class TerkinConfiguration:
             deepupdate(self.store, self.overlay)
 
     def load(self, filename):
-        """
-        Load configuration file.
+        """Load configuration file.
+
+        :param filename: 
+
         """
         # Protect against directory traversals.
         filename = os_path.basename(filename)
@@ -159,8 +195,11 @@ class TerkinConfiguration:
             log.exc(ex, 'Reading configuration from "{}" failed'.format(filepath))
 
     def save(self, filename, instream):
-        """
-        Save configuration file, with rotating backup.
+        """Save configuration file, with rotating backup.
+
+        :param filename: 
+        :param instream: 
+
         """
         import uos
 
