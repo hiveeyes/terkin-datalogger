@@ -11,15 +11,20 @@ contributed to this software in one way or another.
 * Diedrich Lamken <didi@hiverize.org>
 * Diren Senger <diren@uni-bremen.de>
 * Dominik Kapusta <https://github.com/ayoy>
+* Ingo Porzucek <https://community.hiveeyes.org/u/ingop/>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
+* Kolja <https://github.com/pinguin999>
 * Markus Mohr <https://github.com/poesel>
+* Matthias Büchner <https://github.com/thiasB>
+* Matthias Mehldau <wetter@hiveeyes.org>
 * Michael Kurzweil <https://flowers4bees.org/>
 * Ralf Lindlein <https://github.com/walterheisenberg>
 * Richard Pobering <richard@hiveeyes.org>
-* Roh <incognito>
+* Roh <https://community.hiveeyes.org/u/roh/>
 * Ron Jacob <ron.jacob@easyhive.org>
+* Thorsten Kluß <https://community.hiveeyes.org/u/tox/>
 * Vincent Kuhlen <vkuhlen@uni-bremen.de>
-* Weef <incognito>
+* Weef <https://community.hiveeyes.org/u/weef/>
 
 Thanks a bunch!
 

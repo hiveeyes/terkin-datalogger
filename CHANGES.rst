@@ -47,6 +47,7 @@ Development
 - Improve configuration module.
     - Reduce convolution of "purge_sensible_settings"
     - Be more graceful when attempting to read json settings
+- Add missing ``import socket`` to LoRa module. Thanks, @thiasB!
 - Improve multi-platform support
     - Refactor platform switch and rename first stage bootloader
       to *Universal MicroPython Application Loader (umal)*
