@@ -14,6 +14,18 @@ Prio 0.7
 - Rename "busses" to "buses"
 - Use WLAN power_save, see https://docs.pycom.io/firmwareapi/pycom/network/wlan/
 - Rename "mboot.py", this name is already taken by the native MicroPython bootloader
+  https://github.com/micropython/micropython/blob/master/ports/stm32/mboot/README.md
+- Investigate if re-reading ``settings.py`` works
+  https://forum.pycom.io/topic/5296/reread-setting-py-while-the-program-is-running
+- Build custom firmware
+  https://forum.pycom.io/topic/3902/frozen-modules-for-my-sipy-solved/9
+  pycom-micropython-sigfox/esp32/pycom_version.h
+- Ping @rdagger
+    - https://github.com/rdagger
+    - https://github.com/jczic/MicroWebSrv/issues/7
+    - https://www.youtube.com/playlist?list=PLKGiH5V9SS1hUz5Jh_35oTFM4wPZYA4sT
+- Try WiFi power saving.
+
 
 Prio 0.8
 ========
@@ -302,7 +314,7 @@ Prio 3
 
 Prio 4
 ======
-- [o] Unlock frozen modules: Upload .mby code through mby-cross
+- [o] Unlock frozen modules: Upload .mpy code through mpy-cross
 - [o] Upload watcher
 - [o] Add DS18B20: https://github.com/pycom/pycom-libraries/tree/master/examples/DS18X20
 - [o] WiFi soft reset re. ``if machine.reset_cause() != machine.SOFT_RESET:``

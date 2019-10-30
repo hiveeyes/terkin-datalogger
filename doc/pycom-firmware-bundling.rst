@@ -40,9 +40,7 @@ Use Pycom firmware release (ELF file)::
 
 Create new tarball::
 
-    cd build
-    tar -czf ../FiPy-1.20.1.r1-rebundled.tar.gz *
-    cd -
+    cd build; tar -czf ../FiPy-1.20.1.r1-rebundled.tar.gz *; cd -
 
 Flash to device::
 

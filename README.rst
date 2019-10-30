@@ -6,11 +6,25 @@
 
 |
 
-###############################
-Hiveeyes MicroPython Datalogger
-###############################
+#################
+Terkin Datalogger
+#################
 
-Data logging for humans.
+Data logging for humans, written in MicroPython.
+
+
+*****
+About
+*****
+The Terkin Datalogger has been conceived for the
+Bee Observer (BOB) project, funded by the BMBF.
+
+- https://www.bmbf.de/de/dem-bienensterben-auf-der-spur-9156.html
+- https://www.buergerschaffenwissen.de/projekt/bee-observer-bob
+- http://www.cognitive-neuroinformatics.com/de/home/news/258-das-citizen-science-projekt-bee-observer-bob
+- https://www.uni-bremen.de/jahrbuch/transfer-weiterdenken/thorsten-kluss/
+- https://community.hiveeyes.org/t/bee-observer-bob-uni-bremen-und-hiveeyes-werden-als-citizen-science-projekte-vom-forschungsministerium-unterstutzt/454
+- https://community.hiveeyes.org/c/bee-observer
 
 
 ************

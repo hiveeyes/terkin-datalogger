@@ -12,7 +12,7 @@ contributed to this software in one way or another.
 * Diren Senger <diren@uni-bremen.de>
 * Dominik Kapusta <https://github.com/ayoy>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
-* Markus <https://github.com/poesel>
+* Markus Mohr <https://github.com/poesel>
 * Michael Kurzweil <https://flowers4bees.org/>
 * Ralf Lindlein <https://github.com/walterheisenberg>
 * Richard Pobering <richard@hiveeyes.org>
@@ -37,7 +37,9 @@ people are doing on the foundation infrastructure the software is leveraging.
 - Daniel Campora for the Pycom MQTT package.
 - David Gerber <https://github.com/geda>, Robert H. <https://github.com/robert-hh> and
   Anthony Hinsinger <https://github.com/atoy40> for the HX711 driver.
-- Robert H. <https://github.com/robert-hh> for the BME280 driver.
+- Robert H. <https://github.com/robert-hh> for the 1-Wire and DS18B20 drivers,
+  the BME280 driver and many important details we learned from him through the
+  `Pycom user forum`_.
 - Paweł Zadrożny <https://github.com/pawelzny> for the `Dotty Dict`_ package.
 - Sebastian Meiling <https://github.com/smlng> for the ``PyCayenneLPP`` package.
 - Dominik Kapusta <https://github.com/ayoy> for many inspirations
@@ -52,7 +54,7 @@ components and resources to the community! You know who you are.
 .. _pycom-libraries: https://github.com/pycom/pycom-libraries
 .. _upython-aq-monitor: https://github.com/ayoy/upython-aq-monitor
 .. _Dotty Dict: https://github.com/pawelzny/dotty_dict
-
+.. _Pycom user forum: https://forum.pycom.io/
 
 
 **********
