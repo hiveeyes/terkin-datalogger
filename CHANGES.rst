@@ -44,6 +44,9 @@ Development
 - Large refactoring.
     - Get rid of the "hiveeyes" module namespace.
     - Rework the "sensors.system" configuration section.
+- Improve configuration module.
+    - Reduce convolution of "purge_sensible_settings"
+    - Be more graceful when attempting to read json settings
 
 
 2019-08-19 0.6.0

@@ -2,6 +2,7 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import os
 import json
 import types
 import os_path
@@ -143,22 +144,24 @@ class TerkinConfiguration:
 
     def purge_sensible_settings(self, thing):
         """
+        This function purges all sensible pieces from the data structure
+        holding the configuration settings in order to protect information
+        leakage os sensitive information to STDOUT.
 
         :param thing: 
-
         """
-        for key, value in thing.items():
+        if isinstance(thing, dict):
+            for key, value in thing.items():
 
-            if isinstance(value, dict):
+                if key in self.protected_settings:
+                    value = '## redacted ##'
+                    thing[key] = value
+
                 self.purge_sensible_settings(value)
 
-            elif isinstance(value, list):
-                for item in value:
-                    self.purge_sensible_settings(item)
-
-            if key in self.protected_settings:
-                value = '## redacted ##'
-                thing[key] = value
+        elif isinstance(thing, list):
+            for item in thing:
+                self.purge_sensible_settings(item)
 
     def to_dict(self):
         """ """
@@ -183,6 +186,12 @@ class TerkinConfiguration:
 
         # Absolute path to configuration file.
         filepath = os_path.join(self.CONFIG_PATH, filename)
+
+        # FIXME: Use ``os_path.exists``.
+        try:
+            os.stat(filepath)
+        except OSError:
+            return
 
         log.info('Reading configuration file {}'.format(filepath))
         try:
