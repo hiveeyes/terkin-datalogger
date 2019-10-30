@@ -4,6 +4,7 @@
 # License: GNU General Public License, Version 3
 import time
 import binascii
+import socket
 from terkin import logging
 
 log = logging.getLogger(__name__)
