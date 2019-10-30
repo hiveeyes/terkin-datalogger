@@ -39,6 +39,11 @@ Development
 - Adjust sandbox infrastructure for Pycom MicroPython 1.11
 - Fix import path of ``onewire`` module
 - Fix weird error when freezing modules
+- Add LoPy4 support in Bootloader. Thanks, @poesel.
+- Add auto docstrings with pyment. Thanks, @poesel.
+- Large refactoring.
+    - Get rid of the "hiveeyes" module namespace.
+    - Rework the "sensors.system" configuration section.
 
 
 2019-08-19 0.6.0

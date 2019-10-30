@@ -154,27 +154,60 @@ sensors = {
     # Whether to prettify sensor log output.
     'prettify_log': True,
 
-    'system': {
+    'system': [
 
-        # Adjust voltage divider resistor values matching the board.
-        #
-        # See also
-        # - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
-        # - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
-        # - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
-        #
-        # As a reference (all readings using 6dB attenuation unless otherwise noted):
-        #
-        # - Pycom Expansion board v3.0: 115 kΩ / 56 kΩ
-        # - Pycom Expansion board v3.1: 1 MΩ / 1 MΩ
-        # - Pycom Expansion board v3.2: 1 MΩ / 1 MΩ
-        # - BOB-HAT-V5: 1 MΩ / 470 kΩ or 220 kΩ
-        # - BOB-SHIELD: 10 MΩ / 2 MΩ
-        # - Air Quality monitor: 100kΩ / 47 kΩ, measured with 2.5dB attenuation
+        {
+            # Sensor which reports free system memory.
+            'type': 'system.memfree',
+        },
+        {
+            # Sensor which reports system temperature.
+            'type': 'system.temperature',
+        },
+        {
+            # Sensor which reports system uptime metrics.
+            'type': 'system.uptime',
+        },
+        {
+            # Sensor which reports system WiFi metrics.
+            'type': 'system.wifi',
+        },
+        {
+            # Settings for button events, e.g. through ESP32 touch pads.
+            'type': 'system.touch-buttons',
 
-        # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
-        'vcc': {
+            # Enable/disable sensor.
+            'enabled': False,
+        },
 
+        {
+            # Sensor which reports battery voltage.
+
+            # Adjust voltage divider resistor values matching the board.
+            #
+            # See also
+            # - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
+            # - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+            # - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
+            #
+            # As a reference (all readings using 6dB attenuation unless otherwise noted):
+            #
+            # - Pycom Expansion board v3.0: 115 kΩ / 56 kΩ
+            # - Pycom Expansion board v3.1: 1 MΩ / 1 MΩ
+            # - Pycom Expansion board v3.2: 1 MΩ / 1 MΩ
+            # - BOB-HAT-V5: 1 MΩ / 470 kΩ or 220 kΩ
+            # - BOB-SHIELD: 10 MΩ / 2 MΩ
+            # - Air Quality monitor: 100kΩ / 47 kΩ, measured with 2.5dB attenuation
+
+            # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
+
+            # The sensor type identifier.
+            'type': 'system.battery-voltage',
+
+            # Enable/disable sensor.
+            'enabled': True,
+
+            # On which Pin to schnuckle this.
             'pin': 'P16',
 
             # Main resistor value (R1).
@@ -182,13 +215,11 @@ sensors = {
 
             # Resistor between input pin and ground (R2).
             'resistor_r2': 1000,
+
         },
 
-        # Settings for button events, e.g. through touch pads.
-        'buttons': {
-            'enabled': False,
-        },
-    },
+    ],
+
     'environment': [
         {
             'id': 'scale-1',

@@ -18,12 +18,14 @@ platform_info = get_platform_info()
 #log.setLevel(logging.DEBUG)
 
 
-class SystemMemoryFree:
-    """Read free memory in bytes."""
+class AbstractSystemSensor:
 
-    def enabled(self):
-        """ """
-        return True
+    def __init__(self, settings):
+        self.settings = settings
+
+
+class SystemMemoryFree(AbstractSystemSensor):
+    """Read free memory in bytes."""
 
     def read(self):
         """ """
@@ -32,8 +34,9 @@ class SystemMemoryFree:
         return {'system.memfree': value}
 
 
-class SystemTemperature:
-    """Read the internal temperature of the MCU.
+class SystemTemperature(AbstractSystemSensor):
+    """
+    Read the internal temperature of the MCU.
     
     - https://docs.micropython.org/en/latest/esp32/quickref.html#general-board-control
     - https://github.com/micropython/micropython-esp32/issues/33
@@ -42,17 +45,14 @@ class SystemTemperature:
     - https://github.com/espressif/esp-idf/issues/146
     - https://forum.pycom.io/topic/2208/new-firmware-release-1-10-2-b1/4
 
-
     """
-
-    def enabled(self):
-        """ """
-        import machine
-        return hasattr(machine, 'temperature')
 
     def read(self):
         """ """
         import machine
+
+        if not hasattr(machine, 'temperature'):
+            return
 
         rawvalue = machine.temperature()
 
@@ -68,8 +68,9 @@ class SystemTemperature:
         return reading
 
 
-class SystemBatteryLevel:
-    """Read the battery level by sampling the ADC on a pin connected
+class SystemBatteryLevel(AbstractSystemSensor):
+    """
+    Read the battery level by sampling the ADC on a pin connected
     to a voltage divider. As the Pycom expansion board is using
     Pin 16, this is also used on other boards as kind of a convention.
     
@@ -104,10 +105,12 @@ class SystemBatteryLevel:
     # How many times to sample the ADC for making a reading.
     adc_sample_count = const(1000)
 
-    def __init__(self):
+    def __init__(self, settings):
         """
         Initialized ADC unit.
         """
+
+        super().__init__(settings)
 
         # ADC Pin to sample from.
         self.pin = None
@@ -121,23 +124,20 @@ class SystemBatteryLevel:
         # Reference to platform ADC object.
         self.adc = None
 
-    def enabled(self):
-        """ """
-        return True
+        self.setup()
 
-    def setup(self, settings):
+    def setup(self):
         """
 
         :param settings: 
 
         """
 
-        if settings.get('sensors.system.vcc') is None:
-            return False
+        print('SystemVoltage settings:', self.settings)
 
-        self.pin = settings.get('sensors.system.vcc.pin')
-        self.resistor_r1 = settings.get('sensors.system.vcc.resistor_r1')
-        self.resistor_r2 = settings.get('sensors.system.vcc.resistor_r2')
+        self.pin = self.settings.get('pin')
+        self.resistor_r1 = self.settings.get('resistor_r1')
+        self.resistor_r2 = self.settings.get('resistor_r2')
 
         assert type(self.pin) is str, 'VCC Error: Voltage divider ADC pin invalid'
         assert type(self.resistor_r1) is int, 'VCC Error: Voltage divider resistor value "resistor_r1" invalid'
@@ -225,19 +225,13 @@ class SystemBatteryLevel:
         self.adc.deinit()
 
 
-class SystemUptime:
+class SystemUptime(AbstractSystemSensor):
     """
-
-
-    :returns: https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
-
+    Report system uptime.
+    https://docs.pycom.io/firmwareapi/micropython/utime.html#utimeticksms
     """
 
     start_time = time.time()
-
-    def enabled(self):
-        """ """
-        return True
 
     def read(self):
         """ """
@@ -253,17 +247,17 @@ class SystemUptime:
 
 
 class SystemHallSensor:
-    """- https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
+    """
+    - https://forum.pycom.io/topic/3537/internal-hall-sensor-question/2
     - https://github.com/micropython/micropython-esp32/pull/211
     - https://www.esp32.com/viewtopic.php?t=481
-
-
     """
     pass
 
 
 class SystemMemoryPeeker:
-    """``machine.mem32[]``
+    """
+    ``machine.mem32[]``
     
     - https://github.com/micropython/micropython-esp32/pull/192#issuecomment-334631994
 
@@ -273,14 +267,14 @@ class SystemMemoryPeeker:
 
 
 class ADC2:
-    """::
+    """
+    ::
     
         adc = machine.ADC(machine.Pin(35))
         adc.atten(machine.ADC.ATTN_11DB)
     
     - https://github.com/micropython/micropython-esp32/issues/33
     - https://www.esp32.com/viewtopic.php?t=955
-
 
     """
     pass

@@ -59,7 +59,7 @@ create-source-archives: prepare-release
 	@mkdir -p $(work_dir)
 
 	@cp -r dist-packages lib boot.py main.py settings.example*.py $(work_dir)
-	@cp -r hiveeyes terkin $(work_dir)/lib
+	@cp -r terkin $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)

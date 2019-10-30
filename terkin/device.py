@@ -318,7 +318,8 @@ class TerkinDevice:
         """We don't use Bluetooth yet."""
 
         if self.application_info.platform_info.vendor == MicroPythonPlatform.Vanilla:
-            log.warning('FIXME: Skip touching Bluetooth on vanilla MicroPython platforms')
+            log.warning("FIXME: Skip touching Bluetooth on vanilla MicroPython "
+                        "platforms as we don't use Bluetooth yet")
             return
 
         log.info('Turning off Bluetooth')

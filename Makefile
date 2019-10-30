@@ -136,7 +136,6 @@ mpy-compile: check-mpy-version check-mpy-target
 	fi
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
-	@$(MAKE) mpy-cross what="--out $(mpy_path)/hiveeyes hiveeyes"
 
 	@echo "$(INFO) Size of $(mpy_path):"
 	@du -sch $(mpy_path)
@@ -167,7 +166,7 @@ pyboard-install: check-mpy-version check-mpy-target
 	@$(MAKE) mpy-compile
 
 	# Inactive
-	@#rsync -auv dist-packages lib-mpy hiveeyes terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+	@#rsync -auv dist-packages lib-mpy terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/mboot.py lib/mininet.py /Volumes/PYBFLASH/lib; \

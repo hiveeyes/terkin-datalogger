@@ -32,8 +32,8 @@ def main():
     global bootloader
     global datalogger
     print('[main.py] INFO: Loading modules')
-    from hiveeyes.datalogger import HiveeyesDatalogger
-    datalogger = HiveeyesDatalogger(settings, platform_info=bootloader.platform_info)
+    from terkin.datalogger import TerkinDatalogger
+    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
     datalogger.setup()
     datalogger.start()
 

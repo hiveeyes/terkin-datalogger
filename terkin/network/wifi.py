@@ -58,7 +58,7 @@ class WiFiManager:
         try:
             import _thread
             _thread.start_new_thread(self.stay_connected, ())
-        except ImportError:
+        except:
             self.connect_once()
 
     def start_interface(self):
@@ -532,14 +532,16 @@ class WiFiManager:
 
 
 class WiFiException(Exception):
-    """ """
     pass
 
 
 class SystemWiFiMetrics:
-    """ """
+    """
+    Runtime information from the WiFi bearer.
+    """
 
-    def __init__(self, station):
+    def __init__(self, settings, station):
+        self.settings = settings
         self.station = station
 
     def read(self):
@@ -548,9 +550,8 @@ class SystemWiFiMetrics:
         platform_info = get_platform_info()
 
         if platform_info.vendor == MicroPythonPlatform.Vanilla:
-            stats = {
-                'system.wifi.channel': self.station.config('channel'),
-            }
+            stats = {}
+            stats['system.wifi.channel'] = self.station.config('channel')
 
             try:
                 stats['system.wifi.rssi'] = self.station.status('rssi')

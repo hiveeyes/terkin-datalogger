@@ -12,6 +12,9 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
+from terkin.drivers.bme280 import BME280Sensor
+from terkin.drivers.ds18x20 import DS18X20Sensor
+from terkin.drivers.hx711 import HX711Sensor
 from terkin.util import dformat, gc_disabled, ddformat, GenericChronometer
 
 log = logging.getLogger(__name__)
@@ -59,20 +62,24 @@ class TerkinDatalogger:
         # Fulfill singleton factory.
         TerkinDatalogger.__instance__ = self
 
+        # Signal startup with first available timestamp.
+        log.info('Starting Terkin datalogger')
+
         # Obtain configuration settings.
         self.settings = TerkinConfiguration()
         self.settings.add(settings)
         self.settings.add_user_file()
-
-        self.application_info = ApplicationInfo(
-            name=self.name, version=self.version, settings=self.settings,
-            application=self, platform_info=platform_info)
 
         # Configure logging.
         logging_enabled = self.settings.get('main.logging.enabled', False)
         if not logging_enabled:
             log.info('Disabling logging to save bytes')
             logging.disable_logging()
+
+        # Initialize ApplicationInfo object.
+        self.application_info = ApplicationInfo(
+            name=self.name, version=self.version, settings=self.settings,
+            application=self, platform_info=platform_info)
 
         # Initialize transient storage.
         self.storage = TransientStorage()
@@ -141,13 +148,6 @@ class TerkinDatalogger:
         log_configuration = self.settings.get('main.logging.configuration', False)
         if log_configuration:
             self.settings.dump()
-
-        # Initialize buttons / touch pads.
-        buttons_enabled = self.settings.get('sensors.system.buttons.enabled', False)
-        if buttons_enabled:
-            from terkin.sensor.button import ButtonManager
-            self.button_manager = ButtonManager()
-            self.start_buttons()
 
         # Disable this if you don't want serial access.
         #self.device.enable_serial()
@@ -299,38 +299,136 @@ class TerkinDatalogger:
         return sleep_time
 
     def register_sensors(self):
-        """Add system sensors."""
+        """
+        Configure and register sensor objects.
+        """
 
-        log.info('Registering system sensors')
+        # Add sensors.
+        log.info('Registering sensors')
+        sensor_infos = []
 
-        system_sensors = [
-            SystemMemoryFree,
-            SystemTemperature,
-            SystemBatteryLevel,
-            SystemUptime,
-        ]
+        # Get list of system sensors from configuration settings.
+        sensor_infos += self.settings.get('sensors.system', [])
 
-        for sensor_factory in system_sensors:
-            sensor_name = sensor_factory.__name__
+        # Get list of environmental sensors from configuration settings.
+        sensor_infos += self.settings.get('sensors.environment', [])
+
+        # Backward compatibility for environmental sensors.
+        if sensor_infos is None:
+            sensor_infos += self.settings.get('sensors.registry', {}).values() or []
+
+        # Scan sensor definitions, create and register sensor objects.
+        for sensor_info in sensor_infos:
+
+            sensor_type = sensor_info.get('type', 'unknown').lower()
+            sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
+            description = sensor_info.get('description')
+
+            if 'bus' in sensor_info:
+                sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info['bus'])
+                bus_name = sensor_bus.name
+            else:
+                sensor_bus = None
+                bus_name = None
+
+            if 'address' in sensor_info:
+                sensor_address = hex(sensor_info.get('address'))
+            else:
+                sensor_address = None
+
+            message = 'Setting up sensor with with id={} and type={} on bus={} with address={} ' \
+                      'described as "{}"'.format(sensor_id, sensor_type, bus_name, sensor_address, description)
+            log.info(message)
+
+            # Skip sensor if disabled in configuration.
+            if sensor_info.get('enabled') is False:
+                log.info('Sensor with id={} is disabled, skipping registration'.format(sensor_id))
+                continue
+
             try:
-                sensor = sensor_factory()
-                if not sensor.enabled():
-                    log.info('Sensor %s not enabled, skipping', sensor_name)
-                    continue
-                if hasattr(sensor, 'setup') and callable(sensor.setup):
-                    sensor.setup(self.settings)
-                self.sensor_manager.register_sensor(sensor)
-            except Exception as ex:
-                log.exc(ex, 'Registering system sensor "%s" failed', sensor_name)
 
-        # Add WiFi metrics.
-        try:
-            self.sensor_manager.register_sensor(SystemWiFiMetrics(self.device.networking.wifi_manager.station))
-        except Exception as ex:
-            log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
+                # Sensor reporting about free system memory.
+                if sensor_type == 'system.memfree':
+                    sensor_object = SystemMemoryFree(sensor_info)
+
+                # Sensor which reports system temperature.
+                elif sensor_type == 'system.temperature':
+                    sensor_object = SystemTemperature(sensor_info)
+
+                # Sensor which reports battery voltage.
+                elif sensor_type == 'system.battery-voltage':
+                    sensor_object = SystemBatteryLevel(sensor_info)
+
+                # Sensor which reports system uptime metrics.
+                elif sensor_type == 'system.uptime':
+                    sensor_object = SystemUptime(sensor_info)
+
+                # Sensor which reports WiFi metrics.
+                elif sensor_type == 'system.wifi':
+                    try:
+                        sensor_object = SystemWiFiMetrics(sensor_info, self.device.networking.wifi_manager.station)
+                    except Exception as ex:
+                        log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
+                        continue
+
+                # Initialize buttons / touch pads.
+                elif sensor_type == 'system.touch-buttons':
+                    from terkin.sensor.button import ButtonManager
+                    self.button_manager = ButtonManager()
+                    self.start_buttons()
+
+                # Setup and register HX711 sensors.
+                elif sensor_type == 'hx711':
+                    sensor_object = HX711Sensor(settings=sensor_info)
+                    sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
+                    sensor_object.register_pin('dout', sensor_info['pin_dout'])
+                    sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
+                    sensor_object.register_parameter('scale', sensor_info['scale'])
+                    sensor_object.register_parameter('offset', sensor_info['offset'])
+                    sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
+
+                    # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
+                    # hx711_sensor.select_driver('gerber')
+                    sensor_object.select_driver('heisenberg')
+
+                    # Start sensor.
+                    sensor_object.start()
+
+                # Setup and register DS18X20 sensors.
+                elif sensor_type == 'ds18b20':
+                    sensor_object = DS18X20Sensor(settings=sensor_info)
+                    sensor_object.acquire_bus(sensor_bus)
+
+                    # Start sensor.
+                    sensor_object.start()
+
+                # Setup and register BME280 sensors.
+                elif sensor_type == 'bme280':
+
+                    sensor_object = BME280Sensor(settings=sensor_info)
+                    if 'address' in sensor_info:
+                        sensor_object.set_address(sensor_info['address'])
+                    sensor_object.acquire_bus(sensor_bus)
+
+                    # Start sensor.
+                    sensor_object.start()
+
+                else:
+                    log.warning('Sensor with id={} has unknown type, skipping registration. '
+                                'Sensor settings:\n{}'.format(sensor_id, sensor_info))
+                    continue
+
+                # Register sensor object with sensor manager.
+                self.sensor_manager.register_sensor(sensor_object)
+
+            except Exception as ex:
+                log.exc(ex, 'Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+
+            # Clean up memory after creating each sensor object.
+            #self.device.run_gc()
 
     def read_sensors(self):
-        """Read sensors"""
+        """Read measurements from all sensor objects"""
 
         # Collect observations.
         data = {}
@@ -371,7 +469,8 @@ class TerkinDatalogger:
             # Feed the watchdog.
             self.device.watchdog.feed()
 
-            self.device.run_gc()
+            # Clean up memory after reading each sensor object.
+            #self.device.run_gc()
 
         # Debugging: Print sensor data before running telemetry.
         prettify_log = self.settings.get('sensors.prettify_log', False)
@@ -432,7 +531,9 @@ class TerkinDatalogger:
         return success
 
     def start_buttons(self):
-        """ """
+        """
+        Configure ESP32 touchpads.
+        """
 
         # RGB-LED: 2
         # POWER-ENABLE: 3

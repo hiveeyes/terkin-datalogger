@@ -5,6 +5,3 @@ rsync ./lib /flash/lib
 
 mkdir /flash/lib/terkin
 rsync terkin /flash/lib/terkin
-
-mkdir /flash/lib/hiveeyes
-rsync hiveeyes /flash/lib/hiveeyes

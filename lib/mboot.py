@@ -58,12 +58,12 @@ class MicroPythonBootloader:
         self.platform_info = PlatformInfo()
 
     def extend_syspath(self):
-        """Extend Python module search path.
+        """
+        Extend Python module search path.
+
         Dependency modules are shipped through the "dist-packages" folder.
         Please populate this folder appropriately as shown above before
         expecting anything to work.
-
-
         """
         import sys
 
@@ -82,19 +82,19 @@ class MicroPythonBootloader:
         # Extend by all paths required for running the sandboxed firmware.
         if '/flash' in sys.path:
             sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
-            sys.path.extend(['/flash/dist-packages', '/flash/terkin', '/flash/hiveeyes'])
+            sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
         else:
             sys.path[0:0] = ['/{}'.format(bytecode_path)]
-            sys.path.extend(['/dist-packages', '/terkin', '/hiveeyes'])
+            sys.path.extend(['/dist-packages', '/terkin'])
 
         """
         # Experiments.
-        sys.path[0:0] = ['/flash/terkin', '/flash/hiveeyes']
+        sys.path[0:0] = ['/flash/terkin']
         #sys.path[0:0] = ['/flash/lib-mpy']
         sys.path.extend(['dist-packages2'])
-        #sys.path.extend(['dist-packages2', 'terkin', 'hiveeyes'])
-        #sys.path.extend(['dist-packages', 'terkin', 'hiveeyes'])
-        #sys.path.extend(['terkin', 'hiveeyes'])
+        #sys.path.extend(['dist-packages2', 'terkin'])
+        #sys.path.extend(['dist-packages', 'terkin'])
+        #sys.path.extend(['terkin'])
         """
 
         print('[mboot]   INFO: Python module search path is:', sys.path)

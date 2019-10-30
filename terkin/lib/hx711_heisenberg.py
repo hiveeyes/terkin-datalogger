@@ -32,7 +32,7 @@ Notes
 
 """
 
-from hx711 import HX711
+from terkin.lib.hx711 import HX711
 from terkin import logging
 
 log = logging.getLogger(__name__)

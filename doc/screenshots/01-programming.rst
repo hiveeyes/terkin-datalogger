@@ -12,9 +12,6 @@
     Unable to create /flash/lib/terkin
     took 0.539 seconds
     took 20.476 seconds
-    Unable to create /flash/lib/hiveeyes
-    took 0.538 seconds
-    took 5.379 seconds
     .venv3/bin/rshell --port /dev/cu.usbmodemPye090a1 --buffer-size 2048 --timing --file tools/upload-sketch.rshell
     Using buffer-size of 2048
     Connecting to /dev/cu.usbmodemPye090a1 (buffer-size 2048)...

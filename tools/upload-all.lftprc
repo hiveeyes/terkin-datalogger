@@ -26,7 +26,6 @@ mirror --reverse --delete --use-cache lib
 
 sleep 0.5; cd /flash/lib
 mirror --reverse --delete --use-cache terkin
-mirror --reverse --delete --use-cache hiveeyes
 
 sleep 0.5; cd /flash
 mirror --reverse --delete --use-cache dist-packages

@@ -38,11 +38,11 @@ class HX711Sensor(AbstractSensor):
 
         # Use vanilla HX711 library by David Gerber.
         if name == 'gerber':
-            from hx711 import HX711
+            from terkin.lib.hx711 import HX711
 
         # Use improved HX711 library by Ralf Lindlein.
         elif name == 'heisenberg':
-            from hx711_heisenberg import HX711Heisenberg as HX711
+            from terkin.lib.hx711_heisenberg import HX711Heisenberg as HX711
 
         # Error out for unknown hardware driver.
         else:
