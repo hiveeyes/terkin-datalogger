@@ -5,6 +5,7 @@
 import time
 import machine
 
+from umal import ApplicationInfo
 from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
@@ -15,28 +16,9 @@ from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatt
 from terkin.drivers.bme280 import BME280Sensor
 from terkin.drivers.ds18x20 import DS18X20Sensor
 from terkin.drivers.hx711 import HX711Sensor
-from terkin.util import dformat, gc_disabled, ddformat, GenericChronometer
+from terkin.util import gc_disabled, ddformat, GenericChronometer
 
 log = logging.getLogger(__name__)
-
-
-class ApplicationInfo:
-    """ """
-
-    def __init__(self, name=None, version=None, settings=None, application=None, platform_info=None):
-
-        self.name = name
-        self.version = version
-
-        self.platform_info = platform_info
-
-        self.settings = settings
-        self.application = application
-
-    @property
-    def fullname(self):
-        """ """
-        return '{} {}'.format(self.name, self.version)
 
 
 class TransientStorage:

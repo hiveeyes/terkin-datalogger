@@ -169,7 +169,7 @@ pyboard-install: check-mpy-version check-mpy-target
 	@#rsync -auv dist-packages lib-mpy terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
-		rsync -auv lib/mboot.py lib/mininet.py /Volumes/PYBFLASH/lib; \
+		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
 		rsync -auv lib-mpy-$(MPY_VERSION)-$(MPY_TARGET) /Volumes/PYBFLASH; \
 		rsync -auv boot.py main.py /Volumes/PYBFLASH; \
 		cp settings.pybd.py /Volumes/PYBFLASH/settings.py; \

@@ -11,7 +11,7 @@ set mirror:exclude-regex "\.(py)$|\.(pyc)$|__pycache__"
 set mirror:overwrite true
 
 cd /flash/lib
-mirror --reverse --use-cache --file=lib/mboot.py --file=lib/mininet.py
+mirror --reverse --use-cache --file=lib/umal.py --file=lib/mininet.py
 
 cd /flash
 mirror --reverse --delete --use-cache lib-mpy-1.9.4-pycom

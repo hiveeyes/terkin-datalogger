@@ -89,7 +89,7 @@ create-mpy-archives: prepare-release
 	@mkdir -p $(work_dir)/lib
 
 	@cp -r lib-mpy boot.py main.py settings.example*.py $(work_dir)
-	@cp -r lib/mboot.py lib/mininet.py $(work_dir)/lib
+	@cp -r lib/umal.py lib/mininet.py $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)

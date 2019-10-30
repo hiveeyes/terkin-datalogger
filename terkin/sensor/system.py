@@ -6,7 +6,6 @@ import time
 from machine import enable_irq, disable_irq
 from micropython import const
 
-from mboot import MicroPythonPlatform
 from terkin import logging
 from terkin.util import get_platform_info
 
@@ -163,7 +162,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # read samples
-        if platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.adc.init()
             adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
             irq_state = disable_irq()
@@ -187,7 +186,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
             adc_variance += (sample - adc_mean) ** 2
         adc_variance /= (self.adc_sample_count - 1)
 
-        if platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             raw_voltage = adc_channel.value_to_voltage(4095)
             mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
         else:
@@ -203,7 +202,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
         resistor_sum = self.resistor_r1 + self.resistor_r2
-        if platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
         else:
             # FIXME: Make this work for vanilla ESP32.
@@ -211,7 +210,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.
-        if platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             adc_channel.deinit()
 
         log.debug('Battery level: {}'.format(voltage_volt))

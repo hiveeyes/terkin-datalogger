@@ -3,7 +3,6 @@
 # License: GNU General Public License, Version 3
 import machine
 
-from mboot import MicroPythonPlatform
 from terkin import logging
 from terkin.util import get_platform_info
 
@@ -12,7 +11,8 @@ platform_info = get_platform_info()
 
 
 class MachineResetCause:
-    """Machine reset cause and wakeup reason definitions.
+    """
+    Machine reset cause and wakeup reason definitions.
     
     Will produce nice log messages like these.
     
@@ -30,49 +30,53 @@ class MachineResetCause:
 
     """
 
-    if platform_info.vendor == MicroPythonPlatform.Pycom:
-        reset_causes = {
-            machine.PWRON_RESET: 'PWRON',
-            machine.HARD_RESET: 'HARD',
-            machine.WDT_RESET: 'WDT',
-            machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
-            machine.SOFT_RESET: 'SOFT',
-            machine.BROWN_OUT_RESET: 'BROWN_OUT'
-        }
+    reset_cause_candidates = [
+        'PWRON',
+        'HARD',
+        'SOFT',
+        'WDT',
+        'DEEPSLEEP',
+        'BROWN_OUT',
+    ]
 
-        wakeup_reasons = {
-            machine.PIN_WAKE: 'PIN',
-            machine.PWRON_WAKE: 'PWRON',
-            machine.RTC_WAKE: 'RTC',
-            machine.ULP_WAKE: 'ULP',
-            machine.WLAN_WAKE: 'WLAN',
-        }
+    wakeup_reason_candidates = [
+        'PIN',
+        'PWRON',
+        'RTC',
+        'ULP',
+        'WLAN',
+    ]
 
-    else:
-        reset_causes = {
-            machine.PWRON_RESET: 'PWRON',
-            machine.HARD_RESET: 'HARD',
-            machine.WDT_RESET: 'WDT',
-            machine.DEEPSLEEP_RESET: 'DEEPSLEEP',
-            machine.SOFT_RESET: 'SOFT',
-            #machine.BROWN_OUT_RESET: 'BROWN_OUT'
-        }
+    def __init__(self):
+        """
+        Resolve reset cause and wakeup reason symbols
+        and store in dictionary for lookup through
+        ``self.humanize()``.
+        """
 
-        wakeup_reasons = {
-            machine.PIN_WAKE: 'PIN',
-            #machine.PWRON_WAKE: 'PWRON',
-            #machine.RTC_WAKE: 'RTC',
-            machine.ULP_WAKE: 'ULP',
-            machine.WLAN_WAKE: 'WLAN',
-        }
+        self.reset_causes = {}
+        self.wakeup_reasons = {}
 
+        for name in self.reset_cause_candidates:
+            attribute = name + '_RESET'
+            symbol = getattr(machine, attribute, None)
+            if symbol is not None:
+                self.reset_causes[symbol] = name
 
-    @classmethod
-    def humanize(cls):
-        """ """
+        for name in self.wakeup_reason_candidates:
+            attribute = name + '_WAKE'
+            symbol = getattr(machine, attribute, None)
+            if symbol is not None:
+                self.wakeup_reasons[symbol] = name
+
+    def humanize(self):
+        """
+        Yield dictionary containing reset cause and wakeup reason
+        suitable for human consumption through an appropriate log message.
+        """
 
         reset_cause_magic = machine.reset_cause()
-        if platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             wakeup_reason_magic, _ = machine.wake_reason()
         else:
             wakeup_reason_magic = machine.wake_reason()
@@ -80,8 +84,8 @@ class MachineResetCause:
         log.debug('Reset cause: %s', reset_cause_magic)
         log.debug('Wakeup reason: %s', wakeup_reason_magic)
 
-        reset_cause_label = cls.reset_causes.get(reset_cause_magic, 'UNKNOWN')
-        wakeup_reason_label = cls.wakeup_reasons.get(wakeup_reason_magic, 'UNKNOWN')
+        reset_cause_label = self.reset_causes.get(reset_cause_magic, 'UNKNOWN')
+        wakeup_reason_label = self.wakeup_reasons.get(wakeup_reason_magic, 'UNKNOWN')
         status = {
             'reset_cause': {'code': reset_cause_magic, 'message': reset_cause_label},
             'wakeup_reason': {'code': wakeup_reason_magic, 'message': wakeup_reason_label},

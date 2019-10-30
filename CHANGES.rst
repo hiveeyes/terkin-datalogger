@@ -47,6 +47,10 @@ Development
 - Improve configuration module.
     - Reduce convolution of "purge_sensible_settings"
     - Be more graceful when attempting to read json settings
+- Improve multi-platform support
+    - Refactor platform switch and rename first stage bootloader
+      to *Universal MicroPython Application Loader (umal)*
+    - Improve gracefulness for MachineResetCause helper
 
 
 2019-08-19 0.6.0
@@ -176,10 +180,10 @@ Development
 - Parallelize networking subsystem
 - Prepare real "light sleep" (WIP)
 - Attempt to reset WiFi connection if scanning fails
-- Add "mboot", the universal MicroPython bootloader
+- Add ``umal``, the Universal MicroPython Application Loader
 - Reconfigure watchdog when connecting the device using MiniNet
 - Propagate platform information for implementing platform switch conditions
-- Transfer "mboot" bootloader and "mininet" module
+- Transfer ``umal`` bootloader and the ``mininet`` module to the ``lib`` folder
 - Start making Terkin platform-agnostic. Thanks, Markus!
 - Add release archives with frozen modules compatible to Pycom MicroPython
 

@@ -8,7 +8,6 @@ import types
 import os_path
 from copy import deepcopy
 from dotty_dict import dotty
-from mboot import McuFamily, MicroPythonPlatform
 from shutil import copyfileobj
 from terkin import logging
 from terkin.backup import backup_file
@@ -18,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 platform_info = get_platform_info()
-if platform_info.mcu == McuFamily.ESP32 and platform_info.vendor == MicroPythonPlatform.Vanilla:
+if platform_info.mcu == platform_info.MCU.ESP32 and platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
     CONFIG_PATH = '/'
     BACKUP_PATH = '/backup'
 else:

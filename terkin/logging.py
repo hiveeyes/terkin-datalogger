@@ -7,12 +7,11 @@ import utime
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
-from mboot import MicroPythonPlatform
 from terkin.util import GenericChronometer, PycomChronometer, get_platform_info
 
 # Keep track of time since boot.
 platform_info = get_platform_info()
-if platform_info.vendor == MicroPythonPlatform.Pycom:
+if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
     _chrono = PycomChronometer()
 else:
     _chrono = GenericChronometer()

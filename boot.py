@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print('[boot.py] INFO: Python module search path is:', sys.path)
 
     # Extend module search path.
-    print('[boot.py] INFO: Starting "mboot" bootloader')
-    from mboot import MicroPythonBootloader
+    print('[boot.py] INFO: Universal MicroPython Application Loader (umal)')
+    from umal import MicroPythonBootloader
     bootloader = MicroPythonBootloader()
     bootloader.extend_syspath()

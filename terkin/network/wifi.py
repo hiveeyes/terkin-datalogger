@@ -4,24 +4,25 @@
 # License: GNU General Public License, Version 3
 import time
 import machine
-import binascii
 import network
+import binascii
 
-from mboot import MicroPythonPlatform
 from terkin import logging
-from terkin.util import format_mac_address, backoff_time, Stopwatch, get_platform_info
+from terkin.util import get_platform_info, format_mac_address, backoff_time, Stopwatch
 
 log = logging.getLogger(__name__)
 
+platform_info = get_platform_info()
+
 
 class WiFiManager:
-    """ """
+    """
+    Manages all things relevant to the WiFi connection.
+    """
 
     def __init__(self, manager, settings):
         self.manager = manager
         self.settings = settings
-
-        self.platform_info = self.manager.device.application_info.platform_info
 
         # WIFI settings.
         self.phy = self.settings.get('networking.wifi.phy', {})
@@ -72,7 +73,7 @@ class WiFiManager:
 
         """
 
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.station = network.WLAN()
         else:
             log.info('WiFi STA: Will exclusively use STA mode on this platform. AP mode not implemented yet.')
@@ -95,7 +96,7 @@ class WiFiManager:
         # Setup network interface.
         log.info("WiFi: Starting interface")
 
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.configure_antenna()
             self.station.mode(network.WLAN.STA_AP)
             self.station.init()
@@ -268,7 +269,7 @@ class WiFiManager:
         log.info('WiFi STA: Preparing connection to network "{}"'.format(network_name))
 
         auth_mode = None
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             log.info('WiFi STA: Getting auth mode')
             auth_mode = self.get_auth_mode(network_name)
             log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
@@ -295,7 +296,7 @@ class WiFiManager:
         network_timeout = network.get('timeout', 15.0)
 
         # Connect to WiFi station.
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name,
                                                                                                network_timeout))
             self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
@@ -382,7 +383,7 @@ class WiFiManager:
 
     def get_ssid(self):
         """ """
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             return self.station.ssid()
         else:
             return self.station.config('essid')
@@ -497,7 +498,7 @@ class WiFiManager:
         """ """
 
         # Get MAC address.
-        if self.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             mac_address = self.station.mac()
         else:
             mac_address = self.station.config('mac')
@@ -547,9 +548,7 @@ class SystemWiFiMetrics:
     def read(self):
         """ """
 
-        platform_info = get_platform_info()
-
-        if platform_info.vendor == MicroPythonPlatform.Vanilla:
+        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             stats = {}
             stats['system.wifi.channel'] = self.station.config('channel')
 

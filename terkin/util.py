@@ -8,7 +8,7 @@ import uio
 import copy
 import collections
 
-from mboot import MicroPythonPlatform
+from umal import PlatformInfo
 
 
 def to_base64(bytes):
@@ -288,7 +288,7 @@ def get_last_stacktrace():
 def random_from_crypto():
     """ """
     platform_info = get_platform_info()
-    if platform_info.vendor == MicroPythonPlatform.Pycom:
+    if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
         # https://forum.pycom.io/topic/1378/solved-how-to-get-random-number-in-a-range/6
         # https://github.com/micropython/micropython-lib/blob/master/random/random.py
         import crypto
@@ -297,6 +297,7 @@ def random_from_crypto():
         import urandom
         r = urandom.getrandbits(32)
     return ((r[0] << 24) + (r[1] << 16) + (r[2] << 8) + r[3]) / 4294967295.0
+
 
 def randint(a, b):
     """
@@ -397,7 +398,7 @@ class Eggtimer:
         return self.stopwatch.elapsed() >= self.duration
 
 
-def get_platform_info():
+def get_platform_info() -> PlatformInfo:
     """ """
     from __main__ import bootloader
     return bootloader.platform_info

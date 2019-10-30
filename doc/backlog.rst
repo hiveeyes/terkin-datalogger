@@ -13,8 +13,6 @@ Prio 0.7
 - Sensor-Mapping for @clemens, @wtf and @mko
 - Rename "busses" to "buses"
 - Use WLAN power_save, see https://docs.pycom.io/firmwareapi/pycom/network/wlan/
-- Rename "mboot.py", this name is already taken by the native MicroPython bootloader
-  https://github.com/micropython/micropython/blob/master/ports/stm32/mboot/README.md
 - Investigate if re-reading ``settings.py`` works
   https://forum.pycom.io/topic/5296/reread-setting-py-while-the-program-is-running
 - Build custom firmware

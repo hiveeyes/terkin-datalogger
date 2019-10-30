@@ -8,7 +8,7 @@ import time
 
 import machine
 
-from mboot import MicroPythonPlatform
+from umal import ApplicationInfo
 from terkin import logging
 from terkin.telemetry import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
@@ -27,9 +27,11 @@ class DeviceStatus:
 class TerkinDevice:
     """ """
 
-    def __init__(self, application_info):
+    def __init__(self, application_info: ApplicationInfo):
 
         self.application_info = application_info
+        self.platform_info = application_info.platform_info
+
         self.name = application_info.name
         self.version = application_info.version
         self.settings = application_info.settings
@@ -125,7 +127,7 @@ class TerkinDevice:
 
     def configure_rgb_led(self):
         """https://docs.pycom.io/tutorials/all/rgbled.html"""
-        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             import pycom
             # Enable or disable heartbeat.
             rgb_led_heartbeat = self.settings.get('main.rgb_led.heartbeat', True)
@@ -142,7 +144,7 @@ class TerkinDevice:
         :param count:  (Default value = 1)
 
         """
-        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             import pycom
             terkin_blink_pattern = self.settings.get('main.rgb_led.terkin', False)
             if terkin_blink_pattern:
@@ -241,7 +243,7 @@ class TerkinDevice:
         add('=' * len(title))
 
         # Machine runtime information.
-        if self.application_info.platform_info.vendor == MicroPythonPlatform.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             frequency = machine.freq() / 1000000
         else:
             frequency = machine.freq()[0] / 1000000
@@ -317,7 +319,7 @@ class TerkinDevice:
     def power_off_bluetooth(self):
         """We don't use Bluetooth yet."""
 
-        if self.application_info.platform_info.vendor == MicroPythonPlatform.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             log.warning("FIXME: Skip touching Bluetooth on vanilla MicroPython "
                         "platforms as we don't use Bluetooth yet")
             return
@@ -383,9 +385,9 @@ class TerkinDevice:
         """ """
         try:
             from terkin.pycom import MachineResetCause
-            log.info('Reset cause and wakeup reason: %s', MachineResetCause.humanize())
-        except:
-            log.warning('Could not determine reset cause')
+            log.info('Reset cause and wakeup reason: %s', MachineResetCause().humanize())
+        except Exception as ex:
+            log.exc(ex, 'Could not determine reset cause and wakeup reason')
 
     def set_wakeup_mode(self):
         """ """
