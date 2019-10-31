@@ -52,6 +52,7 @@ Development
     - Refactor platform switch and rename first stage bootloader
       to *Universal MicroPython Application Loader (umal)*
     - Improve gracefulness for MachineResetCause helper
+- Improve WiFi robustness on first connection attempt
 
 
 2019-08-19 0.6.0

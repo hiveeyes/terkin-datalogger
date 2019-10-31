@@ -7,6 +7,7 @@ import machine
 import network
 import binascii
 
+from copy import deepcopy
 from terkin import logging
 from terkin.util import get_platform_info, format_mac_address, backoff_time, Stopwatch
 
@@ -57,10 +58,17 @@ class WiFiManager:
         self.manager.device.run_gc()
 
         try:
+            s = deepcopy(self.stations[0])
+            s['timeout'] = 1
+            self.connect_station(s)
+        except WiFiException:
+            self.connect_once()
+
+        try:
             import _thread
             _thread.start_new_thread(self.stay_connected, ())
         except:
-            self.connect_once()
+            pass
 
     def start_interface(self):
         """Genuine MicroPython:
