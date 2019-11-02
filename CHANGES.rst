@@ -62,6 +62,7 @@ Development
 - Disable web server by default.
 - Make use of LoRaWAN state restoration from NVRAM. Thanks, @thiasB!
 - Only restore LoRa state from NVRAM on wake from deep sleep. Thanks, @thiasB!
+- Refactor BLE encoding/decoding utility functions
 
 
 2019-08-19 0.6.0

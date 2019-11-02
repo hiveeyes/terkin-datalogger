@@ -5,9 +5,8 @@
 import utime
 import machine
 import ubinascii
-from ustruct import pack, unpack
 from network import Bluetooth
-from terkin.network.ble.util import BluetoothUuid
+from terkin.network.ble.util import BluetoothUuid, sint16, uint16, encode_temperature_2a1c
 
 
 class BluetoothApi:
@@ -328,95 +327,6 @@ class BluetoothApi:
         # of user data between a Server and a Client.
         # https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.user_data.xml
         #user_data = self.bt.service(uuid=0x0123456789ABCDEF, isprimary=True, nbr_chars=1, start=True)
-
-
-def float64(value):
-    """
-
-    :param value: 
-
-    """
-    # https://arduino.stackexchange.com/questions/30502/writing-a-float-to-a-ble-characteristic-what-data-format
-    # https://stackoverflow.com/questions/36655172/how-to-read-a-ble-characteristic-float-in-swift
-    # Remark: Android-nRF-Connect does not decode float64 values out of the box.
-    return pack('<d', value)
-
-
-def sint16(value):
-    """
-
-    :param value: 
-
-    """
-    # https://github.com/ukBaz/python-bluezero/blob/master/examples/cpu_temperature.py#L28-L29
-    return pack('<h', int(value))
-    return int(value * 10).to_bytes(2, 'little', True)
-
-
-def uint16(value):
-    """
-
-    :param value: 
-
-    """
-    return pack('<H', int(value))
-    return int(value * 100).to_bytes(2, 'little', True)
-
-
-def encode_temperature_2a1c(value):
-    """Temperature Measurement
-    UUID: 2A1C
-    Format: Variable length structure
-    Value Format: FLOAT (IEEE-11073 32-bit FLOAT)
-    Abstract: The Temperature Measurement characteristic is a variable length structure
-    containing a Flags field, a Temperature Measurement Value field and, based upon the
-    contents of the Flags field, optionally a Time Stamp field and/or a Temperature Type field.
-    https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.characteristic.temperature_measurement.xml
-    
-    IEEE-11073
-    ==========
-    - https://learn.adafruit.com/introducing-the-adafruit-bluefruit-le-uart-friend/ble-gatt
-    - https://devzone.nordicsemi.com/f/nordic-q-a/28727/32-bit-ieee-11073-float-data-type-parser
-    - https://stackoverflow.com/questions/11564270/how-to-convert-ieee-11073-16-bit-sfloat-to-simple-float-in-java/14707658#14707658
-    - http://www.java2s.com/example/java/language-basics/reads-a-decimal-value-as-a-ieee11073-16bits-float-from-bytebuffer.html
-    - https://stackoverflow.com/questions/28899195/converting-two-bytes-to-an-ieee-11073-16-bit-sfloat-in-c-sharp/32950340#32950340
-
-    :param value: 
-
-    """
-    return bytearray([0b00000000]) + encode_ieee11073(value, precision=5)
-
-
-def encode_ieee11073(value, precision=2):
-    """Binary representation of float value as IEEE-11073:20601 32-bit FLOAT for
-    implementing the BLE GATT "Temperature Measurement 2A1C" characteristic.
-    
-    -- https://community.hiveeyes.org/t/convenient-ble-gatts-ess-with-micropython/2413/3
-    
-    print('Adding Temperature Measurement')
-    payload = bytearray([0b00000000]) + float_ieee11073(42.42)
-    service.characteristic(uuid=0x2A1C, value=payload)
-
-    :param value: 
-    :param precision:  (Default value = 2)
-
-    >>> ubinascii.hexlify(encode_ieee11073(42.42))
-    b'921000fe'
-    """
-
-    # FIXME: Sanity checks dearly required.
-    return int(value * (10 ** precision)).to_bytes(3, 'little', True) + pack('<b', -precision)
-
-
-def decode_ieee11073(payload):
-    """
-
-    :param payload: 
-
-    >>> decode_ieee11073(encode_ieee11073(167.123456789, precision=5))
-    167.1234
-    """
-    return int.from_bytes(payload[:3], 'little') / 10 ** -unpack('<b', payload[3:])[0]
 
 
 def get_device_id():
