@@ -7,8 +7,7 @@ import machine
 import ubinascii
 from ustruct import pack, unpack
 from network import Bluetooth
-
-#print(dir(Bluetooth))
+from terkin.network.ble.util import BluetoothUuid
 
 
 class BluetoothApi:
@@ -273,7 +272,7 @@ class BluetoothApi:
         # UUID: 2A3D
         # A generic UTF8 string which may be used in Services requiring strings.
         # https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.characteristic.string.xml
-        srv1 = self.bt.service(uuid=uuid2bytes('15ECCA29-0B6E-40B3-9181-BE9509B53200'), isprimary=True, nbr_chars=2, start=True)
+        srv1 = self.bt.service(uuid=BluetoothUuid.to_bytes_le('15ECCA29-0B6E-40B3-9181-BE9509B53200'), isprimary=True, nbr_chars=2, start=True)
         #generic_attribute = self.bt.service(uuid=0x1800, isprimary=True, nbr_chars=2, start=True)
         #wifi_ssid = generic_attribute.characteristic(uuid=0x2A3D, properties=Bluetooth.PROP_BROADCAST | Bluetooth.PROP_INDICATE | Bluetooth.PROP_NOTIFY | Bluetooth.PROP_READ | Bluetooth.PROP_WRITE, value="default")
         #wifi_ssid = generic_attribute.characteristic(uuid=0x2A3D, properties=Bluetooth.PROP_NOTIFY | Bluetooth.PROP_READ | Bluetooth.PROP_WRITE, value="default")
@@ -329,19 +328,6 @@ class BluetoothApi:
         # of user data between a Server and a Client.
         # https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.user_data.xml
         #user_data = self.bt.service(uuid=0x0123456789ABCDEF, isprimary=True, nbr_chars=1, start=True)
-
-
-def uuid2bytes(uuid):
-    """
-
-    :param uuid: 
-
-    """
-    # https://forum.pycom.io/topic/530/working-with-uuid/2
-    import binascii
-    uuid = uuid.encode().replace(b'-', b'')
-    tmp = binascii.unhexlify(uuid)
-    return bytes(reversed(tmp))
 
 
 def float64(value):

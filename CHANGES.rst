@@ -57,6 +57,8 @@ Development
 - Be graceful if OSError exception object received from
   MQTT publishing has no "errno" attribute.
 - Improve sensor registration mechanics again
+- Improve utility functions to work around the 128-bit UUID byte swap problem.
+  Thanks, @poesel!
 
 
 2019-08-19 0.6.0
