@@ -65,7 +65,7 @@ services = {
             'enabled': True,
         },
         'http': {
-            'enabled': True,
+            'enabled': False,
         },
     },
 }
