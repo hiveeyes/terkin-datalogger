@@ -630,7 +630,11 @@ class MQTTAdapter:
             # Signal connection error in order to reconnect on next submission attempt.
             # [Errno 104] ECONNRESET
             # [Errno 113] ECONNABORTED
-            if ex.errno in [104, 113]:
+            try:
+                if ex.errno in [104, 113]:
+                    self.connected = False
+            except AttributeError:
+                print('Exception has no "errno" attribute', dir(ex))
                 self.connected = False
 
             message = '{}: {}'.format(message, ex)

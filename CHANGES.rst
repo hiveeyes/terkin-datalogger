@@ -54,6 +54,8 @@ Development
     - Improve gracefulness for MachineResetCause helper
 - Improve WiFi robustness on first connection attempt
 - Gracefully handle buses without names. Thanks, @thiasB!
+- Be graceful if OSError exception object received from
+  MQTT publishing has no "errno" attribute.
 
 
 2019-08-19 0.6.0
