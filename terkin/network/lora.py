@@ -5,6 +5,7 @@
 import time
 import binascii
 import socket
+import machine
 from terkin import logging
 
 log = logging.getLogger(__name__)
@@ -42,8 +43,13 @@ class LoRaManager:
         #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
-        # restore LoRa state from NVRAM
-        self.lora.nvram_restore()
+        # restore LoRa state from NVRAM after waking up from DEEPSLEEP. Rejoin otherwise
+        if machine.reset_cause() == machine.DEEPSLEEP_RESET:
+            self.lora.nvram_restore()
+            log.info('[LoRA] LoRaWAN state restored from NVRAM after deep sleep')
+        else:
+            self.lora.nvram_erase()
+            log.info('[LoRA] LoRaWAN state erased from NVRAM to let the device join the network')
 
         # Create LoRaWAN OTAA connection to TTN.
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
@@ -61,8 +67,6 @@ class LoRaManager:
             else:
                 dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
                 self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
-        else:
-            log.info('[LoRA] LoRaWAN state restored from NVRAM. No need to rejoin')
 
     def wait_for_lora_join(self, attempts):
         """
