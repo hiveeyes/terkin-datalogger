@@ -306,12 +306,14 @@ class TerkinDatalogger:
             sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
             description = sensor_info.get('description')
 
+            sensor_bus = None
+            bus_name = None
             if 'bus' in sensor_info:
                 sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info['bus'])
-                bus_name = sensor_bus.name
-            else:
-                sensor_bus = None
-                bus_name = None
+                try:
+                    bus_name = sensor_bus.name
+                except AttributeError:
+                    pass
 
             if 'address' in sensor_info:
                 sensor_address = hex(sensor_info.get('address'))

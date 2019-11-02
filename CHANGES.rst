@@ -53,6 +53,7 @@ Development
       to *Universal MicroPython Application Loader (umal)*
     - Improve gracefulness for MachineResetCause helper
 - Improve WiFi robustness on first connection attempt
+- Gracefully handle buses without names. Thanks, @thiasB!
 
 
 2019-08-19 0.6.0
