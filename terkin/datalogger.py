@@ -306,28 +306,35 @@ class TerkinDatalogger:
             sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
             description = sensor_info.get('description')
 
-            sensor_bus = None
-            bus_name = None
-            if 'bus' in sensor_info:
-                sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info['bus'])
-                try:
-                    bus_name = sensor_bus.name
-                except AttributeError:
-                    pass
+            # Skip sensor if disabled in configuration.
+            if sensor_info.get('enabled') is False:
+                log.info('Sensor with id={} and type={} is disabled, skipping registration'.format(sensor_id, sensor_type))
+                continue
 
+            # Resolve associated bus object.
+            sensor_bus = None
+            sensor_bus_name = None
+            if 'bus' in sensor_info:
+                sensor_info_bus = sensor_info['bus']
+                sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info_bus)
+
+                # Skip sensor if associated bus is disabled in configuration.
+                if sensor_bus is None:
+                    log.info('Bus {} for sensor with id={} and type={} is disabled, '
+                             'skipping registration'.format(sensor_info_bus, sensor_id, sensor_type))
+                    continue
+                sensor_bus_name = sensor_bus.name
+
+            # Human readable sensor address.
             if 'address' in sensor_info:
                 sensor_address = hex(sensor_info.get('address'))
             else:
                 sensor_address = None
 
+            # Report sensor registration to user.
             message = 'Setting up sensor with with id={} and type={} on bus={} with address={} ' \
-                      'described as "{}"'.format(sensor_id, sensor_type, bus_name, sensor_address, description)
+                      'described as "{}"'.format(sensor_id, sensor_type, sensor_bus_name, sensor_address, description)
             log.info(message)
-
-            # Skip sensor if disabled in configuration.
-            if sensor_info.get('enabled') is False:
-                log.info('Sensor with id={} is disabled, skipping registration'.format(sensor_id))
-                continue
 
             try:
 

@@ -56,6 +56,7 @@ Development
 - Gracefully handle buses without names. Thanks, @thiasB!
 - Be graceful if OSError exception object received from
   MQTT publishing has no "errno" attribute.
+- Improve sensor registration mechanics again
 
 
 2019-08-19 0.6.0
