@@ -60,6 +60,8 @@ Development
 - Improve utility functions to work around the 128-bit UUID byte swap problem.
   Thanks, @poesel!
 - Disable web server by default.
+- Make use of LoRaWAN state restoration from NVRAM. Thanks, @thiasB!
+- Only restore LoRa state from NVRAM on wake from deep sleep. Thanks, @thiasB!
 
 
 2019-08-19 0.6.0

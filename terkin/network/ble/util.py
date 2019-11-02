@@ -123,9 +123,8 @@ class BluetoothUuid:
     @staticmethod
     def to_bytes_le(uuid):
         """
-        uuid2bytes
+        Taken from ``uuid2bytes`` from the Pycom user forum. By @jmarcelino.
 
-        Taken from the Pycom user forum. By @jmarcelino.
         https://forum.pycom.io/topic/530/working-with-uuid/2
         """
         import ubinascii
