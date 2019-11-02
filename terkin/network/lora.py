@@ -42,6 +42,9 @@ class LoRaManager:
         #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
         self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
+        # restore LoRa state from NVRAM
+        self.lora.nvram_restore()
+
         # Create LoRaWAN OTAA connection to TTN.
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
         app_key = binascii.unhexlify(self.otaa_settings['application_key'])
@@ -52,11 +55,14 @@ class LoRaManager:
         #self.lora.add_channel(1, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
         #self.lora.add_channel(2, frequency=self.otaa_settings['frequency'], dr_min=0, dr_max=5)
 
-        if self.otaa_settings.get('device_eui') is None:
-            self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
+        if not self.lora.has_joined():
+            if self.otaa_settings.get('device_eui') is None:
+                self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
+            else:
+                dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
+                self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
         else:
-            dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
-            self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
+            log.info('[LoRA] LoRaWAN state restored from NVRAM. No need to rejoin')
 
     def wait_for_lora_join(self, attempts):
         """
@@ -77,6 +83,8 @@ class LoRaManager:
 
         if self.lora_joined:
             log.info('[LoRA] joined...')
+            # TODO: move nvram_save() to after payload send call
+            self.lora.nvram_save()
         else:
             log.info('[LoRa] did not join in %s attempts', attempts)
 
