@@ -59,7 +59,7 @@ class WiFiManager:
 
         try:
             s = deepcopy(self.stations[0])
-            s['timeout'] = 1
+            s['timeout'] = 3
             self.connect_station(s)
         except WiFiException:
             self.connect_once()

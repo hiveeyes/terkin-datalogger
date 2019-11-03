@@ -63,6 +63,8 @@ Development
 - Make use of LoRaWAN state restoration from NVRAM. Thanks, @thiasB!
 - Only restore LoRa state from NVRAM on wake from deep sleep. Thanks, @thiasB!
 - Refactor BLE encoding/decoding utility functions
+- Improve connection to WiFi after starting again
+
 
 
 2019-08-19 0.6.0
