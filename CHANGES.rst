@@ -66,6 +66,11 @@ Development
 - Improve connection to WiFi after starting again
 - Use ``lte.deinit(reset=True)`` for shutting down LTE modem on startup,
   see https://forum.pycom.io/topic/3083/lte-deinit-not-working/2. Thanks, @combaindeft!
+- Speed up shutting down LTE modem on startup by not invoking "detach"
+  as we haven't actually been attached at all, like ``lte.deinit(detach=False, reset=True)``.
+  Thanks @arapostol for https://github.com/pycom/pycom-micropython-sigfox/pull/255/files
+  which made us look at the source code in detail.
+
 
 
 2019-08-19 0.6.0
