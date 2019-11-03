@@ -311,7 +311,7 @@ class TerkinDevice:
 
             log.info('Invoking LTE.deinit()')
             lte = LTE()
-            lte.deinit()
+            lte.deinit(reset=True)
 
         except Exception as ex:
             log.exc(ex, 'Shutting down LTE modem failed')

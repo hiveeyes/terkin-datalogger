@@ -64,7 +64,8 @@ Development
 - Only restore LoRa state from NVRAM on wake from deep sleep. Thanks, @thiasB!
 - Refactor BLE encoding/decoding utility functions
 - Improve connection to WiFi after starting again
-
+- Use ``lte.deinit(reset=True)`` for shutting down LTE modem on startup,
+  see https://forum.pycom.io/topic/3083/lte-deinit-not-working/2. Thanks, @combaindeft!
 
 
 2019-08-19 0.6.0
