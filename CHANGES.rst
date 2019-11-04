@@ -71,6 +71,7 @@ Development
   Thanks @arapostol for https://github.com/pycom/pycom-micropython-sigfox/pull/255/files
   which made us look at the source code in detail.
 - Improve robustness of WiFi manager re. "connectivity after reset" again
+- Improve inline documentation
 
 
 2019-08-19 0.6.0

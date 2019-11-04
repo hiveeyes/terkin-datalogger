@@ -282,19 +282,31 @@ class TerkinDevice:
         self.networking.stop()
 
     def power_off_lte_modem(self):
-        """We don't use LTE yet.
-        
-        https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
-        https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
-
-
         """
+        We don't use LTE yet.
 
-        """
-        import pycom
-        if not pycom.lte_modem_en_on_boot():
-            log.info('Skip turning off LTE modem')
-            return
+        Important
+        =========
+        Once the LTE radio is initialized, it must be de-initialized
+        before going to deepsleep in order to ensure minimum power consumption.
+        This is required due to the LTE radio being powered independently and
+        allowing use cases which require the system to be taken out from
+        deepsleep by an event from the LTE network (data or SMS received for
+        instance).
+
+        Note
+        ====
+        When using the expansion board and the FiPy together, the RTS/CTS
+        jumpers MUST be removed as those pins are being used by the LTE radio.
+        Keeping those jumpers in place will lead to erratic operation and
+        higher current consumption specially while in deepsleep.
+
+        -- https://forum.pycom.io/topic/3090/fipy-current-consumption-analysis/17
+
+        See also
+        ========
+        - https://community.hiveeyes.org/t/lte-modem-des-pycom-fipy-komplett-stilllegen/2161
+        - https://forum.pycom.io/topic/4877/deepsleep-on-batteries/10
         """
 
         log.info('Turning off LTE modem')
@@ -302,13 +314,11 @@ class TerkinDevice:
             import pycom
             from network import LTE
 
-            # Invoking this will cause `LTE.deinit()` to take around 6(!) seconds.
-            #log.info('Enabling LTE modem on boot')
-            #pycom.lte_modem_en_on_boot(True)
-
             log.info('Turning off LTE modem on boot')
             pycom.lte_modem_en_on_boot(False)
 
+            # Disables LTE modem completely. This presumably reduces the power
+            # consumption to the minimum. Call this before entering deepsleep.
             log.info('Invoking LTE.deinit()')
             lte = LTE()
             lte.deinit(detach=False, reset=True)

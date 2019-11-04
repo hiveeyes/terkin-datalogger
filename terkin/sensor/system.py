@@ -127,12 +127,9 @@ class SystemBatteryLevel(AbstractSystemSensor):
 
     def setup(self):
         """
-
-        :param settings: 
-
+        - Configure the appropriate resistor values for computing the voltage.
+        - Setup ADC for sampling.
         """
-
-        print('SystemVoltage settings:', self.settings)
 
         self.pin = self.settings.get('pin')
         self.resistor_r1 = self.settings.get('resistor_r1')
