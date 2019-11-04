@@ -70,7 +70,7 @@ Development
   as we haven't actually been attached at all, like ``lte.deinit(detach=False, reset=True)``.
   Thanks @arapostol for https://github.com/pycom/pycom-micropython-sigfox/pull/255/files
   which made us look at the source code in detail.
-
+- Improve robustness of WiFi manager re. "connectivity after reset" again
 
 
 2019-08-19 0.6.0

@@ -55,15 +55,14 @@ class WiFiManager:
 
             return
 
+        # Free up some memory.
         self.manager.device.run_gc()
 
-        try:
-            s = deepcopy(self.stations[0])
-            s['timeout'] = 3
-            self.connect_station(s)
-        except WiFiException:
-            self.connect_once()
+        # Connect to WiFi network and wait for successful connection.
+        self.connect_once()
 
+        # Start thread which monitors connection
+        # and reconnects if required.
         try:
             import _thread
             _thread.start_new_thread(self.stay_connected, ())
@@ -71,14 +70,13 @@ class WiFiManager:
             pass
 
     def start_interface(self):
-        """Genuine MicroPython:
+        """
+        Genuine MicroPython:
         https://docs.micropython.org/en/latest/library/network.WLAN.html
         
         Pycom MicroPython:
         https://docs.pycom.io/tutorials/all/wlan.html
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
-
-
         """
 
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
@@ -106,6 +104,7 @@ class WiFiManager:
 
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.configure_antenna()
+            # FIXME: Make STA or AP or STA_AP configurable.
             self.station.mode(network.WLAN.STA_AP)
             self.station.init()
         else:
@@ -152,11 +151,14 @@ class WiFiManager:
         """
         pass
 
+    def get_configured_stations(self):
+        return frozenset([station['ssid'] for station in self.stations])
+
     def connect_once(self):
         """ """
 
         # Prepare information about known WiFi networks.
-        networks_known = frozenset([station['ssid'] for station in self.stations])
+        networks_known = self.get_configured_stations()
 
         try:
             self.connect_stations(networks_known)
@@ -168,7 +170,7 @@ class WiFiManager:
         """ """
 
         # Prepare information about known WiFi networks.
-        networks_known = frozenset([station['ssid'] for station in self.stations])
+        networks_known = self.get_configured_stations()
 
         # Attempt to connect to known/configured networks.
         attempt = 0
@@ -180,7 +182,8 @@ class WiFiManager:
                 attempt = 0
 
             else:
-                log.info("WiFi STA: Connecting to configured networks: %s. Attempt: #%s", list(networks_known), attempt + 1)
+                log.info("WiFi STA: Connecting to configured networks: %s. "
+                         "Attempt: #%s", list(networks_known), attempt + 1)
                 try:
                     self.connect_stations(networks_known)
 
@@ -195,9 +198,13 @@ class WiFiManager:
             time.sleep(delay)
 
     def is_connected(self):
-        """ """
+        """
+        Check if connected to WiFi access point and
+        connection yielded a valid IP address.
+        """
         try:
-            # ``isconnected()`` returns True when connected to a WiFi access point *and* having a valid IP address.
+            # ``isconnected()`` returns True when connected to a
+            # WiFi access point *and* having a valid IP address.
             if self.station is not None and self.station.isconnected():
                 ssid = self.get_ssid()
                 if ssid[0] is not None:
@@ -206,12 +213,14 @@ class WiFiManager:
                         return True
 
         except Exception as ex:
-            log.exc(ex, 'Invoking "is_connected" failed')
+            if ex.__class__.__name__ != 'TimeoutError':
+                log.exc(ex, 'Invoking "isconnected" failed')
 
         return False
 
     def power_off(self):
-        """Power off all radio peripherals.
+        """
+        Power off all radio peripherals.
         
         - https://forum.pycom.io/topic/563/disabling-wifi-on-lopy
         - https://github.com/Hiverize/FiPy/commit/b6b15677
@@ -304,17 +313,20 @@ class WiFiManager:
         network_timeout = network.get('timeout', 15.0)
 
         # Connect to WiFi station.
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-            log.info('WiFi STA: Starting connection to "{}" with timeout of {} seconds'.format(network_name,
-                                                                                               network_timeout))
-            self.station.connect(network_name, (auth_mode, password), timeout=int(network_timeout * 1000))
-        else:
-            log.info('WiFi STA: Starting connection to "{}"'.format(network_name))
-            self.station.connect(network_name, password)
+        log.info('WiFi STA: Starting connection to "{}" '
+                 'with timeout of {} seconds'.format(network_name, network_timeout))
+        self._connect(network_name, password, auth_mode=auth_mode, timeout=network_timeout)
+
+        # After reset, WiFi regularly does not connect.
+        # So, let's retry again.
+        self.wait_for_connection(1)
+        if not self.is_connected():
+            self._connect(network_name, password, auth_mode=auth_mode, timeout=network_timeout)
 
         # Wait for network to arrive.
         self.wait_for_connection(network_timeout)
 
+        # Finally, check for WiFi connection.
         if not self.is_connected():
             raise WiFiException('WiFi STA: Unable to connect to "{}"'.format(network_name))
 
@@ -324,8 +336,15 @@ class WiFiManager:
 
         return True
 
+    def _connect(self, ssid, password, auth_mode=None, timeout=None):
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            self.station.connect(ssid, (auth_mode, password), timeout=int(timeout * 1000))
+        else:
+            self.station.connect(ssid, password)
+
     def wait_for_connection(self, timeout=15.0):
-        """Wait for network to arrive.
+        """
+        Wait for network to arrive.
 
         :param timeout:  (Default value = 15.0)
 
@@ -369,6 +388,12 @@ class WiFiManager:
 
         # Inquire visible networks.
         log.info("WiFi STA: Scanning for networks")
+
+        # Work around "OSError: Scan operation Failed!" by waiting before `scan`.
+        # > I put a time.sleep() of 3sec before wlan.scan(). And the error don't happen.
+        # https://forum.pycom.io/topic/5258/firmware-release-v1-20-1/49
+        time.sleep(1)
+
         try:
             stations_available = self.station.scan()
         except Exception as ex:
