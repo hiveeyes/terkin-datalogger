@@ -51,7 +51,8 @@ class SystemTemperature(AbstractSystemSensor):
         import machine
 
         if not hasattr(machine, 'temperature'):
-            return
+            raise NotImplementedError('Reading the MCU core temperature is '
+                                      'not implemented on this platform')
 
         rawvalue = machine.temperature()
 
@@ -141,12 +142,17 @@ class SystemBatteryLevel(AbstractSystemSensor):
 
         # ADC channel used for sampling the raw value.
         from machine import ADC
-        try:
+        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             self.adc = ADC(id=0)
-        except TypeError:
+
+        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             from machine import Pin
             self.adc = ADC(Pin(self.pin))
-                
+
+        else:
+            raise NotImplementedError('Reading the ADC for vbatt is '
+                                      'not implemented on this platform')
+
     def read(self):
         """Acquire vbatt reading by sampling ADC."""
         # Todo: Make attenuation factor configurable.
@@ -159,7 +165,16 @@ class SystemBatteryLevel(AbstractSystemSensor):
         log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # read samples
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            self.adc.atten(ADC.ATTN_6DB)
+            irq_state = disable_irq()
+            while i < self.adc_sample_count:
+                adc_samples[i] = self.adc.read()
+                adc_mean += adc_samples[i]
+                i += 1
+            enable_irq(irq_state)
+
+        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.adc.init()
             adc_channel = self.adc.channel(attn=ADC.ATTN_6DB, pin=self.pin)
             irq_state = disable_irq()
@@ -168,14 +183,10 @@ class SystemBatteryLevel(AbstractSystemSensor):
                 adc_samples[i] = sample
                 adc_mean += sample
                 i += 1
+            enable_irq(irq_state)
+
         else:
-            self.adc.atten(ADC.ATTN_6DB)
-            irq_state = disable_irq()
-            while i < self.adc_sample_count:
-                adc_samples[i] = self.adc.read()
-                adc_mean += adc_samples[i]
-                i += 1        
-        enable_irq(irq_state)
+            raise NotImplementedError('Reading the ADC for vbatt is not implemented on this platform')
 
         adc_mean /= self.adc_sample_count
         adc_variance = 0.0
@@ -183,13 +194,15 @@ class SystemBatteryLevel(AbstractSystemSensor):
             adc_variance += (sample - adc_mean) ** 2
         adc_variance /= (self.adc_sample_count - 1)
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-            raw_voltage = adc_channel.value_to_voltage(4095)
-            mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
-        else:
+        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             # FIXME: Make this work for vanilla ESP32.
             raw_voltage = 0.0
             mean_voltage = 0.0
+
+        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            raw_voltage = adc_channel.value_to_voltage(4095)
+            mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
+
         mean_variance = (adc_variance * 10 ** 6) // (adc_mean ** 2)
 
         # log.debug("ADC readings. count=%u:\n%s" %(self.adc_sample_count, str(adc_samples)))

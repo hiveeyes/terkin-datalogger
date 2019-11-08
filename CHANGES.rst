@@ -72,6 +72,7 @@ Development
   which made us look at the source code in detail.
 - Improve robustness of WiFi manager re. "connectivity after reset" again
 - Improve inline documentation
+- Improve platform switch for system sensors
 
 
 2019-08-19 0.6.0
