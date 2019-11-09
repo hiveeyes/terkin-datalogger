@@ -7,6 +7,8 @@ from binascii import hexlify
 from machine import Pin, I2C
 
 from terkin import logging
+from terkin.util import get_platform_info
+platform_info = get_platform_info()
 
 log = logging.getLogger(__name__)
 
@@ -275,7 +277,13 @@ class OneWireBus(AbstractBus):
         # Todo: Improve error handling.
         try:
             from onewire import OneWire
-            self.adapter = OneWire(Pin(self.pins['data']))
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                self.adapter = OneWire(Pin(int(self.pins['data'][1:])))
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                self.adapter = OneWire(Pin(self.pins['data']))
+            else:
+                raise NotImplementedError('I2C Bus is '
+                        'not implemented on this platform')
             self.scan_devices()
 
         except Exception as ex:
@@ -328,7 +336,13 @@ class I2CBus(AbstractBus):
         """ """
         # Todo: Improve error handling.
         try:
-            self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                self.adapter = I2C(self.number, sda = Pin(int(self.pins['sda'][1:])), scl = Pin(int(self.pins['scl'][1:])), freq=100000)
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+            else:
+                raise NotImplementedError('I2C Bus is '
+                        'not implemented on this platform')
             self.scan_devices()
         except Exception as ex:
             log.exc(ex, 'I2C hardware driver failed')

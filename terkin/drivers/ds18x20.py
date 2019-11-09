@@ -8,6 +8,8 @@ from binascii import hexlify
 from terkin import logging
 from terkin.sensor import AbstractSensor
 from terkin.sensor.core import OneWireBus
+from terkin.util import get_platform_info
+platform_info = get_platform_info()
 
 log = logging.getLogger(__name__)
 
@@ -30,8 +32,16 @@ class DS18X20Sensor(AbstractSensor):
 
         # Initialize the DS18x20 hardware driver.
         try:
-            from onewire import DS18X20
-            self.driver = DS18X20(self.bus.adapter)
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                import ds18x20
+                #self.driver = ds18x20.DS18X20(self.ow)
+                # TBD there is some difference between uPy & Pycom
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                from onewire import DS18X20
+                self.driver = DS18X20(self.bus.adapter)
+            else:
+                raise NotImplementedError('DS18X20 is '
+                        'not implemented on this platform')
             return True
 
         except Exception as ex:
