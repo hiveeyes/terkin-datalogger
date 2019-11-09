@@ -72,22 +72,31 @@ download-requirements:
 
 	## Sensors
 
-	# Install BME280 Libary
+	# 1. Install BME280 Libary
 	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
 	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/a7074fd2d5a140a14957dbb7c6f247f975a6dcfa/bme280_int.py
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/a7074fd2d5a140a14957dbb7c6f247f975a6dcfa/bme280_float.py
 
-	# Install Pycom OneWire and DS18x20 libraries
-	# https://github.com/micropython/micropython/tree/master/drivers
-	#mkdir -p $(target_dir)/onewire
-	#touch $(target_dir)/onewire/__init__.py
+	# 2. Install Pycom OneWire and DS18x20 libraries
 
-	# Vanilla onewire.py
+	# Genuine MicroPython driver for Pycom MicroPython 1.11.
+	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
+	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
+
+	# Pycom MicroPython driver for Pycom MicroPython 1.11.
+	# https://github.com/pycom/pycom-micropython-sigfox/tree/v1.20.1.r1/drivers/onewire
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-micropython-sigfox/v1.20.1.r1/drivers/onewire/onewire.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-micropython-sigfox/v1.20.1.r1/drivers/onewire/ds18x20.py
+
+	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
+	# Has no CRC checks.
 	#$(fetch) $(target_dir)/onewire https://raw.githubusercontent.com/pycom/pycom-libraries/60f2592/examples/DS18X20/onewire.py
 
-	# Optimize timing, enable CRC check and slim the code #62
+	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
+	# Enhanced by @robert-hh: Optimize timing, enable CRC check and slim the code.
 	# https://github.com/pycom/pycom-libraries/pull/62
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/dabce8d9cc8cf3b9849446000d811a39c53b6093/examples/DS18X20/onewire.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/pycom/pycom-libraries/dabce8d9/examples/DS18X20/onewire.py
 
 
 download-requirements-optional:

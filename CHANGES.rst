@@ -73,6 +73,8 @@ Development
 - Improve robustness of WiFi manager re. "connectivity after reset" again
 - Improve inline documentation
 - Improve platform switch for system sensors
+- Acquire ``onewire.py`` drivers for both Vanilla MicroPython and Pycom MicroPython
+  as ``onewire_native.py`` vs. ``onewire_python.py``.
 
 
 2019-08-19 0.6.0

@@ -3,13 +3,14 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-from binascii import hexlify
 
 from terkin import logging
 from terkin.sensor import AbstractSensor
 from terkin.sensor.core import OneWireBus
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 
 class DS18X20Sensor(AbstractSensor):
@@ -29,13 +30,27 @@ class DS18X20Sensor(AbstractSensor):
             raise KeyError("Bus missing for DS18X20Sensor")
 
         # Initialize the DS18x20 hardware driver.
+        onewire_bus = self.bus.adapter
         try:
-            from onewire import DS18X20
-            self.driver = DS18X20(self.bus.adapter)
-            return True
+
+            # Vanilla MicroPython 1.11
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                from ds18x20 import DS18X20
+                self.driver = DS18X20NativeDriverAdapter(DS18X20(onewire_bus))
+
+            # Pycom MicroPython 1.9.4
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                from onewire_python import DS18X20
+                self.driver = DS18X20(onewire_bus)
+
+            else:
+                raise NotImplementedError('DS18X20 driver not implemented on this platform')
 
         except Exception as ex:
             log.exc(ex, 'DS18X20 hardware driver failed')
+            return False
+
+        return True
 
     def read(self):
         """ """
@@ -46,7 +61,7 @@ class DS18X20Sensor(AbstractSensor):
         # TODO: Review device reading re. glitches and timing.
         log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
         devices = self.start_reading()
-        time.sleep(1)
+        time.sleep_ms(750)
         data = self.read_devices(devices)
 
         if not data:
@@ -71,9 +86,9 @@ class DS18X20Sensor(AbstractSensor):
                 log.info('Skipping DS18X20 device "{}"'.format(address))
                 continue
 
-            self.driver.start_conversion(device)
-
             effective_devices.append(device)
+
+        self.driver.start_conversion()
 
         return effective_devices
 
@@ -97,6 +112,8 @@ class DS18X20Sensor(AbstractSensor):
 
             # Evaluate device response.
             if value is not None:
+
+                # TODO: Filter the 85° thing here.
 
                 try:
                     # Compute telemetry field name.
@@ -157,3 +174,28 @@ class DS18X20Sensor(AbstractSensor):
         """
         device_settings = self.get_device_settings(address)
         return device_settings.get('description')
+
+
+class DS18X20NativeDriverAdapter:
+    """
+    Adapter for mimicking the pure-Python onewire.py
+    driver from the early days of MicroPython 1.9.4.
+
+    https://github.com/pycom/pycom-libraries/blob/dabce8d9/examples/DS18X20/onewire.py
+    """
+
+    def __init__(self, driver):
+        self.driver = driver
+
+    def start_conversion(self):
+        """
+        Start the temp conversion on all DS18x20 devices.
+        """
+        return self.driver.convert_temp()
+
+    def read_temp_async(self, rom):
+        """
+        Read the temperature from the scratch memory of one DS18x20 device
+        if the conversion is complete, otherwise return None.
+        """
+        return self.driver.read_temp(rom)

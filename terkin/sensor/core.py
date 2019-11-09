@@ -7,8 +7,10 @@ from binascii import hexlify
 from machine import Pin, I2C
 
 from terkin import logging
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 log.setLevel(logging.DEBUG)
 
@@ -274,8 +276,20 @@ class OneWireBus(AbstractBus):
         """ """
         # Todo: Improve error handling.
         try:
-            from onewire import OneWire
-            self.adapter = OneWire(Pin(self.pins['data']))
+            # Vanilla MicroPython 1.11
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                from onewire_native import OneWire
+                pin = Pin(int(self.pins['data'][1:]))
+
+            # Pycom MicroPython 1.9.4
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                from onewire_python import OneWire
+                pin = Pin(self.pins['data'])
+
+            else:
+                raise NotImplementedError('1-Wire driver not implemented on this platform')
+
+            self.adapter = OneWire(pin)
             self.scan_devices()
 
         except Exception as ex:
@@ -284,7 +298,7 @@ class OneWireBus(AbstractBus):
     def scan_devices(self):
         """ """
 
-        # Reset the 1-Wire device in case of leftovers.
+        # The 1-Wire bus sometimes needs a fix when coming back from deep sleep.
         self.adapter.reset()
 
         # TODO: Tune this further?
