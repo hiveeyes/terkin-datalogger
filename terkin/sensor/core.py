@@ -278,7 +278,7 @@ class OneWireBus(AbstractBus):
         try:
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                from onewire_native import OneWire
+                from onewire import OneWire
                 pin = Pin(int(self.pins['data'][1:]))
 
             # Pycom MicroPython 1.9.4

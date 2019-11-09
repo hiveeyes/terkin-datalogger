@@ -81,8 +81,8 @@ download-requirements:
 
 	# Genuine MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
-	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
+	#$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
 
 	# Pycom MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/pycom/pycom-micropython-sigfox/tree/v1.20.1.r1/drivers/onewire
