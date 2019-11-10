@@ -278,18 +278,18 @@ class OneWireBus(AbstractBus):
         try:
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                from onewire import OneWire
+                import onewire
                 pin = Pin(int(self.pins['data'][1:]))
-
+                self.adapter = onewire.OneWire(pin)
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
                 from onewire_python import OneWire
                 pin = Pin(self.pins['data'])
+                self.adapter = OneWire(pin)
 
             else:
                 raise NotImplementedError('1-Wire driver not implemented on this platform')
 
-            self.adapter = OneWire(pin)
             self.scan_devices()
 
         except Exception as ex:
@@ -342,7 +342,13 @@ class I2CBus(AbstractBus):
         """ """
         # Todo: Improve error handling.
         try:
-            self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                self.adapter = I2C(self.number, sda = Pin(int(self.pins['sda'][1:])), scl = Pin(int(self.pins['scl'][1:])), freq=100000)
+            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+            else:
+                raise NotImplementedError('I2C Bus is '
+                        'not implemented on this platform')
             self.scan_devices()
         except Exception as ex:
             log.exc(ex, 'I2C hardware driver failed')

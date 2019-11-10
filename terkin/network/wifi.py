@@ -583,7 +583,7 @@ class SystemWiFiMetrics:
 
         if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             stats = {}
-            stats['system.wifi.channel'] = self.station.config('channel')
+            #stats['system.wifi.channel'] = self.station.config('channel')
 
             try:
                 stats['system.wifi.rssi'] = self.station.status('rssi')

@@ -14,7 +14,10 @@ platform_info = get_platform_info()
 
 
 class DS18X20Sensor(AbstractSensor):
-    """A generic DS18B20 sensor component."""
+    """
+    A generic DS18B20 sensor component.
+    Used by terkin/datalogger to register and read() from this sensor.
+    """
 
     def acquire_bus(self, bus):
         """
@@ -35,8 +38,8 @@ class DS18X20Sensor(AbstractSensor):
 
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                from ds18x20 import DS18X20
-                self.driver = DS18X20NativeDriverAdapter(DS18X20(onewire_bus))
+                import ds18x20
+                self.driver = DS18X20NativeDriverAdapter(ds18x20.DS18X20(onewire_bus))
 
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:

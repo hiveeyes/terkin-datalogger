@@ -30,7 +30,11 @@ class TransientStorage:
 
 # Maybe refactor to TerkinCore.
 class TerkinDatalogger:
-    """ """
+    """ 
+    Main class of project.
+    Handles loop & sleep, registers sensors, reads their data and stores them.
+    Shows up as 'datalogger' in the rest of the program.
+    """
 
     # Application metadata.
     name = 'Terkin MicroPython Datalogger'
@@ -283,6 +287,9 @@ class TerkinDatalogger:
     def register_sensors(self):
         """
         Configure and register sensor objects.
+        There are three types of sensors: system, environment & busses. Only the former two are assigned to the latter (if applicable).
+        Definitions are in 'settings.py'.
+        The sensor are registered by calling their respective classes from terkin/drivers/
         """
 
         # Add sensors.
@@ -419,7 +426,10 @@ class TerkinDatalogger:
             #self.device.run_gc()
 
     def read_sensors(self):
-        """Read measurements from all sensor objects"""
+        """
+        Read measurements from all sensor objects that have been registered in the sensor_manager.
+        Reading is done with the read() function of each respective sensor object.
+        """
 
         # Collect observations.
         data = {}
