@@ -76,6 +76,7 @@ Development
 - Acquire ``onewire.py`` drivers for both Vanilla MicroPython and Pycom MicroPython
   as ``onewire_native.py`` vs. ``onewire_python.py``.
 - Fix 1-Wire multi-platform support again. Thanks, @poesel!
+- Port codebase to Genuine MicroPython on ESP32. Thanks, @poesel!
 - Adjust naming for sensor driver adapters
 
 
