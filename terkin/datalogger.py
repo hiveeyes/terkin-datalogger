@@ -13,9 +13,9 @@ from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
-from terkin.drivers.bme280 import BME280Sensor
-from terkin.drivers.ds18x20 import DS18X20Sensor
-from terkin.drivers.hx711 import HX711Sensor
+from terkin.driver.bme280_sensor import BME280Sensor
+from terkin.driver.ds18x20_sensor import DS18X20Sensor
+from terkin.driver.hx711_sensor import HX711Sensor
 from terkin.util import gc_disabled, ddformat, GenericChronometer
 
 log = logging.getLogger(__name__)
