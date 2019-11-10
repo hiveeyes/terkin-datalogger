@@ -243,10 +243,8 @@ class TerkinDevice:
         add('=' * len(title))
 
         # Machine runtime information.
-        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            frequency = machine.freq() / 1000000
-        else:
-            frequency = machine.freq()[0] / 1000000
+        frequency = machine.freq() / 1000000
+
         add('CPU freq     {} MHz'.format(frequency))
         add('Device id    {}'.format(self.device_id))
         add()
