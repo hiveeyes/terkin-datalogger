@@ -104,9 +104,13 @@ class WiFiManager:
 
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.configure_antenna()
+
             # FIXME: Make STA or AP or STA_AP configurable.
             self.station.mode(network.WLAN.STA_AP)
+
+            # Initialize the WiFi peripheral.
             self.station.init()
+
         else:
             self.station.active(True)
 
@@ -310,6 +314,7 @@ class WiFiManager:
             self.station.ifconfig(config=network['ifconfig'])
 
         # Obtain timeout value.
+        # TODO: Make default timeout configurable.
         network_timeout = network.get('timeout', 15.0)
 
         # Connect to WiFi station.
@@ -318,8 +323,8 @@ class WiFiManager:
         self._connect(network_name, password, auth_mode=auth_mode, timeout=network_timeout)
 
         # After reset, WiFi regularly does not connect.
-        # So, let's retry again.
-        self.wait_for_connection(1)
+        # So, let's just try again working around this weird obstacle.
+        self.wait_for_connection(2)
         if not self.is_connected():
             self._connect(network_name, password, auth_mode=auth_mode, timeout=network_timeout)
 
