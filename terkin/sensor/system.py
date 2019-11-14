@@ -143,11 +143,11 @@ class SystemBatteryLevel(AbstractSystemSensor):
         # ADC channel used for sampling the raw value.
         from machine import ADC
         if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-            self.adc = ADC(id=0)
+            from machine import Pin
+            self.adc = ADC(Pin(int(self.pin[1:])))
 
         elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-            from machine import Pin
-            self.adc = ADC(Pin(self.pin))
+            self.adc = ADC(id=0)
 
         else:
             raise NotImplementedError('Reading the ADC for vbatt is '
@@ -186,7 +186,8 @@ class SystemBatteryLevel(AbstractSystemSensor):
             enable_irq(irq_state)
 
         else:
-            raise NotImplementedError('Reading the ADC for vbatt is not implemented on this platform')
+            raise NotImplementedError('Reading the ADC for vbatt is '
+                                      'not implemented on this platform')
 
         adc_mean /= self.adc_sample_count
         adc_variance = 0.0
