@@ -26,6 +26,7 @@ class NetworkManager:
         self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.lora_manager = None
         self.mode_server = None
+        self.http_api = None
 
     def stop(self):
         """ """
@@ -140,8 +141,10 @@ class NetworkManager:
         """Start HTTP server for managing the device."""
         from terkin.api.http import TerkinHttpApi
         storage = self.device.application_info.application.storage
-        http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
-        http_api.start()
+
+        log.info('Setting up HTTP API')
+        self.http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
+        self.http_api.start()
 
     def handle_modeserver(self, data, addr):
         """

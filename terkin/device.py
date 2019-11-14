@@ -121,6 +121,7 @@ class TerkinDevice:
         import gc
         log.info('Start curating the garbage collector')
         gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+        log.info('Collecting garbage')
         gc.collect()
         #log.info('Curating the garbage collector finished')
         log.info('Curating the garbage collector finished. Free memory: %s', gc.mem_free())
