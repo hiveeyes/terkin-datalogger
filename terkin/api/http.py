@@ -17,8 +17,7 @@ import json
 import machine
 
 from copy import deepcopy
-from microWebSrv import MicroWebSrv
-from microDNSSrv import MicroDNSSrv
+from MicroWebSrv2 import MicroWebSrv2, WebRoute, HttpRequest, GET, POST, PUT
 
 from terkin import logging
 from terkin.sensor import BusType
@@ -41,8 +40,6 @@ class TerkinHttpApi:
 
     def __init__(self, device=None, settings=None, storage=None):
 
-        log.info('Setting up HTTP API')
-
         TerkinHttpApi.device = device
         TerkinHttpApi.settings = settings
         TerkinHttpApi.storage = storage
@@ -60,62 +57,60 @@ class TerkinHttpApi:
         # TODO: Make port and htdocs folder configurable.
         global webserver
         if webserver is None:
-            webserver = MicroWebSrv()
+            log.info('Creating new HTTP server object')
+            webserver = MicroWebSrv2()
         self.webserver = webserver
 
     def start(self):
         """ """
-        if self.webserver.IsStarted():
+        if self.webserver.IsRunning:
             log.info('HTTP server already started')
         else:
             log.info('Starting HTTP server')
-            self.webserver.Start(threaded=True)
+            self.webserver.SetEmbeddedConfig()
+            try:
+                self.webserver.StartManaged()
+            except:
+                self.webserver._xasSrv._socket._close()
+                self.webserver.StartManaged()
 
     def captive(self):
-        """Configure transparent captive portal."""
-        # To intercept all requests and redirect them.
-        self.webserver.SetNotFoundPageUrl("http://hiverize.wifi")
+        """
+        Configure transparent captive portal.
+
+        Intercept all requests and redirect them to the device.
+        """
+
+        # Intercept DNS inquiries.
+        from microDNSSrv import MicroDNSSrv
         MicroDNSSrv.Create({'*': '192.168.4.1'})
+
+        # All pages not found will be redirected here.
+        self.webserver.NotFoundURL("http://hiverize.wifi")
+
 
     # ======
     # System
     # ======
 
-    @MicroWebSrv.route('/status', 'GET')
-    @MicroWebSrv.route('/status', 'POST')
-    def about(httpClient, httpResponse):
-        """
+    @WebRoute(GET, '/status')
+    @WebRoute(POST, '/status')
+    def status(microWebSrv2, request: HttpRequest):
+        TerkinHttpApi.respond_text(request, 'OK')
 
-        :param httpClient: 
-        :param httpResponse: 
+    @WebRoute(GET, '/about')
+    def about(microWebSrv2, request: HttpRequest):
+        TerkinHttpApi.respond_text(request, TerkinHttpApi.device.application_info.fullname)
 
-        """
-        return TerkinHttpApi.respond_text(httpResponse, 'OK')
+    @WebRoute(POST, '/restart')
+    def restart(microWebSrv2: MicroWebSrv2, request: HttpRequest):
 
-    @MicroWebSrv.route('/about', 'GET')
-    def about(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
-        return TerkinHttpApi.respond_text(httpResponse, TerkinHttpApi.device.application_info.fullname)
-
-    @MicroWebSrv.route('/restart', 'POST')
-    def restart(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
-
-        TerkinHttpApi.respond_text(httpResponse, 'ACK')
+        TerkinHttpApi.respond_text(request, 'ACK')
 
         def do_reset():
             """ """
             log.info('Resetting device')
+            microWebSrv2.Stop()
             machine.reset()
 
         try:
@@ -128,51 +123,42 @@ class TerkinHttpApi:
     # Application
     # ===========
 
-    @MicroWebSrv.route('/api/v1/settings', 'GET')
-    def get_settings(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/settings')
+    def get_settings(microWebSrv2, request: HttpRequest):
         try:
-            query_params = httpClient.GetRequestQueryParams()
+            query_params = request.QueryParams
             format = query_params.get('format', 'json')
             if format == 'json':
                 headers = dict(TerkinHttpApi.headers)
                 headers.update({'Content-Disposition': 'attachment; filename="settings.json"'})
-                return httpResponse.WriteResponseJSONOk(headers=headers, obj=TerkinHttpApi.settings.to_dict())
+                TerkinHttpApi.respond_json(request, TerkinHttpApi.settings.to_dict())
+
             elif format == 'python':
-                return httpResponse.WriteResponseFileAttachment('/flash/settings.py', 'settings.py', headers=TerkinHttpApi.headers)
+                request.Response._headers.update(TerkinHttpApi.headers)
+                request.Response.ReturnFile(filename='/flash/settings.py', attachmentName='settings.py')
+
+            else:
+                request.Response.ReturnNotFound()
 
         except Exception as ex:
             log.exc(ex, 'GET settings request failed')
-            return httpResponse.WriteResponseError(400)
+            request.Response.ReturnBadRequest()
 
-        return httpResponse.WriteResponseNotFound()
-
-    @MicroWebSrv.route('/api/v1/settings', 'PUT')
-    def put_settings(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(PUT, '/api/v1/settings')
+    def put_settings(microWebSrv2, request: HttpRequest):
         try:
 
             # Sanity checks.
             # TODO: Validate the request.
-            content_type = httpClient.GetRequestContentType()
+            content_type = request.ContentType
 
             if content_type is None:
-                return httpResponse.WriteResponseNotFound()
+                request.Response.ReturnNotFound()
 
             if content_type.startswith('application/json'):
-                data = httpClient.ReadRequestContentAsJSON()
+                data = request.GetPostedJSONObject()
                 TerkinHttpApi.settings.save('settings-user.json', json.dumps(data))
-                return TerkinHttpApi.respond_text(httpResponse, 'ACK')
+                TerkinHttpApi.respond_text(request, 'ACK')
 
             elif content_type.startswith('text/plain') or content_type.startswith('application/octet-stream'):
                 """
@@ -180,82 +166,61 @@ class TerkinHttpApi:
                 #print('body:')
                 #print(body)
                 TerkinHttpApi.settings.save('settings.py', buffer)
-                return TerkinHttpApi.respond_text(httpResponse, 'ACK')
+                TerkinHttpApi.respond_text(httpResponse, 'ACK')
                 """
-                return httpResponse.WriteResponseError(400)
+                request.Response.ReturnBadRequest()
+
+            else:
+                request.Response.ReturnNotFound()
 
         except Exception as ex:
             log.exc(ex, 'PUT settings request failed')
-            return httpResponse.WriteResponseError(500)
+            request.Response.ReturnInternalServerError()
 
-        return httpResponse.WriteResponseNotFound()
-
-    @MicroWebSrv.route('/api/v1/setting', 'GET')
-    def get_setting(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/setting')
+    def get_setting(microWebSrv2, request: HttpRequest):
         try:
-            query_data = httpClient.GetRequestQueryParams()
+            query_data = request.QueryParams
             name = query_data['name']
             log.info('Getting configuration setting "{}"'.format(name))
             value = TerkinHttpApi.settings.get(name)
             log.info('Configuration setting "{}" is "{}"'.format(name, value))
-            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
+            TerkinHttpApi.respond_json(request, value)
 
         except Exception as ex:
             log.exc(ex, 'GET setting request failed')
-            return httpResponse.WriteResponseError(500)
+            request.Response.ReturnInternalServerError()
 
-    @MicroWebSrv.route('/api/v1/setting', 'PUT')
-    def put_setting(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(PUT, '/api/v1/setting')
+    def put_setting(microWebSrv2, request: HttpRequest):
         try:
-            query_data = httpClient.GetRequestQueryParams()
+            query_data = request.QueryParams
             name = query_data['name']
-            value = httpClient.ReadRequestContentAsJSON()
+            value = request.GetPostedJSONObject()
             log.info('Setting configuration setting "{}" to "{}"'.format(name, value))
             TerkinHttpApi.settings[name] = value
 
             value = TerkinHttpApi.settings.get(name)
             log.info('Re-reading configuration setting "{}" as "{}"'.format(name, value))
-            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=value)
+            TerkinHttpApi.respond_json(request, value)
 
         except Exception as ex:
             log.exc(ex, 'PUT setting request failed')
-            return httpResponse.WriteResponseError(500)
+            request.Response.ReturnInternalServerError()
 
-    @MicroWebSrv.route('/api/v1/reading/last', 'GET')
-    def get_settings(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/reading/last')
+    def get_settings(microWebSrv2, request: HttpRequest):
         try:
-            return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=TerkinHttpApi.storage.last_reading)
+            TerkinHttpApi.respond_json(request, TerkinHttpApi.storage.last_reading)
+            return
 
         except Exception as ex:
             log.exc(ex, 'GET last reading request failed')
-            return httpResponse.WriteResponseError(500)
+            request.Response.ReturnInternalServerError()
 
-        return httpResponse.WriteResponseNotFound()
+        request.Response.ReturnNotFound()
 
-    def read_request(httpClient):
-        """
-
-        :param httpClient: 
-
-        """
+    def read_request(request: HttpRequest):
         # Observations show request payloads are capped at ~4308 bytes.
         # https://github.com/jczic/MicroWebSrv/issues/51
         from uio import StringIO
@@ -263,7 +228,7 @@ class TerkinHttpApi:
         while True:
             try:
                 log.info('Reading 4000 bytes from network')
-                payload = httpClient.ReadRequestContent(size=4000)
+                payload = request.Content
                 if not payload:
                     log.info('Reading finished')
                     raise StopIteration()
@@ -275,38 +240,20 @@ class TerkinHttpApi:
         buffer.seek(0)
         return buffer
 
-    @MicroWebSrv.route('/api/v1/peripherals/busses')
-    def sensor_index(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/peripherals/busses')
+    def sensor_index(microWebSrv2, request: HttpRequest):
         sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
         som_info = serialize_som(sensor_manager.busses)
-        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=som_info)
+        TerkinHttpApi.respond_json(request, som_info)
 
-    @MicroWebSrv.route('/api/v1/peripherals/sensors')
-    def sensor_index(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/peripherals/sensors')
+    def sensor_index(microWebSrv2, request: HttpRequest):
         sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
         som_info = serialize_som(sensor_manager.sensors)
-        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=som_info)
+        TerkinHttpApi.respond_json(request, som_info)
 
-    @MicroWebSrv.route('/api/v1/sensors/ds18b20')
-    def sensor_index_ds18b20(httpClient, httpResponse):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-
-        """
+    @WebRoute(GET, '/api/v1/sensors/ds18b20')
+    def sensor_index_ds18b20(microWebSrv2, request: HttpRequest):
         sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
         ds18b20_sensors = []
         #print('sensor_manager.busses:', sensor_manager.busses)
@@ -324,32 +271,33 @@ class TerkinHttpApi:
                 sensor_info['address'] = address
                 sensor_info['description'] = sensor.get_device_description(address)
                 ds18b20_sensors.append(sensor_info)
-        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=ds18b20_sensors)
+
+        TerkinHttpApi.respond_json(request, ds18b20_sensors)
+
+    @WebRoute(GET, '/api/v1/sensor/<sensor>')
+    def sensor_info(microWebSrv2, request: HttpRequest, routeArgs):
+        sensor = routeArgs['sensor']
 
     # ====
     # Demo
     # ====
 
-    @MicroWebSrv.route('/echo/<slot>', 'GET')
-    @MicroWebSrv.route('/echo/<slot>', 'POST')
-    def echo(httpClient, httpResponse, routeArgs):
-        """
-
-        :param httpClient: 
-        :param httpResponse: 
-        :param routeArgs: 
-
-        """
+    @WebRoute(GET, '/echo/<slot>')
+    @WebRoute(POST, '/echo/<slot>')
+    def echo(microWebSrv2, request: HttpRequest, routeArgs):
 
         # Collect information from HTTP request.
-        content_type = httpClient.GetRequestContentType()
-        query_data = httpClient.GetRequestQueryParams()
+        content_type = request.ContentType
+        query_data = request.QueryParams
 
         if content_type.startswith('application/json'):
-            data = httpClient.ReadRequestContentAsJSON()
+            data = request.GetPostedJSONObject()
 
         elif content_type.startswith('application/x-www-form-urlencoded'):
-            data = httpClient.ReadRequestPostedFormData()
+            data = request.GetPostedURLEncodedForm()
+
+        else:
+            data = None
 
         # Bundle request information.
         payload = {
@@ -358,18 +306,18 @@ class TerkinHttpApi:
             'query': query_data,
             'data': data,
         }
-        return httpResponse.WriteResponseJSONOk(headers=TerkinHttpApi.headers, obj=payload)
+        TerkinHttpApi.respond_json(request, payload)
 
     # =========
     # Utilities
     # =========
 
-    def respond_text(httpResponse, text):
-        """
+    def respond_text(request, text):
+        request.Response._headers.update(TerkinHttpApi.headers)
+        request.Response._contentType = 'text/plain'
+        request.Response._contentCharset = 'utf-8'
+        request.Response.ReturnOk(content=text)
 
-        :param httpResponse: 
-        :param text: 
-
-        """
-        return httpResponse.WriteResponseOk(headers=TerkinHttpApi.headers, contentType='text/plain',
-                                            contentCharset='utf-8', content=text)
+    def respond_json(request, data):
+        request.Response._headers.update(TerkinHttpApi.headers)
+        request.Response.ReturnOkJSON(obj=data)

@@ -79,6 +79,7 @@ Development
 - Port codebase to Genuine MicroPython on ESP32. Thanks, @poesel!
 - Adjust naming for sensor driver adapters
 - Obtain improved lowlevel MicroPython driver for the MAX17043. Thanks, @poesel!
+- Upgrade to MicroWebSrv2. Thanks, Jean-Christophe (@jczic)!
 
 
 2019-08-19 0.6.0

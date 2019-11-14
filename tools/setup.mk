@@ -37,10 +37,13 @@ download-requirements:
 	# Install MicroWebSrv and MicroDNSSrv libraries
 	# https://github.com/jczic/MicroWebSrv
 	# https://github.com/jczic/MicroDNSSrv
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSrv.py
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSocket.py
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSrv.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSocket.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
+
+	# Install MicroWebSrv2
+	curl --location https://github.com/jczic/MicroWebSrv2/archive/de57eeb3.zip | tar -C $(target_dir) --strip-components=1 -xvf - MicroWebSrv2-de57eeb3ef2dbd88b40b38030263530641a06fcd/MicroWebSrv2
 
 	# Install BLE GATTS Wrapper for Pycom devices
 	# https://github.com/cmisztur/pycom-ble-gatt-wrapper
