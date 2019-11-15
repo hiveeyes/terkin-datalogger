@@ -68,11 +68,7 @@ class TerkinHttpApi:
         else:
             log.info('Starting HTTP server')
             self.webserver.SetEmbeddedConfig()
-            try:
-                self.webserver.StartManaged()
-            except:
-                self.webserver._xasSrv._socket._close()
-                self.webserver.StartManaged()
+            self.webserver.StartManaged()
 
     def captive(self):
         """

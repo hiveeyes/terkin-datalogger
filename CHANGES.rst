@@ -83,6 +83,7 @@ Development
 - Fix multi-platform support for SystemTemperatureSensor
 - Improve WiFi connectivity after hard reset again
 - Catch KeyboardInterrupt in order to properly shut down the HTTP server. Thanks, @jczic!
+- Just start HTTP server once without trying again
 
 
 2019-08-19 0.6.0
