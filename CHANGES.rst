@@ -82,6 +82,7 @@ Development
 - Upgrade to MicroWebSrv2. Thanks, Jean-Christophe (@jczic)!
 - Fix multi-platform support for SystemTemperatureSensor
 - Improve WiFi connectivity after hard reset again
+- Catch KeyboardInterrupt in order to properly shut down the HTTP server. Thanks, @jczic!
 
 
 2019-08-19 0.6.0

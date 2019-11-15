@@ -35,7 +35,17 @@ def main():
     from terkin.datalogger import TerkinDatalogger
     datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
     datalogger.setup()
-    datalogger.start()
+
+    try:
+        datalogger.start()
+
+    except KeyboardInterrupt:
+        try:
+            # This helps the webserver to get rid of any half-open listening sockets.
+            # https://github.com/jczic/MicroWebSrv2/issues/8
+            datalogger.device.networking.stop_httpserver()
+        except:
+            pass
 
 
 if __name__ == '__main__':

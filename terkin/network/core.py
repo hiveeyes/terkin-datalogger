@@ -146,6 +146,14 @@ class NetworkManager:
         self.http_api = TerkinHttpApi(device=self.device, settings=self.settings, storage=storage)
         self.http_api.start()
 
+    def stop_httpserver(self):
+        if self.settings.get('services.api.http.enabled', False):
+            try:
+                log.info('Shutting down HTTP server')
+                self.http_api.webserver.Stop()
+            except Exception as ex:
+                log.exc(ex, 'Shutting down HTTP server failed')
+
     def handle_modeserver(self, data, addr):
         """
 
