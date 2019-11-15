@@ -87,6 +87,7 @@ Development
 - Upgrade to MicroWebSrv2 2.0.2
 - Catch ``KeyboardInterrupt`` exceptions in WiFi keepalive thread and
   ``UdpServer`` in order to shut down using a single ``CTRL-C``
+- Upgrade to MicroWebSrv2 2.0.3. Thanks, @jczic!
 
 
 2019-08-19 0.6.0
