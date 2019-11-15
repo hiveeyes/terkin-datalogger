@@ -41,7 +41,15 @@ class WiFiManager:
         self.start_interface()
 
         # Check WiFi connectivity.
-        if self.is_connected():
+        if not self.is_connected():
+
+            # Free up some memory.
+            # self.manager.device.run_gc()
+
+            # Connect to WiFi network and wait for successful connection.
+            self.connect_once()
+
+        else:
 
             log.info("WiFi STA: Network connection already established, will skip scanning and resume connectivity.")
             self.print_short_status()
@@ -53,19 +61,10 @@ class WiFiManager:
             #self.print_short_status()
             self.print_address_status()
 
-            return
-
-        # Free up some memory.
-        self.manager.device.run_gc()
-
-        # Connect to WiFi network and wait for successful connection.
-        self.connect_once()
-
-        # Start thread which monitors connection
-        # and reconnects if required.
+        # Start thread to monitor WiFi connection and reconnect if required.
         try:
             import _thread
-            _thread.start_new_thread(self.stay_connected, ())
+            _thread.start_new_thread(self.stay_connected_invoke, ())
         except:
             pass
 
@@ -170,6 +169,13 @@ class WiFiManager:
         except Exception as ex:
             log.exc(ex, 'WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))
 
+    def stay_connected_invoke(self):
+        try:
+            log.info('Starting WiFi keepalive thread')
+            self.stay_connected()
+        except KeyboardInterrupt:
+            log.info('Shutting down WiFi keepalive thread')
+
     def stay_connected(self):
         """ """
 
@@ -190,6 +196,9 @@ class WiFiManager:
                          "Attempt: #%s", list(networks_known), attempt + 1)
                 try:
                     self.connect_stations(networks_known)
+
+                except KeyboardInterrupt:
+                    raise
 
                 except Exception as ex:
                     log.exc(ex, 'WiFi STA: Connecting to configured networks "{}" failed'.format(list(networks_known)))

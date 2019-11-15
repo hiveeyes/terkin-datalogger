@@ -28,14 +28,27 @@ class UdpServer:
     def start_real(self):
         """ """
         import socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((self.ip, self.port))
+
+        log.info("Starting UdpServer on {}:{}".format(self.ip, self.port))
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind((self.ip, self.port))
+
+        except Exception as ex:
+            log.exc(ex, "Failed starting UdpServer on {}:{}".format(self.ip, self.port))
+            return
+
         #print('waiting....')
-        while True:
-            data, addr = s.recvfrom(1024)
-            self.receive_handler(data, addr)
-            s.sendto(data, addr)
+        try:
+            while True:
+                data, addr = s.recvfrom(1024)
+                self.receive_handler(data, addr)
+                s.sendto(data, addr)
+
+        except KeyboardInterrupt:
+            log.info("Shutting down UdpServer")
+            s.close()
 
     def receive_handler(self, data, addr):
         """
