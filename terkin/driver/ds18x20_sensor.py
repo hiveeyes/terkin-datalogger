@@ -38,13 +38,13 @@ class DS18X20Sensor(AbstractSensor):
 
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                import ds18x20
-                self.driver = DS18X20NativeDriverAdapter(ds18x20.DS18X20(onewire_bus))
+                import ds18x20_native
+                self.driver = DS18X20NativeDriverAdapter(ds18x20_native.DS18X20(onewire_bus))
 
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-                from onewire_python import DS18X20
-                self.driver = DS18X20(onewire_bus)
+                import ds18x20_python
+                self.driver = ds18x20_python.DS18X20(onewire_bus)
 
             else:
                 raise NotImplementedError('DS18X20 driver not implemented on this platform')
@@ -61,11 +61,14 @@ class DS18X20Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        # TODO: Review device reading re. glitches and timing.
         log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
-        devices = self.start_reading()
+
+        # Start conversion on all DS18X20 sensors.
+        self.driver.start_conversion()
         time.sleep_ms(750)
-        data = self.read_devices(devices)
+
+        # Read scratch memory of each sensor.
+        data = self.read_devices()
 
         if not data:
             log.warning('No data from any DS18X20 devices on bus "{}"'.format(self.bus.name))
@@ -74,7 +77,7 @@ class DS18X20Sensor(AbstractSensor):
 
         return data
 
-    def start_reading(self):
+    def get_effective_devices(self):
         """ """
 
         log.info('Start conversion for DS18X20 devices on bus "{}"'.format(self.bus.name))
@@ -91,8 +94,6 @@ class DS18X20Sensor(AbstractSensor):
 
             effective_devices.append(device)
 
-        self.driver.start_conversion()
-
         return effective_devices
 
     def read_devices(self, devices):
@@ -103,6 +104,7 @@ class DS18X20Sensor(AbstractSensor):
         """
 
         data = {}
+        devices = self.get_effective_devices()
         for device in devices:
 
             address = OneWireBus.device_address_ascii(device)

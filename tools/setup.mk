@@ -84,8 +84,8 @@ download-requirements:
 
 	# Genuine MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
-	#$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
+	@test -e $(target_dir)/onewire_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	@test -e $(target_dir)/ds18x20_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
 
 	# Pycom MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/pycom/pycom-micropython-sigfox/tree/v1.20.1.r1/drivers/onewire
@@ -99,7 +99,8 @@ download-requirements:
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
 	# Enhanced by @robert-hh: Optimize timing, enable CRC check and slim the code.
 	# https://github.com/pycom/pycom-libraries/pull/62
-	@test -e $(target_dir)/onewire_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/pycom/pycom-libraries/dabce8d9/examples/DS18X20/onewire.py
+	@test -e $(target_dir)/onewire_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/hiveeyes/MicroPythonPP_Onewire_DS18X20/da15affe/onewire.py
+	@test -e $(target_dir)/ds18x20_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/hiveeyes/MicroPythonPP_Onewire_DS18X20/da15affe/ds18x20.py
 
     # 3. Install driver for MAX17043
 	@test -e $(target_dir)/max17043.py || $(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
