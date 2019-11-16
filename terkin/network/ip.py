@@ -15,6 +15,9 @@ class UdpServer:
         self.port = port
         self.callback = None
 
+        self.server_socket = None
+        self.is_running = False
+
     def start(self, callback=None):
         """
 
@@ -23,7 +26,13 @@ class UdpServer:
         """
         self.callback = callback
         import _thread
+        self.is_running = True
         _thread.start_new_thread(self.start_real, ())
+
+    def stop(self):
+        self.is_running = False
+        log.info("Shutting down UdpServer")
+        self.server_socket.close()
 
     def start_real(self):
         """ """
@@ -31,24 +40,24 @@ class UdpServer:
 
         log.info("Starting UdpServer on {}:{}".format(self.ip, self.port))
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.bind((self.ip, self.port))
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket.bind((self.ip, self.port))
 
         except Exception as ex:
             log.exc(ex, "Failed starting UdpServer on {}:{}".format(self.ip, self.port))
             return
 
-        #print('waiting....')
         try:
-            while True:
-                data, addr = s.recvfrom(1024)
+            while self.is_running:
+                data, addr = self.server_socket.recvfrom(1024)
                 self.receive_handler(data, addr)
-                s.sendto(data, addr)
+                self.server_socket.sendto(data, addr)
 
         except KeyboardInterrupt:
-            log.info("Shutting down UdpServer")
-            s.close()
+            log.info("Received KeyboardInterrupt within UdpServer")
+            self.stop()
+            raise
 
     def receive_handler(self, data, addr):
         """

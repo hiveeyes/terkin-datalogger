@@ -28,11 +28,14 @@ datalogger = None
 
 def main():
     """Start the data logger application."""
+
     print('[main.py] INFO: Loading Terkin Datalogger')
     global bootloader
     global datalogger
+
     print('[main.py] INFO: Loading modules')
     from terkin.datalogger import TerkinDatalogger
+
     datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
     datalogger.setup()
 
@@ -40,12 +43,15 @@ def main():
         datalogger.start()
 
     except KeyboardInterrupt:
-        try:
-            # This helps the webserver to get rid of any half-open listening sockets.
+        log.info("Received KeyboardInterrupt within main thread")
+
+        if datalogger.device.networking is not None:
+            datalogger.device.networking.stop_modeserver()
+            datalogger.device.networking.wifi_manager.stop()
+
+            # This helps the webserver to get rid of any listening sockets.
             # https://github.com/jczic/MicroWebSrv2/issues/8
             datalogger.device.networking.stop_httpserver()
-        except:
-            pass
 
 
 if __name__ == '__main__':

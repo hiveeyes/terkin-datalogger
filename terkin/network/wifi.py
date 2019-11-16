@@ -35,6 +35,9 @@ class WiFiManager:
         self.stopwatch = Stopwatch()
         log.info('Started stopwatch successfully')
 
+        # Helper for the ``stay_connected`` thread.
+        self.is_running = False
+
     def start(self):
         """ """
 
@@ -64,9 +67,15 @@ class WiFiManager:
         # Start thread to monitor WiFi connection and reconnect if required.
         try:
             import _thread
+            self.is_running = True
+            log.info('Starting WiFi connection monitor')
             _thread.start_new_thread(self.stay_connected_invoke, ())
         except:
-            pass
+            log.warning('Failed starting WiFi connection monitor')
+
+    def stop(self):
+        log.info('Shutting down WiFi connection monitor')
+        self.is_running = False
 
     def start_interface(self):
         """
@@ -171,10 +180,11 @@ class WiFiManager:
 
     def stay_connected_invoke(self):
         try:
-            log.info('Starting WiFi keepalive thread')
             self.stay_connected()
         except KeyboardInterrupt:
-            log.info('Shutting down WiFi keepalive thread')
+            log.info("Received KeyboardInterrupt within WiFi connection monitor")
+            self.stop()
+            raise
 
     def stay_connected(self):
         """ """
@@ -184,7 +194,7 @@ class WiFiManager:
 
         # Attempt to connect to known/configured networks.
         attempt = 0
-        while True:
+        while self.is_running:
 
             delay = 1
 
