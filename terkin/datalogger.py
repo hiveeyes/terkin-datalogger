@@ -103,8 +103,6 @@ class TerkinDatalogger:
     def start(self):
         """ """
 
-        self.duty_chrono.reset()
-
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -117,16 +115,13 @@ class TerkinDatalogger:
         # Alternative startup signalling: 2 x green.
         self.device.blink_led(0x000b00, count=2)
 
+        # Free up some memory.
         self.device.run_gc()
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
-        # Todo: Revisit where this should actually go.
-        # The modem driver takes about six seconds to initialize, so adjust the watchdog accordingly.
-        self.device.watchdog.reconfigure_minimum_timeout(15000)
-        if not self.settings.get('main.fastboot', False):
-            self.device.power_off_lte_modem()
+        # TODO: Make this configurable.
+        self.device.power_off_lte_modem()
         self.device.power_off_bluetooth()
-        self.device.watchdog.resume()
 
         log.info('Starting %s', self.application_info.fullname)
 

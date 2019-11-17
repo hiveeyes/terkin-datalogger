@@ -93,6 +93,8 @@ Development
 - Support native 1-Wire/DS18X20 MicroPython driver
 - Improve 1-Wire/DS18X20 support after the pure-Python variant has
   aligned its API to the one of Genuine MicroPython. Thanks, @robert-hh!
+- Remove ``fastboot`` setting as the LTE modem can already be shutdown
+  more quickly by using ``deattach=False``
 
 
 2019-08-19 0.6.0
