@@ -94,8 +94,8 @@ download-requirements:
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
 	# Enhanced by @robert-hh: Optimize timing, enable CRC check and slim the code.
 	# https://github.com/pycom/pycom-libraries/pull/62
-	@test -e $(target_dir)/onewire_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/hiveeyes/MicroPythonPP_Onewire_DS18X20/f6e97532/onewire.py
-	@test -e $(target_dir)/ds18x20_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/hiveeyes/MicroPythonPP_Onewire_DS18X20/f6e97532/ds18x20.py
+	@test -e $(target_dir)/onewire_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/onewire.py
+	@test -e $(target_dir)/ds18x20_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/ds18x20.py
 
     # 3. Install driver for MAX17043
 	@test -e $(target_dir)/max17043.py || $(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py

@@ -96,6 +96,8 @@ Development
 - Remove ``fastboot`` setting as the LTE modem can already be shutdown
   more quickly by using ``deattach=False``
 - Improve timekeeping
+- Update 1-Wire/DS18X20 driver again.
+  The DS18B20 driver now also supports parasite power mode. Thanks, @robert-hh!
 
 
 2019-08-19 0.6.0
