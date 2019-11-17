@@ -36,8 +36,10 @@ class DS18X20Sensor(AbstractSensor):
         onewire_bus = self.bus.adapter
         try:
 
+            use_native_driver = self.bus.settings.get('driver') == 'native'
+
             # Vanilla MicroPython 1.11
-            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla or use_native_driver:
                 import ds18x20_native
                 self.driver = DS18X20NativeDriverAdapter(ds18x20_native.DS18X20(onewire_bus))
 
@@ -96,7 +98,7 @@ class DS18X20Sensor(AbstractSensor):
 
         return effective_devices
 
-    def read_devices(self, devices):
+    def read_devices(self):
         """
 
         :param devices: 

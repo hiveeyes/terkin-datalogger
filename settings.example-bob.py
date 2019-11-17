@@ -281,6 +281,7 @@ sensors = {
             "number": 0,
             "enabled": True,
             "pin_data": "P11",
+            #"driver": "native",
         },
     ]
 }

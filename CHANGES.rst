@@ -90,6 +90,7 @@ Development
 - Upgrade to MicroWebSrv2 2.0.3. Thanks, @jczic!
 - Improve thread shutdown behavior when receiving ``SIGINT`` / ``CTRL-C``
 - Improve sensor reading from 1-Wire DS18X20 devices
+- Support native 1-Wire/DS18X20 MicroPython driver
 
 
 2019-08-19 0.6.0

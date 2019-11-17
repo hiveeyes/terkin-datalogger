@@ -276,16 +276,24 @@ class OneWireBus(AbstractBus):
         """ """
         # Todo: Improve error handling.
         try:
+
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                import onewire
                 pin = Pin(int(self.pins['data'][1:]))
-                self.adapter = onewire.OneWire(pin)
+                import onewire_native
+                self.adapter = onewire_native.OneWire(pin)
+
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-                from onewire_python import OneWire
                 pin = Pin(self.pins['data'])
-                self.adapter = OneWire(pin)
+                if self.settings.get('driver') == 'native':
+                    log.info('Using native 1-Wire driver on Pycom MicroPython')
+                    import onewire_native
+                    self.adapter = onewire_native.OneWire(pin)
+                else:
+                    log.info('Using pure-Python 1-Wire driver on Pycom MicroPython')
+                    import onewire_python
+                    self.adapter = onewire_python.OneWire(pin)
 
             else:
                 raise NotImplementedError('1-Wire driver not implemented on this platform')
@@ -294,15 +302,18 @@ class OneWireBus(AbstractBus):
 
         except Exception as ex:
             log.exc(ex, '1-Wire hardware driver failed')
+            return False
+
+        return True
 
     def scan_devices(self):
         """ """
 
         # The 1-Wire bus sometimes needs a fix when coming back from deep sleep.
-        self.adapter.reset()
+        #self.adapter.reset()
 
         # TODO: Tune this further?
-        time.sleep(1)
+        #time.sleep(1)
 
         # Scan for 1-Wire devices and remember them.
         # TODO: Refactor things specific to DS18x20 devices elsewhere.
