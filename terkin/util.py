@@ -8,7 +8,7 @@ import uio
 import copy
 import collections
 
-from umal import PlatformInfo
+from umal import PlatformInfo, GenericChronometer
 
 
 def to_base64(bytes):
@@ -341,28 +341,6 @@ class Stopwatch:
     def reset(self):
         """ """
         self.chronometer.reset()
-
-
-class GenericChronometer:
-    """A millisecond chronometer implemented with vanilla MicroPython.
-    https://micropython.readthedocs.io/en/latest/pyboard/tutorial/timer.html#making-a-microsecond-counter
-
-
-    """
-
-    def __init__(self):
-        import time
-        self.start = time.ticks_ms()
-
-    def read(self):
-        """ """
-        import time
-        return time.ticks_diff(time.ticks_ms(), self.start) / 1000.0
-
-    def reset(self):
-        """ """
-        import time
-        self.start = time.ticks_ms()
 
 
 class PycomChronometer:

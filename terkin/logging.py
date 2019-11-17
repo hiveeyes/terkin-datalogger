@@ -7,7 +7,8 @@ import utime
 import logging
 from logging import Logger, StreamHandler, Formatter, _level, _loggers
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
-from terkin.util import GenericChronometer, PycomChronometer, get_platform_info
+from terkin.util import PycomChronometer, get_platform_info
+from umal import GenericChronometer
 
 # Keep track of time since boot.
 platform_info = get_platform_info()

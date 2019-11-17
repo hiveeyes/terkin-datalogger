@@ -100,6 +100,7 @@ class MicroPythonBootloader:
 
     def __init__(self):
         self.platform_info = PlatformInfo()
+        self.duty_chrono = GenericChronometer()
 
     def extend_syspath(self):
         """
@@ -133,3 +134,24 @@ class MicroPythonBootloader:
             sys.path.extend(['/dist-packages', '/terkin'])
 
         print('[umal]    INFO: Python module search path is:', sys.path)
+
+
+class GenericChronometer:
+    """
+    A millisecond chronometer implemented with vanilla MicroPython.
+    https://micropython.readthedocs.io/en/latest/pyboard/tutorial/timer.html#making-a-microsecond-counter
+    """
+
+    def __init__(self):
+        import time
+        self.start = time.ticks_ms()
+
+    def read(self):
+        """ """
+        import time
+        return time.ticks_diff(time.ticks_ms(), self.start) / 1000.0
+
+    def reset(self):
+        """ """
+        import time
+        self.start = time.ticks_ms()

@@ -5,6 +5,7 @@
 import time
 import machine
 
+from __main__ import bootloader
 from umal import ApplicationInfo
 from terkin import __version__
 from terkin import logging
@@ -16,7 +17,7 @@ from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatt
 from terkin.driver.bme280_sensor import BME280Sensor
 from terkin.driver.ds18x20_sensor import DS18X20Sensor
 from terkin.driver.hx711_sensor import HX711Sensor
-from terkin.util import gc_disabled, ddformat, GenericChronometer
+from terkin.util import gc_disabled, ddformat
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +45,9 @@ class TerkinDatalogger:
     __instance__ = None
 
     def __init__(self, settings, platform_info=None):
+
+        # Reference to the chronometer used for general timekeeping.
+        self.duty_chrono = bootloader.duty_chrono
 
         # Fulfill singleton factory.
         TerkinDatalogger.__instance__ = self
@@ -79,7 +83,6 @@ class TerkinDatalogger:
         # Initialize sensor domain.
         self.sensor_manager = SensorManager()
 
-        self.duty_chrono = GenericChronometer()
 
     @staticmethod
     def getInstance(settings=None):
