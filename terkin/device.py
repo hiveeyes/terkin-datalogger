@@ -246,14 +246,24 @@ class TerkinDevice:
         # Machine runtime information.
         frequency = machine.freq() / 1000000
 
-        add('CPU freq     {} MHz'.format(frequency))
         add('Device id    {}'.format(self.device_id))
+        add()
+        add('CPU freq     {}   MHz'.format(frequency))
+        try:
+            import pycom
+            free_heap = pycom.get_free_heap()
+            add('{:13}{:>7} {}'.format('Free heap', free_heap[0] / 1000.0, 'kB'))
+            add('{:13}{:>7} {}'.format('Free PSRAM', free_heap[1] / 1000.0, 'kB'))
+        except:
+            pass
         add()
 
         # System memory info (in bytes).
+        """
         if hasattr(machine, 'info'):
             machine.info()
             add()
+        """
 
         # TODO: Python runtime information.
         add('{:8}: {}'.format('Python', sys.version))
@@ -269,7 +279,6 @@ class TerkinDevice:
             value = getattr(runtime_info, key)
             #print('value:', value)
             add('{:8}: {}'.format(key, value))
-        add()
         add()
 
         # Todo: Add program authors, contributors and credits.
