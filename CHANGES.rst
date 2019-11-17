@@ -91,6 +91,8 @@ Development
 - Improve thread shutdown behavior when receiving ``SIGINT`` / ``CTRL-C``
 - Improve sensor reading from 1-Wire DS18X20 devices
 - Support native 1-Wire/DS18X20 MicroPython driver
+- Improve 1-Wire/DS18X20 support after the pure-Python variant has
+  aligned its API to the one of Genuine MicroPython. Thanks, @robert-hh!
 
 
 2019-08-19 0.6.0

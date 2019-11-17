@@ -41,7 +41,7 @@ class DS18X20Sensor(AbstractSensor):
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla or use_native_driver:
                 import ds18x20_native
-                self.driver = DS18X20NativeDriverAdapter(ds18x20_native.DS18X20(onewire_bus))
+                self.driver = ds18x20_native.DS18X20(onewire_bus)
 
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
@@ -66,7 +66,7 @@ class DS18X20Sensor(AbstractSensor):
         log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
 
         # Start conversion on all DS18X20 sensors.
-        self.driver.start_conversion()
+        self.driver.convert_temp()
         time.sleep_ms(750)
 
         # Read scratch memory of each sensor.
@@ -112,7 +112,7 @@ class DS18X20Sensor(AbstractSensor):
             address = OneWireBus.device_address_ascii(device)
             log.info('Reading DS18X20 device "{}"'.format(address))
             try:
-                value = self.driver.read_temp_async(device)
+                value = self.driver.read_temp(device)
             except Exception as ex:
                 log.exc(ex, "Reading DS18X20 device {} failed".format(address))
                 continue
@@ -181,28 +181,3 @@ class DS18X20Sensor(AbstractSensor):
         """
         device_settings = self.get_device_settings(address)
         return device_settings.get('description')
-
-
-class DS18X20NativeDriverAdapter:
-    """
-    Adapter for mimicking the pure-Python onewire.py
-    driver from the early days of MicroPython 1.9.4.
-
-    https://github.com/pycom/pycom-libraries/blob/dabce8d9/examples/DS18X20/onewire.py
-    """
-
-    def __init__(self, driver):
-        self.driver = driver
-
-    def start_conversion(self):
-        """
-        Start the temp conversion on all DS18x20 devices.
-        """
-        return self.driver.convert_temp()
-
-    def read_temp_async(self, rom):
-        """
-        Read the temperature from the scratch memory of one DS18x20 device
-        if the conversion is complete, otherwise return None.
-        """
-        return self.driver.read_temp(rom)
