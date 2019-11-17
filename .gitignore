@@ -16,3 +16,4 @@ settings.py
 /.pio
 /.vscode
 /portainer
+/tmp
