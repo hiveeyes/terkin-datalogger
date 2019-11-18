@@ -61,37 +61,45 @@ class TerkinDevice:
 
         self.networking = NetworkManager(device=self, settings=self.settings)
 
-        # Start WiFi.
-        try:
-            self.networking.start_wifi()
+        if self.settings.get('networking.wifi.enabled'):
+            # Start WiFi.
+            try:
+                self.networking.start_wifi()
 
-        except Exception as ex:
-            log.exc(ex, 'Starting WiFi networking failed')
-            self.status.networking = False
-            return
+            except Exception as ex:
+                log.exc(ex, 'Starting WiFi networking failed')
+                self.status.networking = False
+                return
 
-        # Wait for network stack to come up.
-        try:
-            self.networking.wait_for_ip_stack(timeout=5)
-            self.status.networking = True
-        except Exception as ex:
-            log.exc(ex, 'IP stack not available')
-            self.status.networking = False
+            # Wait for network stack to come up.
+            try:
+                self.networking.wait_for_ip_stack(timeout=5)
+                self.status.networking = True
+            except Exception as ex:
+                log.exc(ex, 'IP stack not available')
+                self.status.networking = False
 
-        try:
-            self.networking.start_services()
-        except Exception as ex:
-            log.exc(ex, 'Starting network services failed')
+            try:
+                self.networking.start_services()
+            except Exception as ex:
+                log.exc(ex, 'Starting network services failed')
+        else:
+            log.info("[WiFi] interface disabled in settings.")
 
         # Initialize LoRa device.
-        if self.settings.get('networking.lora.antenna_attached'):
-            try:
-                self.networking.start_lora()
-            except Exception as ex:
-                log.exc(ex, 'Unable to start LoRa subsystem')
+        if self.settings.get('networking.lora.enabled'):
+            if self.settings.get('networking.lora.antenna_attached'):
+                try:
+                    self.networking.start_lora()
+                    self.status.networking = True
+                except Exception as ex:
+                    log.exc(ex, 'Unable to start LoRa subsystem')
+                    self.status.networking = False
+            else:
+                log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
+                         "ATTENTION: Running LoRa without antenna will wreck your device.")
         else:
-            log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
-                     "ATTENTION: Running LoRa without antenna will wreck your device.")
+            log.info("[LoRa] interface disabled in settings.")
 
         # Inform about networking status.
         #self.networking.print_status()
