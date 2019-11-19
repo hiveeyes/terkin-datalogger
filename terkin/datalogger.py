@@ -319,7 +319,7 @@ class TerkinDatalogger:
             # skip WiFi sensor registration when WiFi is disabled
             if sensor_type == 'system.wifi':
                 if not self.settings.get('networking.wifi.enabled'):
-                    log.info('WiFi is disabled, skipping sensor registration'.format(sensor_id, sensor_type))
+                    log.info('WiFi is disabled, skipping sensor registration')
                     continue
 
             # Resolve associated bus object.
