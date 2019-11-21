@@ -99,6 +99,8 @@ Development
 - Update 1-Wire/DS18X20 driver again.
   The DS18B20 driver now also supports parasite power mode. Thanks, @robert-hh!
 - Improve bootstrap messages
+- Optimize reading the HX711. Don't ever use ``read_average()``. Instead, just
+  ``read()`` the sensor ten times for computing the median.
 
 
 2019-08-19 0.6.0

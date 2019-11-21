@@ -72,16 +72,16 @@ class HX711Heisenberg(HX711):
 
         log.info('Gain & initial value set')
 
-    def read_median(self, times=8):
+    def read_median(self, times=10):
         """Acquire multiple readings and return median.
 
-        :param times:  (Default value = 8)
+        :param times:  (Default value = 10)
 
         """
         lst = []
         # Fixme: Think about feeding the watchdog here.
         for i in range(times):
-            lst.append(self.read_average())
+            lst.append(self.read())
         sortedLst = sorted(lst)
         #print(sortedLst)
         lstLen = len(lst)
