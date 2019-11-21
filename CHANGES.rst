@@ -99,6 +99,8 @@ Development
 - Update 1-Wire/DS18X20 driver again.
   The DS18B20 driver now also supports parasite power mode. Thanks, @robert-hh!
 - Improve bootstrap messages
+- Add boolean flags for enabling/disabling Wifi and LoRa. Thanks @thiasB!
+- Skip reading WiFi sensors when WiFi is disabled. Thanks @thiasB!
 - Optimize reading the HX711. Don't ever use ``read_average()``. Instead, just
   ``read()`` the sensor ten times for computing the median.
 

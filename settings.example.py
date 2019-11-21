@@ -77,6 +77,7 @@ interfaces = {
 # Networking configuration.
 networking = {
     'wifi': {
+        'enabled': True,
 
         # WiFi interface configuration.
         'phy': {
@@ -107,6 +108,7 @@ networking = {
         ],
     },
     'lora': {
+        'enabled': False,
         'otaa': {
             'frequency': 868100000,
             'region': 'LoRa.EU868',
