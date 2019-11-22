@@ -78,6 +78,9 @@ interfaces = {
 networking = {
     'wifi': {
 
+        # Enable/disable WiFi completely.
+        'enabled': True,
+
         # WiFi interface configuration.
         'phy': {
             'antenna_external': False,
