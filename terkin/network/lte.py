@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019 Matthias Mehldau <wetter@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import ure
+import time
+
+
 class SQNS:
-    """Synopsis::
+    """
+    Synopsis::
     
         sq = SQNS()
         sq.info()
@@ -11,6 +17,8 @@ class SQNS:
     
         sq.at('showphy')
 
+    See also:
+    - https://git.cicer.de/autonome-zelle/fipy-nbiot-rtd/blob/master/main.py
 
     """
 
@@ -18,6 +26,28 @@ class SQNS:
         from network import LTE
         self.lte = LTE()
         self.at('RRC:setDbgPerm full')
+
+    def connect(self):
+        self.lte.init()
+
+    def attach(self):
+        self.lte.attach(band=8, apn="iot.1nce.net")
+        while not self.lte.isattached():  # do we have a timeout?
+            time.sleep(1)
+            try:
+                csq_at = self.lte.send_at_cmd("AT+CSQ")
+                csq_line_regex = ure.compile("\n")
+                csq_line = csq_line_regex.split(csq_at)
+                csq_string_regex = ure.compile(" ")
+                csq_string = csq_string_regex.split(csq_line[1])
+                csq_comma = csq_string[1]
+                csq_num_regex = ure.compile(",")
+                csq_num = csq_num_regex.split(csq_comma)
+                csq = csq_num[0]
+                print("[LTE   ]   ... still attaching ... (CSQ: " + csq + ")")
+            except:
+                csq = "-999.0"
+                print("[LTE   ]   ... no CSQ recevied, let us hope I am still attaching " + csq)
 
     def at(self, command):
         """
