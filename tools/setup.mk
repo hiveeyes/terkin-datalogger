@@ -43,7 +43,7 @@ download-requirements:
 	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
 
 	# Install MicroWebSrv2
-	curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.3.zip | tar -C $(target_dir) --strip-components=1 -xvf - MicroWebSrv2-2.0.3/MicroWebSrv2
+	curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
 
 	# Install BLE GATTS Wrapper for Pycom devices
 	# https://github.com/cmisztur/pycom-ble-gatt-wrapper

@@ -104,6 +104,7 @@ Development
 - Optimize reading the HX711. Don't ever use ``read_average()``. Instead, just
   ``read()`` the sensor ten times for computing the median.
 - Port LTE attach procedure from "Autonome Zelle". Thanks, @wtf!
+- Fix installation of "MicroWebSrv2" dependency. Thanks, Chris!
 
 
 2019-08-19 0.6.0
