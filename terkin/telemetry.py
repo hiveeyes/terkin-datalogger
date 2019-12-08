@@ -225,6 +225,7 @@ class TelemetryClient:
 
     TRANSPORT_HTTP = 'http'
     TRANSPORT_MQTT = 'mqtt'
+    TRANSPORT_LORA = 'lora'
 
     FORMAT_URLENCODED = 'urlencoded'
     FORMAT_JSON = 'json'
@@ -257,6 +258,9 @@ class TelemetryClient:
 
         elif self.scheme in ['mqtt']:
             self.transport = TelemetryClient.TRANSPORT_MQTT
+
+        elif self.scheme in ['lora']:
+            self.transport = TelemetryClient.TRANSPORT_LORA
 
     def serialize(self, data):
         """
@@ -315,7 +319,7 @@ class TelemetryClient:
 
         payload = data
         """
-        if "TelemetryTransportTTN" in handler:
+        if "TelemetryTransportLORA" in handler:
             serialize = False
         """
 
@@ -344,8 +348,8 @@ class TelemetryClient:
         elif self.transport == TelemetryClient.TRANSPORT_MQTT:
             handler = TelemetryTransportMQTT(uri, self.format)
 
-        elif self.transport == TelemetryClient.TRANSPORT_TTN:
-            handler = TelemetryTransportTTN(self.ttn_size)
+        elif self.transport == TelemetryClient.TRANSPORT_LORA:
+            handler = TelemetryTransportLORA(self.ttn_size)
 
         else:
             raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
@@ -401,20 +405,21 @@ class TelemetryTransportHTTP:
             raise TelemetryTransportError(message)
 
 
-class TelemetryTransportTTN:
+class TelemetryTransportLORA:
     """ """
 
     def __init__(self, size=100):
-        raise NotImplementedError('Yadda.')
+        #raise NotImplementedError('Yadda.')
 
-        from cayenneLPP import cayenneLPP
+        #from cayenneLPP import cayenneLPP
 
         # TODO: TTN application needs to be setup accordingly to URI in HTTP.
         # self.application = application
-        self.size = size
+        #self.size = size
 
-        self.connection = NetworkManager.create_lora_socket()
-        self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
+        #self.connection = NetworkManager.create_lora_socket()
+        #self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
+        pass
 
     def send(self, request_data):
         """
@@ -422,8 +427,22 @@ class TelemetryTransportTTN:
         :param request_data: 
 
         """
-        # TODO: Raise exception if submission failed.
-        raise NotImplementedError('Yadda.')
+
+
+        log.info('Sending payload via LoRa...')
+        log.info('Payload:     %s', request_data['payload'])
+
+        payload = request_data['payload']
+
+        # Send payload and potentially receive downlink message
+        try:
+            lora_received = self.lora_manager.lora_send(payload)
+            print(lora_received)
+        except:
+            log.exception('[LoRa] Transmission failed')
+            return False
+
+        return True
 
 
 class TelemetryTransportMQTT:
@@ -647,6 +666,7 @@ class TelemetryTopology:
     NONE = 'null'
     MQTTKIT = 'mqttkit'
     BEEP_BOB = 'beep-bob'
+    TTN = 'ttn'
 
 
 class TelemetryTopologyFactory:
@@ -667,6 +687,9 @@ class TelemetryTopologyFactory:
 
         elif self.name == TelemetryTopology.MQTTKIT:
             return MqttKitTopology()
+
+        elif self.name == TelemetryTopology.TTN:
+            return TTNTopology()
 
         else:
             raise KeyError('Configured topology "{}" unknown'.format(self.name))
@@ -771,6 +794,9 @@ class MqttKitTopology(IdentityTopology):
         TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
     }
 
+class TTNTopology(IdentityTopology):
+    """ """
+    pass
 
 class TelemetryTransportError(Exception):
     """ """
