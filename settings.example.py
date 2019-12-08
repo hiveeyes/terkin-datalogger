@@ -193,6 +193,17 @@ telemetry = {
             },
             'format': 'lpp',
             'encode': 'base64',
+        },
+
+        # CayenneLPP over TTN-LoRa
+        {
+            # Enable/disable this telemetry target.
+            'enabled': True,
+
+            'endpoint': 'lora://',
+            'topology': 'ttn',
+
+            'format': 'lpp',
         }
     ],
 }
