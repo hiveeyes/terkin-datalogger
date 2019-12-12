@@ -192,7 +192,7 @@ telemetry = {
                 "node": "node-01-mqtt-lpp",
             },
             'format': 'lpp',
-            'encode': 'base64',
+            'content_encoding': 'base64',
         },
 
         # CayenneLPP over TTN-LoRa

@@ -194,15 +194,7 @@ class TerkinDevice:
 
         """
         # Create adapter object.
-        telemetry_adapter = TelemetryAdapter(
-            device=self,
-            endpoint=telemetry_target['endpoint'],
-            address=telemetry_target.get('address'),
-            data=telemetry_target.get('data'),
-            topology=telemetry_target.get('topology'),
-            format=telemetry_target.get('format'),
-            content_encoding=telemetry_target.get('encode'),
-        )
+        telemetry_adapter = TelemetryAdapter(device=self, target=telemetry_target)
 
         # Setup telemetry adapter.
         telemetry_adapter.setup()

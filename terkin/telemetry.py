@@ -57,22 +57,24 @@ class TelemetryAdapter:
 
     MAX_FAILURES = 3
 
-    def __init__(self, device=None, endpoint=None, address=None, data=None, topology=None, format=None, content_encoding=None):
+    def __init__(self, device=None, target=None):
 
         self.device = device
-        self.base_uri = endpoint
-        self.address = address or {}
-        self.address['base_uri'] = endpoint
-        self.data_more = data or {}
+        self.target = target
+
+        self.base_uri = self.target.endpoint
+        self.address = self.target.address or {}
+        self.address['base_uri'] = self.target.endpoint
+        self.data_more = self.target.data or {}
 
         # TODO: Move default value deeper into the framework here?
-        self.format = format or TelemetryClient.FORMAT_JSON
-        self.content_encoding = content_encoding
+        self.format = self.target.format or TelemetryClient.FORMAT_JSON
+        self.content_encoding = self.target.content_encoding
 
         self.channel_uri = None
         self.client = None
 
-        self.topology_name = topology
+        self.topology_name = self.target.topology
         self.topology = None
 
         self.offline = False
@@ -97,7 +99,8 @@ class TelemetryAdapter:
         client = TelemetryClient(self.channel_uri,
                                  format=self.format,
                                  content_encoding=self.content_encoding,
-                                 uri_suffixes=self.topology.uri_suffixes)
+                                 uri_suffixes=self.topology.uri_suffixes,
+                                 settings=self.target.get('settings'))
         return client
 
     def topology_factory(self):
@@ -217,10 +220,9 @@ class CSVTelemetryAdapter(TelemetryAdapter):
 
 
 class TelemetryClient:
-    """A flexible telemetry data client wrapping access to
+    """
+    A flexible telemetry data client wrapping access to
     different transport adapters and serialization mechanisms.
-
-
     """
 
     TRANSPORT_HTTP = 'http'
@@ -236,7 +238,7 @@ class TelemetryClient:
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
 
-    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None):
+    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None, settings=None):
 
         log.info('Starting Terkin TelemetryClient')
         self.uri = uri
@@ -247,9 +249,7 @@ class TelemetryClient:
         self.format = format
         self.content_encoding = content_encoding
         self.uri_suffixes = uri_suffixes or {}
-
-        # TODO: Move to TTN Adapter.
-        self.ttn_size = 12
+        self.settings = settings or {}
 
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
