@@ -293,10 +293,6 @@ class TerkinDevice:
 
         log.info('\n' + buffer.getvalue())
 
-    def power_off(self):
-        """ """
-        self.networking.stop()
-
     def power_off_lte_modem(self):
         """
         We don't use LTE yet.

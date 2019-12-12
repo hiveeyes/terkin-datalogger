@@ -159,9 +159,6 @@ class TerkinDatalogger:
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
 
-        # Power up sensor peripherals.
-        self.sensor_manager.power_on()
-
         # Ready.
         self.start_mainloop()
 
@@ -236,17 +233,21 @@ class TerkinDatalogger:
             log.info('Device is in maintenance mode. Skipping deep sleep and '
                      'adjusting interval to {} seconds'.format(interval))
 
-        # Use deep sleep if requested.
+        # Prepare device shutdown.
         try:
+
+            # Shut down sensor peripherals.
+            self.sensor_manager.power_off()
+
+            # Shut down networking.
             if deepsleep:
+                self.device.networking.stop()
 
-                # Shut down sensor peripherals.
-                self.sensor_manager.power_off()
+        except Exception as ex:
+            log.exc(ex, 'Power off failed')
 
-                # Shut down device peripherals.
-                self.device.power_off()
-
-            # Send device to deep sleep.
+        # Activate device sleep mode.
+        try:
             self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
 
         # When hibernation fails, fall back to regular "time.sleep".
@@ -434,6 +435,9 @@ class TerkinDatalogger:
         Read measurements from all sensor objects that have been registered in the sensor_manager.
         Reading is done with the read() function of each respective sensor object.
         """
+
+        # Power up sensor peripherals.
+        self.sensor_manager.power_on()
 
         # Collect observations.
         data = {}

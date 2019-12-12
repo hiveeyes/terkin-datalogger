@@ -105,6 +105,7 @@ Development
   ``read()`` the sensor ten times for computing the median.
 - Port LTE attach procedure from "Autonome Zelle". Thanks, @wtf!
 - Fix installation of "MicroWebSrv2" dependency. Thanks, Chris!
+- Shut down peripherals regardless of using deep sleep or not
 
 
 2019-08-19 0.6.0
