@@ -438,6 +438,7 @@ class TelemetryTransportLORA:
         if self.lora_socket is None:
             self.create_lora_socket()
 
+
     def send(self, request_data):
         """
         :param request_data:
@@ -449,6 +450,7 @@ class TelemetryTransportLORA:
         log.info('Payload:     %s', request_data['payload'])
 
         payload = request_data['payload']
+
 
         # Send payload and potentially receive downlink message.
         try:
