@@ -97,30 +97,6 @@ class LoRaManager:
 
         return self.lora_joined
 
-    def create_lora_socket(self):
-        """ """
-        # create a lora socket
-
-        self.lora_socket = None
-        self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
-
-        # set the LoRaWAN data rate
-        #self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
-        self.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.otaa_settings['datarate'])
-        # make the socket non-blocking
-        self.socket.setblocking(False)
-
-        self.lora_socket = True
-        log.info('[LoRa] socket created')
-
-        for i in range(0,2):
-            #pycom.rgbled(0x000f00) # green
-            time.sleep(0.1)
-            #pycom.rgbled(0x000000) # off
-
-        time.sleep(4.0)
-        return self.lora_socket
-
     def lora_send(self, payload):
         """
 

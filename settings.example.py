@@ -114,7 +114,6 @@ networking = {
         'otaa': {
             'frequency': 868100000,
             'region': 'LoRa.EU868',
-            'datarate': 0,
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
@@ -204,6 +203,11 @@ telemetry = {
             'topology': 'ttn',
 
             'format': 'lpp',
+
+            'settings': {
+                'size': 12,
+                'datarate': 0,
+            },
         }
     ],
 }

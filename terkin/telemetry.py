@@ -296,11 +296,9 @@ class TelemetryClient:
 
     def transmit(self, data, uri=None, serialize=True):
         """
-
         :param data: 
         :param uri:  (Default value = None)
         :param serialize:  (Default value = True)
-
         """
 
         # Submit telemetry data using HTTP POST request
@@ -349,7 +347,7 @@ class TelemetryClient:
             handler = TelemetryTransportMQTT(uri, self.format)
 
         elif self.transport == TelemetryClient.TRANSPORT_LORA:
-            handler = TelemetryTransportLORA(self.ttn_size)
+            handler = TelemetryTransportLORA(self.settings)
 
         else:
             raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
@@ -408,36 +406,54 @@ class TelemetryTransportHTTP:
 class TelemetryTransportLORA:
     """ """
 
-    def __init__(self, size=100):
-        #raise NotImplementedError('Yadda.')
+    lora_socket = None
+
+    def __init__(self, settings):
 
         #from cayenneLPP import cayenneLPP
 
         # TODO: TTN application needs to be setup accordingly to URI in HTTP.
         # self.application = application
-        #self.size = size
 
-        #self.connection = NetworkManager.create_lora_socket()
+        self.settings = settings or {}
+        self.size = self.settings.get('size', 12)
+        self.datarate = self.settings.get('datarate', 0)
+
         #self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
-        pass
+
+    def create_lora_socket(self):
+
+        import socket
+        self.lora_socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+
+        # Set the LoRaWAN data rate
+        self.lora_socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
+
+        # Make the socket non-blocking.
+        self.lora_socket.setblocking(False)
+
+        log.info('[LoRa] socket created')
+
+    def ensure_lora_socket(self):
+        if self.lora_socket is None:
+            self.create_lora_socket()
 
     def send(self, request_data):
         """
-
-        :param request_data: 
-
+        :param request_data:
         """
 
+        self.ensure_lora_socket()
 
         log.info('Sending payload via LoRa...')
         log.info('Payload:     %s', request_data['payload'])
 
         payload = request_data['payload']
 
-        # Send payload and potentially receive downlink message
+        # Send payload and potentially receive downlink message.
         try:
-            lora_received = self.lora_manager.lora_send(payload)
-            print(lora_received)
+            outcome = self.lora_socket.send(payload)
+            log.info('[LoRa] Send outcome: %s', outcome)
         except:
             log.exception('[LoRa] Transmission failed')
             return False
