@@ -62,19 +62,19 @@ class TelemetryAdapter:
         self.device = device
         self.target = target
 
-        self.base_uri = self.target.endpoint
-        self.address = self.target.address or {}
-        self.address['base_uri'] = self.target.endpoint
-        self.data_more = self.target.data or {}
+        self.base_uri = self.target['endpoint']
+        self.address = self.target.get('address', {})
+        self.address['base_uri'] = self.target.get('endpoint')
+        self.data_more = self.target.get('data', {})
 
         # TODO: Move default value deeper into the framework here?
-        self.format = self.target.format or TelemetryClient.FORMAT_JSON
-        self.content_encoding = self.target.content_encoding
+        self.format = self.target.get('format', TelemetryClient.FORMAT_JSON)
+        self.content_encoding = self.target.get('content_encoding')
 
         self.channel_uri = None
         self.client = None
 
-        self.topology_name = self.target.topology
+        self.topology_name = self.target.get('topology')
         self.topology = None
 
         self.offline = False
