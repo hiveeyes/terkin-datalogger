@@ -686,7 +686,6 @@ class TelemetryTopology:
     NONE = 'null'
     MQTTKIT = 'mqttkit'
     BEEP_BOB = 'beep-bob'
-    TTN = 'ttn'
 
 
 class TelemetryTopologyFactory:

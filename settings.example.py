@@ -112,7 +112,6 @@ networking = {
     'lora': {
         'enabled': False,
         'otaa': {
-            'frequency': 868100000,
             'region': 'LoRa.EU868',
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
@@ -200,9 +199,7 @@ telemetry = {
             'enabled': True,
 
             'endpoint': 'lora://',
-
             'format': 'lpp',
-
             'settings': {
                 'size': 12,
                 'datarate': 0,
