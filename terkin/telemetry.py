@@ -708,9 +708,6 @@ class TelemetryTopologyFactory:
         elif self.name == TelemetryTopology.MQTTKIT:
             return MqttKitTopology()
 
-        elif self.name == TelemetryTopology.TTN:
-            return TTNTopology()
-
         else:
             raise KeyError('Configured topology "{}" unknown'.format(self.name))
 
@@ -813,10 +810,6 @@ class MqttKitTopology(IdentityTopology):
         TelemetryClient.TRANSPORT_HTTP: '/data',
         TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
     }
-
-class TTNTopology(IdentityTopology):
-    """ """
-    pass
 
 class TelemetryTransportError(Exception):
     """ """
