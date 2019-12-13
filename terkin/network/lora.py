@@ -34,9 +34,18 @@ class LoRaManager:
 
         from network import LoRa
 
-        #pycom.rgbled(0x0f0000) # red
-        #self.lora = LoRa(mode=LoRa.LORAWAN, region=self.otaa_settings['region'])
-        self.lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
+        if self.otaa_settings['region']   == 'AS923':
+            lora_region = LoRa.AS923
+        elif self.otaa_settings['region'] == 'AU915':
+            lora_region = LoRa.AU915
+        elif self.otaa_settings['region'] == 'EU868':
+            lora_region = LoRa.EU868
+        elif self.otaa_settings['region'] == 'US915':
+            lora_region = LoRa.US915
+
+        lora_adr = self.otaa_settings['adr'] or False
+
+        self.lora = LoRa(mode=LoRa.LORAWAN, region=lora_region, adr=lora_adr)
 
         # restore LoRa state from NVRAM after waking up from DEEPSLEEP. Rejoin otherwise
         if machine.reset_cause() == machine.DEEPSLEEP_RESET:
@@ -44,7 +53,7 @@ class LoRaManager:
             log.info('[LoRa] LoRaWAN state restored from NVRAM after deep sleep')
         else:
             self.lora.nvram_erase()
-            log.info('[LoRa] LoRaWAN state erased from NVRAM. Let the device join the network')
+            log.info('[LoRa] LoRaWAN state erased from NVRAM to force the device to rejoin the network')
 
         # Create LoRaWAN OTAA connection to TTN.
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])

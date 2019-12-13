@@ -112,7 +112,8 @@ networking = {
     'lora': {
         'enabled': False,
         'otaa': {
-            'region': 'LoRa.EU868',
+            'region': 'EU868',
+            'adr': False,
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
