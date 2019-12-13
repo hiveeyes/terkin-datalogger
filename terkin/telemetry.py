@@ -64,7 +64,7 @@ class TelemetryAdapter:
 
         self.base_uri = self.target['endpoint']
         self.address = self.target.get('address', {})
-        self.address['base_uri'] = self.target.get('endpoint')
+        self.address['base_uri'] = self.target['endpoint']
         self.data_more = self.target.get('data', {})
 
         # TODO: Move default value deeper into the framework here?
