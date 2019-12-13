@@ -446,16 +446,16 @@ class TelemetryTransportLORA:
         :param request_data:
         """
 
-        self.ensure_lora_socket()
+        import binascii
 
-        log.info('Sending payload via LoRa...')
-        log.info('Payload:     %s', request_data['payload'])
+        self.ensure_lora_socket()
 
         payload = request_data['payload']
 
-
         # Send payload and potentially receive downlink message.
         try:
+            log.info('Sending payload via LoRa...')
+            log.info('Payload (hex) : %s', binascii.hexlify(payload))
             outcome = self.lora_socket.send(payload)
             log.info('[LoRa] Send outcome: %s', outcome)
         except:
