@@ -29,11 +29,6 @@ class LoRaManager:
 
         time.sleep(2.5)
 
-        if self.lora_joined:
-            self.create_lora_socket()
-        else:
-            log.error("[LoRa] Could not join network")
-
     def start_lora_join(self):
         """ """
 
