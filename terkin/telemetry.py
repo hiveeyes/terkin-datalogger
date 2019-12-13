@@ -435,12 +435,11 @@ class TelemetryTransportLORA:
         log.info('[LoRa] socket created')
 
     def ensure_lora_socket(self):
-        if self.lora_joined:
-            if self.lora_socket is None:
-                try:
-                    self.create_lora_socket()
-                except:
-                    log.error("[LoRa] Could not create LoRa socket")
+        if self.lora_socket is None:
+            try:
+                self.create_lora_socket()
+            except:
+                log.error("[LoRa] Could not create LoRa socket")
 
     def send(self, request_data):
         """
