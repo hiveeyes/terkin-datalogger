@@ -200,7 +200,6 @@ telemetry = {
             'enabled': True,
 
             'endpoint': 'lora://',
-            'topology': 'ttn',
 
             'format': 'lpp',
 
