@@ -106,6 +106,8 @@ class TerkinDatalogger:
     def start(self):
         """ """
 
+        import os
+
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -123,7 +125,9 @@ class TerkinDatalogger:
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # TODO: Make this configurable.
-        self.device.power_off_lte_modem()
+        if not "LoPy" in os.uname().sysname:
+            self.device.power_off_lte_modem()
+
         self.device.power_off_bluetooth()
 
         log.info('Starting %s', self.application_info.fullname)
