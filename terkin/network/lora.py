@@ -29,6 +29,11 @@ class LoRaManager:
 
         time.sleep(2.5)
 
+        if self.lora_joined:
+            self.create_lora_socket()
+        else:
+            log.error("[LoRa] Could not join network")
+
     def start_lora_join(self):
         """ """
 
@@ -76,24 +81,31 @@ class LoRaManager:
         for i in range(0, attempts):
             while not self.lora.has_joined():
                 time.sleep(2.5)
-                #pycom.rgbled(0x0f0f00) # yellow
-                time.sleep(0.1)
                 log.info('[LoRa] Not joined yet...')
-                #pycom.rgbled(0x000000) # off
 
         self.lora_joined = self.lora.has_joined()
 
         if self.lora_joined:
             log.info('[LoRa] joined...')
-            # TODO: move nvram_save() to after payload send call
-            self.lora.nvram_save()
         else:
             log.info('[LoRa] did not join in %s attempts', attempts)
 
-        #for i in range(3, 16):
-        #    self.lora.remove_channel(i)
-
         return self.lora_joined
+
+    def create_lora_socket(self):
+        """ """
+
+        # create a lora socket
+        self.lora_socket = None
+        self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+
+        # make the socket non-blocking
+        self.socket.setblocking(False)
+
+        self.lora_socket = True
+        log.info('[LoRa] socket created')
+
+        return self.lora_socket
 
     def lora_send(self, payload):
         """
@@ -102,10 +114,10 @@ class LoRaManager:
 
         """
         success = self.socket.send(payload)
-        for i in range(0,2):
-            #pycom.rgbled(0x00000f) # green
-            time.sleep(0.1)
-            #pycom.rgbled(0x000000) # off
+
+        # give LoRa stack some rest before saving status to NVRAM
+        time.sleep(4)
+        self.lora.nvram_save()
 
         return success
 
@@ -113,9 +125,7 @@ class LoRaManager:
         """ """
         rx, port = self.socket.recvfrom(256)
         if rx:
-            #pycom.rgbled(0x000f00) # green
             log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
-            #pycom.rgbled(0x000f00) # green
         time.sleep(6)
 
         return rx, port

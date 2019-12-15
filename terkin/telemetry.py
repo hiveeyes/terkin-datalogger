@@ -413,35 +413,17 @@ class TelemetryTransportLORA:
 
     def __init__(self, lora_manager, settings):
 
-        #from cayenneLPP import cayenneLPP
-
-        # TODO: TTN application needs to be setup accordingly to URI in HTTP.
-        # self.application = application
-
         self.lora_manager = lora_manager
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
         self.datarate = self.settings.get('datarate', 0)
 
-        #self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
-
-    def create_lora_socket(self):
-
-        import socket
-        self.lora_socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
-
-        # Set the LoRaWAN data rate
-        self.lora_socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
-
-        # Make the socket non-blocking.
-        self.lora_socket.setblocking(False)
-
-        log.info('[LoRa] socket created')
 
     def ensure_lora_socket(self):
-        if self.lora_socket is None:
+
+        if self.lora_manager.lora_socket is None:
             try:
-                self.create_lora_socket()
+                self.lora_manager.create_lora_socket()
             except:
                 log.error("[LoRa] Could not create LoRa socket")
 
@@ -451,20 +433,25 @@ class TelemetryTransportLORA:
         """
 
         import binascii
+        import socket
 
         self.ensure_lora_socket()
 
         payload = request_data['payload']
+        log.info('[LoRa] Payload (hex) : %s', binascii.hexlify(payload))
 
-        # Send payload and potentially receive downlink message.
+        # Send payload
         try:
-            log.info('Sending payload via LoRa...')
-            log.info('Payload (hex) : %s', binascii.hexlify(payload))
-            outcome = self.lora_socket.send(payload)
-            log.info('[LoRa] Send outcome: %s', outcome)
+            log.info('[LoRa] Sending payload ...')
+            self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
+            outcome = self.lora_manager.lora_send(payload)
+            log.info('[LoRa] %s bytes sent', outcome)
         except:
             log.exception('[LoRa] Transmission failed')
             return False
+
+        # Receive downlink message
+        # rx = self.lora_manager.lora_receive()
 
         return True
 
