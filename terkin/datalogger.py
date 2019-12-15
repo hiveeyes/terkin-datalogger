@@ -6,7 +6,7 @@ import time
 import machine
 
 from __main__ import bootloader
-from umal import ApplicationInfo
+from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
 from terkin.configuration import TerkinConfiguration
@@ -44,7 +44,7 @@ class TerkinDatalogger:
     # For the singleton factory.
     __instance__ = None
 
-    def __init__(self, settings, platform_info=None):
+    def __init__(self, settings, platform_info: PlatformInfo = None):
 
         # Reference to the chronometer used for general timekeeping.
         self.duty_chrono = bootloader.duty_chrono
@@ -106,8 +106,6 @@ class TerkinDatalogger:
     def start(self):
         """ """
 
-        import os
-
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
 
@@ -125,7 +123,7 @@ class TerkinDatalogger:
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # TODO: Make this configurable.
-        if not "LoPy" in os.uname().sysname:
+        if self.application_info.platform_info.device_name in ['GPy', 'FiPy']:
             self.device.power_off_lte_modem()
 
         self.device.power_off_bluetooth()

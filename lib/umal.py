@@ -54,6 +54,7 @@ class PlatformInfo:
         self.mcu = None
         self.vendor = None
         self.micropython_version = None
+        self.device_name = None
 
         self.resolve_platform()
 
@@ -75,6 +76,8 @@ class PlatformInfo:
         if sys.platform in ['pyboard']:
             self.mcu = McuFamily.STM32
             self.vendor = MicroPythonVendor.Vanilla
+
+        self.device_name = sys.platform
 
 
 class ApplicationInfo:
