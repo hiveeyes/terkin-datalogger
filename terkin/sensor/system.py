@@ -145,13 +145,13 @@ class SystemBatteryLevel(AbstractSystemSensor):
         # ADC channel used for sampling the raw value.
         from machine import ADC
 
-        if self.adc_attenuation_db == 0.:
+        if self.adc_attenuation_db == 0.0:
             self.adc_atten = ADC.ATTN_0DB
         elif self.adc_attenuation_db == 2.5:
             self.adc_atten = ADC.ATTN_2_5DB
-        elif self.adc_attenuation_db == 6.:
+        elif self.adc_attenuation_db == 6.0:
             self.adc_atten = ADC.ATTN_6DB
-        elif self.adc_attenuation_db == 11.:
+        elif self.adc_attenuation_db == 11.0:
             self.adc_atten = ADC.ATTN_11DB
         else:
             raise ValueError('ADC attenuation value (adc_attenuation_db) not allowed : {}'.format(self.adc_attenuation_db))
