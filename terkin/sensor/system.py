@@ -135,7 +135,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         self.pin = self.settings.get('pin')
         self.resistor_r1 = self.settings.get('resistor_r1')
         self.resistor_r2 = self.settings.get('resistor_r2')
-        self.adc_attenuation_db = self.settings.get('adc_attenuation_db')
+        self.adc_attenuation_db = self.settings.get('adc_attenuation_db', 6.0)
 
         assert type(self.pin) is str, 'VCC Error: Voltage divider ADC pin invalid'
         assert type(self.resistor_r1) is int, 'VCC Error: Voltage divider resistor value "resistor_r1" invalid'
@@ -153,6 +153,8 @@ class SystemBatteryLevel(AbstractSystemSensor):
             self.adc_atten = ADC.ATTN_6DB
         elif self.adc_attenuation_db == 11.:
             self.adc_atten = ADC.ATTN_11DB
+        else:
+            raise ValueError('ADC attenuation value (adc_attenuation_db) not allowed : {}'.format(self.adc_attenuation_db))
 
         if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             from machine import Pin
