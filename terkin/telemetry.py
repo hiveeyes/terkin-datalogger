@@ -100,7 +100,8 @@ class TelemetryAdapter:
                                  format=self.format,
                                  content_encoding=self.content_encoding,
                                  uri_suffixes=self.topology.uri_suffixes,
-                                 settings=self.target.get('settings'))
+                                 settings=self.target.get('settings'),
+                                 networking=self.device.networking)
         return client
 
     def topology_factory(self):
@@ -238,7 +239,7 @@ class TelemetryClient:
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
 
-    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None, settings=None):
+    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None, settings=None, networking=None):
 
         log.info('Starting Terkin TelemetryClient')
         self.uri = uri
@@ -250,6 +251,8 @@ class TelemetryClient:
         self.content_encoding = content_encoding
         self.uri_suffixes = uri_suffixes or {}
         self.settings = settings or {}
+
+        self.networking = networking
 
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
@@ -347,7 +350,7 @@ class TelemetryClient:
             handler = TelemetryTransportMQTT(uri, self.format)
 
         elif self.transport == TelemetryClient.TRANSPORT_LORA:
-            handler = TelemetryTransportLORA(self.settings)
+            handler = TelemetryTransportLORA(self.networking.lora_manager, self.settings)
 
         else:
             raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
@@ -408,13 +411,14 @@ class TelemetryTransportLORA:
 
     lora_socket = None
 
-    def __init__(self, settings):
+    def __init__(self, lora_manager, settings):
 
         #from cayenneLPP import cayenneLPP
 
         # TODO: TTN application needs to be setup accordingly to URI in HTTP.
         # self.application = application
 
+        self.lora_manager = lora_manager
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
         self.datarate = self.settings.get('datarate', 0)
