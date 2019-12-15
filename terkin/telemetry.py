@@ -832,6 +832,8 @@ def to_cayenne_lpp(data):
 
         if "temperature" in name:
             frame.add_temperature(channel, value)
+        elif "voltage" in name:
+            frame.add_analog_output(channel, value)
         elif "digital-input" in name:
             frame.add_digital_input(channel, value)
         elif "digital_output" in name:
