@@ -821,39 +821,45 @@ def to_cayenne_lpp(data):
     from cayennelpp import LppFrame
     frame = LppFrame()
 
+    channel = {}
+    channel['temp']    = 0
+    channel['ana_out'] = 0
+    channel['hum']     = 0
+    channel['press']   = 0
+    channel['scale']   = 0
+
     for key, value in data.items():
 
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]
-        try:
-            channel = int(key.split("_")[1])
-        except IndexError:
-            channel = 0
+        # try:
+        #     channel = int(key.split(":")[1])
+        # except IndexError:
+        #     channel = 0
 
         if "temperature" in name:
-            frame.add_temperature(channel, value)
+            frame.add_temperature(channel['temp'], value)
+            channel['temp'] += 1
         elif "voltage" in name:
+            frame.add_analog_output(channel['ana_out'], value)
+            channel['ana_out'] += 1
+        elif "humidity" in name:
+            frame.add_humitidy(channel['hum'], value)
+            channel['hum'] += 1
+        elif "pressure" in name:
+            frame.add_barometer(channel['press'], value)
+            channel['press'] += 1
+        elif "scale" in name:
+            frame.add_analog_input(channel, value)
+            channel['scale'] += 1
+        elif "analog-output" in name:
             frame.add_analog_output(channel, value)
         elif "digital-input" in name:
             frame.add_digital_input(channel, value)
         elif "digital_output" in name:
             frame.add_digital_output(channel, value)
-        elif "analog-input" in name:
-            frame.add_analog_input(channel, value)
-        elif "analog-output" in name:
-            frame.add_analog_output(channel, value)
         elif "illuminance" in name:
-            frame.add_illuminance(channel, value)
-        elif "presence" in name:
-            frame.add_presence(channel, value)
-        elif "humidity" in name:
-            frame.add_humidity(channel, value)
-        elif "accelerometer" in name:
-            frame.add_accelerometer(channel, value)
-        elif "barometer" in name:
-            frame.add_barometer(channel, value)
-        elif "gyrometer" in name:
-            frame.add_gyrometer(channel, value)
+            frame.add_luminosity(channel, value)
         elif "gps" in name:
             frame.add_gps(channel, value)
 
@@ -861,8 +867,9 @@ def to_cayenne_lpp(data):
         # TODO: Add load encoder as ID 122 (3322)
         # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
         # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
-        elif False and "load" in name:
-            frame.add_load(channel, value)
+
+        # elif False and "load" in name:
+        #     frame.add_load(channel, value)
 
         # TODO: Map memfree and other baseline sensors appropriately.
 
