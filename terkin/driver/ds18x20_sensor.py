@@ -120,7 +120,10 @@ class DS18X20Sensor(AbstractSensor):
             # Evaluate device response.
             if value is not None:
 
-                # TODO: Filter the 85° thing here.
+                # TODO: Mask power-on reset value 0550h (85°) here.
+                # https://github.com/micropython/micropython/pull/5338
+                # Maybe it's not only 85°. Sometimes it's also 25°(!).
+                # https://github.com/cpetrich/counterfeit_DS18B20
 
                 try:
                     # Compute telemetry field name.
