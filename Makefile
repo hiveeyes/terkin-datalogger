@@ -199,20 +199,30 @@ install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
 		$(MAKE) mpy-compile && \
-		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
 		$(MAKE) lftp lftp_recipe=tools/upload-mpy-$(MPY_VERSION).lftprc; \
 	else \
 		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
+	fi
+
+## Install all files to the device, using USB (rshell)
+install-rshell:
+
+	@if test "${mpy_cross}" = "true"; then \
+		$(MAKE) mpy-compile && \
+		$(rshell) $(rshell_options) --file tools/upload-mpy.rshell; \
+	else \
+		$(MAKE) install; \
 	fi
 
 ## Install all files to the device, using best method
 install-ng: check-mcu-port
 
 	@if test "${mcu_port_type}" = "ip"; then \
+		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
 		$(MAKE) install-ftp; \
 	elif test "${mcu_port_type}" = "usb"; then \
 		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using USB" \
-		$(MAKE) install; \
+		$(MAKE) install-rshell; \
 	fi
 
 	@# User notification
