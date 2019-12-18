@@ -421,11 +421,21 @@ class TelemetryTransportLORA:
 
     def ensure_lora_socket(self):
 
-        if self.lora_manager.lora_socket is None:
-            try:
-                self.lora_manager.create_lora_socket()
-            except:
-                log.error("[LoRa] Could not create LoRa socket")
+        import socket
+
+        self.lora_manager.wait_for_lora_join(42)
+
+        if self.lora_manager.lora_joined:
+            if self.lora_manager.lora_socket is None:
+                try:
+                    self.lora_manager.create_lora_socket()
+                except:
+                    log.error("[LoRa] Could not create LoRa socket")
+                if self.lora_manager.lora_socket:
+                    self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
+        else:
+            log.error("[LoRa] Could not join network")
+
 
     def send(self, request_data):
         """
@@ -433,7 +443,6 @@ class TelemetryTransportLORA:
         """
 
         import binascii
-        import socket
 
         self.ensure_lora_socket()
 
@@ -443,7 +452,6 @@ class TelemetryTransportLORA:
         # Send payload
         try:
             log.info('[LoRa] Sending payload ...')
-            self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
             outcome = self.lora_manager.lora_send(payload)
             log.info('[LoRa] %s bytes sent', outcome)
         except:

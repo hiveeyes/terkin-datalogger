@@ -25,14 +25,6 @@ class LoRaManager:
     def start(self):
         """ """
         self.start_lora_join()
-        self.wait_for_lora_join(42)
-
-        time.sleep(2.5)
-
-        if self.lora_joined:
-            self.create_lora_socket()
-        else:
-            log.error("[LoRa] Could not join network")
 
     def start_lora_join(self):
         """ """
@@ -50,21 +42,24 @@ class LoRaManager:
 
         lora_adr = self.otaa_settings['adr'] or False
 
+        self.lora_socket = None
+
         self.lora = LoRa(mode=LoRa.LORAWAN, region=lora_region, adr=lora_adr)
 
-        # restore LoRa state from NVRAM after waking up from DEEPSLEEP. Rejoin otherwise
+        # restore LoRa state from NVRAM after waking up from DEEPSLEEP. Reset LoRa NVRAM and rejoin otherwise
         if machine.reset_cause() == machine.DEEPSLEEP_RESET:
             self.lora.nvram_restore()
             log.info('[LoRa] LoRaWAN state restored from NVRAM after deep sleep')
         else:
             self.lora.nvram_erase()
-            log.info('[LoRa] LoRaWAN state erased from NVRAM to force the device to rejoin the network')
+            log.info('[LoRa] LoRaWAN state erased from NVRAM. Rejoin forced')
 
         # Create LoRaWAN OTAA connection to TTN.
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
         app_key = binascii.unhexlify(self.otaa_settings['application_key'])
 
         if not self.lora.has_joined():
+            log.info('[LoRa] joining the network...')
             if self.otaa_settings.get('device_eui') is None:
                 self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
             else:
@@ -80,8 +75,8 @@ class LoRaManager:
         self.lora_joined = None
         for i in range(0, attempts):
             while not self.lora.has_joined():
-                time.sleep(2.5)
                 log.info('[LoRa] Not joined yet...')
+                time.sleep(2.5)
 
         self.lora_joined = self.lora.has_joined()
 
@@ -96,7 +91,6 @@ class LoRaManager:
         """ """
 
         # create a lora socket
-        self.lora_socket = None
         self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
         # make the socket non-blocking
