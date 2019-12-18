@@ -57,22 +57,24 @@ class TelemetryAdapter:
 
     MAX_FAILURES = 3
 
-    def __init__(self, device=None, endpoint=None, address=None, data=None, topology=None, format=None, content_encoding=None):
+    def __init__(self, device=None, target=None):
 
         self.device = device
-        self.base_uri = endpoint
-        self.address = address or {}
-        self.address['base_uri'] = endpoint
-        self.data_more = data or {}
+        self.target = target
+
+        self.base_uri = self.target['endpoint']
+        self.address = self.target.get('address', {})
+        self.address['base_uri'] = self.target['endpoint']
+        self.data_more = self.target.get('data', {})
 
         # TODO: Move default value deeper into the framework here?
-        self.format = format or TelemetryClient.FORMAT_JSON
-        self.content_encoding = content_encoding
+        self.format = self.target.get('format', TelemetryClient.FORMAT_JSON)
+        self.content_encoding = self.target.get('content_encoding')
 
         self.channel_uri = None
         self.client = None
 
-        self.topology_name = topology
+        self.topology_name = self.target.get('topology')
         self.topology = None
 
         self.offline = False
@@ -97,7 +99,9 @@ class TelemetryAdapter:
         client = TelemetryClient(self.channel_uri,
                                  format=self.format,
                                  content_encoding=self.content_encoding,
-                                 uri_suffixes=self.topology.uri_suffixes)
+                                 uri_suffixes=self.topology.uri_suffixes,
+                                 settings=self.target.get('settings'),
+                                 networking=self.device.networking)
         return client
 
     def topology_factory(self):
@@ -217,14 +221,14 @@ class CSVTelemetryAdapter(TelemetryAdapter):
 
 
 class TelemetryClient:
-    """A flexible telemetry data client wrapping access to
+    """
+    A flexible telemetry data client wrapping access to
     different transport adapters and serialization mechanisms.
-
-
     """
 
     TRANSPORT_HTTP = 'http'
     TRANSPORT_MQTT = 'mqtt'
+    TRANSPORT_LORA = 'lora'
 
     FORMAT_URLENCODED = 'urlencoded'
     FORMAT_JSON = 'json'
@@ -235,7 +239,7 @@ class TelemetryClient:
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
 
-    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None):
+    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None, settings=None, networking=None):
 
         log.info('Starting Terkin TelemetryClient')
         self.uri = uri
@@ -246,9 +250,9 @@ class TelemetryClient:
         self.format = format
         self.content_encoding = content_encoding
         self.uri_suffixes = uri_suffixes or {}
+        self.settings = settings or {}
 
-        # TODO: Move to TTN Adapter.
-        self.ttn_size = 12
+        self.networking = networking
 
         self.scheme, self.netloc, self.path, self.query, self.fragment = urlsplit(self.uri)
 
@@ -257,6 +261,9 @@ class TelemetryClient:
 
         elif self.scheme in ['mqtt']:
             self.transport = TelemetryClient.TRANSPORT_MQTT
+
+        elif self.scheme in ['lora']:
+            self.transport = TelemetryClient.TRANSPORT_LORA
 
     def serialize(self, data):
         """
@@ -292,11 +299,9 @@ class TelemetryClient:
 
     def transmit(self, data, uri=None, serialize=True):
         """
-
         :param data: 
         :param uri:  (Default value = None)
         :param serialize:  (Default value = True)
-
         """
 
         # Submit telemetry data using HTTP POST request
@@ -315,7 +320,7 @@ class TelemetryClient:
 
         payload = data
         """
-        if "TelemetryTransportTTN" in handler:
+        if "TelemetryTransportLORA" in handler:
             serialize = False
         """
 
@@ -344,8 +349,8 @@ class TelemetryClient:
         elif self.transport == TelemetryClient.TRANSPORT_MQTT:
             handler = TelemetryTransportMQTT(uri, self.format)
 
-        elif self.transport == TelemetryClient.TRANSPORT_TTN:
-            handler = TelemetryTransportTTN(self.ttn_size)
+        elif self.transport == TelemetryClient.TRANSPORT_LORA:
+            handler = TelemetryTransportLORA(self.networking.lora_manager, self.settings)
 
         else:
             raise ValueError('Unknown telemetry transport "{}"'.format(self.transport))
@@ -401,29 +406,62 @@ class TelemetryTransportHTTP:
             raise TelemetryTransportError(message)
 
 
-class TelemetryTransportTTN:
+class TelemetryTransportLORA:
     """ """
 
-    def __init__(self, size=100):
-        raise NotImplementedError('Yadda.')
+    lora_socket = None
 
-        from cayenneLPP import cayenneLPP
+    def __init__(self, lora_manager, settings):
 
-        # TODO: TTN application needs to be setup accordingly to URI in HTTP.
-        # self.application = application
-        self.size = size
+        self.lora_manager = lora_manager
+        self.settings = settings or {}
+        self.size = self.settings.get('size', 12)
+        self.datarate = self.settings.get('datarate', 0)
 
-        self.connection = NetworkManager.create_lora_socket()
-        self.lpp = cayenneLPP.CayenneLPP(size=100, sock=self.connection)
+
+    def ensure_lora_socket(self):
+
+        import socket
+
+        self.lora_manager.wait_for_lora_join(42)
+
+        if self.lora_manager.lora_joined:
+            if self.lora_manager.lora_socket is None:
+                try:
+                    self.lora_manager.create_lora_socket()
+                except:
+                    log.error("[LoRa] Could not create LoRa socket")
+                if self.lora_manager.lora_socket:
+                    self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
+        else:
+            log.error("[LoRa] Could not join network")
+
 
     def send(self, request_data):
         """
-
-        :param request_data: 
-
+        :param request_data:
         """
-        # TODO: Raise exception if submission failed.
-        raise NotImplementedError('Yadda.')
+
+        import binascii
+
+        self.ensure_lora_socket()
+
+        payload = request_data['payload']
+        log.info('[LoRa] Payload (hex) : %s', binascii.hexlify(payload))
+
+        # Send payload
+        try:
+            log.info('[LoRa] Sending payload ...')
+            outcome = self.lora_manager.lora_send(payload)
+            log.info('[LoRa] %s bytes sent', outcome)
+        except:
+            log.exception('[LoRa] Transmission failed')
+            return False
+
+        # Receive downlink message
+        # rx = self.lora_manager.lora_receive()
+
+        return True
 
 
 class TelemetryTransportMQTT:
@@ -771,7 +809,6 @@ class MqttKitTopology(IdentityTopology):
         TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
     }
 
-
 class TelemetryTransportError(Exception):
     """ """
     pass
@@ -792,35 +829,55 @@ def to_cayenne_lpp(data):
     from cayennelpp import LppFrame
     frame = LppFrame()
 
+    channel = {}
+    channel['temp']    = 0
+    channel['ana_out'] = 0
+    channel['hum']     = 0
+    channel['press']   = 0
+    channel['scale']   = 0
+
     for key, value in data.items():
 
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]
-        try:
-            channel = int(key.split("_")[1])
-        except IndexError:
-            channel = 0
+        # try:
+        #     channel = int(key.split(":")[1])
+        # except IndexError:
+        #     channel = 0
 
         if "temperature" in name:
-            frame.add_temperature(channel, value)
+            frame.add_temperature(channel['temp'], value)
+            channel['temp'] += 1
+        elif "voltage" in name:
+            frame.add_analog_output(channel['ana_out'], value)
+            channel['ana_out'] += 1
+        elif "humidity" in name:
+            frame.add_humitidy(channel['hum'], value)
+            channel['hum'] += 1
+        elif "pressure" in name:
+            frame.add_barometer(channel['press'], value)
+            channel['press'] += 1
+        elif "weight" in name:
+            # 2 bytes signed float is easily exceeded when sending values in [g]
+            value_kg = float('%.2f' % (value / 1000))
+            frame.add_analog_input(channel['scale'], value_kg)
+            channel['scale'] += 1
+        elif "analog-output" in name:
+            frame.add_analog_output(channel, value)
+        elif "analog-input" in name:
+            frame.add_analog_input(channel, value)
         elif "digital-input" in name:
             frame.add_digital_input(channel, value)
         elif "digital_output" in name:
             frame.add_digital_output(channel, value)
-        elif "analog-input" in name:
-            frame.add_analog_input(channel, value)
-        elif "analog-output" in name:
-            frame.add_analog_output(channel, value)
         elif "illuminance" in name:
-            frame.add_illuminance(channel, value)
-        elif "presence" in name:
-            frame.add_presence(channel, value)
-        elif "humidity" in name:
-            frame.add_humidity(channel, value)
-        elif "accelerometer" in name:
-            frame.add_accelerometer(channel, value)
+            frame.add_luminosity(channel, value)
         elif "barometer" in name:
             frame.add_barometer(channel, value)
+        elif "presence" in name:
+            frame.add_presence(channel, value)
+        elif "accelerometer" in name:
+            frame.add_accelerometer(channel, value)
         elif "gyrometer" in name:
             frame.add_gyrometer(channel, value)
         elif "gps" in name:
@@ -830,8 +887,9 @@ def to_cayenne_lpp(data):
         # TODO: Add load encoder as ID 122 (3322)
         # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
         # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
-        elif False and "load" in name:
-            frame.add_load(channel, value)
+
+        # elif False and "load" in name:
+        #     frame.add_load(channel, value)
 
         # TODO: Map memfree and other baseline sensors appropriately.
 

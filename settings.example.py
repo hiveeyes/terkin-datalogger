@@ -112,9 +112,8 @@ networking = {
     'lora': {
         'enabled': False,
         'otaa': {
-            'frequency': 868100000,
-            'region': 'LoRa.EU868',
-            'datarate': 0,
+            'region': 'EU868',
+            'adr': False,
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
@@ -192,7 +191,20 @@ telemetry = {
                 "node": "node-01-mqtt-lpp",
             },
             'format': 'lpp',
-            'encode': 'base64',
+            'content_encoding': 'base64',
+        },
+
+        # CayenneLPP over TTN-LoRa
+        {
+            # Enable/disable this telemetry target.
+            'enabled': True,
+
+            'endpoint': 'lora://',
+            'format': 'lpp',
+            'settings': {
+                'size': 12,
+                'datarate': 0,
+            },
         }
     ],
 }

@@ -87,19 +87,22 @@ class TerkinDevice:
             log.info("[WiFi] interface disabled in settings.")
 
         # Initialize LoRa device.
-        if self.settings.get('networking.lora.enabled'):
-            if self.settings.get('networking.lora.antenna_attached'):
-                try:
-                    self.networking.start_lora()
-                    self.status.networking = True
-                except Exception as ex:
-                    log.exc(ex, 'Unable to start LoRa subsystem')
-                    self.status.networking = False
+        if self.application_info.platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']:
+            if self.settings.get('networking.lora.enabled'):
+                if self.settings.get('networking.lora.antenna_attached'):
+                    try:
+                        self.networking.start_lora()
+                        self.status.networking = True
+                    except Exception as ex:
+                        log.exc(ex, 'Unable to start LoRa subsystem')
+                        self.status.networking = False
+                else:
+                    log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
+                                 "ATTENTION: Running LoRa without antenna will wreck your device.")
             else:
-                log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
-                         "ATTENTION: Running LoRa without antenna will wreck your device.")
+                log.info("[LoRa] interface disabled in settings. Skip LoRa initialisation.")
         else:
-            log.info("[LoRa] interface disabled in settings.")
+            log.info("[LoRa] This is not a LoRa capable device.")
 
         # Inform about networking status.
         #self.networking.print_status()
@@ -194,15 +197,7 @@ class TerkinDevice:
 
         """
         # Create adapter object.
-        telemetry_adapter = TelemetryAdapter(
-            device=self,
-            endpoint=telemetry_target['endpoint'],
-            address=telemetry_target.get('address'),
-            data=telemetry_target.get('data'),
-            topology=telemetry_target.get('topology'),
-            format=telemetry_target.get('format'),
-            content_encoding=telemetry_target.get('encode'),
-        )
+        telemetry_adapter = TelemetryAdapter(device=self, target=telemetry_target)
 
         # Setup telemetry adapter.
         telemetry_adapter.setup()
