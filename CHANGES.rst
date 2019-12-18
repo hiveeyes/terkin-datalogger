@@ -108,6 +108,7 @@ Development
 - Shut down peripherals regardless of using deep sleep or not
 - Battery voltage sensor: Make ADC attenuation configurable. Thanks, @thiasB!
 - Power on I2C peripheral after power off. Thanks, @ckrohne!
+- Enable WiFi by default if not explicitly disabled within configuration
 
 
 2019-08-19 0.6.0

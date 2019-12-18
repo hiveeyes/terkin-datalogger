@@ -61,7 +61,7 @@ class TerkinDevice:
 
         self.networking = NetworkManager(device=self, settings=self.settings)
 
-        if self.settings.get('networking.wifi.enabled'):
+        if self.settings.get('networking.wifi.enabled', True):
             # Start WiFi.
             try:
                 self.networking.start_wifi()
