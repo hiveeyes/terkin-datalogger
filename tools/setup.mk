@@ -84,8 +84,8 @@ download-requirements:
 
 	# Genuine MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
-	@test -e $(target_dir)/onewire_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/hiveeyes/micropython/ds18x20-power-on-reset-value/drivers/onewire/onewire.py
-	@test -e $(target_dir)/ds18x20_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/hiveeyes/micropython/ds18x20-power-on-reset-value/drivers/onewire/ds18x20.py
+	@test -e $(target_dir)/onewire_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	@test -e $(target_dir)/ds18x20_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
 
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
 	# Has no CRC checks.

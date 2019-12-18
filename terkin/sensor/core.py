@@ -245,6 +245,9 @@ class AbstractBus:
         self.devices = []
         self.pins = {}
 
+        # Indicate whether the bus driver just has been started.
+        self.just_started = None
+
     @property
     def name(self):
         """ """
@@ -348,19 +351,22 @@ class I2CBus(AbstractBus):
     """Initialize the I2C hardware driver and represent as bus object."""
 
     type = BusType.I2C
+    frequency = 100000
 
     def start(self):
         """ """
         # Todo: Improve error handling.
         try:
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-                self.adapter = I2C(self.number, sda = Pin(int(self.pins['sda'][1:])), scl = Pin(int(self.pins['scl'][1:])), freq=100000)
+                self.adapter = I2C(self.number, sda=Pin(int(self.pins['sda'][1:])), scl=Pin(int(self.pins['scl'][1:])), freq=self.frequency)
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-                self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=100000)
+                self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
             else:
-                raise NotImplementedError('I2C Bus is '
-                        'not implemented on this platform')
+                raise NotImplementedError('I2C Bus is not implemented on this platform')
+
+            self.just_started = True
             self.scan_devices()
+
         except Exception as ex:
             log.exc(ex, 'I2C hardware driver failed')
 
@@ -370,12 +376,24 @@ class I2CBus(AbstractBus):
         # i2c.readfrom(0x76, 5)
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
 
+    def power_on(self):
+        """
+        Turn on the I2C peripheral after power off.
+        """
+
+        # Don't reinitialize device if power on just occurred through initial driver setup.
+        if self.just_started:
+            self.just_started = False
+            return
+
+        # TODO: Add implementation for Vanilla MicroPython.
+        self.adapter.init(mode=I2C.master, baudrate=self.frequency)
+
     def power_off(self):
-        """Turn off the I2C peripheral.
+        """
+        Turn off the I2C peripheral.
         
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
-
-
         """
         log.info('Turning off I2C bus {}'.format(self.name))
         self.adapter.deinit()
