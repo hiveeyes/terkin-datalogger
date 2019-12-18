@@ -850,16 +850,28 @@ def to_cayenne_lpp(data):
             frame.add_barometer(channel['press'], value)
             channel['press'] += 1
         elif "scale" in name:
-            frame.add_analog_input(channel, value)
+            # 2 bytes signed float is easily exceeded when sending values in [g]
+            value_kg = float('%.2f' % (value / 1000))
+            frame.add_analog_input(channel['scale'], value_kg)
             channel['scale'] += 1
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)
+        elif "analog-input" in name:
+            frame.add_analog_input(channel, value)
         elif "digital-input" in name:
             frame.add_digital_input(channel, value)
         elif "digital_output" in name:
             frame.add_digital_output(channel, value)
         elif "illuminance" in name:
             frame.add_luminosity(channel, value)
+        elif "barometer" in name:
+            frame.add_barometer(channel, value)
+        elif "presence" in name:
+            frame.add_presence(channel, value)
+        elif "accelerometer" in name:
+            frame.add_accelerometer(channel, value)
+        elif "gyrometer" in name:
+            frame.add_gyrometer(channel, value)
         elif "gps" in name:
             frame.add_gps(channel, value)
 
