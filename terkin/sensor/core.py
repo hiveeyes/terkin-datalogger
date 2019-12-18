@@ -387,7 +387,7 @@ class I2CBus(AbstractBus):
             return
 
         # TODO: Add implementation for Vanilla MicroPython.
-        self.adapter.init(mode=I2C.master, baudrate=self.frequency)
+        self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
 
     def power_off(self):
         """
