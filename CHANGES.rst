@@ -110,6 +110,7 @@ Development
 - Power on I2C peripheral after power off. Thanks, @ckrohne!
 - Enable WiFi by default if not explicitly disabled within configuration
 - Improve "make install-ng": Now also works over USB/UART
+- LoRaWAN/TTN integration for real. Thanks, @thiasB!
 
 
 2019-08-19 0.6.0
