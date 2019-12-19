@@ -13,7 +13,7 @@ from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
-from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemBatteryLevel, SystemUptime
+from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVoltage, SystemUptime
 from terkin.driver.bme280_sensor import BME280Sensor
 from terkin.driver.ds18x20_sensor import DS18X20Sensor
 from terkin.driver.hx711_sensor import HX711Sensor
@@ -362,7 +362,11 @@ class TerkinDatalogger:
 
                 # Sensor which reports battery voltage.
                 elif sensor_type == 'system.battery-voltage':
-                    sensor_object = SystemBatteryLevel(sensor_info)
+                    sensor_object = SystemVoltage(sensor_info)
+
+                # Sensor which reports solar panel voltage.
+                elif sensor_type == 'system.solar-voltage':
+                    sensor_object = SystemVoltage(sensor_info)
 
                 # Sensor which reports system uptime metrics.
                 elif sensor_type == 'system.uptime':
