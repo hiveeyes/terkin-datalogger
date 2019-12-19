@@ -93,7 +93,6 @@ setup: setup-environment download-requirements mpy-cross-setup
 setup-terkin-agent:
 	$(pip3) install --pre --requirement requirements-terkin-agent.txt
 
-.PHONY: terkin-agent
 ## Run the MicroTerkin Agent, e.g. "make terkin-agent action=maintain"
 terkin-agent: setup-terkin-agent
 	sudo $(python3) tools/terkin.py $(action) $(macs)
