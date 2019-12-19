@@ -145,7 +145,7 @@ recycle: install-framework install-sketch reset-device-attached
 ## Upload framework, program and settings and restart device
 recycle-ng: install-ng
 
-	@# Restart device after prompting the user for confirmation.
+	## Restart device after prompting the user for confirmation.
 	@echo
 	@echo "$(WARNING) It is crucial all files have been transferred successfully before restarting the device."
 	@echo "          Otherwise, chances are high the program will crash after restart."
