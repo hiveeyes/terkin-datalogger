@@ -221,7 +221,7 @@ install-ng: check-mcu-port
 		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using FTP" && \
 		$(MAKE) install-ftp; \
 	elif test "${mcu_port_type}" = "usb"; then \
-		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using USB" \
+		$(MAKE) notify status=INFO status_ansi="$(INFO)" message="Uploading MicroPython code to device using USB" && \
 		$(MAKE) install-rshell; \
 	fi
 
