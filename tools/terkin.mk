@@ -46,7 +46,7 @@ check-mcu-port-strict:
 	fi
 
 ## Restart device using the HTTP API
-restart-device:
+restart-device-http:
 	$(eval ip_address := $(mcu_port))
 
 	@# Notify user about the power cycling.
