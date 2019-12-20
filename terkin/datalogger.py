@@ -363,11 +363,11 @@ class TerkinDatalogger:
                     sensor_object = SystemTemperature(sensor_info)
 
                 # Sensor which reports battery voltage.
-                elif sensor_type == 'system.battery-voltage':
+                elif sensor_type == 'system.voltage.battery':
                     sensor_object = SystemVoltage(sensor_info)
 
                 # Sensor which reports solar panel voltage.
-                elif sensor_type == 'system.solar-voltage':
+                elif sensor_type == 'system.voltage.solar':
                     sensor_object = SystemVoltage(sensor_info)
 
                 # Sensor which reports system uptime metrics.
