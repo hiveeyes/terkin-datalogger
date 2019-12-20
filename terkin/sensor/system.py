@@ -68,11 +68,12 @@ class SystemTemperature(AbstractSystemSensor):
         return reading
 
 
-class SystemBatteryLevel(AbstractSystemSensor):
+class SystemVoltage(AbstractSystemSensor):
     """
-    Read the battery level by sampling the ADC on a pin connected
+    Read the a voltage level by sampling the ADC on a pin connected
     to a voltage divider. As the Pycom expansion board is using
-    Pin 16, this is also used on other boards as kind of a convention.
+    Pin 16 for battery voltage, this is also used on other boards
+    as kind of a convention.
     
     Implementation
     ==============
@@ -136,6 +137,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         self.resistor_r1 = self.settings.get('resistor_r1')
         self.resistor_r2 = self.settings.get('resistor_r2')
         self.adc_attenuation_db = self.settings.get('adc_attenuation_db', 6.0)
+        self.reading_key = self.settings.get('type')
 
         assert type(self.pin) is str, 'VCC Error: Voltage divider ADC pin invalid'
         assert type(self.resistor_r1) is int, 'VCC Error: Voltage divider resistor value "resistor_r1" invalid'
@@ -164,11 +166,11 @@ class SystemBatteryLevel(AbstractSystemSensor):
             self.adc = ADC(id=0)
 
         else:
-            raise NotImplementedError('Reading the ADC for vbatt is '
+            raise NotImplementedError('Reading the ADC is '
                                       'not implemented on this platform')
 
     def read(self):
-        """Acquire vbatt reading by sampling ADC."""
+        """Acquire voltage reading by sampling ADC."""
         # Todo: Make attenuation factor configurable.
 
         from machine import ADC
@@ -176,7 +178,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
         i = 0
-        log.debug('Reading battery level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
+        log.debug('Reading voltage level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # read samples
         if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
@@ -200,7 +202,7 @@ class SystemBatteryLevel(AbstractSystemSensor):
             enable_irq(irq_state)
 
         else:
-            raise NotImplementedError('Reading the ADC for vbatt is '
+            raise NotImplementedError('Reading the ADC is '
                                       'not implemented on this platform')
 
         adc_mean /= self.adc_sample_count
@@ -221,10 +223,10 @@ class SystemBatteryLevel(AbstractSystemSensor):
         mean_variance = (adc_variance * 10 ** 6) // (adc_mean ** 2)
 
         # log.debug("ADC readings. count=%u:\n%s" %(self.adc_sample_count, str(adc_samples)))
-        log.debug("SystemBatteryLevel: Mean of ADC readings (0-4095) = %15.13f" % adc_mean)
-        log.debug("SystemBatteryLevel: Mean of ADC voltage readings (0-%dmV) = %15.13f" % (raw_voltage, mean_voltage))
-        log.debug("SystemBatteryLevel: Variance of ADC readings = %15.13f" % adc_variance)
-        log.debug("SystemBatteryLevel: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
+        log.debug("SystemVoltage: Mean of ADC readings (0-4095) = %15.13f" % adc_mean)
+        log.debug("SystemVoltage: Mean of ADC voltage readings (0-%dmV) = %15.13f" % (raw_voltage, mean_voltage))
+        log.debug("SystemVoltage: Variance of ADC readings = %15.13f" % adc_variance)
+        log.debug("SystemVoltage: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
         resistor_sum = self.resistor_r1 + self.resistor_r2
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
@@ -238,9 +240,9 @@ class SystemBatteryLevel(AbstractSystemSensor):
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             adc_channel.deinit()
 
-        log.debug('Battery level: {}'.format(voltage_volt))
+        log.debug('Voltage level: {}'.format(voltage_volt))
 
-        reading = {'system.voltage': voltage_volt}
+        reading = {self.reading_key: voltage_volt}
         return reading
 
     def power_off(self):

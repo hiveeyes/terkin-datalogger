@@ -202,7 +202,10 @@ sensors = {
             # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
 
             # The sensor type identifier.
-            'type': 'system.battery-voltage',
+            'type': 'system.voltage.battery',
+
+            # The sensor description.
+            'description': 'Battery',
 
             # Enable/disable sensor.
             'enabled': True,
@@ -218,6 +221,32 @@ sensors = {
 
             # ADC attenuation. possbible values: 0.0, 2.5, 6.0 or 11.0
             'adc_attenuation_db': 6.0,
+        },
+
+        {
+            # Sensor which reports solar panel voltage.
+            # See description in system.battery-voltage sensor
+
+            # The sensor type identifier.
+            'type': 'system.voltage.solar',
+
+            # The sensor description.
+            'description': 'Solar Panel',
+
+            # Enable/disable sensor.
+            'enabled': False,
+
+            # On which Pin to schnuckle this.
+            'pin': 'P17',
+
+            # Main resistor value (R1).
+            'resistor_r1': 1000,
+
+            # Resistor between input pin and ground (R2).
+            'resistor_r2': 100,
+
+            # ADC attenuation. possbible values: 0.0, 2.5, 6.0 or 11.0
+            'adc_attenuation_db': 11.0,
         },
 
     ],
