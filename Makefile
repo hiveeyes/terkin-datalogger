@@ -145,7 +145,7 @@ recycle: install-framework install-sketch reset-device-attached
 ## Upload framework, program and settings and restart device
 recycle-ng: install-ng
 
-	@# Restart device after prompting the user for confirmation.
+	# Restart device after prompting the user for confirmation.
 	@echo
 	@echo "$(WARNING) It is crucial all files have been transferred successfully before restarting the device."
 	@echo "          Otherwise, chances are high the program will crash after restart."
@@ -154,10 +154,10 @@ recycle-ng: install-ng
 	@echo
 
 	@if test "${mcu_port_type}" = "ip"; then \
-		@$(MAKE) confirm text="Restart device using the HTTP API?" && \
-		@$(MAKE) restart-device-http; \
+		$(MAKE) confirm text="Restart device using the HTTP API?" && \
+		$(MAKE) restart-device-http; \
 	elif test "${mcu_port_type}" = "usb"; then \
-		@$(MAKE) confirm text="Restart device using the REPL?" && \
+		$(MAKE) confirm text="Restart device using the REPL?" && \
 		$(MAKE) reset-device; \
 	fi
 
