@@ -6,6 +6,7 @@ import json
 from copy import copy
 from urllib.parse import urlsplit, urlencode
 from terkin import logging
+from terkin.model import DataFrame
 from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat
 
 log = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class TelemetryManager:
         """
         self.adapters.append(adapter)
 
-    def transmit(self, data):
+    def transmit(self, dataframe: DataFrame):
         """
 
         :param data: 
@@ -39,7 +40,7 @@ class TelemetryManager:
         for adapter in self.adapters:
 
             # Dispatch transmission to telemetry adapter.
-            outcome = adapter.transmit(data)
+            outcome = adapter.transmit(dataframe)
 
             # Todo: Propagate last error message into outcome and obtain here.
             channel = adapter.channel_uri
@@ -118,10 +119,10 @@ class TelemetryAdapter:
         data.update(kwargs)
         return self.topology.uri_template.format(**data)
 
-    def transmit(self, data):
+    def transmit(self, dataframe: DataFrame):
         """
 
-        :param data: 
+        :param dataframe:
 
         """
 
@@ -136,13 +137,13 @@ class TelemetryAdapter:
         # Transform into egress telemetry payload
         # using the designated encoder.
         try:
-            data = self.transform(data)
+            self.transform(dataframe)
         except Exception as ex:
             log.exc(ex, 'Transmission transform for topology "%s" failed', self.topology_name)
             return False
 
         try:
-            outcome = self.client.transmit(data)
+            outcome = self.client.transmit(dataframe)
             self.reset_errors()
             return outcome
 
@@ -156,27 +157,19 @@ class TelemetryAdapter:
 
         return False
 
-    def transform(self, data):
+    def transform(self, dataframe: DataFrame):
         """
-
-        :param data: 
-
+        :param dataframe:
         """
 
         # Add predefined "data_more" to telemetry message.
-        data.update(self.data_more)
-
-        if not hasattr(self.topology, 'encode'):
-            return data
+        dataframe.data_in.update(self.data_more)
 
         # Run data through designated encoder, if given.
-        encoder = self.topology.encode
-        if encoder is None:
-            return data
-        else:
-            data = encoder(data)
-
-        return data
+        if hasattr(self.topology, 'encode'):
+            encoder = self.topology.encode
+            if encoder is not None and callable(encoder):
+                encoder(dataframe)
 
     def is_online(self):
         """ """
@@ -265,7 +258,7 @@ class TelemetryClient:
         elif self.scheme in ['lora']:
             self.transport = TelemetryClient.TRANSPORT_LORA
 
-    def serialize(self, data):
+    def serialize(self, dataframe: DataFrame):
         """
 
         :param data: 
@@ -274,13 +267,13 @@ class TelemetryClient:
 
         # Serialize payload.
         if self.format == TelemetryClient.FORMAT_URLENCODED:
-            payload = urlencode(data)
+            payload = urlencode(dataframe.data_out)
 
         elif self.format == TelemetryClient.FORMAT_JSON:
-            payload = json.dumps(data)
+            payload = json.dumps(dataframe.data_out)
 
         elif self.format == TelemetryClient.FORMAT_CAYENNELPP:
-            payload = to_cayenne_lpp(data)
+            payload = to_cayenne_lpp(dataframe)
 
         elif self.format == TelemetryClient.FORMAT_CSV:
             raise NotImplementedError('Serialization format "CSV" not implemented yet')
@@ -295,11 +288,11 @@ class TelemetryClient:
         elif self.content_encoding == self.CONTENT_ENCODING_BASE64:
             payload = to_base64(payload)
 
-        return payload
+        dataframe.payload_out = payload
 
-    def transmit(self, data, uri=None, serialize=True):
+    def transmit(self, dataframe: DataFrame, uri=None, serialize=True):
         """
-        :param data: 
+        :param dataframe:
         :param uri:  (Default value = None)
         :param serialize:  (Default value = True)
         """
@@ -307,6 +300,7 @@ class TelemetryClient:
         # Submit telemetry data using HTTP POST request
         # Serialization: x-www-form-urlencoded
 
+        # Compute target URI.
         if uri:
             real_uri = uri
         else:
@@ -315,23 +309,16 @@ class TelemetryClient:
         suffix = self.uri_suffixes.get(self.transport, '').format(**self.__dict__)
         real_uri = real_uri + suffix
 
+        # Resolve handler by URI.
         handler = self.get_handler(real_uri)
 
-
-        payload = data
-        """
-        if "TelemetryTransportLORA" in handler:
-            serialize = False
-        """
-
+        # Prepare dataframe for egress.
+        dataframe.payload_out = dataframe.data_out
         if serialize:
-            payload = self.serialize(data)
+            self.serialize(dataframe)
 
-        request = {
-            'payload': payload,
-        }
-
-        return handler.send(request)
+        # Submit dataframe to handler.
+        return handler.send(dataframe)
 
     def get_handler(self, uri):
         """
@@ -388,17 +375,17 @@ class TelemetryTransportHTTP:
         else:
             raise ValueError('Unknown serialization format for TelemetryTransportHTTP: {}'.format(format))
 
-    def send(self, request_data):
+    def send(self, dataframe: DataFrame):
         """Submit telemetry data using HTTP POST request
 
-        :param request_data: 
+        :param dataframe:
 
         """
         log.info('Sending HTTP request to %s', self.uri)
-        log.info('Payload:     %s', request_data['payload'])
+        log.info('Payload:     %s', dataframe.payload_out)
 
         import urequests
-        response = urequests.post(self.uri, data=request_data['payload'], headers={'Content-Type': self.content_type})
+        response = urequests.post(self.uri, data=dataframe.payload_out, headers={'Content-Type': self.content_type})
         if response.status_code in [200, 201]:
             return True
         else:
@@ -418,7 +405,6 @@ class TelemetryTransportLORA:
         self.size = self.settings.get('size', 12)
         self.datarate = self.settings.get('datarate', 0)
 
-
     def ensure_lora_socket(self):
 
         import socket
@@ -436,17 +422,16 @@ class TelemetryTransportLORA:
         else:
             log.error("[LoRa] Could not join network")
 
-
-    def send(self, request_data):
+    def send(self, dataframe: DataFrame):
         """
-        :param request_data:
+        :param dataframe:
         """
 
         import binascii
 
         self.ensure_lora_socket()
 
-        payload = request_data['payload']
+        payload = dataframe.payload_out
         log.info('[LoRa] Payload (hex) : %s', binascii.hexlify(payload))
 
         # Send payload
@@ -465,7 +450,8 @@ class TelemetryTransportLORA:
 
 
 class TelemetryTransportMQTT:
-    """MQTT transport for Terkin Telemetry.
+    """
+    MQTT transport for Terkin Telemetry.
     
     This is currently based on the "Pycom MicroPython MQTT module" just called ``mqtt.py``.
     https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
@@ -529,11 +515,9 @@ class TelemetryTransportMQTT:
         """ """
         return self.ensure_connection()
 
-    def send(self, request_data):
+    def send(self, dataframe: DataFrame):
         """
-
-        :param request_data: 
-
+        :param dataframe:
         """
 
         # Evaluate and handle defunctness.
@@ -551,7 +535,7 @@ class TelemetryTransportMQTT:
             raise TelemetryTransportError(message)
 
         # Use payload from request.
-        payload = request_data['payload']
+        payload = dataframe.payload_out
 
         # Reporting.
         log.info('MQTT topic:   %s', topic)
@@ -573,7 +557,8 @@ class TelemetryTransportMQTT:
 
 
 class MQTTAdapter:
-    """MQTT adapter wrapping the lowlevel MQTT driver.
+    """
+    MQTT adapter wrapping the lowlevel MQTT driver.
     Handles a single connection to an MQTT broker.
     
     TODO: Try to make this module reasonably compatible again
@@ -724,13 +709,13 @@ class IdentityTopology:
         """ """
         return self.__class__.__name__
 
-    def encode(self, data):
+    def encode(self, dataframe: DataFrame):
         """
 
-        :param data: 
+        :param dataframe:
 
         """
-        return data
+        dataframe.data_out = dataframe.data_in
 
 
 class BeepBobTopology(IdentityTopology):
@@ -752,7 +737,7 @@ class BeepBobTopology(IdentityTopology):
         self.adapter = adapter
         self.settings = self.adapter.device.settings
 
-    def encode(self, data):
+    def encode(self, dataframe: DataFrame):
         """Encode telemetry data matching the BEEP-BOB interface.
         
         https://gist.github.com/vkuhlen/51f7968266659f37d076bd66d57cdbbd
@@ -781,10 +766,10 @@ class BeepBobTopology(IdentityTopology):
         mapping['key'] = 'key'
         for sensor_field, telemetry_field in mapping.items():
             sensor_field = sensor_field.lower()
-            if sensor_field in data:
-                egress_data[telemetry_field] = data[sensor_field]
+            if sensor_field in dataframe.data_in:
+                egress_data[telemetry_field] = dataframe.data_in[sensor_field]
 
-        return egress_data
+        dataframe.data_out = egress_data
 
 
 class MqttKitTopology(IdentityTopology):
@@ -809,6 +794,7 @@ class MqttKitTopology(IdentityTopology):
         TelemetryClient.TRANSPORT_MQTT: '/data.{format}',
     }
 
+
 class TelemetryTransportError(Exception):
     """ """
     pass
@@ -819,11 +805,11 @@ class TelemetryAdapterError(Exception):
     pass
 
 
-def to_cayenne_lpp(data):
-    """Serialize plain data dictionary to binary CayenneLPP format.
+def to_cayenne_lpp(dataframe: DataFrame):
+    """
+    Serialize dataframe to binary CayenneLPP format.
 
-    :param data: 
-
+    :param dataframe:
     """
 
     from cayennelpp import LppFrame
@@ -836,7 +822,10 @@ def to_cayenne_lpp(data):
     channel['press']   = 0
     channel['scale']   = 0
 
-    for key, value in data.items():
+    # TODO: Iterate ``dataframe.readings`` to get more metadata from sensor configuration.
+    # It is a list of ``SensorReading`` instances, each having a ``sensor`` and ``data`` attribute.
+
+    for key, value in dataframe.data_out.items():
 
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]

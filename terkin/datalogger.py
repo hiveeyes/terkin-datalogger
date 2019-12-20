@@ -6,6 +6,7 @@ import time
 import machine
 
 from __main__ import bootloader
+
 from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
@@ -201,7 +202,7 @@ class TerkinDatalogger:
         readings = self.read_sensors()
 
         # Remember current reading
-        self.storage.last_reading = readings
+        self.storage.last_reading = readings.data_in
 
         # Run the garbage collector.
         self.device.run_gc()
@@ -436,7 +437,7 @@ class TerkinDatalogger:
             # Clean up memory after creating each sensor object.
             #self.device.run_gc()
 
-    def read_sensors(self):
+    def read_sensors(self) -> DataFrame:
         """
         Read measurements from all sensor objects that have been registered in the sensor_manager.
         Reading is done with the read() function of each respective sensor object.
@@ -448,6 +449,7 @@ class TerkinDatalogger:
         # Collect observations.
         data = {}
         richdata = {}
+        readings = []
 
         # Iterate all registered sensors.
         sensors = self.sensor_manager.sensors
@@ -464,17 +466,23 @@ class TerkinDatalogger:
                 # Disable garbage collector to guarantee reasonable
                 # realtime behavior before invoking sensor reading.
                 with gc_disabled():
-                    reading = sensor.read()
+                    sensor_data = sensor.read()
 
                 # Evaluate sensor outcome.
-                if reading is None or reading is AbstractSensor.SENSOR_NOT_INITIALIZED:
+                if sensor_data is None or sensor_data is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
 
                 # Add sensor reading to observations.
-                data.update(reading)
+                data.update(sensor_data)
 
                 # Record reading for prettified output.
-                self.record_reading(sensor, reading, richdata)
+                self.record_reading(sensor, sensor_data, richdata)
+
+                # Capture single sensor reading.
+                item = SensorReading()
+                item.sensor = sensor
+                item.data = sensor_data
+                readings.append(item)
 
             except Exception as ex:
                 # Because of the ``gc_disabled`` context manager used above,
@@ -494,7 +502,12 @@ class TerkinDatalogger:
         else:
             log.info('Sensor data:  %s', data)
 
-        return data
+        # Capture all sensor readings.
+        result = DataFrame()
+        result.readings = readings
+        result.data_in = data
+
+        return result
 
     def record_reading(self, sensor, reading, richdata):
         """
@@ -519,10 +532,11 @@ class TerkinDatalogger:
                                 if device_description:
                                     richdata[key]['description'] = device_description
 
-    def transmit_readings(self, data):
-        """Transmit data
+    def transmit_readings(self, dataframe: DataFrame):
+        """
+        Transmit data
 
-        :param data: 
+        :param dataframe:
 
         """
 
@@ -531,7 +545,7 @@ class TerkinDatalogger:
             log.warning('Telemetry disabled')
             return False
 
-        telemetry_status = self.device.telemetry.transmit(data)
+        telemetry_status = self.device.telemetry.transmit(dataframe)
         count_total = len(telemetry_status)
         success = all(telemetry_status.values())
 
