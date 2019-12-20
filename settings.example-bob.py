@@ -202,7 +202,7 @@ sensors = {
             # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
 
             # The sensor type identifier.
-            'type': 'system.battery-voltage',
+            'type': 'system.voltage.battery',
 
             # The sensor description.
             'description': 'Battery',
@@ -228,7 +228,7 @@ sensors = {
             # See description in system.battery-voltage sensor
 
             # The sensor type identifier.
-            'type': 'system.solar-voltage',
+            'type': 'system.voltage.solar',
 
             # The sensor description.
             'description': 'Solar Panel',
