@@ -30,11 +30,11 @@ class MAX17043Sensor(AbstractSensor):
 
         # Initialize the hardware driver.
         try:
-            self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+            self.driver = MAX17043(address=self.address, i2c=self.bus.adapter)
             return True
 
         except Exception as ex:
-            log.exc(ex, 'BME280 hardware driver failed')
+            log.exc(ex, 'MAX17043 hardware driver failed')
 
     def read(self):
         """ """
@@ -42,7 +42,7 @@ class MAX17043Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        #log.info('Acquire reading from BME280')
+        #log.info('Acquire reading from MAX17043')
 
         data = {}
 
@@ -71,32 +71,7 @@ class MAX17043Sensor(AbstractSensor):
 
     @staticmethod
     def int_to_float(t, p, h):
-        """Obtains readings from BME280's (integer variant) ``read_compensated_data()`` method.
-        
-        
-        Integer formats
-        ===============
-        
-        Temperature
-        -----------
-        The temperature in hundredths of a degree Celsius.
-        For example, the value 2534 indicates a temperature of 25.34 degrees.
-        
-        Pressure
-        --------
-        The atmospheric pressure. This 32-bit value consists of 24 bits
-        indicating the integer value, and 8 bits indicating the fractional
-        value. To get a value in Pascals, divide the return value by 256.
-        For example, a value of 24674867 indicates 96386.2Pa, or 963.862hPa.
-        
-        Humidity
-        --------
-        The relative humidity. This 32-bit value consists of 22 bits
-        indicating the integer value, and 10 bits indicating the fractional
-        value. To get a value in %RH, divide the return  value by 1024.
-        For example, a value of 47445 indicates 46.333%RH.
-        
-        -- https://github.com/robert-hh/BME280#integer-formats
+        """
 
         :param t: 
         :param p: 

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# adapted from https://github.com/DFRobot/DFRobot_MAX17043
+
 import time
 
 from machine import I2C, Pin
@@ -13,7 +16,7 @@ MAX17043_VERSION = 0x08
 MAX17043_CONFIG = 0x0c
 MAX17043_COMMAND = 0xfe
 
-class DFRobot_MAX17043():
+class MAX17043():
   
   def __init__(self):
     pass
