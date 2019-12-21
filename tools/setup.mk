@@ -77,8 +77,8 @@ download-requirements:
 
 	# 1. Install BME280 Libary
 	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/catdog2/mpy_bme280_esp8266/d7e052b/bme280.py
-	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/a7074fd2d5a140a14957dbb7c6f247f975a6dcfa/bme280_int.py
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/a7074fd2d5a140a14957dbb7c6f247f975a6dcfa/bme280_float.py
+	@#$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/3bc048f93e0d155264d212dea16f589607511ae2/bme280_int.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/BME280/3bc048f93e0d155264d212dea16f589607511ae2/bme280_float.py
 
 	# 2. Install Pycom OneWire and DS18x20 libraries
 
