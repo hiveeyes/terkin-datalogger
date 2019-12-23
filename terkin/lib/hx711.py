@@ -235,7 +235,8 @@ class HX711:
 
         # Hold level to HIGH, even during deep sleep.
         # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
-        self.pSCK.hold(True)
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            self.pSCK.hold(True)
 
 
 class DeviceNotFound(Exception):
