@@ -386,8 +386,9 @@ class I2CBus(AbstractBus):
             self.just_started = False
             return
 
-        # TODO: Add implementation for Vanilla MicroPython.
-        self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
+        # uPy doesn't have deinit so it doesn't need init
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
 
     def power_off(self):
         """
@@ -396,7 +397,8 @@ class I2CBus(AbstractBus):
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
         """
         log.info('Turning off I2C bus {}'.format(self.name))
-        self.adapter.deinit()
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            self.adapter.deinit()
 
 
 def serialize_som(thing, stringify=None):
