@@ -42,5 +42,6 @@ show-rules:
 	}'
 
 	@echo
-	@#| LC_ALL='C' sort --ignore-case \
-	@#| more $(shell test $(shell uname) == Darwin && echo '--no-init --raw-control-chars')
+
+#| LC_ALL='C' sort --ignore-case \
+#| more $(shell test $(shell uname) == Darwin && echo '--no-init --raw-control-chars')
