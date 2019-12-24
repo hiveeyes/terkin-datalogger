@@ -1,4 +1,10 @@
-download-requirements:
+EXECUTABLES = wget curl
+
+check-download-tools:
+	$(foreach exec,$(EXECUTABLES),\
+		$(if $(shell which $(exec)),,$(error "Program '$(exec)' not found in PATH. Please install it.")))
+
+download-requirements: check-download-tools
 
 	# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
