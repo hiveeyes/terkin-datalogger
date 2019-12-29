@@ -2,7 +2,7 @@
 # License: GNU General Public License, Version 3
 from terkin import logging
 from terkin.sensor import AbstractSensor
-from DFRobot_MAX17043 import MAX17043
+from max17043 import DFRobot_MAX17043 as MAX17043
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class MAX17043Sensor(AbstractSensor):
 
         # Initialize the hardware driver.
         try:
-            self.driver = MAX17043(address=self.address, i2c=self.bus.adapter)
+            self.driver = MAX17043(i2c=self.bus.adapter)
             return True
 
         except Exception as ex:
@@ -46,13 +46,13 @@ class MAX17043Sensor(AbstractSensor):
 
         data = {}
 
-        t, p, h = self.driver.read_compensated_data()
+        voltage = self.driver.readVoltage()
+        percentage = self.driver.readPercentage()
 
         # Prepare readings.
         values = {
-            "temperature": t,
-            "pressure": p / 100,
-            "humidity": h,
+            "voltage": voltage / 1000,
+            "percentage": percentage,
         }
 
         # Build telemetry payload.
@@ -69,29 +69,4 @@ class MAX17043Sensor(AbstractSensor):
 
         return data
 
-    @staticmethod
-    def int_to_float(t, p, h):
-        """
-
-        :param t: 
-        :param p: 
-        :param h: 
-
-        """
-        # Prepare readings.
-        values = {}
-        if t:
-            values["temperature"] = t / 100
-
-        if p:
-            p = p // 256
-            pi = p // 100
-            pd = p - pi * 100
-            values["pressure"] = float("{}.{:02d}".format(pi, pd))
-
-        if h:
-            hi = h // 1024
-            hd = h * 100 // 1024 - hi * 100
-            values["humidity"] = float("{}.{:02d}".format(hi, hd))
-
-        return values
+    
