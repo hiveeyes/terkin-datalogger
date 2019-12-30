@@ -113,7 +113,7 @@ class DS18X20Sensor(AbstractSensor):
             address = OneWireBus.device_address_ascii(device)
             log.info('Reading DS18X20 device "{}"'.format(address))
             try:
-                value = self.driver.read_temp_async(device)
+                value = self.driver.read_temp(device)
             except Exception as ex:
                 log.exc(ex, "Reading DS18X20 device {} failed".format(address))
                 continue
