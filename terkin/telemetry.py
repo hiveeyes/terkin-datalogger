@@ -261,7 +261,9 @@ class TelemetryClient:
     def serialize(self, dataframe: DataFrame):
         """
 
-        :param data: 
+        :param data: defined in terkin/model.py
+
+        moves & reformats data from dataframe.data_out to dataframe.payload_out
 
         """
 
@@ -517,7 +519,9 @@ class TelemetryTransportMQTT:
 
     def send(self, dataframe: DataFrame):
         """
-        :param dataframe:
+        :param dataframe: defined in terkin/model.py
+
+        sends data in dataframe.payload_out per MQTT to a server
         """
 
         # Evaluate and handle defunctness.
@@ -712,7 +716,9 @@ class IdentityTopology:
     def encode(self, dataframe: DataFrame):
         """
 
-        :param dataframe:
+        :param dataframe: defined in terkin/model.py
+
+        move data_in to data_out (why?)
 
         """
         dataframe.data_out = dataframe.data_in
