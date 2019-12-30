@@ -19,6 +19,7 @@ from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVolt
 from terkin.driver.bme280_sensor import BME280Sensor
 from terkin.driver.ds18x20_sensor import DS18X20Sensor
 from terkin.driver.hx711_sensor import HX711Sensor
+from terkin.driver.max17043_sensor import MAX17043Sensor
 from terkin.util import gc_disabled, ddformat
 
 log = logging.getLogger(__name__)
