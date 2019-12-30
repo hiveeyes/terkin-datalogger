@@ -17,6 +17,7 @@ class DS18X20Sensor(AbstractSensor):
     """
     A generic DS18B20 sensor component.
     Used by terkin/datalogger to register and read() from this sensor.
+    start() & read() are mandatory
     """
 
     def acquire_bus(self, bus):
@@ -63,6 +64,7 @@ class DS18X20Sensor(AbstractSensor):
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
+<<<<<<< HEAD
         log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
 
         # Start conversion on all DS18X20 sensors.
@@ -71,6 +73,13 @@ class DS18X20Sensor(AbstractSensor):
 
         # Read scratch memory of each sensor.
         data = self.read_devices()
+=======
+        # TODO: Review device reading re. glitches and timing.
+        log.info('Acquire readings from all DS18X20 sensors attached to bus "{}"'.format(self.bus.name))
+        devices = self.start_reading()
+        time.sleep_ms(750)
+        data = self.read_devices(devices)
+>>>>>>> MAX
 
         if not data:
             log.warning('No data from any DS18X20 devices on bus "{}"'.format(self.bus.name))
@@ -79,7 +88,11 @@ class DS18X20Sensor(AbstractSensor):
 
         return data
 
+<<<<<<< HEAD
     def get_effective_devices(self):
+=======
+    def start_reading(self):
+>>>>>>> MAX
         """ """
 
         log.info('Start conversion for DS18X20 devices on bus "{}"'.format(self.bus.name))
@@ -96,9 +109,17 @@ class DS18X20Sensor(AbstractSensor):
 
             effective_devices.append(device)
 
+<<<<<<< HEAD
         return effective_devices
 
     def read_devices(self):
+=======
+        self.driver.start_conversion()
+
+        return effective_devices
+
+    def read_devices(self, devices):
+>>>>>>> MAX
         """
 
         :param devices: 
@@ -106,13 +127,20 @@ class DS18X20Sensor(AbstractSensor):
         """
 
         data = {}
+<<<<<<< HEAD
         devices = self.get_effective_devices()
+=======
+>>>>>>> MAX
         for device in devices:
 
             address = OneWireBus.device_address_ascii(device)
             log.info('Reading DS18X20 device "{}"'.format(address))
             try:
+<<<<<<< HEAD
                 value = self.driver.read_temp(device)
+=======
+                value = self.driver.read_temp_async(device)
+>>>>>>> MAX
             except Exception as ex:
                 log.exc(ex, "Reading DS18X20 device {} failed".format(address))
                 continue
@@ -120,10 +148,14 @@ class DS18X20Sensor(AbstractSensor):
             # Evaluate device response.
             if value is not None:
 
+<<<<<<< HEAD
                 # TODO: Mask power-on reset value 0550h (85°) here.
                 # https://github.com/micropython/micropython/pull/5338
                 # Maybe it's not only 85°. Sometimes it's also 25°(!).
                 # https://github.com/cpetrich/counterfeit_DS18B20
+=======
+                # TODO: Filter the 85° thing here.
+>>>>>>> MAX
 
                 try:
                     # Compute telemetry field name.
@@ -184,3 +216,31 @@ class DS18X20Sensor(AbstractSensor):
         """
         device_settings = self.get_device_settings(address)
         return device_settings.get('description')
+<<<<<<< HEAD
+=======
+
+
+class DS18X20NativeDriverAdapter:
+    """
+    Adapter for mimicking the pure-Python onewire.py
+    driver from the early days of MicroPython 1.9.4.
+
+    https://github.com/pycom/pycom-libraries/blob/dabce8d9/examples/DS18X20/onewire.py
+    """
+
+    def __init__(self, driver):
+        self.driver = driver
+
+    def start_conversion(self):
+        """
+        Start the temp conversion on all DS18x20 devices.
+        """
+        return self.driver.convert_temp()
+
+    def read_temp_async(self, rom):
+        """
+        Read the temperature from the scratch memory of one DS18x20 device
+        if the conversion is complete, otherwise return None.
+        """
+        return self.driver.read_temp(rom)
+>>>>>>> MAX

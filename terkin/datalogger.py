@@ -424,6 +424,16 @@ class TerkinDatalogger:
                     # Start sensor.
                     sensor_object.start()
 
+                elif sensor_type == 'max17043':
+
+                    sensor_object = MAX17043Sensor(settings=sensor_info)
+                    if 'address' in sensor_info:
+                        sensor_object.set_address(sensor_info['address'])
+                    sensor_object.acquire_bus(sensor_bus)
+
+                    # Start sensor.
+                    sensor_object.start()                    
+
                 else:
                     log.warning('Sensor with id={} has unknown type, skipping registration. '
                                 'Sensor settings:\n{}'.format(sensor_id, sensor_info))
