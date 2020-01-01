@@ -17,6 +17,7 @@ class DS18X20Sensor(AbstractSensor):
     """
     A generic DS18B20 sensor component.
     Used by terkin/datalogger to register and read() from this sensor.
+    start() & read() are mandatory
     """
 
     def acquire_bus(self, bus):

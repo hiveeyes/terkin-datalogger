@@ -10,7 +10,11 @@ log = logging.getLogger(__name__)
 
 
 class BME280Sensor(AbstractSensor):
-    """A generic BME280 sensor component."""
+    """
+    A generic BME280 sensor component.
+    Used by terkin/datalogger to register and read() from this sensor.
+    start() & read() are mandatory.
+    """
 
     def __init__(self, settings=None):
 
