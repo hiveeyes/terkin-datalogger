@@ -110,16 +110,16 @@ class LoRaManager:
         success = self.socket.send(payload)
 
         # give LoRa stack some rest before saving status to NVRAM
-        time.sleep(4)
+        time.sleep(5)
         self.lora.nvram_save()
 
         return success
 
     def lora_receive(self):
         """ """
-        rx, port = self.socket.recvfrom(256)
-        if rx:
-            log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
-        time.sleep(6)
+        import binascii
 
-        return rx, port
+        rx = self.socket.recv(256)
+        if rx:
+            log.info('[LoRa] Received: %s', binascii.hexlify(rx))
+            return rx

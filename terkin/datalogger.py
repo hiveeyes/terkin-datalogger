@@ -264,6 +264,8 @@ class TerkinDatalogger:
 
     def get_sleep_time(self):
         """ """
+        import pycom
+
         interval = self.settings.get('main.interval', 60.0)
 
         # Configuration switchover backward compatibility / defaults.
@@ -273,7 +275,17 @@ class TerkinDatalogger:
         self.settings.setdefault('main.interval.maintenance', 5.0)
 
         # Compute interval.
-        interval = self.settings.get('main.interval.field')
+        # pycom.nvs_get should return None in case of unset key. Instead it throws an error
+        try:
+            _deepsleep = pycom.nvs_get('deepsleep')
+        except Exception as ex:
+            _deepsleep = None
+
+        if _deepsleep is None:
+            interval = self.settings.get('main.interval.field')
+        else:
+            interval = pycom.nvs_get('deepsleep') * 60
+            log.info('DEEP SLEEP interval set to %s minute(s) by LoRa downlink message', int(interval / 60))
 
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:

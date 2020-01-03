@@ -430,6 +430,7 @@ class TelemetryTransportLORA:
         """
 
         import binascii
+        import pycom
 
         self.ensure_lora_socket()
 
@@ -445,8 +446,25 @@ class TelemetryTransportLORA:
             log.exception('[LoRa] Transmission failed')
             return False
 
-        # Receive downlink message
-        # rx = self.lora_manager.lora_receive()
+        # Receive downlink message and save integer value for deep sleep interval (in minutes)
+        # survives power cycle, reset and deep sleep
+        rx = self.lora_manager.lora_receive()
+
+        if rx:
+            rx_int = int.from_bytes(rx, "big")
+
+            if rx_int == 0:
+                # use value from settings file
+                log.info('[LoRa] erasing deep sleep interval from NVRAM')
+                try:
+                    pycom.nvs_erase('deepsleep')
+                except:
+                    pass
+            else:
+                # use value received via LoRa
+                pycom.nvs_set('deepsleep', rx_int)
+        else:
+            log.info('[LoRa] no downlink message received')
 
         return True
 
