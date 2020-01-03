@@ -159,6 +159,7 @@ recycle-ng: install-ng
 	elif test "${mcu_port_type}" = "usb"; then \
 		$(MAKE) confirm text="Restart device using the REPL?" && \
 		$(MAKE) reset-device; \
+		$(MAKE) console; \
 	fi
 
 
