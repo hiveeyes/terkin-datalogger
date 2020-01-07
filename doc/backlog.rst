@@ -23,6 +23,16 @@ Prio 0.7
     - https://github.com/jczic/MicroWebSrv/issues/7
     - https://www.youtube.com/playlist?list=PLKGiH5V9SS1hUz5Jh_35oTFM4wPZYA4sT
 - Try WiFi power saving.
+- Include uPing and others into annapurna
+    - https://gist.github.com/shawwwn/91cc8979e33e82af6d99ec34c38195fb
+    - https://forum.pycom.io/topic/5348/gpy-full-flash-erase/40
+- Maybe use ``machine.rng()``
+- Implement ``reboot`` via UDP mode server
+- Maybe just send ``lte.send_at_cmd('AT!="powerOff"')`` for shutting down the LTE modem?
+- When the network goes away while in live mode, the MQTT submission hangs forever::
+
+    231.9092 [terkin.telemetry         ] INFO   : MQTT payload: {"system.voltage": 3.732, "system.wifi.country": "DE", "system.wifi.max_tx_power": 78, "system.time": 230, "system.temperature": 22.17392, "system.wifi.channel": 6, "system.uptime": 230.707, "system.wifi.bandwidth": 2, "system.memfree": 2324320, "system.runtime": 224, "system.wifi.rssi": -48}
+
 
 
 Prio 0.8
