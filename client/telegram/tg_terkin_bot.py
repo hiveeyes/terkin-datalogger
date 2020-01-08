@@ -37,7 +37,7 @@ mqtt_client = handler.data()
 def start(update, context):
     message = "I'm the Terkin Control bot, please command me! Your chat_id is " + str(update.effective_chat.id)
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
-    
+
 start_handler = CommandHandler('start', start, Filters.user(user_id=tg_user_id))
 dispatcher.add_handler(start_handler)
 
@@ -45,33 +45,28 @@ dispatcher.add_handler(start_handler)
 def connect_callback(res, client):
     if res:
         logging.info('[connect_callback] (Re)connected to TTN broker')
-        #bot.send_message(chat_id=tg_user_id, text="(connected to TTN broker)")
     else:
         logging.info('[connect_callback] (Re)connecting to TTN broker failed')
         bot.send_message(chat_id=tg_user_id, text="(Re)connecting to TTN broker failed")
-        
+
 def close_callback(res, client):
     if res:
         logging.info('[close_callback] Successfully disconnected from TTN broker')
     else:
         logging.info('[close_callback] Lost connection to TTN broker')
         mqtt_client.connect()
-    #bot.send_message(chat_id=tg_user_id, text="(disconnected from TTN broker)")
 
 # not triggered by the framework at the moment
 def uplink_callback(msg, client):
     logging.info('[uplink_callback] Uplink received from %s', msg.dev_id)
-    logging.info(msg)
-    bot.send_message(chat_id=tg_user_id, text="(Uplink received)")
 
 # not triggered by the framework at the moment
 def downlink_callback(msg, client):
     logging.info('[downlink_callback] Downlink sent to %s', msg.dev_id)
-    logging.info(msg)
-    bot.send_message(chat_id=tg_user_id, text="(Downlink sent)")
+    bot.send_message(chat_id=tg_user_id, text="(Downlink sent to %s)", msg.dev_id)
 
-# set TTN callbacks
-mqtt_client.set_downlink_callback(uplink_callback)
+# TTN callbacks
+mqtt_client.set_uplink_callback(uplink_callback)
 mqtt_client.set_downlink_callback(downlink_callback)
 mqtt_client.set_connect_callback(connect_callback)
 mqtt_client.set_close_callback(close_callback)
