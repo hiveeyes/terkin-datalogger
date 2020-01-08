@@ -56,7 +56,6 @@ def close_callback(res, client):
         logging.info('[close_callback] Lost connection to TTN broker')
         mqtt_client.connect()
 
-# not triggered by the framework at the moment
 def uplink_callback(msg, client):
     logging.info('[uplink_callback] Uplink received from %s', msg.dev_id)
 
