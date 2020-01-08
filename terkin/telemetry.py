@@ -417,10 +417,9 @@ class TelemetryTransportLORA:
             if self.lora_manager.lora_socket is None:
                 try:
                     self.lora_manager.create_lora_socket()
+                    self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
                 except:
                     log.error("[LoRa] Could not create LoRa socket")
-                if self.lora_manager.lora_socket:
-                    self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
         else:
             log.error("[LoRa] Could not join network")
 
@@ -430,11 +429,22 @@ class TelemetryTransportLORA:
         """
 
         import binascii
+        import pycom
 
         self.ensure_lora_socket()
 
-        payload = dataframe.payload_out
-        log.info('[LoRa] Payload (hex) : %s', binascii.hexlify(payload))
+        # clean up payload from sensor data if pause command was received on last uplink
+        try:
+            _pause = pycom.nvs_get('pause')
+        except:
+            _pause = None
+
+        if ( _pause is None ) or ( _pause == 0 ):
+            payload = dataframe.payload_out + binascii.unhexlify(b'000100')
+        elif _pause == 1:
+            payload = binascii.unhexlify(b'000101')
+
+        log.info('[LoRa] Uplink payload (hex) : %s', binascii.hexlify(payload).decode())
 
         # Send payload
         try:
@@ -445,8 +455,31 @@ class TelemetryTransportLORA:
             log.exception('[LoRa] Transmission failed')
             return False
 
-        # Receive downlink message
-        # rx = self.lora_manager.lora_receive()
+        # Receive downlink message and save integer value for
+        # 1) deep sleep interval in minutes and
+        # 2) pausing payload submission (1=true,0=false)
+        # survives power cycle, reset and deep sleep
+        rx, port = self.lora_manager.lora_receive()
+
+        if port == 1:
+            sleep = int.from_bytes(rx, "big")
+            log.info('[LoRa] deep sleep interval command received: sleep for %s minutes', sleep)
+            if sleep == 0:
+                # use value from settings file
+                log.info('[LoRa] erasing deep sleep interval from NVRAM')
+                try:
+                    pycom.nvs_erase('deepsleep')
+                except:
+                    pass
+            else:
+                # use value received via LoRa
+                pycom.nvs_set('deepsleep', sleep)
+        elif port == 2:
+            pause = int.from_bytes(rx, "big")
+            log.info('[LoRa] pause payload submission : %s', bool(pause))
+            pycom.nvs_set('pause', pause)
+        else:
+            log.info('[LoRa] no or invalid downlink message received')
 
         return True
 

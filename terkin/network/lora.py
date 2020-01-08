@@ -93,8 +93,7 @@ class LoRaManager:
         # create a lora socket
         self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
-        # make the socket non-blocking
-        self.socket.setblocking(False)
+        self.socket.settimeout(6.0)
 
         self.lora_socket = True
         log.info('[LoRa] socket created')
@@ -107,19 +106,26 @@ class LoRaManager:
         :param payload: 
 
         """
+        self.socket.setblocking(True)
+
         success = self.socket.send(payload)
 
-        # give LoRa stack some rest before saving status to NVRAM
-        time.sleep(4)
+        self.socket.setblocking(False)
+
         self.lora.nvram_save()
 
         return success
 
     def lora_receive(self):
         """ """
-        rx, port = self.socket.recvfrom(256)
+        import binascii
+
+        try:
+            rx, port = self.socket.recvfrom(256)
+        except socket.timeout:
+            log.info('[LoRa] no packet received within receive window ')
+
         if rx:
             log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
-        time.sleep(6)
 
         return rx, port
