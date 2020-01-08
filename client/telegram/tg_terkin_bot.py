@@ -63,7 +63,7 @@ def uplink_callback(msg, client):
 # not triggered by the framework at the moment
 def downlink_callback(msg, client):
     logging.info('[downlink_callback] Downlink sent to %s', msg.dev_id)
-    bot.send_message(chat_id=tg_user_id, text="(Downlink sent to %s)", msg.dev_id)
+    bot.send_message(chat_id=tg_user_id, text="(Downlink sent)")
 
 # TTN callbacks
 mqtt_client.set_uplink_callback(uplink_callback)
