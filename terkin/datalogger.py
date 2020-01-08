@@ -274,18 +274,16 @@ class TerkinDatalogger:
             self.settings.setdefault('main.interval.field', interval)
         self.settings.setdefault('main.interval.maintenance', 5.0)
 
-        # Compute interval.
-        # pycom.nvs_get should return None in case of unset key. Instead it throws an error
+        # First, try to acquire deep sleep interval from NVRAM.
+        # This gets used when set from a LoRaWAN downlink message.
+        # pycom.nvs_get should return "None" in case of unset key. Instead it throws an error
         try:
-            _deepsleep = pycom.nvs_get('deepsleep')
+            interval_minutes = pycom.nvs_get('deepsleep')
+            log.info('Deep sleep interval set to %s minute(s) by LoRaWAN downlink message', interval_minutes)
+            interval = interval_minutes * 60
+        # Otherwise, fall back to original configuration setting.
         except Exception as ex:
-            _deepsleep = None
-
-        if _deepsleep is None:
             interval = self.settings.get('main.interval.field')
-        else:
-            interval = pycom.nvs_get('deepsleep') * 60
-            log.info('DEEP SLEEP interval set to %s minute(s) by LoRa downlink message', int(interval / 60))
 
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:
