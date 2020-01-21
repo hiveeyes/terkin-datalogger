@@ -128,4 +128,4 @@ At this point, you should take a minute to have a look at
 you through essential commands and function keys you will definitively need after
 taking the red pill.
 
-.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
+.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
