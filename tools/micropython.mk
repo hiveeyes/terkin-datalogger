@@ -103,7 +103,7 @@ mpy-cross: check-mpy-version check-mpy-target
 mpy-cross-setup: setup-virtualenv2
 
 	@echo "$(INFO) Downgrading pip to 19.3.1"
- @$(pip2) --quiet install pip==19.3.1
+	@$(pip2) --quiet install pip==19.3.1
 
 	@mkdir -p bin/mpy-cross
 
