@@ -856,7 +856,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
 
     channel = {}
     channel['temp']    = 0
-    channel['ana_out'] = 0
+    channel['volt']    = 0
     channel['hum']     = 0
     channel['press']   = 0
     channel['scale']   = 0
@@ -877,8 +877,8 @@ def to_cayenne_lpp(dataframe: DataFrame):
             frame.add_temperature(channel['temp'], value)
             channel['temp'] += 1
         elif "voltage" in name:
-            frame.add_analog_output(channel['ana_out'], value)
-            channel['ana_out'] += 1
+            frame.add_voltage(channel['volt'], value)
+            channel['volt'] += 1
         elif "humidity" in name:
             frame.add_humitidy(channel['hum'], value)
             channel['hum'] += 1
@@ -887,8 +887,8 @@ def to_cayenne_lpp(dataframe: DataFrame):
             channel['press'] += 1
         elif "weight" in name:
             # 2 bytes signed float is easily exceeded when sending values in [g]
-            value_kg = float('%.2f' % (value / 1000))
-            frame.add_analog_input(channel['scale'], value_kg)
+            value_kg = float('%.3f' % (value / 1000))
+            frame.add_load(channel['scale'], value_kg)
             channel['scale'] += 1
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)
