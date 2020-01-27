@@ -880,7 +880,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
             frame.add_voltage(channel['volt'], value)
             channel['volt'] += 1
         elif "humidity" in name:
-            frame.add_humitidy(channel['hum'], value)
+            frame.add_humidity(channel['hum'], value)
             channel['hum'] += 1
         elif "pressure" in name:
             frame.add_barometer(channel['press'], value)
