@@ -6,6 +6,8 @@
 mkdir /flash/lib-mpy-1.11-pycom
 rsync lib-mpy-1.11-pycom /flash/lib-mpy-1.11-pycom
 
+cp lib-mpy-1.11-pycom/umal.mpy /flash/lib
+
 cp pybytes_config.json /flash
 
 cp boot.py /flash
