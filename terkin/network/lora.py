@@ -126,6 +126,6 @@ class LoRaManager:
             log.info('[LoRa] no packet received within receive window ')
 
         if rx:
-            log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
+            log.info('[LoRa] Received (hex): %s, on port: %i', binascii.hexlify(rx), port)
 
         return rx, port

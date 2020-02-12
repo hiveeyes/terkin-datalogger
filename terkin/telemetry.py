@@ -25,7 +25,7 @@ class TelemetryManager:
     def add_adapter(self, adapter):
         """
 
-        :param adapter: 
+        :param adapter:
 
         """
         self.adapters.append(adapter)
@@ -33,7 +33,7 @@ class TelemetryManager:
     def transmit(self, dataframe: DataFrame):
         """
 
-        :param data: 
+        :param data:
 
         """
         outcomes = {}
@@ -112,7 +112,7 @@ class TelemetryAdapter:
     def format_uri(self, **kwargs):
         """
 
-        :param **kwargs: 
+        :param **kwargs:
 
         """
         data = copy(self.address)
@@ -191,7 +191,7 @@ class TelemetryAdapter:
 
 class CSVTelemetryAdapter(TelemetryAdapter):
     """Telemetry node client: Network participant API.
-    
+
     This will make your node talk CSV.
 
 
@@ -204,8 +204,8 @@ class CSVTelemetryAdapter(TelemetryAdapter):
     def transmit(self, data, **kwargs):
         """
 
-        :param data: 
-        :param **kwargs: 
+        :param data:
+        :param **kwargs:
 
         """
         uri = self.format_uri(**kwargs)
@@ -325,7 +325,7 @@ class TelemetryClient:
     def get_handler(self, uri):
         """
 
-        :param uri: 
+        :param uri:
 
         """
 
@@ -487,12 +487,12 @@ class TelemetryTransportLORA:
 class TelemetryTransportMQTT:
     """
     MQTT transport for Terkin Telemetry.
-    
+
     This is currently based on the "Pycom MicroPython MQTT module" just called ``mqtt.py``.
     https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
-    
+
     Originally, this was based on the "umqtt.robust" library::
-    
+
         micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
 
 
@@ -597,7 +597,7 @@ class MQTTAdapter:
     """
     MQTT adapter wrapping the lowlevel MQTT driver.
     Handles a single connection to an MQTT broker.
-    
+
     TODO: Try to make this module reasonably compatible again
           by becoming an adapter for different implementations.
           E.g., what about Paho?
@@ -663,8 +663,8 @@ class MQTTAdapter:
     def publish(self, topic, payload, retain=False, qos=1):
         """
 
-        :param topic: 
-        :param payload: 
+        :param topic:
+        :param payload:
         :param retain:  (Default value = False)
         :param qos:  (Default value = 1)
 
@@ -759,9 +759,9 @@ class IdentityTopology:
 
 class BeepBobTopology(IdentityTopology):
     """Define how to communicate with BEEP for BOB.
-    
+
     https://en.wikipedia.org/wiki/Bebop
-    
+
     - https://beep.nl/
     - https://github.com/beepnl/BEEP
     - https://hiverize.org/
@@ -778,12 +778,12 @@ class BeepBobTopology(IdentityTopology):
 
     def encode(self, dataframe: DataFrame):
         """Encode telemetry data matching the BEEP-BOB interface.
-        
+
         https://gist.github.com/vkuhlen/51f7968266659f37d076bd66d57cdbbd
         https://github.com/Hiverize/FiPy/blob/master/logger/beep.py
-        
+
         Example::
-        
+
             {
                 't': 22.66734,
                 'h': 52.41612,
@@ -795,7 +795,7 @@ class BeepBobTopology(IdentityTopology):
                 't_i_4': 23.1875
             }
 
-        :param data: 
+        :param data:
 
         """
 
@@ -818,10 +818,10 @@ class MqttKitTopology(IdentityTopology):
     setups like multi-project or multi-tenant scenarios. Even for single
     users, the infinite number of available channels is very convenient
     for ad hoc operation scenarios.
-    
+
     - https://getkotori.org/
     - https://getkotori.org/docs/applications/mqttkit.html
-    
+
     - https://hiveeyes.org/
     - https://hiveeyes.org/docs/system/acquisition/
 
@@ -855,41 +855,51 @@ def to_cayenne_lpp(dataframe: DataFrame):
     frame = LppFrame()
 
     channel = {}
-    channel['temp']    = 0
-    channel['volt']    = 0
-    channel['hum']     = 0
-    channel['press']   = 0
-    channel['scale']   = 0
+    channel['temp']   = 10
+    channel['humi']   = 1
+    channel['volt']   = 2
+    channel['pres']   = 1
+    channel['scal']   = 6
 
     # TODO: Iterate ``dataframe.readings`` to get more metadata from sensor configuration.
     # It is a list of ``SensorReading`` instances, each having a ``sensor`` and ``data`` attribute.
+
+    # log.info('dataframe.data_out.items : %s', dataframe.data_out.items())
 
     for key, value in dataframe.data_out.items():
 
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]
-        # try:
-        #     channel = int(key.split(":")[1])
-        # except IndexError:
         #     channel = 0
 
-        if "temperature" in name:
-            frame.add_temperature(channel['temp'], value)
-            channel['temp'] += 1
-        elif "voltage" in name:
-            frame.add_voltage(channel['volt'], value)
-            channel['volt'] += 1
-        elif "humidity" in name:
-            frame.add_humidity(channel['hum'], value)
-            channel['hum'] += 1
-        elif "pressure" in name:
-            frame.add_barometer(channel['press'], value)
-            channel['press'] += 1
+        if "voltage" in name:
+            if "battery" in name:
+                chan = 0
+            elif "solar" in name:
+                chan = 1
+            else:
+                chan = channel['volt']
+                channel['volt'] += 1
+            frame.add_voltage(chan, value)
+        elif "i2c" in name:
+            if "temperature" in name:
+                frame.add_temperature(0, value)
+            elif "humidity" in name:
+                frame.add_humidity(0, value)
+            elif "pressure" in name:
+                frame.add_barometer(0, value)
+        elif "onewire" in name:
+            if "temperature" in name:
+                frame.add_temperature(channel['temp'], value)
+                channel['temp'] += 1
         elif "weight" in name:
-            # 2 bytes signed float is easily exceeded when sending values in [g]
             value_kg = float('%.3f' % (value / 1000))
-            frame.add_load(channel['scale'], value_kg)
-            channel['scale'] += 1
+            if name == "weight.0":
+                chan = 5
+            else:
+                chan = channel['scal']
+                channel['scal'] += 1
+            frame.add_load(chan, value_kg)
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)
         elif "analog-input" in name:
