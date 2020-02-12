@@ -1,6 +1,6 @@
-#############################################
-Setup Hiveeyes MicroPython Datalogger sandbox
-#############################################
+###############################
+Setup Terkin Datalogger sandbox
+###############################
 
 
 ************
@@ -52,8 +52,8 @@ Acquire source code
 ===================
 ::
 
-    git clone https://github.com/hiveeyes/hiveeyes-micropython-firmware
-    cd hiveeyes-micropython-firmware
+    git clone https://github.com/hiveeyes/terkin-datalogger
+    cd terkin-datalogger
 
 
 Setup development sandbox
@@ -128,4 +128,4 @@ At this point, you should take a minute to have a look at
 you through essential commands and function keys you will definitively need after
 taking the red pill.
 
-.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
+.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst

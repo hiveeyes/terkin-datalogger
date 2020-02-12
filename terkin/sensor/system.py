@@ -97,7 +97,7 @@ class SystemVoltage(AbstractSystemSensor):
     More resources
     ==============
     - https://forum.pycom.io/topic/3776/adc-use-to-measure-battery-level-vin-level
-    - https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/5
+    - https://github.com/hiveeyes/terkin-datalogger/issues/5
     - https://community.hiveeyes.org/t/batterieuberwachung-voltage-divider-und-attenuation-fur-microypthon-firmware/2128
 
 

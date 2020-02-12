@@ -1,8 +1,8 @@
 .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
-    :target: https://github.com/hiveeyes/hiveeyes-micropython-firmware
+    :target: https://github.com/hiveeyes/terkin-datalogger
 
-.. image:: https://img.shields.io/github/tag/hiveeyes/hiveeyes-micropython-firmware.svg
-    :target: https://github.com/hiveeyes/hiveeyes-micropython-firmware
+.. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
+    :target: https://github.com/hiveeyes/terkin-datalogger
 
 |
 
@@ -61,9 +61,8 @@ Architecture
 - Telemetry and TelemetryTransport
   The telemetry subsystem uses different transport adapters for different
   connectivity scenarios. MQTT and HTTP over TCP over WiFi is implemented
-  already and TTN over LoRaWAN is almost there (thanks, Jan and Richard!).
-  We are still waiting for confirmation of `LTE Cat M1`_ or `LTE Cat NB1`_
-  connectivity in Germany (thanks, Ron and Jan!).
+  already as well as TTN over LoRaWAN. We are still waiting for confirmation of
+  `LTE Cat M1`_ or `LTE Cat NB1`_ connectivity in Germany (thanks, Ron and Jan!).
 
 
 ***********
@@ -87,7 +86,7 @@ Console output
 ==============
 To get a better idea about how running this firmware will feel like when
 watching its log output, we collected some excerpts at
-`Running the Hiveeyes MicroPython Datalogger`_.
+`Running the Terkin Datalogger`_.
 
 
 *********
@@ -122,7 +121,7 @@ Getting started
 
 Introduction
 ============
-See `Getting started with the Hiveeyes MicroPython Datalogger`_.
+See `Getting started with the Terkin Datalogger`_.
 
 Download
 ========
@@ -135,7 +134,7 @@ Sandbox setup
 =============
 If you would like to contribute to the development or want to setup
 a development environment for running the head version of this
-software, please follow up at `Setup Hiveeyes MicroPython Datalogger sandbox`_
+software, please follow up at `Setup Terkin Datalogger sandbox`_
 to read about how to install the MicroPython firmware development environment
 and other software components it relies on and how to configure it properly.
 
@@ -161,9 +160,9 @@ Project information
 About
 =====
 These links will guide you to the source code of the
-»Hiveeyes MicroPython Datalogger« and its documentation.
+»Terkin Datalogger« and its documentation.
 
-- `Hiveeyes MicroPython Datalogger on GitHub <https://github.com/hiveeyes/hiveeyes-micropython-firmware>`_
+- `Terkin Datalogger on GitHub <https://github.com/hiveeyes/terkin-datalogger>`_
 
 Contributing
 ============
@@ -178,7 +177,7 @@ Thanks in advance for your efforts, we really appreciate any help or feedback.
 
 Licenses
 ========
-This software is copyright © 2017-2019 The Hiveeyes Developers and contributors. All rights reserved.
+This software is copyright © 2017-2020 The Hiveeyes Developers and contributors. All rights reserved.
 
 It is and will always be **free and open source software**.
 
@@ -202,12 +201,12 @@ You know who you are.
 Have fun!
 
 
-.. _Setup Hiveeyes MicroPython Datalogger sandbox: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/sandbox-setup.rst
-.. _contributors: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/CONTRIBUTORS.rst
-.. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
-.. _Getting started with the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
-.. _Running the Hiveeyes MicroPython Datalogger: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/0.4.0/doc/screenshots/05-running.rst
-.. _release page: https://github.com/hiveeyes/hiveeyes-micropython-firmware/releases
+.. _Setup Terkin Datalogger sandbox: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/sandbox-setup.rst
+.. _contributors: https://github.com/hiveeyes/terkin-datalogger/blob/master/CONTRIBUTORS.rst
+.. _create an issue: https://github.com/hiveeyes/terkin-datalogger/issues/new
+.. _Getting started with the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst
+.. _Running the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/0.4.0/doc/screenshots/05-running.rst
+.. _release page: https://github.com/hiveeyes/terkin-datalogger/releases
 
 .. _Pycom FiPy: https://pycom.io/product/fipy/
 .. _Pycom LoPy4: https://pycom.io/product/lopy4/

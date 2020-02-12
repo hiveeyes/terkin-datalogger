@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Hiveeyes MicroPython Datalogger
-# https://github.com/hiveeyes/hiveeyes-micropython-firmware
+# Terkin Datalogger
+# https://github.com/hiveeyes/terkin-datalogger
 #
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>

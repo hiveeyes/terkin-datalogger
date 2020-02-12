@@ -1,6 +1,6 @@
-###################################################
-Operate the Hiveeyes MicroPython Datalogger sandbox
-###################################################
+#####################################
+Operate the Terkin Datalogger sandbox
+#####################################
 
 
 **************
@@ -173,11 +173,11 @@ Essentially, we would like to be able to match all Espressif/Pycom devices.
 Troubleshooting
 ***************
 We have collected some tracebacks with root causes and solutions which might also help
-you along, please have a look at `Hiveeyes MicroPython Datalogger troubleshooting`_.
+you along, please have a look at `Terkin Datalogger troubleshooting`_.
 
 
 
-.. _upgrade the Pycom firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
+.. _upgrade the Pycom firmware: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/pycom-firmware-upgrade.rst
 .. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
-.. _Hiveeyes MicroPython Datalogger troubleshooting: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/troubleshooting.rst
-.. _create an issue: https://github.com/hiveeyes/hiveeyes-micropython-firmware/issues/new
+.. _Terkin Datalogger troubleshooting: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/troubleshooting.rst
+.. _create an issue: https://github.com/hiveeyes/terkin-datalogger/issues/new
