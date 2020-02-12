@@ -40,7 +40,7 @@
 <img src="https://ptrace.hiveeyes.org/2019-03-16_Hiveeyes%20BUERGER%20v1%20-%20top.jpeg" height="400"> <img src="https://ptrace.hiveeyes.org/2019-03-16_Hiveeyes%20BUERGER%20v1%20-%20side.jpeg" height="400">
 
 ### Links
-- https://github.com/hiveeyes/hiveeyes-micropython-firmware
+- https://github.com/hiveeyes/terkin-datalogger
 
 
 ---

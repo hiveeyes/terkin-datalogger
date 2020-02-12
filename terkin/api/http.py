@@ -9,7 +9,7 @@
 # https://github.com/jczic/MicroWebSrv
 #
 # Original sources:
-# https://github.com/hiveeyes/hiveeyes-micropython-firmware/pull/12/files
+# https://github.com/hiveeyes/terkin-datalogger/pull/12/files
 # https://github.com/Hiverize/FiPy/blob/master/webserver.py
 #
 import json

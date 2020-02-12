@@ -1,6 +1,6 @@
-#######################################
-Hiveeyes MicroPython Datalogger CHANGES
-#######################################
+#########################
+Terkin Datalogger CHANGES
+#########################
 
 
 Development
