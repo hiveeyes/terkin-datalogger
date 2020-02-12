@@ -150,16 +150,16 @@ print-%: ; @echo $*=$($*)
 # Colors!
 # http://jamesdolan.blogspot.com/2009/10/color-coding-makefile-output.html
 # http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
-NO_COLOR=\x1b[0m
-MAGENTA_DARK_COLOR=\x1b[35m
-GREEN_COLOR=\x1b[32;01m
-RED_COLOR=\x1b[31;01m
-ORANGE_COLOR=\x1b[38;5;208m
-YELLOW_COLOR=\x1b[33;01m
-CYAN_COLOR=\x1b[36;01m
-BOLD=\x1b[1m
-UNDERLINE=\x1b[4m
-REVERSED=\x1b[7m
+NO_COLOR=\033[0m
+MAGENTA_DARK_COLOR=\033[35m
+GREEN_COLOR=\033[32;01m
+RED_COLOR=\033[31;01m
+ORANGE_COLOR=\033[38;5;208m
+YELLOW_COLOR=\033[33;01m
+CYAN_COLOR=\033[36;01m
+BOLD=\033[1m
+UNDERLINE=\033[4m
+REVERSED=\033[7m
 
 OK=$(GREEN_COLOR)[OK]     $(NO_COLOR)
 INFO=$(NO_COLOR)[INFO]   $(NO_COLOR)
