@@ -53,6 +53,7 @@
 # =============
 
 # Load modules
+include config.mk
 include tools/help.mk
 include tools/core.mk
 include tools/setup.mk

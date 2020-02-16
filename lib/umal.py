@@ -126,15 +126,17 @@ class MicroPythonBootloader:
             else:
                 bytecode_path = 'lib-mpy-1.9.4-pycom'
         else:
-            bytecode_path = 'lib-mpy-1.11-bytecode'
+            bytecode_path = 'lib-mpy-112-bytecode'
 
         # Extend by all paths required for running the sandboxed firmware.
         if '/flash' in sys.path:
             sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
             sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
         else:
-            sys.path[0:0] = ['/{}'.format(bytecode_path)]
-            sys.path.extend(['/dist-packages', '/terkin'])
+            #sys.path[0:0] = ['/{}'.format(bytecode_path)]
+            #sys.path.extend(['/dist-packages', '/terkin'])
+            #sys.path.extend(['/dist-packages'])
+            sys.path[0:0] = ['/lib']
 
         print('[umal]    INFO: Python module search path is:', sys.path)
 
