@@ -110,7 +110,7 @@ format-flash: check-mcu-port
 	$(rshell) $(rshell_options) --quiet repl pyboard 'import uos, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ uos.fsformat(\"/flash\") ~'
 	@echo
 
-## Erase flash filesystem
+## Erase flash filesystem for Pycom devices
 erase-fs: check-mcu-port
 
 	@# Ask the user to confirm erasing.
@@ -120,7 +120,7 @@ erase-fs: check-mcu-port
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
 
 
-## Erase flash filesystem
+## Erase flash filesystem for Pycom devices
 erase-device: check-mcu-port
 
 	@# Ask the user to confirm erasing.

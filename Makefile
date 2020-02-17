@@ -53,6 +53,7 @@
 # =============
 
 # Load modules
+include config.mk
 include tools/help.mk
 include tools/core.mk
 include tools/setup.mk
@@ -130,9 +131,9 @@ mpy-compile: check-mpy-version check-mpy-target
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; \
-	fi
+	##@if test "${MPY_TARGET}" = "pycom"; then 
+	$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; 
+	##fi
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 
