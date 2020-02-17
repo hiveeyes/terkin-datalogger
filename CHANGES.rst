@@ -113,6 +113,7 @@ Development
 - LoRaWAN/TTN integration for real. Thanks, @thiasB!
 - Introduce ``DataFrame`` object to improve internal data transfer.
 - Backward compatibility for sensor type "system.battery-voltage".
+- Improve cross-compilation for MicroPython 1.12, see #61. Thanks, @poesel!
 
 
 2019-08-19 0.6.0

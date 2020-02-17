@@ -130,9 +130,7 @@ mpy-compile: check-mpy-version check-mpy-target
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; \
-	fi
+	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 
