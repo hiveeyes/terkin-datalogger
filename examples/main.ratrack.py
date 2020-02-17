@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Ratrack MicroPython Datalogger
-# https://github.com/hiveeyes/hiveeyes-micropython-firmware
+# https://github.com/hiveeyes/terkin-datalogger
 #
 # (c) 2019 Jan Hoffmann <jan.hoffmann@bergamsee.de>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>

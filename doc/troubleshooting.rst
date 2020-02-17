@@ -1,10 +1,10 @@
-###############################################
-Hiveeyes MicroPython Datalogger troubleshooting
-###############################################
+#################################
+Terkin Datalogger troubleshooting
+#################################
 
 We've jumped through some tires that you don't have to.
 
-.. _upgrade your firmware: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-firmware-upgrade.rst
+.. _upgrade your firmware: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/pycom-firmware-upgrade.rst
 
 When experiencing problems, please also visit
 https://docs.pycom.io/gettingstarted/troubleshooting-guide.html.
@@ -554,7 +554,7 @@ https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-lee
 
 Solution
 --------
-Use LittleFS, see https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/getting-started.rst
+Use LittleFS, see https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst
 
 
 Network stack overload

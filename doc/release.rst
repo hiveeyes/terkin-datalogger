@@ -1,6 +1,6 @@
-#########################################
-Hiveeyes MicroPython Datalogger releasing
-#########################################
+###########################
+Terkin Datalogger releasing
+###########################
 
 *****************
 Cut a new release

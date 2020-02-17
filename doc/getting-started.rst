@@ -1,6 +1,6 @@
-########################################################
-Getting started with the Hiveeyes MicroPython Datalogger
-########################################################
+##########################################
+Getting started with the Terkin Datalogger
+##########################################
 
 .. note::
 
@@ -28,7 +28,7 @@ As a general introduction, you might want to read the `Pycom Quickstart Guide`_.
 - When you are running Linux, the documentation at ``doc/sandbox-setup.rst``
   might be the right place to follow up for details.
 - If you are using Windows, the documentation about how to
-  `Install and configure the Hiveeyes Datalogger development sandbox on Windows`_
+  `Install and configure the Terkin Datalogger development sandbox on Windows`_
   might be of interest.
 
 
@@ -47,7 +47,7 @@ in brownout conditions.
 
 
 .. _Pycom Quickstart Guide: https://github.com/pycom/pycom-micropython-sigfox/blob/master/docs/pycom_esp32/getstarted.rst
-.. _Install and configure the Hiveeyes Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
+.. _Install and configure the Terkin Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
 
 
 
@@ -80,7 +80,7 @@ the Pycom MicroPython implementation.
 .. _Pycom MicroPython Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/micropython
 .. _Pycom Vendor Modules: https://github.com/pycom/pydocs/tree/master/firmwareapi/pycom
 .. _Pycom documentation: https://docs.pycom.io/
-.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/hiveeyes-micropython-firmware/blob/master/doc/pycom-getting-started.rst
+.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/pycom-getting-started.rst
 
 .. _Pycom MicroPython for ESP32: https://github.com/pycom/pycom-micropython-sigfox
 .. _Pycom Libraries and Examples: https://github.com/pycom/pycom-libraries
