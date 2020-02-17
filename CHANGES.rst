@@ -114,6 +114,7 @@ Development
 - Introduce ``DataFrame`` object to improve internal data transfer.
 - Backward compatibility for sensor type "system.battery-voltage".
 - Improve cross-compilation for MicroPython 1.12, see #61. Thanks, @poesel!
+- Fix Makefile target "install-pycom-firmware".
 
 
 2019-08-19 0.6.0
