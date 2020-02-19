@@ -135,9 +135,10 @@ class MicroPythonBootloader:
             sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
             sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
         else:
-            sys.path[0:0] = ['/{}'.format(bytecode_path)]
+            #sys.path[0:0] = ['/{}'.format(bytecode_path)]
             #sys.path.extend(['/dist-packages', '/terkin'])
             #sys.path.extend(['/dist-packages'])
+            sys.path[0:0] = ['/lib']
 
         print('[umal]    INFO: Python module search path is:', sys.path)
 
