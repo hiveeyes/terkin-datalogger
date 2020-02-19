@@ -115,6 +115,7 @@ Development
 - Backward compatibility for sensor type "system.battery-voltage".
 - Improve cross-compilation for MicroPython 1.12, see #61. Thanks, @poesel!
 - Fix Makefile target "install-pycom-firmware".
+- Add GPRS modem support for SIM800. Thanks, @sarusso!
 
 
 2019-08-19 0.6.0
