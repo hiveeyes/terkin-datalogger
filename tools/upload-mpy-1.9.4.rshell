@@ -1,0 +1,15 @@
+# Install libraries to MicroPython target device using "rshell".
+
+# Upload lib folder
+#rsync ./lib /flash/lib
+
+mkdir /flash/lib-mpy-1.9.4-pycom
+rsync lib-mpy-1.9.4-pycom /flash/lib-mpy-1.9.4-pycom
+
+cp lib-mpy-1.9.4-pycom/umal.mpy /flash/lib
+
+cp pybytes_config.json /flash
+
+cp boot.py /flash
+cp main.py /flash
+cp settings.py /flash

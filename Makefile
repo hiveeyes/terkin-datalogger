@@ -214,7 +214,7 @@ install-rshell:
 
 	@if test "${mpy_cross}" = "true"; then \
 		$(MAKE) mpy-compile && \
-		$(rshell) $(rshell_options) --file tools/upload-mpy.rshell; \
+		$(rshell) $(rshell_options) --file tools/upload-mpy-$(MPY_VERSION).rshell; \
 	else \
 		$(MAKE) install; \
 	fi
