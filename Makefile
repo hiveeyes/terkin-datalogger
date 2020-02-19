@@ -131,7 +131,7 @@ mpy-compile: check-mpy-version check-mpy-target
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
-	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; 
+	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 
