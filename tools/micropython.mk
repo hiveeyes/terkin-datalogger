@@ -107,9 +107,6 @@ mpy-cross-setup: setup-virtualenv2
 
 	@mkdir -p bin/mpy-cross
 
-	@echo "$(INFO) Installing mpy-cross for MicroPython 1.9.4"
-	@$(pip2) --quiet install --target=bin/mpy-cross/1.9.4 --upgrade mpy-cross==1.9.4
-
 	@echo "$(INFO) Installing mpy-cross for MicroPython 1.11"
 	@$(pip2) --quiet install --target=bin/mpy-cross/1.11 --upgrade mpy-cross==1.11
 

@@ -97,7 +97,7 @@ mpy-compile: check-mpy-version check-mpy-target
 
 	@echo "$(INFO) Ahead-of-time compiling to .mpy $(MPY_TARGET)"
 
-	$(eval mpy_path := lib-mpy-$(MPY_VERSION)-$(MPY_TARGET))
+	$(eval mpy_path := lib-mpy)
 
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
@@ -146,7 +146,7 @@ pyboard-install: check-mpy-version check-mpy-target
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
-		rsync -auv lib-mpy-$(MPY_VERSION)-$(MPY_TARGET) /Volumes/PYBFLASH; \
+		rsync -auv lib-mpy /Volumes/PYBFLASH; \
 		rsync -auv boot.py main.py /Volumes/PYBFLASH; \
 		cp settings.pybd.py /Volumes/PYBFLASH/settings.py; \
 	else \
@@ -175,7 +175,7 @@ install-ftp:
 
 	@if test "${mpy_cross}" = "true"; then \
 		$(MAKE) mpy-compile && \
-		$(MAKE) lftp lftp_recipe=tools/upload-mpy-$(MPY_VERSION).lftprc; \
+		$(MAKE) lftp lftp_recipe=tools/upload-mpy-$(MPY_TARGET).lftprc; \
 	else \
 		$(MAKE) lftp lftp_recipe=tools/upload-all.lftprc; \
 	fi
@@ -185,7 +185,11 @@ install-rshell:
 
 	@if test "${mpy_cross}" = "true"; then \
 		$(MAKE) mpy-compile && \
-		$(rshell) $(rshell_options) --file tools/upload-mpy.rshell; \
+		if test "${MPY_TARGET}" = "pycom"; then \
+			$(rshell) $(rshell_options) --file tools/upload-mpy-pycom.rshell; \
+		else \
+			$(rshell) $(rshell_options) --file tools/upload-mpy-genuine.rshell; \
+		fi; \
 	else \
 		$(MAKE) install; \
 	fi
@@ -205,20 +209,38 @@ install-ng: check-mcu-port
 	@$(MAKE) notify status=OK status_ansi="$(OK)" message="MicroPython code upload finished"
 
 install-requirements: check-mcu-port
-	$(rshell) $(rshell_options) mkdir /flash/dist-packages
-	$(rshell) $(rshell_options) rsync dist-packages /flash/dist-packages
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) mkdir /flash/dist-packages; \
+		$(rshell) $(rshell_options) rsync -m dist-packages /flash/dist-packages; \
+	else \
+		$(rshell) $(rshell_options) mkdir /pyboard/dist-packages; \
+		$(rshell) $(rshell_options) rsync -m dist-packages /pyboard/dist-packages; \
+	fi
 
 install-framework: check-mcu-port
-	$(rshell) $(rshell_options) --file tools/upload-framework.rshell
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) --file tools/upload-framework-pycom.rshell; \
+	else \
+		$(rshell) $(rshell_options) --file tools/upload-framework-genuine.rshell; \
+	fi
 
 install-sketch: check-mcu-port
-	$(rshell) $(rshell_options) --file tools/upload-sketch.rshell
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) --file tools/upload-sketch-pycom.rshell; \
+	else \
+		$(rshell) $(rshell_options) --file tools/upload-sketch-genuine.rshell; \
+	fi
 
 refresh-requirements: check-mcu-port
-	rm -r dist-packages
+	@rm -r dist-packages
 	$(MAKE) download-requirements
-	$(rshell) $(rshell_options) rm -r /flash/dist-packages
-	$(rshell) $(rshell_options) ls /flash/dist-packages
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) rm -r /flash/dist-packages; \
+		$(rshell) $(rshell_options) ls /flash/dist-packages; \
+	else; \
+		$(rshell) $(rshell_options) rm -r /pyboard/dist-packages; \
+		$(rshell) $(rshell_options) ls /pyboard/dist-packages; \
+	fi
 	$(MAKE) install-requirements
 
 
@@ -229,13 +251,18 @@ terkin: install-terkin
 ratrack: install-ratrack
 
 terkin: check-mcu-port
-	@#$(rshell) $(rshell_options) --file tools/upload-framework.rshell
-	$(rshell) $(rshell_options) --file tools/upload-terkin.rshell
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) --file tools/upload-terkin-pycom.rshell; \
+	else; \
+		$(rshell) $(rshell_options) --file tools/upload-terkin-genuine.rshell; \
+	fi
 
 ratrack: check-mcu-port
-	# $(rshell) $(rshell_options) --file tools/upload-framework.rshell
-	$(rshell) $(rshell_options) --file tools/upload-ratrack.rshell
-
+	@if test "${MPY_TARGET}" = "pycom"; then \
+		$(rshell) $(rshell_options) --file tools/upload-ratrack-pycom.rshell; \
+	else \
+		$(rshell) $(rshell_options) --file tools/upload-ratrack-genuine.rshell; \
+	fi
 
 
 # ---------
