@@ -25,6 +25,7 @@ class NetworkManager:
 
         self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.lora_manager = None
+        self.gprs_manager = None
         self.mode_server = None
         self.http_api = None
 
@@ -42,6 +43,11 @@ class NetworkManager:
         from terkin.network.lora import LoRaManager
         self.lora_manager = LoRaManager(manager=self, settings=self.settings)
         self.lora_manager.start()
+
+    def start_gprs(self):
+        from terkin.network.gprs import GPRSManager
+        self.gprs_manager = GPRSManager(manager=self, settings=self.settings)
+        self.gprs_manager.start()
 
     def wait_for_ip_stack(self, timeout=5):
         """
