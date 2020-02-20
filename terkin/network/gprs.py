@@ -70,6 +70,6 @@ class GPRSManager:
 
     def send_request(self, url, payload, content_type):
         response = self.modem.http_request(url, 'POST', payload, content_type)
-        log.info('[GPRS] HTTP response status code:', response.status_code)
-        log.info('[GPRS] HTTP response content:', response.content)
+        log.info('[GPRS] HTTP response status code: %s', response.status_code)
+        log.info('[GPRS] HTTP response content: %s', response.content)
         return response
