@@ -83,7 +83,7 @@ download-requirements: check-download-tools
 	rm -rf $(tmpdir)
 
 	# Install SIM800 driver
-	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/7ee6256e/SIM800L.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/6b137930/SIM800L.py
 
 
 	## Sensors
