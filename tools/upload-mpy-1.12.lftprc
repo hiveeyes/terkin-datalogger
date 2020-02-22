@@ -1,0 +1,18 @@
+# https://lftp.yar.ru/lftp-man.html
+
+set ftp:use-quit true
+set net:connection-limit 1
+set net:reconnect-interval-base 0
+set ftp:passive-mode true
+set ftp:ssl-allow false
+set ftp:list-empty-ok true
+
+set mirror:exclude-regex "\.(py)$|\.(pyc)$|__pycache__"
+set mirror:overwrite true
+
+cd /flash/lib
+mirror --reverse --use-cache --file=lib/umal.py --file=lib/mininet.py
+
+cd /flash
+mirror --reverse --delete --use-cache lib-mpy-1.12-pycom
+mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py

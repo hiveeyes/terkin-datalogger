@@ -121,7 +121,9 @@ class MicroPythonBootloader:
 
         # Extend by path containing frozen modules.
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            if self.platform_info.micropython_version >= (1, 11):
+            if self.platform_info.micropython_version >= (1, 12):
+                bytecode_path = 'lib-mpy-1.12-pycom'
+            elif self.platform_info.micropython_version == (1, 11):
                 bytecode_path = 'lib-mpy-1.11-pycom'
             else:
                 bytecode_path = 'lib-mpy-1.9.4-pycom'
