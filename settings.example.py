@@ -247,7 +247,7 @@ telemetry = {
         # CayenneLPP over TTN-LoRa
         {
             # Enable/disable this telemetry target.
-            'enabled': True,
+            'enabled': False,
 
             'endpoint': 'lora://',
             'format': 'lpp',
@@ -255,7 +255,8 @@ telemetry = {
                 'size': 12,
                 'datarate': 0,
             },
-        }
+        },
+
     ],
 }
 
