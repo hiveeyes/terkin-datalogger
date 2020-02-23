@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import os
 import sys
@@ -13,6 +13,8 @@ import netaddr
 import netifaces
 
 from scapy.all import Ether, ARP, srp, sniff
+
+from .notify import notify_user
 
 """
 Backlog
@@ -27,7 +29,7 @@ Backlog
 """
 
 # Setup logging.
-logging.basicConfig(level=logging.INFO, format='%(asctime)-15s [%(name)-10s] %(levelname)-7s: %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)-15s [%(module)-10s] %(levelname)-7s: %(message)s')
 log = logging.getLogger(__file__)
 #log.setLevel(logging.DEBUG)
 
@@ -354,50 +356,6 @@ def read_floating_address(address):
         return None
 
 
-def notify_user(title, text):
-
-    if sys.platform == 'linux':
-        # https://pypi.org/project/py-notifier/#description
-        # https://github.com/YuriyLisovskiy/pynotifier
-        try:
-            from pynotifier import Notification
-            Notification(
-                title=title,
-                description=text,
-                duration=5,  # Duration in seconds
-                urgency=Notification.URGENCY_NORMAL
-            ).send()
-        except:
-            pass
-
-    elif sys.platform == 'darwin':
-        try:
-            # https://pypi.org/project/pync/
-            import pync
-            pync.notify(text, title=title)
-        except:
-            try:
-                # https://stackoverflow.com/questions/17651017/python-post-osx-notification/41318195#41318195
-                os.system("""
-                osascript -e 'display notification "{}" with title "{}"'
-                """.format(text, title))
-            except:
-                pass
-
-    elif sys.platform.startswith('win'):
-        # https://github.com/malja/zroya
-        # https://malja.github.io/zroya/
-        # https://www.devdungeon.com/content/windows-desktop-notifications-python
-        try:
-            import zroya
-            zroya.init(title, "a", "b", "c", "d")
-            t = zroya.Template(zroya.TemplateType.Text1)
-            t.setFirstLine(text)
-            zroya.show(t)
-        except:
-            pass
-
-
 if __name__ == '__main__':
 
     # There are different MAC address prefixes for different Pycom devices.
@@ -423,23 +381,6 @@ if __name__ == '__main__':
         mac_prefixes = mac_prefixes_default
 
     mac_prefixes = list(map(format_mac_address, map(normalize_mac_address, mac_prefixes)))
-
-    if command == 'notify':
-
-        message = sys.argv[2]
-        status = ''
-        try:
-            status = sys.argv[3]
-        except:
-            pass
-
-        title = 'Terkin Pinocchio'
-        #title = '{} {}'.format(title, status)
-        message = '{}: {}'.format(status, message)
-
-        # Send desktop notification.
-        notify_user(title, message)
-        sys.exit(0)
 
     # Start network monitoring and device discovery machinery.
     run_monitor(command, mac_prefixes)
