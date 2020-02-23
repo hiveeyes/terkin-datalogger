@@ -1,0 +1,8 @@
+# Install libraries to MicroPython target device using "rshell".
+
+mkdir /pyboard/lib/ratrack
+rsync -m ratrack /pyboard/lib/ratrack
+
+# Reset machine after upload
+repl pyboard import machine~
+repl pyboard machine.reset()

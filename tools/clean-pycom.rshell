@@ -2,6 +2,7 @@
 
 rm -r /flash/dist-packages
 rm -r /flash/lib
+rm -r /flash/lib-mpy
 
 rm -r /flash/boot.py
 rm -r /flash/main.py

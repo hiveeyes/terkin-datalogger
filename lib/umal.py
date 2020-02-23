@@ -120,22 +120,17 @@ class MicroPythonBootloader:
         import sys
 
         # Extend by path containing frozen modules.
+        bytecode_path = 'lib-mpy'
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            if self.platform_info.micropython_version >= (1, 11):
-                bytecode_path = 'lib-mpy-1.11-pycom'
-            else:
-                bytecode_path = 'lib-mpy-1.9.4-pycom'
-        else:
-            bytecode_path = 'lib-mpy-1.11-bytecode'
-
-        # Extend by all paths required for running the sandboxed firmware.
-        if '/flash' in sys.path:
             sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
             sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
-        else:
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             sys.path[0:0] = ['/{}'.format(bytecode_path)]
             sys.path.extend(['/dist-packages', '/terkin'])
-
+        else:
+            print('[umal]    ERROR: Micropython platform not supported:', self.platform_info.vendor)
+            sys.exit()
+            
         print('[umal]    INFO: Python module search path is:', sys.path)
 
 
