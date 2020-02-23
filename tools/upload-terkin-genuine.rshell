@@ -1,7 +1,7 @@
 # Install libraries to MicroPython target device using "rshell".
 
-mkdir /flash/terkin
-rsync terkin /flash/terkin
+mkdir /pyboard/terkin
+rsync -m terkin /pyboard/terkin
 
 # Reset machine after upload
 repl pyboard import machine~

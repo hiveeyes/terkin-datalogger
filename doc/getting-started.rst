@@ -25,7 +25,7 @@ Setup sandbox
 
 As a general introduction, you might want to read the `Pycom Quickstart Guide`_.
 
-- When you are running Linux, the documentation at ``doc/sandbox-setup.rst``
+- When you are running Linux, the documentation at `Setup Terkin Datalogger sandbox`_
   might be the right place to follow up for details.
 - If you are using Windows, the documentation about how to
   `Install and configure the Terkin Datalogger development sandbox on Windows`_
@@ -47,6 +47,7 @@ in brownout conditions.
 
 
 .. _Pycom Quickstart Guide: https://github.com/pycom/pycom-micropython-sigfox/blob/master/docs/pycom_esp32/getstarted.rst
+.. _Setup Terkin Datalogger sandbox: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/sandbox-setup.rst
 .. _Install and configure the Terkin Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
 
 
