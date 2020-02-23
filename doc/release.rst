@@ -32,7 +32,7 @@ Pycom MicroPython
 =================
 For building the Pycom firmware with frozen modules, there's a make target,
 which will copy source artifacts of the Terkin Datalogger into the frozen
-directory appropriately.
+directory appropriately::
 
     make sync-frozen path=/home/develop/pycom/pycom-micropython-sigfox/esp32/frozen/Custom
 
