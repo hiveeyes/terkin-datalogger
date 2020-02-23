@@ -116,6 +116,9 @@ mpy-cross-setup: setup-virtualenv2
 	@echo "$(INFO) Installing mpy-cross for MicroPython 1.11"
 	@$(pip2) --quiet install --target=bin/mpy-cross/1.11 --upgrade mpy-cross==1.11
 
+	@echo "$(INFO) Installing mpy-cross for MicroPython 1.12"
+	@$(pip2) --quiet install --target=bin/mpy-cross/1.12 --upgrade mpy-cross==1.12
+
 	@echo "$(INFO) Installing mpy-cross-all"
 	@mkdir -p bin
 	@wget --quiet --unlink --output-document $(mpy-cross-all) https://raw.githubusercontent.com/hiveeyes/micropython/mpy-cross-plus/tools/mpy_cross_all.py

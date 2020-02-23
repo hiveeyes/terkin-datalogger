@@ -104,6 +104,17 @@ class TerkinDevice:
         else:
             log.info("[LoRa] This is not a LoRa capable device.")
 
+        # Initialize GPRS modem.
+        if self.settings.get('networking.gprs.enabled'):
+            try:
+                self.networking.start_gprs()
+                self.status.networking = True
+            except Exception as ex:
+                log.exc(ex, 'Unable to start GPRS modem')
+                self.status.networking = False
+        else:
+            log.info("[GPRS] Interface disabled in settings, skipping initialization.")
+
         # Inform about networking status.
         #self.networking.print_status()
 

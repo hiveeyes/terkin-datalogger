@@ -109,6 +109,8 @@ networking = {
             #},
         ],
     },
+
+    # LoRaWAN/TTN
     'lora': {
         'enabled': False,
         'otaa': {
@@ -119,7 +121,32 @@ networking = {
             'application_key': '<REGISTRATION NEEDED>',
         },
         'antenna_attached': False,
-    }
+    },
+
+    # GPRS/SIM800
+    # https://github.com/hiveeyes/pythings-sim800
+    'gprs': {
+
+        # General settings.
+        'enabled': False,
+        'driver': 'pythings-sim800',
+
+        # Network settings.
+        'apn': 'apn.example.net',
+
+        # Main power switch, connected to a SY8089 step-down converter on a TTGO T-Call SIM800.
+        # https://github.com/Xinyuan-LilyGO/TTGO-T-Call
+        # https://datasheet.lcsc.com/szlcsc/Silergy-Corp-SY8089AAAC_C78988.pdf
+        # https://community.hiveeyes.org/t/minimal-hardware-design-gsm-stockwaage-mit-ttgo-t-call/2906/19
+        'pin_power': 'P23',
+
+        # Modem action and communication pins.
+        # https://simcom.ee/documents/SIM800/SIM800_Hardware%20Design_V1.09.pdf
+        'pin_pwrkey': 'P4',
+        'pin_reset': 'P5',
+        'pin_txd': 'P26',
+        'pin_rxd': 'P27',
+    },
 }
 
 # Telemetry configuration.
@@ -147,6 +174,29 @@ telemetry = {
         {
             # Enable/disable this telemetry target.
             'enabled': False,
+
+            # Define telemetry endpoint and address information.
+            'endpoint': 'https://daq.example.org/api',
+            'topology': 'mqttkit',
+            'address': {
+                "realm": "workbench",
+                "network": "testdrive",
+                "gateway": "area-42",
+                "node": "node-01-http-json",
+            },
+
+            # Use alternative, non-HTTPS endpoint.
+            # 'endpoint': 'http://daq.example.org/api-notls',
+
+        },
+
+        # JSON over HTTP over GPRS: Kotori/MQTTKit
+        {
+            # Enable/disable this telemetry target.
+            'enabled': False,
+
+            # Define outbound interface.
+            'interface': 'gprs',
 
             # Define telemetry endpoint and address information.
             'endpoint': 'https://daq.example.org/api',
@@ -197,7 +247,7 @@ telemetry = {
         # CayenneLPP over TTN-LoRa
         {
             # Enable/disable this telemetry target.
-            'enabled': True,
+            'enabled': False,
 
             'endpoint': 'lora://',
             'format': 'lpp',
@@ -205,7 +255,8 @@ telemetry = {
                 'size': 12,
                 'datarate': 0,
             },
-        }
+        },
+
     ],
 }
 

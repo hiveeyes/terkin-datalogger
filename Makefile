@@ -86,35 +86,6 @@ help: show-rules
 setup: setup-environment download-requirements mpy-cross-setup
 
 
-# -----------------------
-# Discovery & Maintenance
-# -----------------------
-
-setup-terkin-agent:
-	$(pip3) install --pre --requirement requirements-terkin-agent.txt
-
-## Run the MicroTerkin Agent, e.g. "make terkin-agent action=maintain"
-terkin-agent: setup-terkin-agent
-	sudo $(python3) tools/terkin.py $(action) $(macs)
-
-## Load the MiniNet module to the device and start a WiFi access point.
-provide-wifi: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().activate_wifi_ap()"
-	@echo
-
-## Load the MiniNet module to the device and start a WiFi STA connection.
-connect-wifi: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib/mininet_wip.py
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet_wip import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
-	@echo
-
-## Load the MiniNet module to the device and get IP address.
-ip-address: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
-	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ print(MiniNet().get_ip_address()) ~"
-	@echo
-
 
 # -----------------------------
 # File compilation and transfer
@@ -130,9 +101,7 @@ mpy-compile: check-mpy-version check-mpy-target
 	@echo "$(INFO) Populating folder \"$(mpy_path)\""
 	@rm -rf $(mpy_path)
 
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"; \
-	fi
+	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
 	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 

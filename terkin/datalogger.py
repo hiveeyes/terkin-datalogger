@@ -264,7 +264,6 @@ class TerkinDatalogger:
 
     def get_sleep_time(self):
         """ """
-        import pycom
 
         interval = self.settings.get('main.interval', 60.0)
 
@@ -278,9 +277,11 @@ class TerkinDatalogger:
         # This gets used when set from a LoRaWAN downlink message.
         # pycom.nvs_get should return "None" in case of unset key. Instead it throws an error
         try:
+            import pycom
             interval_minutes = pycom.nvs_get('deepsleep')
             log.info('Deep sleep interval set to %s minute(s) by LoRaWAN downlink message', interval_minutes)
             interval = interval_minutes * 60
+
         # Otherwise, fall back to original configuration setting.
         except Exception as ex:
             interval = self.settings.get('main.interval.field')

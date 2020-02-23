@@ -82,6 +82,9 @@ download-requirements: check-download-tools
 	cp -r $(tmpdir)/cayennelpp $(target_dir)/
 	rm -rf $(tmpdir)
 
+	# Install SIM800 driver
+	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/a9a8b981/SIM800L.py
+
 
 	## Sensors
 

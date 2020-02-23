@@ -63,6 +63,7 @@ class TelemetryAdapter:
         self.device = device
         self.target = target
 
+        self.interface = self.target.get('interface')
         self.base_uri = self.target['endpoint']
         self.address = self.target.get('address', {})
         self.address['base_uri'] = self.target['endpoint']
@@ -97,7 +98,8 @@ class TelemetryAdapter:
 
     def client_factory(self):
         """ """
-        client = TelemetryClient(self.channel_uri,
+        client = TelemetryClient(interface=self.interface,
+                                 uri=self.channel_uri,
                                  format=self.format,
                                  content_encoding=self.content_encoding,
                                  uri_suffixes=self.topology.uri_suffixes,
@@ -232,9 +234,10 @@ class TelemetryClient:
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
 
-    def __init__(self, uri, format, content_encoding=None, uri_suffixes=None, settings=None, networking=None):
+    def __init__(self, interface, uri, format, content_encoding=None, uri_suffixes=None, settings=None, networking=None):
 
         log.info('Starting Terkin TelemetryClient')
+        self.interface = interface
         self.uri = uri
 
         self.transport = None
@@ -324,15 +327,16 @@ class TelemetryClient:
 
     def get_handler(self, uri):
         """
-
         :param uri:
-
         """
 
         if uri in self.handlers:
             return self.handlers[uri]
 
-        if self.transport == TelemetryClient.TRANSPORT_HTTP:
+        if self.transport == TelemetryClient.TRANSPORT_HTTP and self.interface == 'gprs':
+            handler = TelemetryTransportHTTPOverGPRS(self.networking.gprs_manager, uri, self.format)
+
+        elif self.transport == TelemetryClient.TRANSPORT_HTTP:
             handler = TelemetryTransportHTTP(uri, self.format)
 
         elif self.transport == TelemetryClient.TRANSPORT_MQTT:
@@ -378,10 +382,10 @@ class TelemetryTransportHTTP:
             raise ValueError('Unknown serialization format for TelemetryTransportHTTP: {}'.format(format))
 
     def send(self, dataframe: DataFrame):
-        """Submit telemetry data using HTTP POST request
+        """
+        Submit telemetry data using HTTP POST request
 
         :param dataframe:
-
         """
         log.info('Sending HTTP request to %s', self.uri)
         log.info('Payload:     %s', dataframe.payload_out)
@@ -392,6 +396,31 @@ class TelemetryTransportHTTP:
             return True
         else:
             message = 'HTTP request failed: {} {}\n{}'.format(response.status_code, response.reason, response.content)
+            raise TelemetryTransportError(message)
+
+
+class TelemetryTransportHTTPOverGPRS(TelemetryTransportHTTP):
+
+    def __init__(self, gprs_manager, uri, format):
+        super().__init__(uri, format)
+        self.gprs_manager = gprs_manager
+
+    def send(self, dataframe: DataFrame):
+        """
+        Submit telemetry data using HTTP POST request over GPRS.
+
+        :param dataframe:
+        """
+        log.info('Sending HTTP request over GPRS APN %s to %s', self.gprs_manager.gprs_settings.get('apn'), self.uri)
+        log.info('Payload:     %s', dataframe.payload_out)
+
+        response = self.gprs_manager.send_request(self.uri, dataframe.payload_out, self.content_type)
+        if response.status_code in [200, 201]:
+            return True
+        else:
+            # TODO: Implement ``response.reason``.
+            #message = 'HTTP request failed: {} {}\n{}'.format(response.status_code, response.reason, response.content)
+            message = 'HTTP request failed: {}\n{}'.format(response.status_code, response.content)
             raise TelemetryTransportError(message)
 
 
