@@ -27,7 +27,7 @@ $(eval bumpversion  := $(venv3path)/bin/bumpversion)
 
 # ------------------
 # Python virtualenvs
-# -------------------
+# ------------------
 check-virtualenv:
 	@$(MAKE) check-program program="virtualenv" hint="Install on Debian-based systems using 'apt install python-virtualenv python3-virtualenv' or use the package manager of your choice"
 
@@ -116,9 +116,7 @@ notify:
 		echo "$(status) $(message)"; \
 	fi
 
-	@if test "${RUNNING_IN_HELL}" != "true" -a "${RUNNING_IN_WSL}" != "true"; then \
-		$(python3) tools/terkin.py notify "$(message)" "$(status)"; \
-	fi
+	@$(python3) -m tools.notify "$(message)" "$(status)" || true
 
 prompt_yesno:
 	$(eval retval := $(shell bash -c 'read -s -p " [y/n] " outcome; echo $$outcome'))

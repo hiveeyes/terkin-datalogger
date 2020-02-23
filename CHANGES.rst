@@ -116,6 +116,9 @@ Development
 - Improve cross-compilation for MicroPython 1.12, see #61. Thanks, @poesel!
 - Fix Makefile target "install-pycom-firmware".
 - Add GPRS modem support for SIM800. Thanks, @sarusso!
+- Sandbox: Separate desktop notifications from tools/terkin.py.
+  Fix nasty dependency bug on the "netaddr" module.
+  Add gracefulness to "make notify" target.
 
 
 2019-08-19 0.6.0

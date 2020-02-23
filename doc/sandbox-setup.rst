@@ -70,17 +70,20 @@ download the required packages into it.
 
 Setup desktop notifications
 ===========================
+These steps are optional but offer convenient desktop notifications
+which will inform you about what's going on when operating the sandbox.
+
 Linux/Windows::
 
-    pip install py-notifier
+    .venv3/bin/pip install py-notifier
 
 macOS::
 
-    pip install pync
+    .venv3/bin/pip install pync
 
 Windows::
 
-    pip install zroya
+    .venv3/bin/pip install zroya
 
 
 Pre-flight checks
