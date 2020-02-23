@@ -128,7 +128,7 @@ class MicroPythonBootloader:
             sys.path[0:0] = ['/{}'.format(bytecode_path)]
             sys.path.extend(['/dist-packages', '/terkin'])
         else:
-            print('[umal]    ERROR: Micropython platform not supported:', self.platform_info.vendor)
+            print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
             sys.exit()
             
         print('[umal]    INFO: Python module search path is:', sys.path)

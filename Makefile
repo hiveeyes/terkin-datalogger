@@ -60,7 +60,7 @@ endif
 
 # Load modules
 include tools/help.mk
-include tools/core.mk
+include tools/base.mk
 include tools/setup.mk
 include tools/release.mk
 
@@ -88,6 +88,7 @@ help: show-rules
 # -----
 # Setup
 # -----
+
 ## Prepare sandbox environment and download requirements
 setup: setup-environment download-requirements mpy-cross-setup
 
@@ -268,19 +269,3 @@ ratrack: check-mcu-port
 	else \
 		$(rshell) $(rshell_options) --file tools/upload-ratrack-genuine.rshell; \
 	fi
-
-
-# ---------
-# Releasing
-# ---------
-
-build-annapurna:
-	docker run -v `pwd`/dist-packages:/opt/frozen -it goinvent/pycom-fw build FIPY annapurna-0.6.0dev2 v1.20.0.rc12.1 idf_v3.1
-
-
-#release-and-publish: release publish-release
-
-# Release this piece of software.
-# Synopsis:
-#   "make release bump=minor"   (major,minor,patch)
-release: bumpversion push publish-release
