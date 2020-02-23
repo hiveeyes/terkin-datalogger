@@ -118,6 +118,26 @@ publish-release: check-github-release build-release
 	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
 
 
+## Copy source artifacts to MicroPython's frozen module folder
+sync-frozen:
+
+	@if test "${path}" = ""; then \
+		echo "Frozen module path not given, please invoke \"make sync-frozen path=/home/develop/pycom/pycom-micropython-sigfox/esp32/frozen/Custom\"."; \
+		exit 1; \
+	fi
+
+	@if ! test -e "${path}"; then \
+		echo "Frozen module path at ${path} does not exist."; \
+		exit 1; \
+	fi
+
+	echo "Deleting all modules from $(path)"
+	rm -rf $(path)/*
+
+	echo "Copying modules to $(frozen_path)"
+	rsync -auv --exclude=__pycache__ lib/* dist-packages/* terkin $(path)
+
+
 ## Release this piece of software
 release: bumpversion push publish-release
 	# Synopsis:
