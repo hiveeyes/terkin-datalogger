@@ -52,8 +52,13 @@
 # Main Makefile
 # =============
 
+# Conditionally load "config.mk".
+MAKE_CONFIG := $(shell test -e "config.mk" && echo "yes")
+ifeq ($(MAKE_CONFIG),yes)
+	include config.mk
+endif
+
 # Load modules
-include config.mk
 include tools/help.mk
 include tools/core.mk
 include tools/setup.mk

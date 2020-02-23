@@ -17,4 +17,3 @@ settings.py
 /.vscode
 /portainer
 /tmp
-config.mk
