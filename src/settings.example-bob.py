@@ -109,151 +109,39 @@ networking = {
             #},
         ],
     },
-
-    # LoRaWAN/TTN
-    'lora': {
-        'enabled': False,
-        'otaa': {
-            'region': 'EU868',
-            'adr': False,
-            'device_eui': '<GENERATED_FROM_LORA_MAC>',
-            'application_eui': '<REGISTRATION NEEDED>',
-            'application_key': '<REGISTRATION NEEDED>',
-        },
-        'antenna_attached': False,
-    },
-
-    # GPRS/SIM800
-    # https://github.com/hiveeyes/pythings-sim800
-    'gprs': {
-
-        # General settings.
-        'enabled': False,
-        'driver': 'pythings-sim800',
-
-        # Network settings.
-        'apn': 'apn.example.net',
-
-        # Main power switch, connected to a SY8089 step-down converter on a TTGO T-Call SIM800.
-        # https://github.com/Xinyuan-LilyGO/TTGO-T-Call
-        # https://datasheet.lcsc.com/szlcsc/Silergy-Corp-SY8089AAAC_C78988.pdf
-        # https://community.hiveeyes.org/t/minimal-hardware-design-gsm-stockwaage-mit-ttgo-t-call/2906/19
-        'pin_power': 'P23',
-
-        # Modem action and communication pins.
-        # https://simcom.ee/documents/SIM800/SIM800_Hardware%20Design_V1.09.pdf
-        'pin_pwrkey': 'P4',
-        'pin_reset': 'P5',
-        'pin_txd': 'P26',
-        'pin_rxd': 'P27',
-    },
 }
 
 # Telemetry configuration.
 telemetry = {
     'targets': [
 
-        # JSON over MQTT: Kotori/MQTTKit
-        {
-            # Enable/disable this telemetry target.
-            'enabled': True,
-
-            # Define telemetry endpoint and address information.
-            'endpoint': 'mqtt://daq.example.org',
-            #'endpoint': 'mqtt://username:password@daq.example.org',
-            'topology': 'mqttkit',
-            'address': {
-                "realm": "workbench",
-                "network": "testdrive",
-                "gateway": "area-42",
-                "node": "node-01-mqtt-json",
-            },
-        },
-
-        # JSON over HTTP: Kotori/MQTTKit
+        # Hiveeyes telemetry: JSON over MQTT
         {
             # Enable/disable this telemetry target.
             'enabled': False,
 
             # Define telemetry endpoint and address information.
-            'endpoint': 'https://daq.example.org/api',
+            'endpoint': 'mqtt://swarm.hiveeyes.org',
+            #'endpoint': 'mqtt://username:password@swarm.hiveeyes.org',
             'topology': 'mqttkit',
             'address': {
-                "realm": "workbench",
+                "realm": "hiveeyes",
                 "network": "testdrive",
                 "gateway": "area-42",
-                "node": "node-01-http-json",
+                "node": "node-99",
             },
-
-            # Use alternative, non-HTTPS endpoint.
-            # 'endpoint': 'http://daq.example.org/api-notls',
-
         },
 
-        # JSON over HTTP over GPRS: Kotori/MQTTKit
-        {
-            # Enable/disable this telemetry target.
-            'enabled': False,
-
-            # Define outbound interface.
-            'interface': 'gprs',
-
-            # Define telemetry endpoint and address information.
-            'endpoint': 'https://daq.example.org/api',
-            'topology': 'mqttkit',
-            'address': {
-                "realm": "workbench",
-                "network": "testdrive",
-                "gateway": "area-42",
-                "node": "node-01-http-json",
-            },
-
-            # Use alternative, non-HTTPS endpoint.
-            # 'endpoint': 'http://daq.example.org/api-notls',
-
-        },
-
-        # JSON over HTTP: Basic
+        # Beep telemetry: JSON over HTTP
         {
             # Enable/disable this telemetry target.
             'enabled': False,
 
             # Define telemetry endpoint and address information.
-            # https://beeceptor.com/
-            # https://requestbin.fullcontact.com/
-            'endpoint': 'https://test.free.beeceptor.com/api/sensors',
+            'endpoint': 'https://bee-observer.org/api/sensors',
+            'topology': 'beep-bob',
             'data': {
-                'key': '## API_KEY ##',
-            },
-        },
-
-        # CayenneLPP over MQTT, Base64 encoded
-        {
-            # Enable/disable this telemetry target.
-            'enabled': False,
-
-            # Define telemetry endpoint and address information.
-            'endpoint': 'mqtt://daq.example.org',
-            'address': {
-                "realm": "workbench",
-                "network": "testdrive",
-                "gateway": "area-42",
-                "node": "node-01-mqtt-lpp",
-            },
-            'format': 'lpp',
-            'content_encoding': 'base64',
-        },
-
-        # CayenneLPP over TTN-LoRa
-        {
-            # Enable/disable this telemetry target.
-            'enabled': False,
-
-            'endpoint': 'lora://',
-            'format': 'lpp',
-            'settings': {
-                'size': 12,
-                'datarate': 0,
+                'key': '## BEEP_SENSOR_KEY ##',
             },
         },
 
@@ -385,18 +273,28 @@ sensors = {
             'bus': 'onewire:0',
             'devices': [
                 {
-                    'id': 'ds18b20-r1c1',
+                    'id': 'ds18b20-w1r1',
                     'address': '1111111111111111',
-                    'description': 'Reihe 1, Spalte 1',
+                    'description': 'Wabengasse 1, Rahmen 1',
                     'enabled': True,
                     #'offset': 0.42,
+
+                    'telemetry_name': 'inside.temperature.brood_1',
+                    'realm': 'inside',
+                    'type': 'temperature',
+                    'name': 'brood_1',
                 },
                 {
-                    'id': 'ds18b20-r1c2',
+                    'id': 'ds18b20-w1r2',
                     'address': '2222222222222222',
-                    'description': 'Reihe 1, Spalte 2',
+                    'description': 'Wabengasse 1, Rahmen 2',
                     'enabled': True,
                     #'offset': -0.42,
+
+                    'telemetry_name': 'inside.temperature.brood_2',
+                    'realm': 'inside',
+                    'type': 'temperature',
+                    'name': 'brood_2',
                 },
             ],
         },
@@ -419,14 +317,6 @@ sensors = {
             "pin_scl": "P10",
         },
         {
-            "id": "bus-i2c-1",
-            "family": "i2c",
-            "number": 1,
-            "enabled": False,
-            "pin_sda": "P22",
-            "pin_scl": "P21",
-        },
-        {
             "id": "bus-onewire-0",
             "family": "onewire",
             "number": 0,
@@ -437,3 +327,40 @@ sensors = {
     ]
 }
 
+# Map sensor field names to telemetry field names.
+# Right now, please adapt this according to your sensor configuration by
+# looking at the console output of the line
+# `[terkin.datalogger] INFO: Sensor data`. Thanks!
+#
+# Remark:
+# This will be replaced by runtime configuration through
+# HTTP API and captive portal.
+sensor_telemetry_map = {
+    "_version": "1.0.0",
+
+    # Waage
+    "weight.0": "weight_kg",
+
+    # BME280
+    "temperature.0x77.i2c:0": "t",
+    "humidity.0x77.i2c:0": "h",
+    "pressure.0x77.i2c:0": "p",
+
+    # DS18B20
+    "temperature.1111111111111111.onewire:0": "t_i_1",
+    "temperature.2222222222222222.onewire:0": "t_i_2",
+    "temperature.3333333333333333.onewire:0": "t_i_3",
+    "temperature.4444444444444444.onewire:0": "t_i_4",
+    "temperature.5555555555555555.onewire:0": "t_i_5",
+    "temperature.6666666666666666.onewire:0": "t_o",
+
+    # Signalstärke
+    "system.wifi.rssi": "rssi",
+
+    # Sendeleistung
+    "system.wifi.max_tx_power": "snr",
+
+    # Batteriespannung
+    "system.voltage": "bv",
+
+}

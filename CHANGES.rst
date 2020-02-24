@@ -120,6 +120,7 @@ Development
   Fix nasty dependency bug on the "netaddr" module.
   Add gracefulness to "make notify" target.
 - Adjust directory layout: Move "terkin" files to "lib" folder
+- Adjust directory layout: Move root files to "src/" folder
 - Support firmware image building for Genuine MicroPython
 
 

@@ -147,13 +147,13 @@ pyboard-install: check-mpy-version check-mpy-target
 	@$(MAKE) mpy-compile
 
 	# Inactive
-	@#rsync -auv dist-packages lib-mpy boot.py main.py settings.py /Volumes/PYBFLASH; \
+	@#rsync -auv dist-packages lib-mpy src/boot.py src/main.py src/settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
 		rsync -auv lib-mpy /Volumes/PYBFLASH; \
-		rsync -auv boot.py main.py /Volumes/PYBFLASH; \
-		cp settings.pybd.py /Volumes/PYBFLASH/settings.py; \
+		rsync -auv src/boot.py src/main.py /Volumes/PYBFLASH; \
+		cp src/settings.pybd.py /Volumes/PYBFLASH/settings.py; \
 	else \
 		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \
 		exit 1; \

@@ -21,6 +21,6 @@ set mirror:overwrite true
 cd /flash
 mirror --reverse --delete --use-cache dist-packages
 mirror --reverse --delete --use-cache lib
-mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py
+mirror --reverse --use-cache --file=src/pybytes_config.json --file=src/settings.py --file=src/boot.py --file=src/main.py
 
 #sleep 0.5

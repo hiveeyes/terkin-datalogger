@@ -9,8 +9,8 @@ rsync --mirror --verbose lib-mpy /pyboard/lib-mpy
 mkdir /pyboard/lib
 cp lib-mpy/umal.mpy /pyboard/lib
 
-cp pybytes_config.json /pyboard
+cp src/pybytes_config.json /pyboard
 
-cp boot.py /pyboard
-cp main.py /pyboard
-cp settings.py /pyboard
+cp src/boot.py /pyboard
+cp src/main.py /pyboard
+cp src/settings.py /pyboard

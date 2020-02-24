@@ -7,7 +7,7 @@ Terkin Datalogger Settings
 Introduction
 ************
 The main Terkin Datalogger configuration is represented through
-the ``settings.py`` file located in the root directory.
+the ``settings.py`` file located in the root directory of the device.
 
 The configuration settings from the user-specific configuration
 file ``settings-user.json`` will be merged into this to yield
@@ -19,7 +19,7 @@ Static configuration
 ********************
 You are free to manipulate the ``settings.py`` and ``settings-user.json``
 files in any way. Respective blueprints for both files can be found inside
-the root directory.
+the ``src/`` directory of this repository.
 
 
 *********************
