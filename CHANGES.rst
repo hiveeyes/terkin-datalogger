@@ -119,6 +119,8 @@ Development
 - Sandbox: Separate desktop notifications from tools/terkin.py.
   Fix nasty dependency bug on the "netaddr" module.
   Add gracefulness to "make notify" target.
+- Adjust directory layout: Move "terkin" files to "lib" folder
+- Support firmware image building for Genuine MicroPython
 
 
 2019-08-19 0.6.0

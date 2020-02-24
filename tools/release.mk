@@ -135,7 +135,7 @@ sync-frozen:
 	rm -rf $(path)/*
 
 	echo "Copying modules to $(frozen_path)"
-	rsync -auv --exclude=__pycache__ lib/* dist-packages/* terkin $(path)
+	rsync -auv --exclude=__pycache__ dist-packages/* lib/* $(path)
 
 
 ## Release this piece of software

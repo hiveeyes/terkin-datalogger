@@ -26,19 +26,37 @@ Create .tar.gz and .zip archive at ``dist`` directory only::
 ********************************
 Build and publish firmware image
 ********************************
+For building self-contained firmware images, the
+toolchain has to be installed appropriately. YMMV.
+
+===================
+Genuine MicroPython
+===================
+Building is based on the ``FROZEN_MANIFEST`` file ``mpy_manifest.py`` included
+within the Terkin Datalogger repository. The build process is straight forward::
+
+    cd /home/develop/toolchain/micropython/ports/esp32
+
+    export PATH=/home/develop/toolchain/xtensa-esp32-elf-1.22.0-98/bin:$PATH
+    export ESPIDF=/home/develop/toolchain/esp-idf
+    export BUILD_VERBOSE=1
+    make -j8 BOARD=GENERIC_SPIRAM FROZEN_MANIFEST=/home/develop/hiveeyes/terkin-datalogger/mpy_manifest.py
+
+The firmware image will be located at ``./build-GENERIC_SPIRAM/firmware.bin``.
 
 =================
 Pycom MicroPython
 =================
 For building the Pycom firmware with frozen modules, there's a make target,
-which will copy source artifacts of the Terkin Datalogger into the frozen
+which will copy all source artifacts of the Terkin Datalogger into the frozen
 directory appropriately::
 
-    make sync-frozen path=/home/develop/pycom/pycom-micropython-sigfox/esp32/frozen/Custom
+    make sync-frozen path=/home/develop/toolchain/pycom-micropython-sigfox/esp32/frozen/Custom
 
 After that, the regular build process may be started using::
 
-    cd /home/develop/pycom/pycom-micropython-sigfox/esp32
+    cd /home/develop/toolchain/pycom-micropython-sigfox/esp32
 
-    export BOARD=FIPY
-    make -j8 BOARD=${BOARD} VARIANT=BASE FS=LFS release
+    export PATH=/home/develop/toolchain/xtensa-esp32-elf-1.22.0-98/bin:$PATH
+    export IDF_PATH=/home/develop/toolchain/pycom-esp-idf
+    make -j8 BOARD=FIPY VARIANT=BASE FS=LFS release
