@@ -120,7 +120,7 @@ class MicroPythonBootloader:
         import sys
 
         # Extend by path containing frozen modules.
-        paths = ['lib', 'dist-packages', 'lib-mpy', '']
+        paths = ['lib', 'dist-packages', 'lib-mpy']
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             paths = ['/flash/{}'.format(path) for path in paths]
 
@@ -131,9 +131,15 @@ class MicroPythonBootloader:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
             sys.exit(1)
 
+        # Amend module search path.
         sys.path.clear()
         sys.path.extend(paths)
-            
+
+        # According to @poesel, empty directory designates frozen modules.
+        # We want to put these at the end in order to be able to override
+        # any module we would like to hack upon.
+        sys.path.extend('')
+
         print('[umal]    INFO: Python module search path is:', sys.path)
 
 
