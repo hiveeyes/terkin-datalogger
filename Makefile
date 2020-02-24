@@ -109,7 +109,7 @@ mpy-compile: check-mpy-version check-mpy-target
 	@rm -rf $(mpy_path)
 
 	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
-	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
+	@$(MAKE) mpy-cross what="--out $(mpy_path) src/lib"
 
 	@echo "$(INFO) Size of $(mpy_path):"
 	@du -sch $(mpy_path)
@@ -150,7 +150,7 @@ pyboard-install: check-mpy-version check-mpy-target
 	@#rsync -auv dist-packages lib-mpy src/boot.py src/main.py src/settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
-		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
+		rsync -auv src/lib/umal.py src/lib/mininet.py /Volumes/PYBFLASH/lib; \
 		rsync -auv lib-mpy /Volumes/PYBFLASH; \
 		rsync -auv src/boot.py src/main.py /Volumes/PYBFLASH; \
 		cp src/settings.pybd.py /Volumes/PYBFLASH/settings.py; \
@@ -216,10 +216,10 @@ install-ng: check-mcu-port
 install-requirements: check-mcu-port
 	@if test "${MPY_TARGET}" = "pycom"; then \
 		$(rshell) $(rshell_options) mkdir /flash/dist-packages; \
-		$(rshell) $(rshell_options) rsync --mirror --verbose dist-packages /flash/dist-packages; \
+		$(rshell) $(rshell_options) rsync --mirror dist-packages /flash/dist-packages; \
 	else \
 		$(rshell) $(rshell_options) mkdir /pyboard/dist-packages; \
-		$(rshell) $(rshell_options) rsync --mirror --verbose dist-packages /pyboard/dist-packages; \
+		$(rshell) $(rshell_options) rsync --mirror dist-packages /pyboard/dist-packages; \
 	fi
 
 install-framework: check-mcu-port

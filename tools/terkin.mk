@@ -93,18 +93,18 @@ terkin-agent: setup-terkin-agent
 
 ## Load the MiniNet module to the device and start a WiFi access point.
 provide-wifi: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
+	@$(rshell) $(rshell_options) --quiet cp src/lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ MiniNet().activate_wifi_ap()"
 	@echo
 
 ## Load the MiniNet module to the device and start a WiFi STA connection.
 connect-wifi: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib/mininet_wip.py
+	@$(rshell) $(rshell_options) --quiet cp src/lib/mininet.py /flash/lib/mininet_wip.py
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet_wip import MiniNet ~ MiniNet().connect_wifi_sta('$(ssid)', '$(password)')"
 	@echo
 
 ## Load the MiniNet module to the device and get IP address.
 ip-address: check-mcu-port
-	@$(rshell) $(rshell_options) --quiet cp lib/mininet.py /flash/lib
+	@$(rshell) $(rshell_options) --quiet cp src/lib/mininet.py /flash/lib
 	@$(rshell) $(rshell_options) --quiet repl "~ from mininet import MiniNet ~ print(MiniNet().get_ip_address()) ~"
 	@echo

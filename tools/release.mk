@@ -58,7 +58,7 @@ create-source-archives: prepare-release
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
 
-	@cp -r dist-packages lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
+	@cp -r dist-packages src/lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
@@ -88,7 +88,7 @@ create-mpy-archives: prepare-release
 	@mkdir -p $(work_dir)/lib
 
 	@cp -r lib-mpy src/boot.py src/main.py src/settings.example*.py $(work_dir)
-	@cp -r lib/umal.py lib/mininet.py $(work_dir)/lib
+	@cp -r src/lib/umal.py src/lib/mininet.py $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)
@@ -134,7 +134,7 @@ sync-frozen:
 	rm -rf $(path)/*
 
 	echo "Copying modules to $(frozen_path)"
-	rsync -auv --exclude=__pycache__ dist-packages/* lib/* $(path)
+	rsync -auv --exclude=__pycache__ dist-packages/* src/lib/* $(path)
 
 
 ## Release this piece of software

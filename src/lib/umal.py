@@ -113,23 +113,25 @@ class MicroPythonBootloader:
         Please populate this folder appropriately as shown above before
         expecting anything to work.
 
-        The ``PYTHONPATH`` as found on the different platforms is:
+        The default ``PYTHONPATH`` as found on the different platforms is:
         - Vanilla MicroPython: ['', '/lib']
         - Pycom MicroPython: ['', '/flash', '/flash/lib']
         """
         import sys
 
         # Extend by path containing frozen modules.
-        bytecode_path = 'lib-mpy'
+        paths = ['lib', 'dist-packages', 'lib-mpy', '']
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
-            sys.path.extend(['/flash/dist-packages'])
+            paths = ['/flash/{}'.format(path) for path in paths]
+
         elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
-            sys.path[0:0] = ['/{}'.format(bytecode_path)]
-            sys.path.extend(['/dist-packages'])
+            paths = ['/{}'.format(path) for path in paths]
+
         else:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
-            sys.exit()
+            sys.exit(1)
+
+        sys.path = paths
             
         print('[umal]    INFO: Python module search path is:', sys.path)
 

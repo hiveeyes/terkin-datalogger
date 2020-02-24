@@ -1,10 +1,10 @@
 # Install libraries to MicroPython target device using "rshell".
 
 # Upload lib folder
-#rsync ./lib /pyboard/lib
+#rsync ./src/lib /pyboard/lib
 
 mkdir /pyboard/lib-mpy
-rsync --mirror --verbose lib-mpy /pyboard/lib-mpy
+rsync --mirror lib-mpy /pyboard/lib-mpy
 
 mkdir /pyboard/lib
 cp lib-mpy/umal.mpy /pyboard/lib
