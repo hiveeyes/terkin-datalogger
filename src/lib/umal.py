@@ -131,7 +131,8 @@ class MicroPythonBootloader:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
             sys.exit(1)
 
-        sys.path = paths
+        sys.path.clear()
+        sys.path.extend(paths)
             
         print('[umal]    INFO: Python module search path is:', sys.path)
 
