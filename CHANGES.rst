@@ -122,6 +122,7 @@ Development
 - Adjust directory layout: Move "terkin" files to "lib" folder
 - Adjust directory layout: Move root files to "src/" folder
 - Support firmware image building for Genuine MicroPython
+- Sandbox presets: "config.mk" is now "presets.mk"
 
 
 2019-08-19 0.6.0

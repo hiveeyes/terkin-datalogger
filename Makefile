@@ -52,10 +52,10 @@
 # Main Makefile
 # =============
 
-# Conditionally load "config.mk".
-MAKE_CONFIG := $(shell test -e "config.mk" && echo "yes")
-ifeq ($(MAKE_CONFIG),yes)
-	include config.mk
+# Conditionally load "presets.mk".
+MAKE_PRESETS := $(shell test -e "presets.mk" && echo "yes")
+ifeq ($(MAKE_PRESETS),yes)
+	include presets.mk
 endif
 
 # Load modules

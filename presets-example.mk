@@ -1,4 +1,4 @@
-# Copy this file to "config.mk" in order to set preferences for your sandbox environment.
+# Copy this file to "presets.mk" in order to set preferences for your sandbox environment.
 # Any variables defined on the user environment will override the settings specified here.
 #
 # Example: Adjust serial port by saying
