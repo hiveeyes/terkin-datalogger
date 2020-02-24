@@ -15,4 +15,4 @@ mirror --reverse --use-cache --file=lib/umal.mpy --file=lib/mininet.mpy
 
 cd /
 mirror --reverse --delete --use-cache lib-mpy
-mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py
+mirror --reverse --use-cache --file=src/pybytes_config.json --file=src/settings.py --file=src/boot.py --file=src/main.py

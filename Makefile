@@ -52,10 +52,15 @@
 # Main Makefile
 # =============
 
+# Conditionally load "presets.mk".
+MAKE_PRESETS := $(shell test -e "presets.mk" && echo "yes")
+ifeq ($(MAKE_PRESETS),yes)
+	include presets.mk
+endif
+
 # Load modules
-include config.mk
 include tools/help.mk
-include tools/core.mk
+include tools/base.mk
 include tools/setup.mk
 include tools/release.mk
 
@@ -83,6 +88,7 @@ help: show-rules
 # -----
 # Setup
 # -----
+
 ## Prepare sandbox environment and download requirements
 setup: setup-environment download-requirements mpy-cross-setup
 
@@ -104,7 +110,6 @@ mpy-compile: check-mpy-version check-mpy-target
 
 	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
-	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 
 	@echo "$(INFO) Size of $(mpy_path):"
 	@du -sch $(mpy_path)
@@ -142,13 +147,13 @@ pyboard-install: check-mpy-version check-mpy-target
 	@$(MAKE) mpy-compile
 
 	# Inactive
-	@#rsync -auv dist-packages lib-mpy terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+	@#rsync -auv dist-packages lib-mpy src/boot.py src/main.py src/settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
 		rsync -auv lib-mpy /Volumes/PYBFLASH; \
-		rsync -auv boot.py main.py /Volumes/PYBFLASH; \
-		cp settings.pybd.py /Volumes/PYBFLASH/settings.py; \
+		rsync -auv src/boot.py src/main.py /Volumes/PYBFLASH; \
+		cp src/settings.pybd.py /Volumes/PYBFLASH/settings.py; \
 	else \
 		echo "ERROR: Could not find /Volumes/PYBFLASH, exiting"; \
 		exit 1; \
@@ -211,10 +216,10 @@ install-ng: check-mcu-port
 install-requirements: check-mcu-port
 	@if test "${MPY_TARGET}" = "pycom"; then \
 		$(rshell) $(rshell_options) mkdir /flash/dist-packages; \
-		$(rshell) $(rshell_options) rsync -m dist-packages /flash/dist-packages; \
+		$(rshell) $(rshell_options) rsync --mirror --verbose dist-packages /flash/dist-packages; \
 	else \
 		$(rshell) $(rshell_options) mkdir /pyboard/dist-packages; \
-		$(rshell) $(rshell_options) rsync -m dist-packages /pyboard/dist-packages; \
+		$(rshell) $(rshell_options) rsync --mirror --verbose dist-packages /pyboard/dist-packages; \
 	fi
 
 install-framework: check-mcu-port
@@ -247,35 +252,10 @@ refresh-requirements: check-mcu-port
 # ------------
 # Applications
 # ------------
-terkin: install-terkin
-ratrack: install-ratrack
+terkin-and-run: check-mcu-port
+	$(MAKE) install-framework
+	$(MAKE) reset-device-attached
 
-terkin: check-mcu-port
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(rshell) $(rshell_options) --file tools/upload-terkin-pycom.rshell; \
-	else; \
-		$(rshell) $(rshell_options) --file tools/upload-terkin-genuine.rshell; \
-	fi
-
-ratrack: check-mcu-port
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(rshell) $(rshell_options) --file tools/upload-ratrack-pycom.rshell; \
-	else \
-		$(rshell) $(rshell_options) --file tools/upload-ratrack-genuine.rshell; \
-	fi
-
-
-# ---------
-# Releasing
-# ---------
-
-build-annapurna:
-	docker run -v `pwd`/dist-packages:/opt/frozen -it goinvent/pycom-fw build FIPY annapurna-0.6.0dev2 v1.20.0.rc12.1 idf_v3.1
-
-
-#release-and-publish: release publish-release
-
-# Release this piece of software.
-# Synopsis:
-#   "make release bump=minor"   (major,minor,patch)
-release: bumpversion push publish-release
+ratrack-and-run: check-mcu-port
+	$(MAKE) install-framework
+	$(MAKE) reset-device-attached

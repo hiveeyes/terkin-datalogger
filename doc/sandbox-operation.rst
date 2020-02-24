@@ -142,20 +142,20 @@ Install prerequisites::
 
 Monitor local networks for devices::
 
-    sudo python3 tools/terkin.py monitor
+    sudo python3 -m tools.terkin monitor
 
 Enable maintenance mode::
 
-    sudo python3 tools/terkin.py maintain
+    sudo python3 -m tools.terkin maintain
 
 Release maintenance mode and enable field mode again::
 
-    sudo python3 tools/terkin.py field
+    sudo python3 -m tools.terkin field
 
 In order to restrict these operations to a single device on the network,
 you should invoke the program like::
 
-    sudo python3 tools/terkin.py maintain 80:7d:3a:c2:de:44
+    sudo python3 -m tools.terkin maintain 80:7d:3a:c2:de:44
 
 By default, the list of MAC address prefixes are::
 

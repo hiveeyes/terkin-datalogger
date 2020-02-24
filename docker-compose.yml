@@ -21,7 +21,7 @@ services:
     container_name: hiveeyes
     restart: unless-stopped
     volumes:
-      - ../hiveeyes-micropython-firmware:/opt/hiveeyes-micropython-firmware
+      - ../terkin-datalogger:/opt/terkin-datalogger
     stdin_open: true
     tty: true
 

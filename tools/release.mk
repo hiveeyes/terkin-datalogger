@@ -25,7 +25,7 @@ install-github-release:
 prepare-release:
 
 	@# Compute release name.
-	$(eval name := hiveeyes-micropython-firmware)
+	$(eval name := terkin-datalogger)
 	$(eval version := $(shell python3 -c 'import terkin; print(terkin.__version__)'))
 	$(eval releasename := $(name)-$(version))
 
@@ -58,8 +58,7 @@ create-source-archives: prepare-release
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
 
-	@cp -r dist-packages lib boot.py main.py settings.example*.py $(work_dir)
-	@cp -r terkin $(work_dir)/lib
+	@cp -r dist-packages lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
@@ -88,7 +87,7 @@ create-mpy-archives: prepare-release
 	@mkdir -p $(work_dir)
 	@mkdir -p $(work_dir)/lib
 
-	@cp -r lib-mpy boot.py main.py settings.example*.py $(work_dir)
+	@cp -r lib-mpy src/boot.py src/main.py src/settings.example*.py $(work_dir)
 	@cp -r lib/umal.py lib/mininet.py $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
@@ -102,17 +101,50 @@ publish-release: check-github-release build-release
 	@echo "Uploading release artefacts for $(releasename) to GitHub"
 
 	@# Show current releases.
-	@#$(github-release) info --user hiveeyes --repo hiveeyes-micropython-firmware
+	@#$(github-release) info --user hiveeyes --repo terkin-datalogger
 
     # Create Release.
-	@#$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --draft
+	@#$(github-release) release --user hiveeyes --repo terkin-datalogger --tag $(version) --draft
 
-	$(github-release) release --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) || true
+	$(github-release) release --user hiveeyes --repo terkin-datalogger --tag $(version) || true
 
     # Upload source release artifacts.
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
 
     # Upload mpy release artifacts.
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(tarfile_mpy)) --file $(tarfile_mpy) --replace
-	$(github-release) upload --user hiveeyes --repo hiveeyes-micropython-firmware --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_mpy)) --file $(tarfile_mpy) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
+
+
+## Copy source artifacts to MicroPython's frozen module folder
+sync-frozen:
+
+	@if test "${path}" = ""; then \
+		echo "Frozen module path not given, please invoke \"make sync-frozen path=/home/develop/pycom/pycom-micropython-sigfox/esp32/frozen/Custom\"."; \
+		exit 1; \
+	fi
+
+	@if ! test -e "${path}"; then \
+		echo "Frozen module path at ${path} does not exist."; \
+		exit 1; \
+	fi
+
+	echo "Deleting all modules from $(path)"
+	rm -rf $(path)/*
+
+	echo "Copying modules to $(frozen_path)"
+	rsync -auv --exclude=__pycache__ dist-packages/* lib/* $(path)
+
+
+## Release this piece of software
+release: bumpversion push publish-release
+	# Synopsis:
+	#   "make release bump=minor"   (major,minor,patch)
+
+
+# -------
+# Testing
+# -------
+build-annapurna:
+	docker run -v `pwd`/dist-packages:/opt/frozen -it goinvent/pycom-fw build FIPY annapurna-0.6.0dev2 v1.20.0.rc12.1 idf_v3.1
