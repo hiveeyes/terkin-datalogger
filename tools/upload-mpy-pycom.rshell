@@ -1,15 +1,16 @@
 # Install libraries to MicroPython target device using "rshell".
 
-# Upload lib folder
-#rsync ./src/lib /flash/lib
+mkdir /flash/lib
 
-mkdir /flash/lib-mpy
-rsync --mirror lib-mpy /flash/lib-mpy
-
-cp lib-mpy/umal.mpy /flash/lib
-
+# Upload main files first.
 cp src/pybytes_config.json /flash
-
+cp src/settings.py /flash
 cp src/boot.py /flash
 cp src/main.py /flash
-cp src/settings.py /flash
+
+# Upload bootloader.
+cp lib-mpy/umal.mpy /flash/lib
+
+# Upload byte-compiled lib folder.
+mkdir /flash/lib-mpy
+rsync --mirror lib-mpy /flash/lib-mpy
