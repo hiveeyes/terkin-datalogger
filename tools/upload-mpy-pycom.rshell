@@ -4,7 +4,7 @@
 #rsync ./lib /flash/lib
 
 mkdir /flash/lib-mpy
-rsync -m lib-mpy /flash/lib-mpy
+rsync --mirror --verbose lib-mpy /flash/lib-mpy
 
 cp lib-mpy/umal.mpy /flash/lib
 

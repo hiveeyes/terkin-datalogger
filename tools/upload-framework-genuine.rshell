@@ -2,7 +2,7 @@
 
 # Upload lib folder
 mkdir /pyboard/lib
-rsync -m ./lib /pyboard/lib
+rsync --mirror --verbose ./lib /pyboard/lib
 
 mkdir /pyboard/lib/terkin
-rsync -m terkin /pyboard/lib/terkin
+rsync --mirror --verbose terkin /pyboard/lib/terkin

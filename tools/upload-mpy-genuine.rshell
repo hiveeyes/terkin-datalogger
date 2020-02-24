@@ -4,7 +4,7 @@
 #rsync ./lib /pyboard/lib
 
 mkdir /pyboard/lib-mpy
-rsync -m lib-mpy /pyboard/lib-mpy
+rsync --mirror --verbose lib-mpy /pyboard/lib-mpy
 
 mkdir /pyboard/lib
 cp lib-mpy/umal.mpy /pyboard/lib
