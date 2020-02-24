@@ -110,7 +110,6 @@ mpy-compile: check-mpy-version check-mpy-target
 
 	@$(MAKE) mpy-cross what="--out $(mpy_path) dist-packages"
 	@$(MAKE) mpy-cross what="--out $(mpy_path) lib"
-	@$(MAKE) mpy-cross what="--out $(mpy_path)/terkin terkin"
 
 	@echo "$(INFO) Size of $(mpy_path):"
 	@du -sch $(mpy_path)
@@ -148,7 +147,7 @@ pyboard-install: check-mpy-version check-mpy-target
 	@$(MAKE) mpy-compile
 
 	# Inactive
-	@#rsync -auv dist-packages lib-mpy terkin boot.py main.py settings.py /Volumes/PYBFLASH; \
+	@#rsync -auv dist-packages lib-mpy boot.py main.py settings.py /Volumes/PYBFLASH; \
 
 	@if test -e "/Volumes/PYBFLASH"; then \
 		rsync -auv lib/umal.py lib/mininet.py /Volumes/PYBFLASH/lib; \
@@ -253,19 +252,10 @@ refresh-requirements: check-mcu-port
 # ------------
 # Applications
 # ------------
-terkin: install-terkin
-ratrack: install-ratrack
+terkin-and-run: check-mcu-port
+	$(MAKE) install-framework
+	$(MAKE) reset-device-attached
 
-terkin: check-mcu-port
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(rshell) $(rshell_options) --file tools/upload-terkin-pycom.rshell; \
-	else; \
-		$(rshell) $(rshell_options) --file tools/upload-terkin-genuine.rshell; \
-	fi
-
-ratrack: check-mcu-port
-	@if test "${MPY_TARGET}" = "pycom"; then \
-		$(rshell) $(rshell_options) --file tools/upload-ratrack-pycom.rshell; \
-	else \
-		$(rshell) $(rshell_options) --file tools/upload-ratrack-genuine.rshell; \
-	fi
+ratrack-and-run: check-mcu-port
+	$(MAKE) install-framework
+	$(MAKE) reset-device-attached

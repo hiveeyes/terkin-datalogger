@@ -123,10 +123,10 @@ class MicroPythonBootloader:
         bytecode_path = 'lib-mpy'
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
-            sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
+            sys.path.extend(['/flash/dist-packages'])
         elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             sys.path[0:0] = ['/{}'.format(bytecode_path)]
-            sys.path.extend(['/dist-packages', '/terkin'])
+            sys.path.extend(['/dist-packages'])
         else:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
             sys.exit()

@@ -19,13 +19,8 @@ set mirror:exclude-regex "\.(pyc)$|__pycache__"
 set mirror:overwrite true
 
 cd /flash
+mirror --reverse --delete --use-cache dist-packages
+mirror --reverse --delete --use-cache lib
 mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py
 
-sleep 0.5; cd /flash
-mirror --reverse --delete --use-cache lib
-
-sleep 0.5; cd /flash/lib
-mirror --reverse --delete --use-cache terkin
-
-sleep 0.5; cd /flash
-mirror --reverse --delete --use-cache dist-packages
+#sleep 0.5
