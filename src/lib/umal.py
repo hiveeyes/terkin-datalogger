@@ -138,7 +138,7 @@ class MicroPythonBootloader:
         # According to @poesel, empty directory designates frozen modules.
         # We want to put these at the end in order to be able to override
         # any module we would like to hack upon.
-        sys.path.extend('')
+        sys.path.extend([''])
 
         print('[umal]    INFO: Python module search path is:', sys.path)
 
