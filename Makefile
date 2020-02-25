@@ -62,6 +62,7 @@ endif
 include tools/help.mk
 include tools/base.mk
 include tools/setup.mk
+include tools/build.mk
 include tools/release.mk
 
 include tools/terkin.mk

@@ -126,6 +126,7 @@ Development
 - Upgrade to rshell 0.0.26
 - Adjust directory layout: Move "lib/" folder inside "src/" folder
 - Add missing "_boot.py" to custom MicroPython firmware images. Thanks, @poesel!
+- Add firmware builder machinery
 
 
 2019-08-19 0.6.0

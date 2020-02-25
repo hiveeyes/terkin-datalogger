@@ -16,3 +16,15 @@ MPY_TARGET ?= pycom
 
 # Specify MicroPython version.
 MPY_VERSION ?= 1.11
+
+
+# Firmware building
+FWB_XTENSA_GCC ?= /path/to/xtensa-esp32-elf-1.22.0-98/bin
+
+# Genuine MicroPython
+FWB_MICROPYTHON_GENUINE ?= /path/to/micropython
+FWB_ESPIDF_GENUINE ?= /path/to/esp-idf
+
+# Pycom MicroPython
+FWB_MICROPYTHON_PYCOM ?= /path/to/pycom-micropython-sigfox
+FWB_ESPIDF_PYCOM ?= /path/to/pycom-esp-idf
