@@ -130,6 +130,7 @@ Development
 - Fix module search path computation in bootloader
 - Stop messing with terminal on UART0 for now
 - Add firmware builder machinery
+- Add lowlevel driver for DS3231 RTC
 
 
 2019-08-19 0.6.0

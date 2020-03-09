@@ -88,6 +88,12 @@ download-requirements: check-download-tools
 	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/a9a8b981/SIM800L.py
 
 
+	## RTC and non-volatile memory
+
+	# Driver for DS3231 RTC
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+
+
 	## Sensors
 
 	# 1. Install BME280 Libary
