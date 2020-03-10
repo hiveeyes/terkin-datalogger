@@ -1,3 +1,2 @@
 ampy==1.2.6
-#rshell==0.0.26
--e git://github.com/dhylands/rshell.git@07fe3b83#egg=rshell
+rshell==0.0.27
