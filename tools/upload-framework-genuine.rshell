@@ -2,4 +2,4 @@
 
 # Upload lib folder
 mkdir /pyboard/lib
-rsync --mirror --verbose ./lib /pyboard/lib
+rsync --mirror ./src/lib /pyboard/lib

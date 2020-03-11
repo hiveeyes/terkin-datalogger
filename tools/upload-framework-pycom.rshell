@@ -2,4 +2,4 @@
 
 # Upload lib folder
 mkdir /flash/lib
-rsync --mirror --verbose ./lib /flash/lib
+rsync --mirror ./src/lib /flash/lib

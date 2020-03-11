@@ -124,6 +124,14 @@ Development
 - Support firmware image building for Genuine MicroPython
 - Sandbox presets: "config.mk" is now "presets.mk"
 - Upgrade to rshell 0.0.26
+- Adjust directory layout: Move "lib/" folder inside "src/" folder
+- Add missing "_boot.py" to custom MicroPython firmware images. Thanks, @poesel!
+- Clean up rshell upload scripts for bytecode uploading
+- Fix module search path computation in bootloader
+- Stop messing with terminal on UART0 for now
+- Add firmware builder machinery
+- Add lowlevel driver for DS3231 RTC
+- Upgrade to rshell 0.0.27
 
 
 2019-08-19 0.6.0

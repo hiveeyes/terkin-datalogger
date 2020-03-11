@@ -31,10 +31,14 @@ prepare-release:
 
 	@# Define directories.
 	$(eval build_dir := ./build)
-	$(eval dist_dir := ./dist)
+	$(eval dist_dir := ./dist/source)
 
 	@# Define platform.
 	$(eval platform := pycom)
+
+	@# Ensure directories exist.
+	@mkdir -p $(build_dir)
+	@mkdir -p $(dist_dir)
 
 create-source-archives: prepare-release
 
@@ -58,7 +62,7 @@ create-source-archives: prepare-release
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
 
-	@cp -r dist-packages lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
+	@cp -r dist-packages src/lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
@@ -88,7 +92,7 @@ create-mpy-archives: prepare-release
 	@mkdir -p $(work_dir)/lib
 
 	@cp -r lib-mpy src/boot.py src/main.py src/settings.example*.py $(work_dir)
-	@cp -r lib/umal.py lib/mininet.py $(work_dir)/lib
+	@cp -r src/lib/umal.py src/lib/mininet.py $(work_dir)/lib
 
     # Create .tar.gz and .zip archives.
 	tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)
@@ -117,34 +121,7 @@ publish-release: check-github-release build-release
 	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
 
 
-## Copy source artifacts to MicroPython's frozen module folder
-sync-frozen:
-
-	@if test "${path}" = ""; then \
-		echo "Frozen module path not given, please invoke \"make sync-frozen path=/home/develop/pycom/pycom-micropython-sigfox/esp32/frozen/Custom\"."; \
-		exit 1; \
-	fi
-
-	@if ! test -e "${path}"; then \
-		echo "Frozen module path at ${path} does not exist."; \
-		exit 1; \
-	fi
-
-	echo "Deleting all modules from $(path)"
-	rm -rf $(path)/*
-
-	echo "Copying modules to $(frozen_path)"
-	rsync -auv --exclude=__pycache__ dist-packages/* lib/* $(path)
-
-
 ## Release this piece of software
 release: bumpversion push publish-release
 	# Synopsis:
 	#   "make release bump=minor"   (major,minor,patch)
-
-
-# -------
-# Testing
-# -------
-build-annapurna:
-	docker run -v `pwd`/dist-packages:/opt/frozen -it goinvent/pycom-fw build FIPY annapurna-0.6.0dev2 v1.20.0.rc12.1 idf_v3.1

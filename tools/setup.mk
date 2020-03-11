@@ -39,7 +39,7 @@ download-requirements: check-download-tools
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/v1.1.1/dotty_dict/dotty_dict.py
 
 	# Install state machine library
-	curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
+	#curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
 
 
 
@@ -86,6 +86,12 @@ download-requirements: check-download-tools
 	# Install SIM800 driver
 	rm $(target_dir)/pythings_sim800.py || true
 	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/a9a8b981/SIM800L.py
+
+
+	## RTC and non-volatile memory
+
+	# Driver for DS3231 RTC
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
 
 
 	## Sensors

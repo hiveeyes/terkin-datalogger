@@ -40,11 +40,11 @@ class TerkinDevice:
         self.watchdog = Watchdog(device=self, settings=self.settings)
 
         # Conditionally enable terminal on UART0. Default: False.
-        try:
-            self.terminal = Terminal(self.settings)
-            self.terminal.start()
-        except Exception as ex:
-            log.exc(ex, 'Enabling Terminal failed')
+        #try:
+        #    self.terminal = Terminal(self.settings)
+        #    self.terminal.start()
+        #except Exception as ex:
+        #    log.exc(ex, 'Enabling Terminal failed')
 
         self.device_id = get_device_id()
 
@@ -383,7 +383,7 @@ class TerkinDevice:
 
             # Invoke deep sleep.
             log.info('Entering deep sleep for {} seconds'.format(interval))
-            self.terminal.stop()
+            #self.terminal.stop()
             machine.deepsleep(int(interval * 1000))
 
         else:
