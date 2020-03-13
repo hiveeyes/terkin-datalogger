@@ -922,13 +922,12 @@ def to_cayenne_lpp(dataframe: DataFrame):
                 frame.add_temperature(channel['temp'], value)
                 channel['temp'] += 1
         elif "weight" in name:
-            value_kg = float('%.3f' % (value / 1000))
             if name == "weight.0":
                 chan = 5
             else:
                 chan = channel['scal']
                 channel['scal'] += 1
-            frame.add_load(chan, value_kg)
+            frame.add_load(chan, value)
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)
         elif "analog-input" in name:
