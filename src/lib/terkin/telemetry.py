@@ -446,7 +446,6 @@ class TelemetryTransportLORA:
             if self.lora_manager.lora_socket is None:
                 try:
                     self.lora_manager.create_lora_socket()
-                    self.lora_manager.socket.setsockopt(socket.SOL_LORA, socket.SO_DR, self.datarate)
                 except:
                     log.error("[LoRa] Could not create LoRa socket")
         else:
