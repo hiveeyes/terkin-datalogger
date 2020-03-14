@@ -64,7 +64,7 @@ class LoRaManager:
                 self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
             else:
                 dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
-                self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
+                self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
 
     def wait_for_lora_join(self, attempts):
         """
