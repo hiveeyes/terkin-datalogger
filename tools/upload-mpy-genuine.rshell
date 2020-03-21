@@ -1,0 +1,16 @@
+# Install libraries to MicroPython target device using "rshell".
+
+mkdir /pyboard/lib
+
+# Upload main files first.
+cp src/pybytes_config.json /pyboard
+cp src/boot.py /pyboard
+cp src/main.py /pyboard
+cp src/settings.py /pyboard
+
+# Upload bootloader.
+cp lib-mpy/umal.mpy /pyboard/lib
+
+# Upload byte-compiled lib folder.
+mkdir /pyboard/lib-mpy
+rsync --mirror lib-mpy /pyboard/lib-mpy

@@ -102,19 +102,13 @@ mpy-cross: check-mpy-version check-mpy-target
 
 mpy-cross-setup: setup-virtualenv2
 
-	@echo "$(INFO) Downgrading pip to 19.3.1"
-	@$(pip2) --quiet install pip==19.3.1
-
 	@mkdir -p bin/mpy-cross
-
-	@echo "$(INFO) Installing mpy-cross for MicroPython 1.9.4"
-	@$(pip2) --quiet install --target=bin/mpy-cross/1.9.4 --upgrade mpy-cross==1.9.4
-
-	@# @echo "$(INFO) Installing mpy-cross for MicroPython 1.10"
-	@# @$(pip2) --quiet install --target=bin/mpy-cross/1.10 --upgrade mpy-cross==1.10
 
 	@echo "$(INFO) Installing mpy-cross for MicroPython 1.11"
 	@$(pip2) --quiet install --target=bin/mpy-cross/1.11 --upgrade mpy-cross==1.11
+
+	@echo "$(INFO) Installing mpy-cross for MicroPython 1.12"
+	@$(pip2) --quiet install --target=bin/mpy-cross/1.12 --upgrade mpy-cross==1.12
 
 	@echo "$(INFO) Installing mpy-cross-all"
 	@mkdir -p bin

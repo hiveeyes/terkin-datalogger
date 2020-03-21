@@ -69,7 +69,7 @@ class PlatformInfo:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonVendor.Vanilla
 
-        if sys.platform in ['WiPy', 'LoPy', 'LoPy4', 'GPy', 'FiPy']:
+        if sys.platform in ['WiPy', 'LoPy', 'LoPy4', 'SiPy', 'GPy', 'FiPy']:
             self.mcu = McuFamily.ESP32
             self.vendor = MicroPythonVendor.Pycom
 
@@ -113,28 +113,32 @@ class MicroPythonBootloader:
         Please populate this folder appropriately as shown above before
         expecting anything to work.
 
-        The ``PYTHONPATH`` as found on the different platforms is:
+        The default ``PYTHONPATH`` as found on the different platforms is:
         - Vanilla MicroPython: ['', '/lib']
         - Pycom MicroPython: ['', '/flash', '/flash/lib']
         """
         import sys
 
         # Extend by path containing frozen modules.
+        paths = ['lib', 'dist-packages', 'lib-mpy']
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            if self.platform_info.micropython_version >= (1, 11):
-                bytecode_path = 'lib-mpy-1.11-pycom'
-            else:
-                bytecode_path = 'lib-mpy-1.9.4-pycom'
-        else:
-            bytecode_path = 'lib-mpy-1.11-bytecode'
+            paths = ['/flash/{}'.format(path) for path in paths]
 
-        # Extend by all paths required for running the sandboxed firmware.
-        if '/flash' in sys.path:
-            sys.path[0:0] = ['/flash/{}'.format(bytecode_path)]
-            sys.path.extend(['/flash/dist-packages', '/flash/terkin'])
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
+            paths = ['/{}'.format(path) for path in paths]
+
         else:
-            sys.path[0:0] = ['/{}'.format(bytecode_path)]
-            sys.path.extend(['/dist-packages', '/terkin'])
+            print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)
+            sys.exit(1)
+
+        # Amend module search path.
+        sys.path.clear()
+        sys.path.extend(paths)
+
+        # According to @poesel, empty directory designates frozen modules.
+        # We want to put these at the end in order to be able to override
+        # any module we would like to hack upon.
+        sys.path.extend([''])
 
         print('[umal]    INFO: Python module search path is:', sys.path)
 

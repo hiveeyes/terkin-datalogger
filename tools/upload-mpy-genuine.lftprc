@@ -10,9 +10,9 @@ set ftp:list-empty-ok true
 set mirror:exclude-regex "\.(py)$|\.(pyc)$|__pycache__"
 set mirror:overwrite true
 
-cd /flash/lib
-mirror --reverse --use-cache --file=lib/umal.py --file=lib/mininet.py
+cd /lib
+mirror --reverse --use-cache --file=src/lib/umal.mpy --file=src/lib/mininet.mpy
 
-cd /flash
-mirror --reverse --delete --use-cache lib-mpy-1.9.4-pycom
-mirror --reverse --use-cache --file=pybytes_config.json --file=settings.py --file=boot.py --file=main.py
+cd /
+mirror --reverse --delete --use-cache lib-mpy
+mirror --reverse --use-cache --file=src/pybytes_config.json --file=src/settings.py --file=src/boot.py --file=src/main.py

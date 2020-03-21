@@ -15,5 +15,6 @@ settings.py
 .terkin
 /.pio
 /.vscode
-/portainer
 /tmp
+presets.mk
+*~

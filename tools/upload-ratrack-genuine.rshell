@@ -1,7 +1,7 @@
 # Install libraries to MicroPython target device using "rshell".
 
-mkdir /flash/terkin
-rsync terkin /flash/terkin
+mkdir /pyboard/lib/ratrack
+rsync --mirror ./src/lib/ratrack /pyboard/lib/ratrack
 
 # Reset machine after upload
 repl pyboard import machine~

@@ -1,0 +1,8 @@
+# Remove firmware from device
+
+rm -r /pyboard/dist-packages
+rm -r /pyboard/lib
+rm -r /pyboard/lib-mpy
+
+rm -r /pyboard/boot.py
+rm -r /pyboard/main.py

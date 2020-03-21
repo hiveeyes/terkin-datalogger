@@ -3,13 +3,15 @@
 # Terkin Datalogger
 # https://github.com/hiveeyes/terkin-datalogger
 #
-# (c) 2019 Jan Hoffmann <jan.hoffmann@bergamsee.de>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+#
 # License: GNU General Public License, Version 3
 #
 """
 Please check https://community.hiveeyes.org/t/operate-the-terkin-datalogger-sandbox/2332
-in order to get an idea how to operate this software sandbox.
+in order to get an idea about how to operate the sandbox of this software.
 
 Have fun!
 """
@@ -57,3 +59,15 @@ def main():
 if __name__ == '__main__':
     """Main application entrypoint."""
     main()
+
+    """
+    from terkin.ui import TerkinUi
+
+    ui = TerkinUi()
+    try:
+        ui.start()
+        ui.example()
+
+    finally:
+        ui.stop()
+    """

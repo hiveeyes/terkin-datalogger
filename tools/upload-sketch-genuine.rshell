@@ -1,9 +1,9 @@
 # Install program to MicroPython target device using "rshell".
 
 # Upload main application assets
-cp boot.py /flash
-cp main.py /flash
-cp settings.py /flash
+cp src/boot.py /pyboard
+cp src/main.py /pyboard
+cp src/settings.py /pyboard
 
 # Just drop into REPL after upload
 # repl

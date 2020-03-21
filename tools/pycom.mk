@@ -62,7 +62,7 @@ check-mcu-device:
 		exit 1; \
 	fi
 
-install-pycom-firmware-preflight: check-pycom-fwtool check-firmware-upgrade-port check-mcu-device
+install-pycom-firmware-confirm: check-pycom-fwtool check-firmware-upgrade-port check-mcu-device
 	@# Ask the user to confirm firmware installation.
 	@$(MAKE) confirm text="Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(pycom_firmware_port)\""
 
@@ -82,7 +82,7 @@ download-pycom-firmware:
 	$(eval fetch := wget --no-clobber --unlink --directory-prefix)
 
 	@mkdir -p $(target_dir)
-	$(fetch) $(target_dir) https://packages.hiveeyes.org/hiveeyes/foss/pycom/$(pycom_firmware_file)
+	$(fetch) $(target_dir) https://packages.hiveeyes.org/hiveeyes/foss/pycom/vanilla/$(pycom_firmware_file)
 
 	@#$(eval url := "https://software.pycom.io/downloads/$(pycom_firmware_file)")
 	@#@echo "INFO: Downloading firmware from \"$(url)\""
@@ -93,7 +93,7 @@ chip_id: check-mcu-port
 	$(pycom_fwtool_cli) --port $(pycom_firmware_port) chip_id
 
 ## Install Pycom firmware on device
-install-pycom-firmware: install-pycom-firmware-preflight download-pycom-firmware
+install-pycom-firmware: install-pycom-firmware-confirm download-pycom-firmware
 	echo "INFO: Installing firmware \"$(pycom_firmware_file)\""
 	$(pycom_fwtool_cli) --verbose --port "$(pycom_firmware_port)" flash --tar "dist-firmwares/$(pycom_firmware_file)"
 
@@ -110,7 +110,7 @@ format-flash: check-mcu-port
 	$(rshell) $(rshell_options) --quiet repl pyboard 'import uos, pycom ~ pycom.bootmgr(fs_type=pycom.LittleFS, reset=True) ~ uos.fsformat(\"/flash\") ~'
 	@echo
 
-## Erase flash filesystem
+## Erase flash filesystem for Pycom devices
 erase-fs: check-mcu-port
 
 	@# Ask the user to confirm erasing.
@@ -120,7 +120,7 @@ erase-fs: check-mcu-port
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
 
 
-## Erase flash filesystem
+## Erase flash filesystem for Pycom devices
 erase-device: check-mcu-port
 
 	@# Ask the user to confirm erasing.

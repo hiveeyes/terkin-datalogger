@@ -20,7 +20,8 @@ download-requirements: check-download-tools
 	## Utility libraries
 
 	# Install "os.path" under the different name "os_path"
-	@test -e $(target_dir)/os_path.py || $(fetch) $(target_dir) --output-document=$(target_dir)/os_path.py https://raw.githubusercontent.com/pfalcon/pycopy-lib/7ba2231/os.path/os/path.py
+	rm $(target_dir)/os_path.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/os_path.py https://raw.githubusercontent.com/pfalcon/pycopy-lib/7ba2231/os.path/os/path.py
 
 	# Install "micropython-base64" without 'micropython-binascii', 'micropython-re-pcre', 'micropython-struct'
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/base64/base64.py
@@ -38,7 +39,7 @@ download-requirements: check-download-tools
 	$(fetch) $(target_dir)/dotty_dict https://raw.githubusercontent.com/pawelzny/dotty_dict/v1.1.1/dotty_dict/dotty_dict.py
 
 	# Install state machine library
-	curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
+	#curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
 
 
 
@@ -82,6 +83,16 @@ download-requirements: check-download-tools
 	cp -r $(tmpdir)/cayennelpp $(target_dir)/
 	rm -rf $(tmpdir)
 
+	# Install SIM800 driver
+	rm $(target_dir)/pythings_sim800.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/a9a8b981/SIM800L.py
+
+
+	## RTC and non-volatile memory
+
+	# Driver for DS3231 RTC
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+
 
 	## Sensors
 
@@ -94,8 +105,10 @@ download-requirements: check-download-tools
 
 	# Genuine MicroPython driver for Pycom MicroPython 1.11.
 	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
-	@test -e $(target_dir)/onewire_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
-	@test -e $(target_dir)/ds18x20_native.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
+	rm $(target_dir)/onewire_native.py || true
+	rm $(target_dir)/ds18x20_native.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
 
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
 	# Has no CRC checks.
@@ -103,12 +116,16 @@ download-requirements: check-download-tools
 
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
 	# Enhanced by @robert-hh: Optimize timing, enable CRC check and slim the code.
+	# https://github.com/robert-hh/Onewire_DS18X20
 	# https://github.com/pycom/pycom-libraries/pull/62
-	@test -e $(target_dir)/onewire_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/onewire.py
-	@test -e $(target_dir)/ds18x20_python.py || $(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/ds18x20.py
+	rm $(target_dir)/onewire_python.py || true
+	rm $(target_dir)/ds18x20_python.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/onewire.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/ds18x20.py
 
     # 3. Install driver for MAX17043
-	@test -e $(target_dir)/max17043.py || $(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
+	rm $(target_dir)/max17043.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
 
 
 download-requirements-optional:

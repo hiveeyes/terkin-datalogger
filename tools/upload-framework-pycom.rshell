@@ -1,0 +1,5 @@
+# Install libraries to MicroPython target device using "rshell".
+
+# Upload lib folder
+mkdir /flash/lib
+rsync --mirror ./src/lib /flash/lib

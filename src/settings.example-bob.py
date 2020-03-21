@@ -278,6 +278,11 @@ sensors = {
                     'description': 'Wabengasse 1, Rahmen 1',
                     'enabled': True,
                     #'offset': 0.42,
+
+                    'telemetry_name': 'inside.temperature.brood_1',
+                    'realm': 'inside',
+                    'type': 'temperature',
+                    'name': 'brood_1',
                 },
                 {
                     'id': 'ds18b20-w1r2',
@@ -285,6 +290,11 @@ sensors = {
                     'description': 'Wabengasse 1, Rahmen 2',
                     'enabled': True,
                     #'offset': -0.42,
+
+                    'telemetry_name': 'inside.temperature.brood_2',
+                    'realm': 'inside',
+                    'type': 'temperature',
+                    'name': 'brood_2',
                 },
             ],
         },

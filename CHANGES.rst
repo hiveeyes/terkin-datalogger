@@ -113,6 +113,25 @@ Development
 - LoRaWAN/TTN integration for real. Thanks, @thiasB!
 - Introduce ``DataFrame`` object to improve internal data transfer.
 - Backward compatibility for sensor type "system.battery-voltage".
+- Improve cross-compilation for MicroPython 1.12, see #61. Thanks, @poesel!
+- Fix Makefile target "install-pycom-firmware".
+- Add GPRS modem support for SIM800. Thanks, @sarusso!
+- Sandbox: Separate desktop notifications from tools/terkin.py.
+  Fix nasty dependency bug on the "netaddr" module.
+  Add gracefulness to "make notify" target.
+- Adjust directory layout: Move "terkin" files to "lib" folder
+- Adjust directory layout: Move root files to "src/" folder
+- Support firmware image building for Genuine MicroPython
+- Sandbox presets: "config.mk" is now "presets.mk"
+- Upgrade to rshell 0.0.26
+- Adjust directory layout: Move "lib/" folder inside "src/" folder
+- Add missing "_boot.py" to custom MicroPython firmware images. Thanks, @poesel!
+- Clean up rshell upload scripts for bytecode uploading
+- Fix module search path computation in bootloader
+- Stop messing with terminal on UART0 for now
+- Add firmware builder machinery
+- Add lowlevel driver for DS3231 RTC
+- Upgrade to rshell 0.0.27
 
 
 2019-08-19 0.6.0
