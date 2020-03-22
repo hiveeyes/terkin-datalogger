@@ -132,6 +132,7 @@ Development
 - Add firmware builder machinery
 - Add lowlevel driver for DS3231 RTC
 - Upgrade to rshell 0.0.27
+- Add basic test suite
 
 
 2019-08-19 0.6.0

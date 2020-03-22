@@ -101,6 +101,10 @@ install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
 
 
+.PHONY: test
+test:
+	$(venv3path)/bin/pytest test --verbose
+
 
 # -------------
 # Miscellaneous
