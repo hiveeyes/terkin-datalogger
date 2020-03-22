@@ -30,20 +30,34 @@ Install environment
 ===================
 ::
 
-    make setup-virtualenv3
+    make setup-tests
 
 
 *******
 Operate
 *******
 
-Invoke::
+=====
+Basic
+=====
+Invoke test suite::
 
     make test
 
-Invoke, with log output::
+With log output::
 
     make test-verbose
+
+With coverage report::
+
+    make test-coverage
+
+========
+Advanced
+========
+Prepare::
+
+    source .venv3/bin/activate
 
 Invoke specific tests, with markers::
 
@@ -52,3 +66,7 @@ Invoke specific tests, with markers::
 Invoke specific tests, with names::
 
     pytest test --capture=no -k test_basic_esp32
+
+Display detailed coverage report::
+
+    coverage report --show-missing

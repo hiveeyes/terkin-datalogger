@@ -23,6 +23,8 @@ $(eval rshell       := $(venv3path)/bin/rshell)
 $(eval miniterm     := $(venv3path)/bin/miniterm.py)
 
 $(eval bumpversion  := $(venv3path)/bin/bumpversion)
+$(eval pytest       := $(venv3path)/bin/pytest)
+$(eval coverage     := $(venv3path)/bin/coverage)
 
 
 # ------------------
@@ -101,16 +103,27 @@ install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
 
 
+# --------------
+# Software tests
+# --------------
 PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(levelname)-8s: %(message)s' --log-date-format='%Y-%m-%dT%H:%M:%S%z' --verbose"
 
 .PHONY: test
 test:
 	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
-	    $(venv3path)/bin/pytest test -m "$(marker)"
+	    $(pytest) test -m "$(marker)"
 
 test-verbose:
 	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
-	    $(venv3path)/bin/pytest --log-cli-level=DEBUG test -m "$(marker)"
+	    $(pytest) --log-cli-level=DEBUG test -m "$(marker)"
+
+test-coverage:
+	$(coverage) run -m pytest -vv
+	$(coverage) report
+
+setup-tests: check-virtualenv
+	virtualenv --python=python3 --no-site-packages $(venv3path)
+	$(pip3) install --requirement requirements-test.txt
 
 
 # -------------
