@@ -6,8 +6,8 @@ Terkin Datalogger Tests
 *****
 About
 *****
-- The Terkin Datalogger tests are executed within a ``pytest``
-  environment on regular CPython 3.x.
+- The Terkin Datalogger tests suite is executed within
+  a ``pytest`` environment on regular CPython 3.x.
 - The environment provides a fake filesystem and other
   infrastructure to invoke integration tests.
 - Docker is used to spin up infrastructure services
@@ -28,7 +28,11 @@ Install Docker
 ===================
 Install environment
 ===================
-::
+Install 3rd-party MicroPython modules::
+
+    make setup
+
+Install pytest modules and addons::
 
     make setup-tests
 
@@ -40,9 +44,13 @@ Operate
 =====
 Basic
 =====
-Invoke test suite::
+Invoke whole test suite::
 
     make test
+
+Invoke specific tests, with markers::
+
+    make test marker="esp32"
 
 With log output::
 
@@ -58,10 +66,6 @@ Advanced
 Prepare::
 
     source .venv3/bin/activate
-
-Invoke specific tests, with markers::
-
-    make test marker="esp32"
 
 Invoke specific tests, with names::
 

@@ -421,6 +421,7 @@ Upload and reset
     - ``make recycle scopes=full``
     - ``make recycle scopes=main,hiveeyes``
     - ``make recycle scopes=main,terkin``
+- [o] Make pytests run against non-standard MQTT port (1888)
 
 
 *************
