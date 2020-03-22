@@ -16,20 +16,8 @@ from terkin.util import ensure_directory, get_platform_info, deepupdate
 log = logging.getLogger(__name__)
 
 
-platform_info = get_platform_info()
-if platform_info.mcu == platform_info.MCU.ESP32 and platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-    CONFIG_PATH = '/'
-    BACKUP_PATH = '/backup'
-else:
-    CONFIG_PATH = '/flash'
-    BACKUP_PATH = '/flash/backup'
-
-
 class TerkinConfiguration:
     """A flexible configuration manager."""
-
-    CONFIG_PATH = CONFIG_PATH
-    BACKUP_PATH = BACKUP_PATH
 
     USER_SETTINGS_FILE = 'settings-user.json'
 
@@ -57,6 +45,8 @@ class TerkinConfiguration:
 
         self.record = True
 
+        self.compute_paths()
+
         log.info('Starting TerkinConfiguration on path "{}"'.format(self.CONFIG_PATH))
         #os.stat(self.CONFIG_PATH)
 
@@ -74,6 +64,15 @@ class TerkinConfiguration:
 
     def __delitem__(self, key):
         del self.store[key]
+
+    def compute_paths(self):
+        platform_info = get_platform_info()
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            self.CONFIG_PATH = '/flash'
+            self.BACKUP_PATH = '/flash/backup'
+        else:
+            self.CONFIG_PATH = '/'
+            self.BACKUP_PATH = '/backup'
 
     def get(self, key, default=None):
         """

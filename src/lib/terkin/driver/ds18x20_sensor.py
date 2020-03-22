@@ -10,7 +10,6 @@ from terkin.sensor.core import OneWireBus
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 
 class DS18X20Sensor(AbstractSensor):
@@ -38,6 +37,8 @@ class DS18X20Sensor(AbstractSensor):
         try:
 
             use_native_driver = self.bus.settings.get('driver') == 'native'
+
+            platform_info = get_platform_info()
 
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla or use_native_driver:

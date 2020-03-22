@@ -2,28 +2,45 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import sys
-import utime
 import logging
-from logging import Logger, StreamHandler, Formatter, _level, _loggers
+from logging import Logger, StreamHandler, Formatter
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 from terkin.util import PycomChronometer, get_platform_info
 from umal import GenericChronometer
 
+
 # Keep track of time since boot.
-platform_info = get_platform_info()
-if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-    _chrono = PycomChronometer()
+_chrono = None
+
+
+def get_chronometer():
+    global _chrono
+    if _chrono:
+        return _chrono
+    platform_info = get_platform_info()
+    if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        _chrono = PycomChronometer()
+    else:
+        _chrono = GenericChronometer()
+    return _chrono
+
+
+if hasattr(logging, 'NullHandler'):
+    NullHandler = logging.NullHandler
 else:
-    _chrono = GenericChronometer()
+    class NullHandler(logging.Handler):
+        def handle(self, record):
+            pass
+    logging.NullHandler = NullHandler
 
 
 class TimedLogRecord(logging.LogRecord):
     """ """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        chrono = get_chronometer()
         try:
-            self.tdelta = _chrono.read()
+            self.tdelta = chrono.read()
         except:
             self.tdelta = 0
 
@@ -39,6 +56,8 @@ class ExtendedLogger(Logger):
         :param *args: 
 
         """
+        from logging import _level
+
         if level >= (self.level or _level):
             record = TimedLogRecord(
                 self.name, level, None, None, msg, args, None, None, None
@@ -56,6 +75,7 @@ def getLogger(name=None, level=logging.INFO):
     :param level:  (Default value = logging.INFO)
 
     """
+    from logging import _loggers
 
     if name is None:
         name = "root"

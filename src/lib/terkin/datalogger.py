@@ -52,9 +52,6 @@ class TerkinDatalogger:
         # Reference to the chronometer used for general timekeeping.
         self.duty_chrono = bootloader.duty_chrono
 
-        # Fulfill singleton factory.
-        TerkinDatalogger.__instance__ = self
-
         # Signal startup with first available timestamp.
         log.info('Starting Terkin datalogger')
 
@@ -86,28 +83,7 @@ class TerkinDatalogger:
         # Initialize sensor domain.
         self.sensor_manager = SensorManager()
 
-
-    @staticmethod
-    def getInstance(settings=None):
-        """Singleton factory.
-
-        :param settings:  (Default value = None)
-
-        """
-        if TerkinDatalogger.__instance__ is None:
-            if settings is None:
-                raise Exception("Settings are None but instance wasn't created before.")
-            else:
-                TerkinDatalogger(settings)
-
-        return TerkinDatalogger.__instance__
-
     def setup(self):
-        """ """
-        pass
-
-    def start(self):
-        """ """
 
         # Report about wakeup reason and run wakeup tasks.
         self.device.resume()
@@ -164,7 +140,7 @@ class TerkinDatalogger:
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
 
-        # Ready.
+    def start(self):
         self.start_mainloop()
 
     def start_mainloop(self):
@@ -174,19 +150,21 @@ class TerkinDatalogger:
 
         # Enter the main loop.
         while True:
+            self.duty_task()
 
-            # Feed the watchdog timer to keep the system alive.
-            self.device.watchdog.feed()
+    def duty_task(self):
+        # Feed the watchdog timer to keep the system alive.
+        self.device.watchdog.feed()
 
-            # Indicate activity.
-            # Todo: Optionally disable this output.
-            log.info('--- loop ---')
+        # Indicate activity.
+        # Todo: Optionally disable this output.
+        log.info('--- loop ---')
 
-            # Run downstream mainloop handlers.
-            self.loop()
+        # Run downstream mainloop handlers.
+        self.loop()
 
-            # Give the system some breath.
-            machine.idle()
+        # Give the system some breath.
+        machine.idle()
 
     def loop(self):
         """Main duty cycle loop."""
@@ -273,6 +251,8 @@ class TerkinDatalogger:
             self.settings.setdefault('main.interval.field', interval)
         self.settings.setdefault('main.interval.maintenance', 5.0)
 
+        interval = self.settings.get('main.interval.field')
+
         # First, try to acquire deep sleep interval from NVRAM.
         # This gets used when set from a LoRaWAN downlink message.
         # pycom.nvs_get should return "None" in case of unset key. Instead it throws an error
@@ -282,9 +262,9 @@ class TerkinDatalogger:
             log.info('Deep sleep interval set to %s minute(s) by LoRaWAN downlink message', interval_minutes)
             interval = interval_minutes * 60
 
-        # Otherwise, fall back to original configuration setting.
+        # Otherwise, use original configuration setting.
         except Exception as ex:
-            interval = self.settings.get('main.interval.field')
+            pass
 
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:

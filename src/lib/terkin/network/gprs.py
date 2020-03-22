@@ -7,8 +7,6 @@ from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
 
-platform_info = get_platform_info()
-
 
 class GPRSManager:
     """ """
@@ -36,6 +34,8 @@ class GPRSManager:
             raise KeyError('Unable to setup unknown modem driver {}'.format(self.gprs_settings['driver']))
 
         from pythings_sim800 import Modem
+
+        platform_info = get_platform_info()
 
         # Define two pins for clock and data.
         if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:

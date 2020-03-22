@@ -184,7 +184,7 @@ class TerkinDevice:
         self.telemetry = TelemetryManager()
 
         # Read all designated telemetry targets from configuration settings.
-        telemetry_targets = self.settings.get('telemetry.targets')
+        telemetry_targets = self.settings.get('telemetry.targets', [])
 
         # Compute list of all _enabled_ telemetry targets.
         telemetry_candidates = []
@@ -280,17 +280,21 @@ class TerkinDevice:
         """
 
         # TODO: Python runtime information.
-        add('{:8}: {}'.format('Python', sys.version))
+        add('{:8}: {}'.format('Python', sys.version.replace('\n', '')))
+        add('{:8}: {}'.format('platform', sys.platform))
 
         """
         >>> import os; os.uname()
         (sysname='FiPy', nodename='FiPy', release='1.20.0.rc7', version='v1.9.4-2833cf5 on 2019-02-08', machine='FiPy with ESP32', lorawan='1.0.2', sigfox='1.0.1')
         """
         runtime_info = os.uname()
+        #print(dir(runtime_info))
         for key in dir(runtime_info):
-            if key == '__class__':
+            if key.startswith('__') or key.startswith('n_'):
                 continue
             value = getattr(runtime_info, key)
+            if callable(value):
+                continue
             #print('value:', value)
             add('{:8}: {}'.format(key, value))
         add()

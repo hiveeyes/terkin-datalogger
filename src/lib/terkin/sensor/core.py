@@ -10,7 +10,6 @@ from terkin import logging
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 log.setLevel(logging.DEBUG)
 
@@ -248,6 +247,9 @@ class AbstractBus:
         # Indicate whether the bus driver just has been started.
         self.just_started = None
 
+        # Reference to platform information.
+        self.platform_info = get_platform_info()
+
     @property
     def name(self):
         """ """
@@ -281,13 +283,13 @@ class OneWireBus(AbstractBus):
         try:
 
             # Vanilla MicroPython 1.11
-            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
                 pin = Pin(int(self.pins['data'][1:]))
                 import onewire_native
                 self.adapter = onewire_native.OneWire(pin)
 
             # Pycom MicroPython 1.9.4
-            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
                 pin = Pin(self.pins['data'])
                 if self.settings.get('driver') == 'native':
                     log.info('Using native 1-Wire driver on Pycom MicroPython')
@@ -357,9 +359,9 @@ class I2CBus(AbstractBus):
         """ """
         # Todo: Improve error handling.
         try:
-            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
                 self.adapter = I2C(self.number, sda=Pin(int(self.pins['sda'][1:])), scl=Pin(int(self.pins['scl'][1:])), freq=self.frequency)
-            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
                 self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
             else:
                 raise NotImplementedError('I2C Bus is not implemented on this platform')
@@ -387,7 +389,7 @@ class I2CBus(AbstractBus):
             return
 
         # uPy doesn't have deinit so it doesn't need init
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
 
     def power_off(self):
@@ -397,7 +399,7 @@ class I2CBus(AbstractBus):
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
         """
         log.info('Turning off I2C bus {}'.format(self.name))
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adapter.deinit()
 
 
