@@ -10,16 +10,18 @@ from test.util.terkin import start_umal
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.telemetry
 @pytest.mark.esp32
-def test_telemetry_esp32(monkeypatch, caplog, capmqtt):
+@pytest.mark.mqtt
+@pytest.mark.telemetry
+@pytest.mark.docker
+def test_telemetry_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'esp32')
     bootloader = start_umal()
 
     # Use very basic settings without networking.
-    import test.settings.telemetry as settings
+    import test.settings.telemetry_mqtt as settings
 
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger

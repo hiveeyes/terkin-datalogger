@@ -1,5 +1,4 @@
 import time
-
 import pytest
 import logging
 import threading
@@ -18,7 +17,7 @@ class MQTTClient(threading.Thread):
         client.on_message = self.on_message
         client.on_socket_open = self.on_socket_open
 
-        client.connect('localhost')
+        client.connect('localhost', port=1883)
         client.loop_start()
         client.subscribe("mqttkit-1/#")
 
