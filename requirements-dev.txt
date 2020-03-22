@@ -6,3 +6,4 @@ mock==4.0.2
 esp32-machine-emulator==1.1.3
 pyfakefs==4.0.2
 #get-mac==0.8.2
+paho-mqtt==1.5.0

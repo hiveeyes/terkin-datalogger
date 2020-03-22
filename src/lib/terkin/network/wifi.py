@@ -8,6 +8,7 @@ import network
 import binascii
 
 from terkin import logging
+from terkin.sensor.system import AbstractSystemSensor
 from terkin.util import get_platform_info, format_mac_address, backoff_time, Stopwatch
 
 log = logging.getLogger(__name__)
@@ -594,13 +595,13 @@ class WiFiException(Exception):
     pass
 
 
-class SystemWiFiMetrics:
+class SystemWiFiMetrics(AbstractSystemSensor):
     """
     Runtime information from the WiFi bearer.
     """
 
     def __init__(self, settings, station):
-        self.settings = settings
+        super().__init__(settings)
         self.station = station
 
     def read(self):

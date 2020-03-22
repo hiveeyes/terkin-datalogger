@@ -5,3 +5,5 @@ monkeypatch()
 
 from test.util.terkin import monkeypatch_terkin
 monkeypatch_terkin()
+
+from test.util.mqtt import capmqtt

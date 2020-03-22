@@ -31,6 +31,23 @@ def monkeypatch_stdlib():
     time.ticks_diff = ticks_diff
     sys.modules['utime'] = time
 
+    import socket
+    class socket_adapter(socket.socket):
+
+        def write(self, data, length=None):
+            if hasattr(data, 'encode'):
+                data = data.encode()
+            if length is not None:
+                data = data[:length]
+            return self.send(data)
+
+        def read(self, length):
+            return self.recv(length)
+
+    #socket.socket = socket_adapter
+    sys.modules['usocket'] = socket
+    sys.modules['usocket'].socket = socket_adapter
+
     import gc
     gc.threshold = Mock()
 
@@ -61,6 +78,9 @@ def monkeypatch_machine():
     machine.reset_cause = Mock()
     machine.reset_cause.return_value = 0
     machine.wake_reason = wake_reason
+
+    machine.temperature = Mock()
+    machine.temperature.return_value = 137.77778
 
 
 def wake_reason():
@@ -135,6 +155,10 @@ def monkeypatch_network():
 
         def scan(self):
             return [StationInfo(ssid='FooBarWiFi', sec=3)]
+
+        def status(self, param):
+            if param == 'rssi':
+                return -85.3
 
         @staticmethod
         def get_local_mac(offset=0):
