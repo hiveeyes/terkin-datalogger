@@ -101,9 +101,16 @@ install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
 
 
+PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(levelname)-8s: %(message)s' --log-date-format='%Y-%m-%dT%H:%M:%S%z' --verbose"
+
 .PHONY: test
 test:
-	$(venv3path)/bin/pytest test --verbose
+	export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	    $(venv3path)/bin/pytest test -m "$(marker)"
+
+test-verbose:
+	export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	    $(venv3path)/bin/pytest --log-cli-level=DEBUG test -m "$(marker)"
 
 
 # -------------

@@ -1,6 +1,10 @@
 nvram = {}
 
 
+def nvs_set(key, value):
+    nvram[key] = value
+
+
 def nvs_get(key):
     if key not in nvram:
         raise KeyError('"{}" not in NVRAM'.format(key))

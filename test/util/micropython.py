@@ -79,22 +79,62 @@ def monkeypatch_network():
             self.sta_mac = sta_mac
             self.ap_mac = ap_mac
 
+    class StationInfo:
+        def __init__(self, ssid, sec):
+            self.ssid = ssid
+            self.sec = sec
+
     class WLANPlus(network.WLAN):
 
-        def config(self, param):
+        STA = 1
+        AP = 2
+        STA_AP = 3
 
-            if param == 'mac':
-                info = MacAddresses(sta_mac=self.get_local_mac(), ap_mac=self.get_local_mac(offset=1))
-                return info
+        def __init__(self, interface_id=None):
+            super().__init__(interface_id)
+            self._mode = None
+            self._settings = {}
 
-            elif param == 'essid':
-                return 'ExampleWiFiNetwork'
+        # noinspection PyUnusedLocal
+        def connect(self, ssid=None, password=None, *, bssid=None, timeout=None):
+            self.is_connected_for_testing = True
+
+        def init(self):
+            pass
+
+        def config(self, *args, **kwargs):
+
+            if kwargs:
+                self._settings.update(kwargs)
+
             else:
-                raise KeyError('network.WLAN.config("{}") not mocked yet'.format(param))
+
+                param = args[0]
+
+                if param == 'mac':
+                    info = MacAddresses(sta_mac=self.get_local_mac(), ap_mac=self.get_local_mac(offset=1))
+                    return info
+
+                elif param == 'essid':
+                    return 'FooBarWiFi'
+                else:
+                    raise KeyError('network.WLAN.config("{}") not mocked yet'.format(param))
 
         def ifconfig(self):
             info = ('192.168.42.42', '255.255.255.0', '192.168.42.1', '192.168.42.1')
             return info
+
+        def mac(self):
+            return self.get_local_mac()
+
+        def mode(self, mode):
+            self._mode = mode
+
+        def ssid(self):
+            return 'FooBarWiFi'
+
+        def scan(self):
+            return [StationInfo(ssid='FooBarWiFi', sec=3)]
 
         @staticmethod
         def get_local_mac(offset=0):

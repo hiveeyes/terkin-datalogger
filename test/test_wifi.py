@@ -9,14 +9,14 @@ from test.util.terkin import start_umal
 
 
 @pytest.mark.esp32
-def test_basic_esp32(monkeypatch, caplog):
+def test_wifi_esp32(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'esp32')
     bootloader = start_umal()
 
     # Use very basic settings without networking.
-    import test.settings.basic as settings
+    import test.settings.wifi as settings
 
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
@@ -33,7 +33,11 @@ def test_basic_esp32(monkeypatch, caplog):
             # Proof it works by verifying log output.
             assert "Starting Terkin datalogger" in captured, captured
             assert "platform: esp32" in captured, captured
-            assert "[WiFi] interface disabled in settings" in captured, captured
+
+            assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+            assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+            assert "Network stack ready" in captured, captured
+
             assert "[LoRa] This is not a LoRa capable device" in captured, captured
             assert "[GPRS] Interface disabled in settings" in captured, captured
             assert "Reading 0 sensor ports" in captured, captured
@@ -43,14 +47,14 @@ def test_basic_esp32(monkeypatch, caplog):
 
 @pytest.mark.pycom
 @pytest.mark.wipy
-def test_basic_wipy(monkeypatch, caplog):
+def test_wifi_wipy(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'WiPy')
     bootloader = start_umal()
 
     # Use very basic settings without networking.
-    import test.settings.basic as settings
+    import test.settings.wifi as settings
 
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
@@ -70,16 +74,20 @@ def test_basic_wipy(monkeypatch, caplog):
             assert "Starting Terkin datalogger" in captured, captured
             assert "platform: WiPy" in captured, captured
 
+            assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+            assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+            assert "Network stack ready" in captured, captured
+
 
 @pytest.mark.cpython
-def test_basic_cpython(monkeypatch, caplog):
+def test_wifi_cpython(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'linux2')
     bootloader = start_umal()
 
     # Use very basic settings without networking.
-    import test.settings.basic as settings
+    import test.settings.wifi as settings
 
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
@@ -96,3 +104,7 @@ def test_basic_cpython(monkeypatch, caplog):
             # Proof it works by verifying log output.
             assert "Starting Terkin datalogger" in captured, captured
             assert "platform: linux2" in captured, captured
+
+            assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+            assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+            assert "Network stack ready" in captured, captured

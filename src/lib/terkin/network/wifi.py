@@ -461,7 +461,7 @@ class WiFiManager:
         """
 
         # NVRAM key for storing auth mode per network. Maximum of 15 characters.
-        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name)
+        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name.encode())
 
         # Get WiFi STA auth mode from NVRAM.
         try:

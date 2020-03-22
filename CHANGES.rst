@@ -134,6 +134,7 @@ Development
 - Upgrade to rshell 0.0.27
 - Add basic test suite
 - Adjust machinery to run under pytest
+- Add tests for WiFi
 
 
 2019-08-19 0.6.0
