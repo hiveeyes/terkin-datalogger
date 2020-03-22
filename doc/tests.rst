@@ -18,12 +18,26 @@ About
 Setup
 *****
 
-==============
-Install Docker
-==============
+=====================
+Install prerequisites
+=====================
+
+Docker
+------
+Infrastructure services may be invoked through Docker.
+
 - https://docs.docker.com/install/linux/docker-ce/debian/
 - https://docs.docker.com/docker-for-mac/install/
 - https://docs.docker.com/docker-for-windows/wsl-tech-preview/
+
+
+Mosquitto
+---------
+::
+
+    apt install mosquitto
+    systemctl start mosquitto
+
 
 ===================
 Install environment
@@ -50,7 +64,11 @@ Invoke whole test suite::
 
 Invoke specific tests, with markers::
 
+    # Only run tests tagged with "esp32".
     make test marker="esp32"
+
+    # Don't run tests tagged with "docker".
+    make test marker="not docker"
 
 With log output::
 

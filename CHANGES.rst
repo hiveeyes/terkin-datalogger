@@ -140,6 +140,7 @@ Development
   against a Mosquitto broker running on Docker.
 - Add test coverage reporting
 - Skip Mosquitto/Docker integration tests on Windows/WSL
+- Improve test suite re. Mosquitto dependency
 
 
 2019-08-19 0.6.0

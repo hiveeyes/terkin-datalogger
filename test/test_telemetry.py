@@ -1,4 +1,3 @@
-import os
 # -*- coding: utf-8 -*-
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
@@ -15,13 +14,9 @@ from test.util.terkin import start_umal
 logger = logging.getLogger(__name__)
 
 
-if 'Microsoft' in os.uname().release:
-    pytest.skip("Skipping this test on Windows/WSL", allow_module_level=True)
-
-
 @pytest.mark.esp32
-@pytest.mark.mqtt
 @pytest.mark.telemetry
+@pytest.mark.mqtt
 @pytest.mark.docker
 def test_telemetry_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
 
