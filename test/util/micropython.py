@@ -2,11 +2,10 @@ import sys
 
 from mock import Mock, MagicMock
 
-from terkin.util import get_platform_info
-
 
 def monkeypatch():
     monkeypatch_stdlib()
+    monkeypatch_exceptions()
     monkeypatch_logging()
     monkeypatch_machine()
     monkeypatch_network()
@@ -18,15 +17,21 @@ def monkeypatch_stdlib():
     import builtins
     builtins.const = int
 
+    sys.modules['micropython'] = Mock()
+    sys.modules['micropython'].const = int
+
     import struct
     sys.modules['ustruct'] = struct
 
     import binascii
     sys.modules['ubinascii'] = binascii
 
-    sys.print_exception = print_exception
-
     import time
+    def ticks_ms():
+        import time
+        return time.time_ns() / 1000
+    def ticks_diff(ticks1, ticks2):
+        return abs(ticks1 - ticks2)
     time.ticks_ms = ticks_ms
     time.ticks_diff = ticks_diff
     sys.modules['utime'] = time
@@ -44,12 +49,30 @@ def monkeypatch_stdlib():
         def read(self, length):
             return self.recv(length)
 
-    #socket.socket = socket_adapter
     sys.modules['usocket'] = socket
     sys.modules['usocket'].socket = socket_adapter
 
+    import io
+    sys.modules['uio'] = io
+
+    import os
+    sys.modules['uos'] = os
+
     import gc
     gc.threshold = Mock()
+    gc.mem_free = Mock()
+    gc.mem_free.return_value = 1000000
+    gc.mem_alloc = Mock()
+    gc.mem_alloc.return_value = 2000000
+
+
+def monkeypatch_exceptions():
+
+    def print_exception(exc, file=sys.stdout):
+        # file.write(str(exc))
+        raise exc
+
+    sys.print_exception = print_exception
 
 
 def monkeypatch_machine():
@@ -84,6 +107,7 @@ def monkeypatch_machine():
 
 
 def wake_reason():
+    from terkin.util import get_platform_info
     platform_info = get_platform_info()
     if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
         return 0
@@ -188,19 +212,3 @@ def monkeypatch_logging():
         self.log(logging.ERROR, msg + "\n" + buf.getvalue(), *args)
 
     logging.Logger.exc = exc
-
-
-# Utility functions.
-
-def print_exception(exc, file=sys.stdout):
-    #file.write(str(exc))
-    raise exc
-
-
-def ticks_ms():
-    import time
-    return time.time_ns() / 1000
-
-
-def ticks_diff(ticks1, ticks2):
-    return abs(ticks1 - ticks2)

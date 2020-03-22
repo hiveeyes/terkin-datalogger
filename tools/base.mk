@@ -105,11 +105,11 @@ PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(l
 
 .PHONY: test
 test:
-	export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
 	    $(venv3path)/bin/pytest test -m "$(marker)"
 
 test-verbose:
-	export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
 	    $(venv3path)/bin/pytest --log-cli-level=DEBUG test -m "$(marker)"
 
 
