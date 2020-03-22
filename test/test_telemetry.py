@@ -1,4 +1,8 @@
 import os
+# -*- coding: utf-8 -*-
+# (c) 2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2020 Andreas Motl <andreas@hiveeyes.org>
+# License: GNU General Public License, Version 3
 import sys
 import json
 import pytest
