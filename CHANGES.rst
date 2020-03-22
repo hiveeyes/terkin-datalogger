@@ -139,6 +139,7 @@ Development
 - Add ``pytest-docker-fixtures`` to invoke the MQTT telemetry tests
   against a Mosquitto broker running on Docker.
 - Add test coverage reporting
+- Skip Mosquitto/Docker integration tests on Windows/WSL
 
 
 2019-08-19 0.6.0

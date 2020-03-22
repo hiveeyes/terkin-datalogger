@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import pytest
@@ -8,6 +9,10 @@ from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 from test.util.terkin import start_umal
 
 logger = logging.getLogger(__name__)
+
+
+if 'Microsoft' in os.uname().release:
+    pytest.skip("Skipping this test on Windows/WSL", allow_module_level=True)
 
 
 @pytest.mark.esp32
