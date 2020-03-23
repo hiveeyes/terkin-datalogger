@@ -14,3 +14,6 @@ from test.util.mosquitto import mosquitto
 
 # Fixture to emulate Pycom's "pycom.{nvs_get,nvs_set} API".
 from test.util.pycom import pycom_nvram
+
+# Fixture to emulate Pycom's "network.LoRa" API.
+from test.util.network import network_lora

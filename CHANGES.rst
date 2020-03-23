@@ -141,6 +141,7 @@ Development
 - Add test coverage reporting
 - Skip Mosquitto/Docker integration tests on Windows/WSL
 - Improve test suite re. Mosquitto dependency
+- Add LoRaWAN tests
 
 
 2019-08-19 0.6.0

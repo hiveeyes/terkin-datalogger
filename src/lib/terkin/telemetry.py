@@ -431,6 +431,8 @@ class TelemetryTransportLORA:
 
     def __init__(self, lora_manager, settings):
 
+        log.info('Telemetry transport: CayenneLPP over LoRaWAN/TTN')
+
         self.lora_manager = lora_manager
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
@@ -447,7 +449,7 @@ class TelemetryTransportLORA:
                 try:
                     self.lora_manager.create_lora_socket()
                 except:
-                    log.error("[LoRa] Could not create LoRa socket")
+                    log.exception("[LoRa] Could not create LoRa socket")
         else:
             log.error("[LoRa] Could not join network")
 
@@ -472,13 +474,13 @@ class TelemetryTransportLORA:
         elif _pause == 1:
             payload = binascii.unhexlify(b'000101')
 
-        log.info('[LoRa] Uplink payload (hex) : %s', binascii.hexlify(payload).decode())
+        log.info('[LoRa] Uplink payload (hex): %s', binascii.hexlify(payload).decode())
 
         # Send payload
         try:
-            log.info('[LoRa] Sending payload ...')
+            log.info('[LoRa] Sending payload...')
             outcome = self.lora_manager.lora_send(payload)
-            log.info('[LoRa] %s bytes sent', outcome)
+            log.info('[LoRa] Sent %s bytes', outcome)
         except:
             log.exception('[LoRa] Transmission failed')
             return False
@@ -491,23 +493,25 @@ class TelemetryTransportLORA:
 
         if port == 1:
             sleep = int.from_bytes(rx, "big")
-            log.info('[LoRa] deep sleep interval command received: sleep for %s minutes', sleep)
             if sleep == 0:
                 # use value from settings file
-                log.info('[LoRa] erasing deep sleep interval from NVRAM')
+                log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
                 try:
                     pycom.nvs_erase('deepsleep')
                 except:
                     pass
             else:
-                # use value received via LoRa
+                # Use deepsleep interval received via LoRa.
+                log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
                 pycom.nvs_set('deepsleep', sleep)
+
         elif port == 2:
             pause = int.from_bytes(rx, "big")
-            log.info('[LoRa] pause payload submission : %s', bool(pause))
+            log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
             pycom.nvs_set('pause', pause)
+
         else:
-            log.info('[LoRa] no or invalid downlink message received')
+            log.info('[LoRa] No downlink message processed')
 
         return True
 
