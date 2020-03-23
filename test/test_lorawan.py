@@ -2,8 +2,23 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import sys
+"""
+About
+=====
+Invoke the datalogger program replaying different LoRaWAN
+communication scenarios and testing for their outcomes.
 
+Setup
+=====
+- https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/tests.rst
+
+Synopsis
+========
+To invoke these tests, just type::
+
+    make test marker="lorawan"
+
+"""
 import mock
 import pytest
 import logging
@@ -15,7 +30,7 @@ logger = logging.getLogger(__name__)
 @pytest.mark.telemetry
 @pytest.mark.lorawan
 @mock.patch('sys.platform', 'LoPy4')
-def test_lora_cayenne_system_temperature(network_lora, caplog):
+def test_uplink_system_temperature(network_lora, caplog):
     """
     Pretend to invoke the datalogger on a LoPy4 with basic system sensors.
     Effectively, only the "system.temperature" sensor will be transmitted
@@ -67,7 +82,7 @@ def test_lora_cayenne_system_temperature(network_lora, caplog):
 @pytest.mark.telemetry
 @pytest.mark.lorawan
 @mock.patch('sys.platform', 'LoPy4')
-def test_lora_cayenne_environment(mocker, network_lora, caplog):
+def test_uplink_environmental_sensors(mocker, network_lora, caplog):
     """
     Pretend to invoke the datalogger on a LoPy4 with environmental sensors.
 
