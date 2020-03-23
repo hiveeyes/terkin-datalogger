@@ -9,7 +9,7 @@ import logging
 
 from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 
-from test.util.terkin import start_umal
+from test.util.terkin import invoke_umal
 
 
 @pytest.mark.esp32
@@ -17,7 +17,7 @@ def test_wifi_esp32(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'esp32')
-    bootloader = start_umal()
+    bootloader = invoke_umal()
 
     # Use very basic settings without networking.
     import test.settings.wifi as settings
@@ -55,7 +55,7 @@ def test_wifi_wipy(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'WiPy')
-    bootloader = start_umal()
+    bootloader = invoke_umal()
 
     # Use very basic settings without networking.
     import test.settings.wifi as settings
@@ -63,6 +63,7 @@ def test_wifi_wipy(monkeypatch, caplog):
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
     with FakeFS():
+
         # Pycom mounts the main filesystem at "/flash".
         os.mkdir('/flash')
 
@@ -88,7 +89,7 @@ def test_wifi_cpython(monkeypatch, caplog):
 
     # Define platform and start bootloader.
     monkeypatch.setattr(sys, 'platform', 'linux2')
-    bootloader = start_umal()
+    bootloader = invoke_umal()
 
     # Use very basic settings without networking.
     import test.settings.wifi as settings

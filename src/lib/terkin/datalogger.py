@@ -153,21 +153,23 @@ class TerkinDatalogger:
             self.duty_task()
 
     def duty_task(self):
+        """Main duty cycle task."""
+
         # Feed the watchdog timer to keep the system alive.
         self.device.watchdog.feed()
 
         # Indicate activity.
         # Todo: Optionally disable this output.
-        log.info('--- loop ---')
+        log.info('--- cycle ---')
 
         # Run downstream mainloop handlers.
-        self.loop()
+        self.duty_cycle()
 
-        # Give the system some breath.
-        machine.idle()
+        # Sleep how ever.
+        self.sleep()
 
-    def loop(self):
-        """Main duty cycle loop."""
+    def duty_cycle(self):
+        """Main duty cycle"""
 
         if not self.settings.get('main.deepsleep', False):
             self.duty_chrono.reset()
@@ -199,8 +201,8 @@ class TerkinDatalogger:
         # Run the garbage collector.
         self.device.run_gc()
 
-        # Sleep how ever.
-        self.sleep()
+        # Give the system some breath.
+        machine.idle()
 
     def sleep(self):
         """Sleep until the next measurement cycle."""

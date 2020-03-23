@@ -5,34 +5,38 @@
 import sys
 import json
 import pytest
+
 import logging
 
 from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 
-from test.util.terkin import start_umal
+from test.util.terkin import invoke_umal, invoke_datalogger_pycom
 
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.esp32
 @pytest.mark.telemetry
 @pytest.mark.mqtt
 @pytest.mark.docker
+@pytest.mark.esp32
 def test_telemetry_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
 
-    # Define platform and start bootloader.
+    # Define platform.
     monkeypatch.setattr(sys, 'platform', 'esp32')
-    bootloader = start_umal()
 
-    # Use very basic settings without networking.
+    # Acquire settings with MQTT telemetry.
     import test.settings.telemetry_mqtt as settings
 
-    # Start datalogger with a single duty cycle on a fake filesystem.
-    from terkin.datalogger import TerkinDatalogger
+    # Use a fake filesystem.
     with FakeFS():
 
         with caplog.at_level(logging.DEBUG):
 
+            # Invoke bootloader.
+            bootloader = invoke_umal()
+
+            # Invoke datalogger with a single duty cycle.
+            from terkin.datalogger import TerkinDatalogger
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
             datalogger.duty_task()
@@ -67,3 +71,5 @@ def test_telemetry_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
             del data_1['system.uptime']
             del data_1['system.runtime']
             assert data_1 == data_reference, capmqtt.buffer()
+
+

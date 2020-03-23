@@ -136,6 +136,8 @@ class TerkinConfiguration:
         """ """
         log.info('Configuration settings:')
         for key, value in self.store.items():
+            if key.startswith('__'):
+                continue
             thing = deepcopy(value)
             self.purge_sensible_settings(thing)
             log.info('Section "{}": {}'.format(key, json.dumps(thing)))

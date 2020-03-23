@@ -64,10 +64,11 @@ def monkeypatch_stdlib():
 
     import gc
     gc.threshold = Mock()
-    gc.mem_free = Mock()
-    gc.mem_free.return_value = 1000000
-    gc.mem_alloc = Mock()
-    gc.mem_alloc.return_value = 2000000
+    gc.mem_free = Mock(return_value=1000000)
+    gc.mem_alloc = Mock(return_value=2000000)
+
+    # Optional convenience to improve speed.
+    gc.collect = Mock()
 
 
 def monkeypatch_exceptions():
@@ -86,8 +87,7 @@ def monkeypatch_machine():
     machine.enable_irq = Mock()
     machine.disable_irq = Mock()
     machine.unique_id = lambda: str(uuid.uuid4().fields[-1])[:5].encode()
-    machine.freq = Mock()
-    machine.freq.return_value = 42000000
+    machine.freq = Mock(return_value=42000000)
     machine.idle = Mock()
 
     machine.PWRON_RESET = 0
@@ -102,21 +102,20 @@ def monkeypatch_machine():
     machine.RTC_WAKE = 2
     machine.ULP_WAKE = 3
 
-    machine.reset_cause = Mock()
-    machine.reset_cause.return_value = 0
+    machine.reset_cause = Mock(return_value=0)
     machine.wake_reason = wake_reason
 
-    machine.temperature = Mock()
-    machine.temperature.return_value = 137.77778
+    # 44.7053182608696°C
+    machine.temperature = Mock(return_value=137.77778)
 
 
 def wake_reason():
     from terkin.util import get_platform_info
     platform_info = get_platform_info()
-    if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
-        return 0
-    else:
+    if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
         return 0, None
+    else:
+        return 0
 
 
 def monkeypatch_network():
@@ -203,8 +202,7 @@ def monkeypatch_pycom():
     import network
     network.Bluetooth = MagicMock()
 
-    import test.util.pycom
-    sys.modules['pycom'] = test.util.pycom
+    sys.modules['pycom'] = MagicMock()
 
 
 def monkeypatch_logging():
