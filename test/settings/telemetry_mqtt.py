@@ -31,12 +31,6 @@ networking = {
         # Enable/disable WiFi completely.
         'enabled': True,
 
-        # WiFi interface configuration.
-        'phy': {
-            'antenna_external': False,
-            'antenna_pin': 'P12',
-        },
-
         # WiFi stations to connect to in STA mode.
         'stations': [
             {'ssid': 'FooBarWiFi', 'password': 'secret', 'timeout': 15.0},

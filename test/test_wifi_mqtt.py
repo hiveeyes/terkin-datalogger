@@ -4,6 +4,9 @@
 # License: GNU General Public License, Version 3
 import sys
 import json
+import time
+
+import mock
 import pytest
 
 import logging
@@ -19,10 +22,8 @@ logger = logging.getLogger(__name__)
 @pytest.mark.mqtt
 @pytest.mark.docker
 @pytest.mark.esp32
-def test_telemetry_wifi_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'esp32')
+@mock.patch('sys.platform', 'esp32')
+def test_telemetry_wifi_mqtt(mosquitto, caplog, capmqtt):
 
     # Acquire settings with MQTT telemetry.
     import test.settings.telemetry_mqtt as settings
@@ -71,5 +72,3 @@ def test_telemetry_wifi_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
             del data_1['system.uptime']
             del data_1['system.runtime']
             assert data_1 == data_reference, capmqtt.buffer()
-
-
