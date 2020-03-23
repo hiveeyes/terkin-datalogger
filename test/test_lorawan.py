@@ -3,6 +3,8 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import sys
+
+import mock
 import pytest
 import logging
 from test.util.terkin import invoke_datalogger_pycom
@@ -12,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-def test_system_temperature(monkeypatch, network_lora, caplog):
+@mock.patch('sys.platform', 'LoPy4')
+def test_lora_cayenne_system_temperature(network_lora, caplog):
     """
     Pretend to invoke the datalogger on a LoPy4 with basic system sensors.
     Effectively, only the "system.temperature" sensor will be transmitted
@@ -22,9 +25,6 @@ def test_system_temperature(monkeypatch, network_lora, caplog):
     submitted payload is correct by checking the raw payload value
     and decoding it through Cayenne.
     """
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'LoPy4')
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation()
@@ -59,13 +59,16 @@ def test_system_temperature(monkeypatch, network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-def test_downlink_interval_set(monkeypatch, network_lora, caplog):
+    """
+    """
+
+@pytest.mark.telemetry
+@pytest.mark.lorawan
+@mock.patch('sys.platform', 'LoPy4')
+def test_downlink_interval_set(network_lora, caplog):
     """
     Simulate a downlink "set interval" command on LoRaWAN port 1.
     """
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'LoPy4')
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=1, response_data=[b'\x03'])
@@ -83,13 +86,11 @@ def test_downlink_interval_set(monkeypatch, network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-def test_downlink_interval_reset(monkeypatch, network_lora, caplog):
+@mock.patch('sys.platform', 'LoPy4')
+def test_downlink_interval_reset(network_lora, caplog):
     """
     Simulate a downlink "reset interval" command on LoRaWAN port 1.
     """
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'LoPy4')
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=1, response_data=[b'\x00'])
@@ -107,13 +108,11 @@ def test_downlink_interval_reset(monkeypatch, network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-def test_downlink_pause(monkeypatch, network_lora, caplog):
+@mock.patch('sys.platform', 'LoPy4')
+def test_downlink_pause(network_lora, caplog):
     """
     Simulate a downlink "pause" command on LoRaWAN port 2.
     """
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'LoPy4')
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=2, response_data=[b'\x01'])
@@ -131,13 +130,11 @@ def test_downlink_pause(monkeypatch, network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-def test_downlink_unpause(monkeypatch, network_lora, caplog):
+@mock.patch('sys.platform', 'LoPy4')
+def test_downlink_unpause(network_lora, caplog):
     """
     Simulate a downlink "unpause" command on LoRaWAN port 2.
     """
-
-    # Define platform.
-    monkeypatch.setattr(sys, 'platform', 'LoPy4')
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=2, response_data=[b'\x00'])

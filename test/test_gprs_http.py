@@ -49,10 +49,12 @@ def test_telemetry_gprs_http(caplog, sim800mock):
     payload is correct. Also, check log output.
     """
 
-    # Invoke datalogger with LoRaWAN telemetry settings for a single duty cycle.
+    # Mix together different settings.
     from test.settings import telemetry_gprs
     from test.settings import sensors as sensor_settings
     telemetry_gprs.sensors = sensor_settings.sensors
+
+    # Invoke datalogger with LoRaWAN telemetry settings for a single duty cycle.
     invoke_datalogger(caplog, settings=telemetry_gprs)
 
     # Capture log output.

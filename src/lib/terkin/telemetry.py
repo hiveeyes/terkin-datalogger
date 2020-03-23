@@ -900,6 +900,8 @@ def to_cayenne_lpp(dataframe: DataFrame):
 
     for key, value in dataframe.data_out.items():
 
+        #log.debug('-' * 42)
+
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]
         # try:

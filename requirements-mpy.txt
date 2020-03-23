@@ -14,3 +14,4 @@ pycopy-shutil
 #pycopy-base64
 #pycopy-logging
 #pycopy-json
+#pycopy-uuid
