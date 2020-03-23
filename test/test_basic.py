@@ -4,6 +4,8 @@
 # License: GNU General Public License, Version 3
 import os
 import sys
+
+import mock
 import pytest
 import logging
 
@@ -12,21 +14,23 @@ from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 from test.util.terkin import invoke_umal
 
 
+@pytest.mark.basic
 @pytest.mark.esp32
-def test_basic_esp32(monkeypatch, caplog):
-
-    # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'esp32')
-    bootloader = invoke_umal()
+@mock.patch('sys.platform', 'esp32')
+def test_basic_esp32(caplog):
 
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    # Start datalogger with a single duty cycle on a fake filesystem.
-    from terkin.datalogger import TerkinDatalogger
     with FakeFS():
 
         with caplog.at_level(logging.DEBUG):
+
+            # Invoke bootloader.
+            bootloader = invoke_umal()
+
+            # Start datalogger with a single duty cycle on a fake filesystem.
+            from terkin.datalogger import TerkinDatalogger
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
             datalogger.duty_task()
@@ -45,24 +49,26 @@ def test_basic_esp32(monkeypatch, caplog):
             assert "Telemetry status: SUCCESS (0/0)" in captured, captured
 
 
+@pytest.mark.basic
 @pytest.mark.pycom
 @pytest.mark.wipy
-def test_basic_wipy(monkeypatch, caplog):
-
-    # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'WiPy')
-    bootloader = invoke_umal()
+@mock.patch('sys.platform', 'WiPy')
+def test_basic_wipy(caplog):
 
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    # Start datalogger with a single duty cycle on a fake filesystem.
-    from terkin.datalogger import TerkinDatalogger
     with FakeFS():
         # Pycom mounts the main filesystem at "/flash".
         os.mkdir('/flash')
 
         with caplog.at_level(logging.DEBUG):
+
+            # Invoke bootloader.
+            bootloader = invoke_umal()
+
+            # Start datalogger with a single duty cycle on a fake filesystem.
+            from terkin.datalogger import TerkinDatalogger
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
             datalogger.duty_task()
@@ -75,21 +81,23 @@ def test_basic_wipy(monkeypatch, caplog):
             assert "platform: WiPy" in captured, captured
 
 
+@pytest.mark.basic
 @pytest.mark.cpython
-def test_basic_cpython(monkeypatch, caplog):
-
-    # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'linux2')
-    bootloader = invoke_umal()
+@mock.patch('sys.platform', 'linux2')
+def test_basic_cpython(caplog):
 
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    # Start datalogger with a single duty cycle on a fake filesystem.
-    from terkin.datalogger import TerkinDatalogger
     with FakeFS():
 
         with caplog.at_level(logging.DEBUG):
+
+            # Invoke bootloader.
+            bootloader = invoke_umal()
+
+            # Start datalogger with a single duty cycle on a fake filesystem.
+            from terkin.datalogger import TerkinDatalogger
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
             datalogger.duty_task()

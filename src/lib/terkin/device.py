@@ -100,7 +100,7 @@ class TerkinDevice:
                     log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                                  "ATTENTION: Running LoRa without antenna will wreck your device.")
             else:
-                log.info("[LoRa] interface disabled in settings. Skip LoRa initialisation.")
+                log.info("[LoRa] Interface disabled in settings, skipping initialization.")
         else:
             log.info("[LoRa] This is not a LoRa capable device.")
 
