@@ -46,32 +46,6 @@ class HX711Heisenberg(HX711):
 
         self.time_constant = 0.9
 
-    def set_gain_inactive(self, gain):
-        """
-
-        :param gain: 
-
-        """
-        if gain is 128:
-            self.GAIN = 1
-        elif gain is 64:
-            self.GAIN = 3
-        elif gain is 32:
-            self.GAIN = 2
-
-        # v1: Skip first reading.
-        #self.read()
-        #self.filtered = self.read()
-
-        # v2: Take average of three readings.
-        # TODO: Maybe improve this.
-        sum = 0
-        for i in range(3):
-            sum += self.read()
-        self.filtered = sum / 3
-
-        log.info('Gain & initial value set')
-
     def read_median(self, times=10):
         """Acquire multiple readings and return median.
 

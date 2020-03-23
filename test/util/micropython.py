@@ -84,12 +84,15 @@ def monkeypatch_exceptions():
 def monkeypatch_machine():
     import uuid
     import machine
+
+    # Some primitives.
     machine.enable_irq = Mock()
     machine.disable_irq = Mock()
     machine.unique_id = lambda: str(uuid.uuid4().fields[-1])[:5].encode()
     machine.freq = Mock(return_value=42000000)
     machine.idle = Mock()
 
+    # Reset cause and wake reason.
     machine.PWRON_RESET = 0
     machine.HARD_RESET = 1
     machine.WDT_RESET = 2
@@ -135,11 +138,20 @@ def monkeypatch_machine():
 
         MASTER = 1
 
-        def __init__(self, number, mode=None, pins=None, baudrate=None):
+        def __init__(self, number, *args, **kwargs):
+
+            # General
             self.number = number
-            self.mode = mode
-            self.pins = pins
-            self.baudrate = baudrate
+
+            # Genuine
+            self.mode = kwargs.get('mode')
+            self.pins = kwargs.get('pins')
+            self.baudrate = kwargs.get('baudrate')
+
+            # Pycom
+            self.sda = kwargs.get('sda')
+            self.scl = kwargs.get('scl')
+            self.freq = kwargs.get('freq')
 
         def readfrom_mem(self, addr, memaddr, nbytes, addrsize=8):
             result = None
@@ -194,6 +206,9 @@ def monkeypatch_machine():
 
     # ADC peripheral
     machine.ADC = MagicMock()
+
+    # UART peripheral
+    machine.UART = MagicMock()
 
 
 def wake_reason():
@@ -330,13 +345,15 @@ def monkeypatch_pycom():
 
     import network
     network.Bluetooth = MagicMock()
+    network.LTE = MagicMock()
 
     sys.modules['pycom'] = MagicMock()
 
 
 def monkeypatch_logging():
-    import logging
     import io
+    import logging
+
     def exc(self, e, msg, *args):
         buf = io.StringIO()
         sys.print_exception(e, buf)

@@ -84,7 +84,7 @@ class TerkinDevice:
             except Exception as ex:
                 log.exc(ex, 'Starting network services failed')
         else:
-            log.info("[WiFi] interface disabled in settings.")
+            log.info("[WiFi] Interface disabled in settings.")
 
         # Initialize LoRa device.
         if self.application_info.platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']:
@@ -100,7 +100,7 @@ class TerkinDevice:
                     log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                                  "ATTENTION: Running LoRa without antenna will wreck your device.")
             else:
-                log.info("[LoRa] Interface disabled in settings, skipping initialization.")
+                log.info("[LoRa] Interface disabled in settings.")
         else:
             log.info("[LoRa] This is not a LoRa capable device.")
 
@@ -113,7 +113,7 @@ class TerkinDevice:
                 log.exc(ex, 'Unable to start GPRS modem')
                 self.status.networking = False
         else:
-            log.info("[GPRS] Interface disabled in settings, skipping initialization.")
+            log.info("[GPRS] Interface disabled in settings.")
 
         # Inform about networking status.
         #self.networking.print_status()
@@ -367,7 +367,7 @@ class TerkinDevice:
     def hibernate(self, interval, lightsleep=False, deepsleep=False):
         """
 
-        :param interval: 
+        :param interval:
         :param lightsleep:  (Default value = False)
         :param deepsleep:  (Default value = False)
 

@@ -50,11 +50,11 @@ class HX711:
         :param gain: 
 
         """
-        if gain is 128:
+        if gain == 128:
             self.GAIN = 1
-        elif gain is 64:
+        elif gain == 64:
             self.GAIN = 3
-        elif gain is 32:
+        elif gain == 32:
             self.GAIN = 2
 
     def is_ready(self):

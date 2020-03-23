@@ -10,7 +10,7 @@ import logging
 
 from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 
-from test.util.terkin import invoke_umal, invoke_datalogger_pycom
+from test.util.terkin import invoke_umal
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @pytest.mark.mqtt
 @pytest.mark.docker
 @pytest.mark.esp32
-def test_telemetry_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
+def test_telemetry_wifi_mqtt(monkeypatch, caplog, mosquitto, capmqtt):
 
     # Define platform.
     monkeypatch.setattr(sys, 'platform', 'esp32')

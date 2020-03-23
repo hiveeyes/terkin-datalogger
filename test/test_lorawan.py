@@ -3,7 +3,6 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import sys
-import json
 import pytest
 import logging
 from test.util.terkin import invoke_datalogger_pycom

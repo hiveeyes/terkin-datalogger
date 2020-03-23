@@ -31,12 +31,17 @@ def invoke_umal():
 
 
 def invoke_datalogger_pycom(caplog, settings):
+    return invoke_datalogger(caplog, settings, pycom=True)
+
+
+def invoke_datalogger(caplog, settings, pycom=False):
 
     # Use a fake filesystem.
     with FakeFS():
 
         # Pycom mounts the main filesystem at "/flash".
-        os.mkdir('/flash')
+        if pycom:
+            os.mkdir('/flash')
 
         # Capture log output.
         with caplog.at_level(logging.DEBUG):
