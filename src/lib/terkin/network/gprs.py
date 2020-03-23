@@ -23,6 +23,7 @@ class GPRSManager:
 
     def start(self):
         """ """
+        log.info('[GPRS] Starting GPRS Manager')
         self.start_modem()
         self.connect()
 

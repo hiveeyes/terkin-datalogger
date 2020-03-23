@@ -405,6 +405,8 @@ class TelemetryTransportHTTPOverGPRS(TelemetryTransportHTTP):
         super().__init__(uri, format)
         self.gprs_manager = gprs_manager
 
+        log.info('Telemetry transport: JSON over HTTP over GPRS')
+
     def send(self, dataframe: DataFrame):
         """
         Submit telemetry data using HTTP POST request over GPRS.

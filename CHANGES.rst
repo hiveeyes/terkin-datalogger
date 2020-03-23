@@ -144,6 +144,7 @@ Development
 - Add LoRaWAN tests
 - Add tests covering sleep modes and maintenance mode
 - Add tests covering sensor machinery
+- Add tests covering GPRS telemetry
 
 
 2019-08-19 0.6.0
