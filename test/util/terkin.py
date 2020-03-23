@@ -49,3 +49,5 @@ def invoke_datalogger_pycom(caplog, settings):
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
             datalogger.duty_cycle()
+
+            return datalogger

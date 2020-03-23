@@ -216,7 +216,7 @@ class TerkinDatalogger:
             lightsleep = False
             deepsleep = False
             log.info('Device is in maintenance mode. Skipping deep sleep and '
-                     'adjusting interval to {} seconds'.format(interval))
+                     'adjusting sleep time to {} seconds.'.format(interval))
 
         # Prepare device shutdown.
         try:
