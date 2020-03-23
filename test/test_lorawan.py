@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-# (c) 2020 Richard Pobering <richard@hiveeyes.org>
-# (c) 2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Matthias Büchner <https://github.com/thiasB>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 """
 About
