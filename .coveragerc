@@ -1,9 +1,12 @@
 [run]
-omit=*/settings-*.py
+omit =
+    */dist-packages/cayennelpp/*
+    */dist-packages/pysm/*
+    */lib/ratrack/*
+
 source =
     dist-packages
     src/lib
-    src
 
 #disable_warnings = no-data-collected
 #branch = True

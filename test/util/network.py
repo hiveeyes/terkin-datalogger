@@ -53,7 +53,7 @@ class LoRaNetworkFixture:
         self.monkeypatch.undo()
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def network_lora():
     fixture = LoRaNetworkFixture()
     yield fixture

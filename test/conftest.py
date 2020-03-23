@@ -6,6 +6,9 @@ monkeypatch_terkin()
 from test.util.micropython import monkeypatch
 monkeypatch()
 
+# Fixture to adjust the Python stdlib environment.
+from test.util.micropython import micropython_stdlib
+
 # Fixture to capture MQTT messages.
 from test.util.mqtt import capmqtt
 

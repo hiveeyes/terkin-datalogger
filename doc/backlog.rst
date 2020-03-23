@@ -426,6 +426,7 @@ Upload and reset
     - UDP API
     - HTTP API
     - WiFi-HTTP telemetry
+    - Pure-Python DS18B20 driver
     - State machine
 
 
