@@ -146,6 +146,7 @@ Development
 - Add tests covering sensor machinery
 - Add tests covering GPRS telemetry
 - Improve tests covering LoRaWAN message decoding with environmental sensors
+- Update 3rd-party modules
 
 
 2019-08-19 0.6.0
