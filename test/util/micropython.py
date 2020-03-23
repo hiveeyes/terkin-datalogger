@@ -13,6 +13,7 @@ def monkeypatch():
     monkeypatch_logging()
     monkeypatch_machine()
     monkeypatch_network()
+    monkeypatch_hal()
     monkeypatch_pycom()
 
 
@@ -83,7 +84,6 @@ def monkeypatch_exceptions():
 def monkeypatch_machine():
     import uuid
     import machine
-    machine.I2C = MagicMock()
     machine.enable_irq = Mock()
     machine.disable_irq = Mock()
     machine.unique_id = lambda: str(uuid.uuid4().fields[-1])[:5].encode()
@@ -107,6 +107,93 @@ def monkeypatch_machine():
 
     # 44.7053182608696°C
     machine.temperature = Mock(return_value=137.77778)
+
+    # Pin class
+    class PinPlus(machine.Pin):
+
+        OPEN_DRAIN = 1999
+        PULL_UP = 2999
+
+        def init(self, mode=None, pull=None):
+            pass
+
+        def hold(self, enabled):
+            pass
+
+        def __call__(self, value=None):
+            if value is None:
+                return 0x00
+                #for i in range(24):
+                #    yield 0x00
+
+    sys.modules['machine'].Pin = PinPlus
+
+    class MockedI2C:
+        """
+        https://docs.pycom.io/firmwareapi/pycom/machine/i2c/
+        """
+
+        MASTER = 1
+
+        def __init__(self, number, mode=None, pins=None, baudrate=None):
+            self.number = number
+            self.mode = mode
+            self.pins = pins
+            self.baudrate = baudrate
+
+        def readfrom_mem(self, addr, memaddr, nbytes, addrsize=8):
+            result = None
+            if addr in [0x76, 0x77]:
+
+                # BME280 calibration for temperature and pressure.
+                if memaddr == 0x88:
+                    result = bytearray([
+                                        # T1-3
+                                        0x01, 0x02, 0x03, 0x04, 0xaa, 0x06,
+                                        # P1-4
+                                        0xff, 0x60, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00,
+                                        # P5-9
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                        # _, H1
+                                        0x00, 0x00])
+
+                # BME280 calibration for humidity.
+                elif memaddr == 0xE1:
+                    result = bytearray([0xff, 0x02, 0x00, 0x20, 0x00, 0x00, 0x00])
+
+                # BME280_REGISTER_STATUS
+                elif memaddr == 0xF3:
+                    result = bytearray([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+                # BME280 burst readout
+                # TODO: Individualize this pre BME280 instance.
+                elif memaddr == 0xF7:
+                    result = bytearray([0x99, 0xbb, 0x03, 0x99, 0xee, 0xff, 0x99, 0xff])
+
+            if result:
+                return result
+            else:
+                raise KeyError('Unknown I2C memory address {} on device {}'.format(hex(memaddr), hex(addr)))
+
+        def readfrom_mem_into(self, addr, memaddr, buf, addrsize=8):
+            nbytes = len(buf)
+            result = self.readfrom_mem(addr, memaddr, nbytes)
+            buf.clear()
+            for char in result:
+                buf.append(char)
+
+        def writeto_mem(self, addr, memaddr, buf, addrsize=8):
+            pass
+
+        def scan(self):
+            return [0x76, 0x77]
+
+    # I2C peripheral
+    #machine.I2C = MagicMock()
+    machine.I2C = MockedI2C
+
+    # ADC peripheral
+    machine.ADC = MagicMock()
 
 
 def wake_reason():
@@ -195,6 +282,48 @@ def monkeypatch_network():
             #return ':'.join(("%012x" % mac)[i:i + 2] for i in range(0, 12, 2))
 
     network.WLAN = WLANPlus
+
+
+def monkeypatch_hal():
+
+    #sys.modules['_onewire'] = MagicMock()
+
+    class MockedOneWire:
+
+        # TODO: Implement real conversation.
+
+        def reset(self, pin):
+            return True
+
+        def writebyte(self, pin, value):
+            #print('_onewire.writebyte({}, {})'.format(pin, hex(value)))
+            pass
+
+        def writebit(self, pin, value):
+            pass
+
+        def readbyte(self, pin):
+            # 48.1875°C
+            return 0x03
+
+        def readbit(self, pin):
+            return 0x00
+
+        def crc8(self, data):
+            # FIXME
+            return 0
+
+    sys.modules['_onewire'] = MockedOneWire()
+
+    def onewire_scan(self):
+        devices = [
+            bytearray([0x28, 0xff, 0x64, 0x1d, 0x8f, 0xdf, 0x18, 0xc1]),
+            bytearray([0x28, 0xff, 0x64, 0x1d, 0x8f, 0xc3, 0x94, 0x4f]),
+        ]
+        return devices
+
+    import onewire_native
+    sys.modules['onewire_native'].OneWire.scan = onewire_scan
 
 
 def monkeypatch_pycom():

@@ -143,6 +143,7 @@ Development
 - Improve test suite re. Mosquitto dependency
 - Add LoRaWAN tests
 - Add tests covering sleep modes and maintenance mode
+- Add tests covering sensor machinery
 
 
 2019-08-19 0.6.0
