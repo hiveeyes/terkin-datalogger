@@ -147,6 +147,7 @@ Development
 - Add tests covering GPRS telemetry
 - Improve tests covering LoRaWAN message decoding with environmental sensors
 - Update 3rd-party modules
+- Fix flakyness of MQTT test
 
 
 2019-08-19 0.6.0

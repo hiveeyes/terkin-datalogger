@@ -66,6 +66,9 @@ def test_telemetry_wifi_mqtt(mosquitto, caplog, capmqtt):
                 "system.wifi.rssi": -85.3,
             }
 
+            # Wait some time for message to arrive.
+            time.sleep(0.2)
+
             message_1 = capmqtt.buffer()[0]
             data_1 = json.loads(message_1)
             del data_1['system.time']
