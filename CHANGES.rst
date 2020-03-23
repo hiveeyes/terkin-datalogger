@@ -145,6 +145,7 @@ Development
 - Add tests covering sleep modes and maintenance mode
 - Add tests covering sensor machinery
 - Add tests covering GPRS telemetry
+- Improve tests covering LoRaWAN message decoding with environmental sensors
 
 
 2019-08-19 0.6.0

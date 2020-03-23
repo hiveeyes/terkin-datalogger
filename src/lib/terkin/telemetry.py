@@ -922,9 +922,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
             frame.add_barometer(channel['press'], value)
             channel['press'] += 1
         elif "weight" in name:
-            # 2 bytes signed float is easily exceeded when sending values in [g]
-            value_kg = float('%.2f' % (value / 1000))
-            frame.add_analog_input(channel['scale'], value_kg)
+            frame.add_analog_input(channel['scale'], value)
             channel['scale'] += 1
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)

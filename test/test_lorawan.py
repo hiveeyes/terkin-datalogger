@@ -48,19 +48,104 @@ def test_lora_cayenne_system_temperature(network_lora, caplog):
     assert Mocket.last_request() == bytearray(b'\x00g\x01\xbf\x00\x01\x00')
 
     # Check the value after decoding from CayenneLPP.
-    from cayennelpp import LppData
-    data = LppData.from_bytes(Mocket.last_request())
-    assert data.channel == 0
-    assert data.type == 103
-    assert data.value == (44.7,)
+    from cayennelpp import LppFrame
+    data = LppFrame.from_bytes(Mocket.last_request()).data
+
+    # System temperature
+    assert data[0].channel == 0
+    assert data[0].type == 103
+    assert data[0].value == (44.7,)
+
+    # EOF?
+    assert data[1].channel == 0
+    assert data[1].type == 1
+    assert data[1].value == (0,)
 
     assert "[LoRa] No downlink message processed" in captured, captured
 
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
+@mock.patch('sys.platform', 'LoPy4')
+def test_lora_cayenne_environment(mocker, network_lora, caplog):
     """
+    Pretend to invoke the datalogger on a LoPy4 with environmental sensors.
+
+    By intercepting the lora socket communication, proof that the
+    submitted payload is correct by checking the raw payload value
+    and decoding it through Cayenne.
     """
+
+    # Define artificial LoRa conversation.
+    network_lora.register_conversation()
+
+    # Mix together different settings.
+    from test.settings import telemetry_lorawan
+    from test.settings import sensors as sensor_settings
+    mocker.patch('test.settings.telemetry_lorawan.sensors', sensor_settings.sensors)
+
+    # Invoke datalogger with LoRaWAN telemetry settings for a single duty cycle.
+    invoke_datalogger_pycom(caplog, settings=telemetry_lorawan)
+
+    # Capture log output.
+    captured = caplog.text
+
+    # Proof it works by verifying log output.
+    assert "Starting Terkin datalogger" in captured, captured
+    assert "platform: LoPy4" in captured, captured
+    assert "[LoRa] Starting LoRa Manager" in captured, captured
+    assert "Telemetry transport: CayenneLPP over LoRaWAN/TTN" in captured, captured
+    assert "Telemetry status: SUCCESS (1/1)" in captured, captured
+
+    # Check the raw LoRa payload.
+    from mocket import Mocket
+    assert Mocket.last_request() == bytearray(b'\x00g\x01\xbf\x00\x02\x01\x80\x01g\x01\xe1\x02g\x01\xe1'
+                                              b'\x03g\x00\x97\x00s)7\x00h\x9b\x00\x01\x00')
+
+    # Check the value after decoding from CayenneLPP.
+    from cayennelpp import LppFrame
+    data = LppFrame.from_bytes(Mocket.last_request()).data
+
+    # System temperature
+    assert data[0].channel == 0
+    assert data[0].type == 103
+    assert data[0].value == (44.7,)
+
+    # Weight (kg)
+    assert data[1].channel == 0
+    assert data[1].type == 2
+    assert data[1].value == (3.84,)
+
+    # DS18B20 temperature
+    assert data[2].channel == 1
+    assert data[2].type == 103
+    assert data[2].value == (48.1,)
+    assert data[3].channel == 2
+    assert data[3].type == 103
+    assert data[3].value == (48.1,)
+
+    # BME280 temperature
+    assert data[4].channel == 3
+    assert data[4].type == 103
+    assert data[4].value == (15.1,)
+
+    # BME280 pressure
+    assert data[5].channel == 0
+    assert data[5].type == 115
+    assert data[5].value == (1055.1,)
+
+    # BME280 humidity
+    assert data[6].channel == 0
+    assert data[6].type == 104
+    assert data[6].value == (77.5,)
+
+    # EOF?
+    assert data[7].channel == 0
+    assert data[7].type == 1
+    assert data[7].value == (0,)
+
+    assert "[LoRa] No downlink message processed" in captured, captured
+
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
