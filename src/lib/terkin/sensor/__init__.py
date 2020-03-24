@@ -3,4 +3,5 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
-from .core import SensorManager, AbstractSensor, BusType
+from .core import BusType, SensorManager
+from .common import AbstractSensor

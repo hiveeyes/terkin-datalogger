@@ -67,6 +67,7 @@ class ExampleDatalogger(TerkinDatalogger):
 def main():
     """Start the data logger application."""
     datalogger = ExampleDatalogger(settings)
+    datalogger.setup()
     datalogger.start()
 
 

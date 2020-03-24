@@ -18,3 +18,5 @@ settings.py
 /tmp
 presets.mk
 *~
+.coverage
+/spikes

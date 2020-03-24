@@ -6,7 +6,6 @@ import utime
 from terkin import logging
 from machine import Pin, enable_irq, disable_irq, idle
 from terkin.util import get_platform_info
-platform_info = get_platform_info()
 
 log = logging.getLogger(__name__)
 
@@ -21,11 +20,13 @@ class HX711:
 
     def __init__(self, dout, pd_sck, gain=128):
 
+        self.platform_info = get_platform_info()
+
         # Define two pins for clock and data.
-        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             self.pSCK = Pin(int(pd_sck[1:]), mode=Pin.OUT)
             self.pOUT = Pin(int(dout[1:]), mode=Pin.IN, pull=Pin.PULL_UP)
-        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.pSCK = Pin(pd_sck, mode=Pin.OUT)
             self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_UP)
         else:
@@ -49,11 +50,11 @@ class HX711:
         :param gain: 
 
         """
-        if gain is 128:
+        if gain == 128:
             self.GAIN = 1
-        elif gain is 64:
+        elif gain == 64:
             self.GAIN = 3
-        elif gain is 32:
+        elif gain == 32:
             self.GAIN = 2
 
     def is_ready(self):
@@ -211,7 +212,7 @@ class HX711:
 
         # Unfreeze pin hold when coming from deep sleep.
         # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.pSCK.hold(False)
 
         log.info('HX711 power up')
@@ -235,7 +236,7 @@ class HX711:
 
         # Hold level to HIGH, even during deep sleep.
         # https://community.hiveeyes.org/t/strom-sparen-beim-einsatz-der-micropython-firmware-im-batteriebetrieb/2055/72
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.pSCK.hold(True)
 
 

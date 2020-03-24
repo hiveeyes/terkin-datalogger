@@ -132,6 +132,22 @@ Development
 - Add firmware builder machinery
 - Add lowlevel driver for DS3231 RTC
 - Upgrade to rshell 0.0.27
+- Add basic test suite
+- Adjust machinery to run under pytest
+- Add tests for WiFi
+- Add MQTT telemetry test. Needs running MQTT broker.
+- Add ``pytest-docker-fixtures`` to invoke the MQTT telemetry tests
+  against a Mosquitto broker running on Docker.
+- Add test coverage reporting
+- Skip Mosquitto/Docker integration tests on Windows/WSL
+- Improve test suite re. Mosquitto dependency
+- Add LoRaWAN tests
+- Add tests covering sleep modes and maintenance mode
+- Add tests covering sensor machinery
+- Add tests covering GPRS telemetry
+- Improve tests covering LoRaWAN message decoding with environmental sensors
+- Update 3rd-party modules
+- Fix flakyness of MQTT test
 
 
 2019-08-19 0.6.0

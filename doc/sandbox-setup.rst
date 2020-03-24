@@ -52,8 +52,12 @@ Acquire source code
 ===================
 ::
 
+    # Initially, clone the source code repository.
     git clone https://github.com/hiveeyes/terkin-datalogger
     cd terkin-datalogger
+
+    # Later, update the source code.
+    git pull
 
 
 Setup development sandbox

@@ -234,7 +234,7 @@ Prio 1.3
     - Add ``alive_timer`` based on ``Timer.Chrono()``
     - Battery low warning & shutdown: if voltage < 4.0 / < 3.7 (normal: 4.3)
     - MOSFET gate
-- [o] ESP32 Mock for testing
+- [x] ESP32 Mock for testing: https://github.com/hiveeyes/terkin-datalogger/tree/master/test
 - [o] Scan Bluetooth neighbourhood for proximity applications
   https://docs.pycom.io/firmwareapi/pycom/network/bluetooth/
 - [o] Add Device ID as HTTP header
@@ -254,7 +254,7 @@ Prio 1.4
 - [o] Appropriate control for turning on DEBUG logging
 - [o] Guard against running without (valid?) ``settings.py``
 - [o] Use non-u-name imports, see also https://micropython.readthedocs.io/en/latest/library/#python-standard-libraries-and-micro-libraries
-- [o] Add software tests
+- [x] Add software tests
 - [o] Control the board through https://github.com/dhylands/rshell/blob/master/rshell/pyboard.py
 - [o] Makefile: Check for "wget"
 - [o] Migrate settings.py to settings.json
@@ -421,6 +421,13 @@ Upload and reset
     - ``make recycle scopes=full``
     - ``make recycle scopes=main,hiveeyes``
     - ``make recycle scopes=main,terkin``
+- [o] Improve tests
+    - Run against non-standard MQTT port (1888)
+    - UDP API
+    - HTTP API
+    - WiFi-HTTP telemetry
+    - Pure-Python DS18B20 driver
+    - State machine
 
 
 *************

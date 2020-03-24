@@ -244,7 +244,7 @@ telemetry = {
             'content_encoding': 'base64',
         },
 
-        # CayenneLPP over TTN-LoRa
+        # CayenneLPP over LoRaWAN/TTN
         {
             # Enable/disable this telemetry target.
             'enabled': False,

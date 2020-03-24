@@ -84,7 +84,7 @@ class TerkinDevice:
             except Exception as ex:
                 log.exc(ex, 'Starting network services failed')
         else:
-            log.info("[WiFi] interface disabled in settings.")
+            log.info("[WiFi] Interface disabled in settings.")
 
         # Initialize LoRa device.
         if self.application_info.platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']:
@@ -100,7 +100,7 @@ class TerkinDevice:
                     log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                                  "ATTENTION: Running LoRa without antenna will wreck your device.")
             else:
-                log.info("[LoRa] interface disabled in settings. Skip LoRa initialisation.")
+                log.info("[LoRa] Interface disabled in settings.")
         else:
             log.info("[LoRa] This is not a LoRa capable device.")
 
@@ -113,7 +113,7 @@ class TerkinDevice:
                 log.exc(ex, 'Unable to start GPRS modem')
                 self.status.networking = False
         else:
-            log.info("[GPRS] Interface disabled in settings, skipping initialization.")
+            log.info("[GPRS] Interface disabled in settings.")
 
         # Inform about networking status.
         #self.networking.print_status()
@@ -184,7 +184,7 @@ class TerkinDevice:
         self.telemetry = TelemetryManager()
 
         # Read all designated telemetry targets from configuration settings.
-        telemetry_targets = self.settings.get('telemetry.targets')
+        telemetry_targets = self.settings.get('telemetry.targets', [])
 
         # Compute list of all _enabled_ telemetry targets.
         telemetry_candidates = []
@@ -280,17 +280,21 @@ class TerkinDevice:
         """
 
         # TODO: Python runtime information.
-        add('{:8}: {}'.format('Python', sys.version))
+        add('{:8}: {}'.format('Python', sys.version.replace('\n', '')))
+        add('{:8}: {}'.format('platform', sys.platform))
 
         """
         >>> import os; os.uname()
         (sysname='FiPy', nodename='FiPy', release='1.20.0.rc7', version='v1.9.4-2833cf5 on 2019-02-08', machine='FiPy with ESP32', lorawan='1.0.2', sigfox='1.0.1')
         """
         runtime_info = os.uname()
+        #print(dir(runtime_info))
         for key in dir(runtime_info):
-            if key == '__class__':
+            if key.startswith('__') or key.startswith('n_'):
                 continue
             value = getattr(runtime_info, key)
+            if callable(value):
+                continue
             #print('value:', value)
             add('{:8}: {}'.format(key, value))
         add()
@@ -363,7 +367,7 @@ class TerkinDevice:
     def hibernate(self, interval, lightsleep=False, deepsleep=False):
         """
 
-        :param interval: 
+        :param interval:
         :param lightsleep:  (Default value = False)
         :param deepsleep:  (Default value = False)
 

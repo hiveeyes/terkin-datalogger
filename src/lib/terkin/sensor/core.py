@@ -2,17 +2,22 @@
 # (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import time
 from binascii import hexlify
-from machine import Pin, I2C
+from machine import Pin
 
 from terkin import logging
-from terkin.util import get_platform_info
+from terkin.sensor.common import AbstractBus
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 log.setLevel(logging.DEBUG)
+
+
+class BusType:
+    """ """
+
+    I2C = 'i2c'
+    OneWire = 'onewire'
 
 
 class SensorManager:
@@ -142,134 +147,6 @@ class SensorManager:
                     log.exc(ex, 'Sending {} to sensor {} failed'.format(action, busname))
 
 
-class AbstractSensor:
-    """Abstract sensor container, containing meta data as readings."""
-
-    SENSOR_NOT_INITIALIZED = object()
-
-    def __init__(self, settings=None):
-
-        self.settings = settings or {}
-        self.type = self.settings.get('type')
-
-        self.name = None
-        self.family = None
-        self.driver = None
-
-        """
-        e.g. Multiple onewire sensors are address indexed on a bus.
-        """
-        self.address = None
-        self.bus = None
-        self.parameter = {}
-        self.pins = {}
-
-    def start(self):
-        """ """
-        raise NotImplementedError("Must be implemented in sensor driver")
-
-    def set_address(self, address):
-        """
-
-        :param address: 
-
-        """
-        self.address = address
-
-    def register_pin(self, name, pin):
-        """
-
-        :param name: 
-        :param pin: 
-
-        """
-        self.pins[name] = pin
-
-    def register_parameter(self, name, parameter):
-        """
-
-        :param name: 
-        :param parameter: 
-
-        """
-        self.parameter[name] = parameter
-
-    def acquire_bus(self, bus):
-        """
-
-        :param bus: 
-
-        """
-        self.bus = bus
-
-    def read(self):
-        """ """
-        raise NotImplementedError()
-
-    def format_fieldname(self, name, address):
-        """
-
-        :param name: 
-        :param address: 
-
-        """
-        fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
-        return fieldname
-
-    def serialize(self):
-        """ """
-        return dict(serialize_som(self.__dict__, stringify=['bus']))
-
-
-class BusType:
-    """ """
-
-    I2C = 'i2c'
-    OneWire = 'onewire'
-
-
-class AbstractBus:
-    """A blueprint for all bus objects."""
-
-    type = None
-
-    def __init__(self, settings):
-        """
-        convention <type>:<index>
-        """
-        self.settings = settings
-        self.number = self.settings['number']
-
-        self.adapter = None
-        # TODO: Publish found 1-Wire devices to MQTT bus and HTTP API.
-        self.devices = []
-        self.pins = {}
-
-        # Indicate whether the bus driver just has been started.
-        self.just_started = None
-
-    @property
-    def name(self):
-        """ """
-        return str(self.type) + ":" + str(self.number)
-
-    def register_pin(self, name, pin):
-        """
-
-        :param name: 
-        :param pin: 
-
-        """
-        self.pins[name] = pin
-
-    def serialize(self):
-        """ """
-        info = dict(serialize_som(self.__dict__))
-        # FIXME: Why is that?
-        info.update({'name': self.name, 'type': self.type})
-        return info
-
-
 class OneWireBus(AbstractBus):
     """Initialize the 1-Wire hardware driver and represent as bus object."""
 
@@ -281,13 +158,13 @@ class OneWireBus(AbstractBus):
         try:
 
             # Vanilla MicroPython 1.11
-            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
                 pin = Pin(int(self.pins['data'][1:]))
                 import onewire_native
                 self.adapter = onewire_native.OneWire(pin)
 
             # Pycom MicroPython 1.9.4
-            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
                 pin = Pin(self.pins['data'])
                 if self.settings.get('driver') == 'native':
                     log.info('Using native 1-Wire driver on Pycom MicroPython')
@@ -356,10 +233,11 @@ class I2CBus(AbstractBus):
     def start(self):
         """ """
         # Todo: Improve error handling.
+        from machine import I2C
         try:
-            if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
                 self.adapter = I2C(self.number, sda=Pin(int(self.pins['sda'][1:])), scl=Pin(int(self.pins['scl'][1:])), freq=self.frequency)
-            elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
                 self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
             else:
                 raise NotImplementedError('I2C Bus is not implemented on this platform')
@@ -387,7 +265,7 @@ class I2CBus(AbstractBus):
             return
 
         # uPy doesn't have deinit so it doesn't need init
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
 
     def power_off(self):
@@ -397,41 +275,5 @@ class I2CBus(AbstractBus):
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
         """
         log.info('Turning off I2C bus {}'.format(self.name))
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adapter.deinit()
-
-
-def serialize_som(thing, stringify=None):
-    """Serialize the sensor object model to a representation
-    suitable to be served for the device API.
-
-    :param thing: 
-    :param stringify:  (Default value = None)
-
-    """
-    stringify = stringify or []
-
-    if isinstance(thing, list):
-        hm = []
-        for item in thing:
-            hm.append(serialize_som(item))
-        return hm
-
-    elif isinstance(thing, dict):
-        newthing = {}
-        for key, value in thing.items():
-            if key in stringify:
-                newthing[key] = str(value)
-            else:
-                newthing[key] = serialize_som(value)
-        return newthing
-
-    elif isinstance(thing, (str, int, float, bool, set)) or type(thing) is type(None):
-        return thing
-
-    else:
-        if hasattr(thing, 'serialize'):
-            thing = thing.serialize()
-        else:
-            thing = str(thing)
-        return thing
