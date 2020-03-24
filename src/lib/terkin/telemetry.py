@@ -890,7 +890,6 @@ def to_cayenne_lpp(dataframe: DataFrame):
 
     channel = {}
     channel['temp']   = 10
-    channel['humi']   = 1
     channel['volt']   = 2
     channel['pres']   = 1
     channel['scal']   = 6
@@ -909,6 +908,10 @@ def to_cayenne_lpp(dataframe: DataFrame):
         #     channel = 0
 
         if "voltage" in name:
+            # treat voltage as system sensors
+            # put battery voltage to channel 0
+            # put solar voltage to channel 1
+            # put other voltages to channel 2++
             if "battery" in name:
                 chan = 0
             elif "solar" in name:
@@ -918,6 +921,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
                 channel['volt'] += 1
                 frame.add_voltage(chan, value)
         elif "i2c" in name:
+            # assume outside BME280 on I2C bus and assign to channel 0
             if "temperature" in name:
                 frame.add_temperature(0, value)
             elif "humidity" in name:
@@ -925,10 +929,14 @@ def to_cayenne_lpp(dataframe: DataFrame):
             elif "pressure" in name:
                 frame.add_barometer(0, value)
         elif "onewire" in name:
+            # assume DS18B20 as inside sensors and assign to channel 10++
             if "temperature" in name:
                 frame.add_temperature(channel['temp'], value)
                 channel['temp'] += 1
         elif "weight" in name:
+            # Channels 5 to 9 for weight readings.
+            # Channel 5 for single reading (weight.0))
+            # Channel 6-9 for multiple readings (weight.[1-4])
             if name == "weight.0":
                 chan = 5
             else:
