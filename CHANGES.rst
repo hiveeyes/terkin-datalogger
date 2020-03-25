@@ -148,6 +148,8 @@ Development
 - Improve tests covering LoRaWAN message decoding with environmental sensors
 - Update 3rd-party modules
 - Fix flakyness of MQTT test
+- Add tests covering HTTP uplink telemetry
+- Use updated "umqtt" module for CPython compatibility
 
 
 2019-08-19 0.6.0
