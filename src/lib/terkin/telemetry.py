@@ -663,7 +663,7 @@ class MQTTAdapter:
 
         # TODO: Create abstract MQTT client factory to account for different implementations.
         try:
-            from mqtt import MQTTClient
+            from umqtt import MQTTClient
             self.driver_class = MQTTClient
 
         except Exception as ex:
