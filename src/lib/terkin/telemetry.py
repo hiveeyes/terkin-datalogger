@@ -920,7 +920,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
                 else:
                     chan = channel['volt']
                     channel['volt'] += 1
-                    frame.add_voltage(chan, value)
+                frame.add_voltage(chan, value)
             elif "temperature" in name:
                 frame.add_temperature(0, value)
         elif "i2c" in name:
