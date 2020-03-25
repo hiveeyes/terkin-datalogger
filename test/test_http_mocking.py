@@ -149,19 +149,21 @@ def test_httpserver_cpython_requests(httpserver_ipv4):
 
     httpserver = httpserver_ipv4
 
-    # Define HTTP request details.
-    data = {'hello': 'world'}
+    # Define HTTP conversation details.
+    request_data = {'hello': 'world'}
+    response_data = {'status': 'ok'}
 
     # Mock HTTP conversation.
-    httpserver.expect_request("/api/data").respond_with_json({'status': 'ok'})
+    httpserver.expect_request("/api/data").respond_with_json(response_data)
 
     # Invoke HTTP request.
     url = httpserver.url_for("/api/data")
-    requests.post(url, json=data)
+    requests.post(url, json=request_data)
 
     # Proof that worked.
     request, response = httpserver.log[0]
-    assert request.get_data() == json.dumps(data).encode()
+    assert request.get_data() == json.dumps(request_data).encode()
+    assert response.get_data() == json.dumps(response_data, indent=4).encode()
 
 
 @pytest.mark.httpmock

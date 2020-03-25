@@ -155,6 +155,7 @@ Development
 - Add new make targets for the testsuite to the inline Make documentation.
   Thanks, Markus!
 - Improve error reporting for "make setup"
+- Improve test coverage for HTTP telemetry / urequests module
 
 
 2019-08-19 0.6.0
