@@ -41,22 +41,6 @@ def monkeypatch_stdlib():
     time.ticks_diff = ticks_diff
     sys.modules['utime'] = time
 
-    import socket
-    class socket_adapter(socket.socket):
-
-        def write(self, data, length=None):
-            if hasattr(data, 'encode'):
-                data = data.encode()
-            if length is not None:
-                data = data[:length]
-            return self.send(data)
-
-        def read(self, length):
-            return self.recv(length)
-
-    sys.modules['usocket'] = socket
-    sys.modules['usocket'].socket = socket_adapter
-
     import io
     sys.modules['uio'] = io
 
