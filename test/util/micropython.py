@@ -34,7 +34,7 @@ def monkeypatch_stdlib():
     import time
     def ticks_ms():
         import time
-        return time.time_ns() / 1000000
+        return time.time() * 1000
     def ticks_diff(ticks1, ticks2):
         return abs(ticks1 - ticks2)
     time.ticks_ms = ticks_ms

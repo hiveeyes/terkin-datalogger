@@ -150,6 +150,8 @@ Development
 - Fix flakyness of MQTT test
 - Add tests covering HTTP uplink telemetry
 - Use updated "umqtt" module for CPython compatibility
+- Use "time.time()" rather than "time.time_ns()" to retain compatibility
+  with Python3.6. Thanks, Matthias!
 
 
 2019-08-19 0.6.0
