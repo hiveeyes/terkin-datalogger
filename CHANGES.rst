@@ -154,6 +154,7 @@ Development
   with Python3.6. Thanks, Matthias!
 - Add new make targets for the testsuite to the inline Make documentation.
   Thanks, Markus!
+- Improve error reporting for "make setup"
 
 
 2019-08-19 0.6.0

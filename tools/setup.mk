@@ -6,8 +6,18 @@ check-download-tools:
 
 download-requirements: check-download-tools
 
-	# Define path to the "dist-packages" installation directory.
+	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
+
+	@echo "$(INFO) Downloading and installing all 3rd-party modules into ${target_dir}"
+
+	@-$(MAKE) download-requirements-real target_dir=${target_dir} && ([ $$? -eq 0 ] \
+		&& echo "$(OK) Installation successful") || echo "$(ERROR) Installation failed"
+
+
+download-requirements-real:
+
+	@# Alias to "wget" program.
 	$(eval fetch := wget --quiet --no-clobber --directory-prefix)
 
 	# Install "upip", the PyPI package manager for MicroPython.
