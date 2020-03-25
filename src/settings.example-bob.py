@@ -219,7 +219,7 @@ sensors = {
             # Resistor between input pin and ground (R2).
             'resistor_r2': 1000,
 
-            # ADC attenuation. possbible values: 0.0, 2.5, 6.0 or 11.0
+            # ADC attenuation. Possible values are 0.0, 2.5, 6.0 or 11.0.
             'adc_attenuation_db': 6.0,
         },
 
