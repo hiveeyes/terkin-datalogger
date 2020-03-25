@@ -108,22 +108,26 @@ install-releasetools: setup-virtualenv3
 # --------------
 PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(levelname)-8s: %(message)s' --log-date-format='%Y-%m-%dT%H:%M:%S%z' --verbose"
 
+## Setup requirements for running the testsuite
+setup-tests: check-virtualenv
+	virtualenv --python=python3 --no-site-packages $(venv3path)
+	$(pip3) install --requirement requirements-test.txt
+
 .PHONY: test
+## Run testsuite
 test:
 	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
 	    $(pytest) test -m "$(marker)"
 
+## Run testsuite, with verbose output
 test-verbose:
 	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
 	    $(pytest) --log-cli-level=DEBUG test -m "$(marker)"
 
+## Run testsuite, with coverage report
 test-coverage:
 	$(coverage) run -m pytest -vv
 	$(coverage) report
-
-setup-tests: check-virtualenv
-	virtualenv --python=python3 --no-site-packages $(venv3path)
-	$(pip3) install --requirement requirements-test.txt
 
 
 # -------------
