@@ -388,10 +388,10 @@ class TelemetryTransportHTTP:
         :param dataframe:
         """
         log.info('Sending HTTP request to %s', self.uri)
-        log.info('Payload:     %s', dataframe.payload_out)
+        log.info('HTTP payload: %s', dataframe.payload_out)
 
-        import urequests
-        response = urequests.post(self.uri, data=dataframe.payload_out, headers={'Content-Type': self.content_type})
+        import uurequests
+        response = uurequests.post(self.uri, data=dataframe.payload_out.encode(), headers={'Content-Type': self.content_type})
         if response.status_code in [200, 201]:
             return True
         else:

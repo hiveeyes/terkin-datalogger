@@ -75,6 +75,9 @@ download-requirements: check-download-tools
 
 	# Install Pycom MQTT client library
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/60f2592/lib/mqtt/mqtt.py
+	# Install "uurequests" module.
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-urequests/uurequests/uurequests.py
+
 
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
