@@ -193,6 +193,14 @@ def monkeypatch_machine():
     class ADC(MagicMock):
         ATTN_6DB = 6.0
 
+        def atten(self, attenuation):
+            # ESP32
+            pass
+
+        def read(self):
+            # ESP32
+            return 4.2 * 1000
+
         def channel(self, *args, **kwargs):
             return ADCChannel()
 
