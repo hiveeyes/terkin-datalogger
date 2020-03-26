@@ -35,6 +35,8 @@ def test_sensors(mocker, caplog):
 
     # Proof it works by verifying last sensor readings.
 
+    # ADC
+    assert last_reading['system.voltage.battery'] == 4.2
 
     # BME280
     assert last_reading['temperature.0x77.i2c:0'] == 15.129645347595215

@@ -92,3 +92,7 @@ Invoke specific tests, with names::
 Display detailed coverage report::
 
     coverage report --show-missing
+
+Output full trace::
+
+    pytest --full-trace --capture=no -vvvvvvv -m spot
