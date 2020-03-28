@@ -10,7 +10,6 @@ from terkin import logging
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 
 # Todo: Make this configurable.
@@ -21,6 +20,7 @@ class AbstractSystemSensor:
 
     def __init__(self, settings):
         self.settings = settings
+        self.platform_info = get_platform_info()
 
 
 class SystemMemoryFree(AbstractSystemSensor):
@@ -158,11 +158,11 @@ class SystemVoltage(AbstractSystemSensor):
         else:
             raise ValueError('ADC attenuation value (adc_attenuation_db) not allowed : {}'.format(self.adc_attenuation_db))
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             from machine import Pin
             self.adc = ADC(Pin(int(self.pin[1:])))
 
-        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adc = ADC(id=0)
 
         else:
@@ -173,7 +173,6 @@ class SystemVoltage(AbstractSystemSensor):
         """Acquire voltage reading by sampling ADC."""
         # Todo: Make attenuation factor configurable.
 
-        from machine import ADC
         # Sample ADC a few times.
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0
@@ -181,7 +180,7 @@ class SystemVoltage(AbstractSystemSensor):
         log.debug('Reading voltage level on pin {} with voltage divider {}/{}'.format(self.pin, self.resistor_r1, self.resistor_r2))
 
         # read samples
-        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             self.adc.atten(self.adc_atten)
             irq_state = disable_irq()
             while i < self.adc_sample_count:
@@ -190,7 +189,7 @@ class SystemVoltage(AbstractSystemSensor):
                 i += 1
             enable_irq(irq_state)
 
-        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.adc.init()
             adc_channel = self.adc.channel(attn=self.adc_atten, pin=self.pin)
             irq_state = disable_irq()
@@ -211,12 +210,12 @@ class SystemVoltage(AbstractSystemSensor):
             adc_variance += (sample - adc_mean) ** 2
         adc_variance /= (self.adc_sample_count - 1)
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             # FIXME: Make this work for vanilla ESP32.
             raw_voltage = 0.0
             mean_voltage = 0.0
 
-        elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             raw_voltage = adc_channel.value_to_voltage(4095)
             mean_voltage = adc_channel.value_to_voltage(int(adc_mean))
 
@@ -229,7 +228,7 @@ class SystemVoltage(AbstractSystemSensor):
         log.debug("SystemVoltage: 10**6*Variance/(Mean**2) of ADC readings = %15.13f" % mean_variance)
 
         resistor_sum = self.resistor_r1 + self.resistor_r2
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             voltage_millivolt = (adc_channel.value_to_voltage(int(adc_mean))) * resistor_sum / self.resistor_r2
         else:
             # FIXME: Make this work for vanilla ESP32.
@@ -237,7 +236,7 @@ class SystemVoltage(AbstractSystemSensor):
         voltage_volt = voltage_millivolt / 1000.0
 
         # Shut down ADC channel.
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             adc_channel.deinit()
 
         log.debug('Voltage level: {}'.format(voltage_volt))

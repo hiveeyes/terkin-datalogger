@@ -388,10 +388,10 @@ class TelemetryTransportHTTP:
         :param dataframe:
         """
         log.info('Sending HTTP request to %s', self.uri)
-        log.info('Payload:     %s', dataframe.payload_out)
+        log.info('HTTP payload: %s', dataframe.payload_out)
 
         import urequests
-        response = urequests.post(self.uri, data=dataframe.payload_out, headers={'Content-Type': self.content_type})
+        response = urequests.post(self.uri, data=dataframe.payload_out.encode(), headers={'Content-Type': self.content_type})
         if response.status_code in [200, 201]:
             return True
         else:
@@ -404,6 +404,8 @@ class TelemetryTransportHTTPOverGPRS(TelemetryTransportHTTP):
     def __init__(self, gprs_manager, uri, format):
         super().__init__(uri, format)
         self.gprs_manager = gprs_manager
+
+        log.info('Telemetry transport: JSON over HTTP over GPRS')
 
     def send(self, dataframe: DataFrame):
         """
@@ -431,6 +433,8 @@ class TelemetryTransportLORA:
 
     def __init__(self, lora_manager, settings):
 
+        log.info('Telemetry transport: CayenneLPP over LoRaWAN/TTN')
+
         self.lora_manager = lora_manager
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
@@ -447,7 +451,7 @@ class TelemetryTransportLORA:
                 try:
                     self.lora_manager.create_lora_socket()
                 except:
-                    log.error("[LoRa] Could not create LoRa socket")
+                    log.exception("[LoRa] Could not create LoRa socket")
         else:
             log.error("[LoRa] Could not join network")
 
@@ -472,13 +476,13 @@ class TelemetryTransportLORA:
         elif _pause == 1:
             payload = binascii.unhexlify(b'000101')
 
-        log.info('[LoRa] Uplink payload (hex) : %s', binascii.hexlify(payload).decode())
+        log.info('[LoRa] Uplink payload (hex): %s', binascii.hexlify(payload).decode())
 
         # Send payload
         try:
-            log.info('[LoRa] Sending payload ...')
+            log.info('[LoRa] Sending payload...')
             outcome = self.lora_manager.lora_send(payload)
-            log.info('[LoRa] %s bytes sent', outcome)
+            log.info('[LoRa] Sent %s bytes', outcome)
         except:
             log.exception('[LoRa] Transmission failed')
             return False
@@ -491,23 +495,25 @@ class TelemetryTransportLORA:
 
         if port == 1:
             sleep = int.from_bytes(rx, "big")
-            log.info('[LoRa] deep sleep interval command received: sleep for %s minutes', sleep)
             if sleep == 0:
                 # use value from settings file
-                log.info('[LoRa] erasing deep sleep interval from NVRAM')
+                log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
                 try:
                     pycom.nvs_erase('deepsleep')
                 except:
                     pass
             else:
-                # use value received via LoRa
+                # Use deepsleep interval received via LoRa.
+                log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
                 pycom.nvs_set('deepsleep', sleep)
+
         elif port == 2:
             pause = int.from_bytes(rx, "big")
-            log.info('[LoRa] pause payload submission : %s', bool(pause))
+            log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
             pycom.nvs_set('pause', pause)
+
         else:
-            log.info('[LoRa] no or invalid downlink message received')
+            log.info('[LoRa] No downlink message processed')
 
         return True
 
@@ -657,7 +663,7 @@ class MQTTAdapter:
 
         # TODO: Create abstract MQTT client factory to account for different implementations.
         try:
-            from mqtt import MQTTClient
+            from umqtt import MQTTClient
             self.driver_class = MQTTClient
 
         except Exception as ex:
@@ -894,6 +900,8 @@ def to_cayenne_lpp(dataframe: DataFrame):
 
     for key, value in dataframe.data_out.items():
 
+        #log.debug('-' * 42)
+
         # TODO: Maybe implement different naming conventions.
         name = key.split("_")[0]
         # try:
@@ -914,9 +922,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
             frame.add_barometer(channel['press'], value)
             channel['press'] += 1
         elif "weight" in name:
-            # 2 bytes signed float is easily exceeded when sending values in [g]
-            value_kg = float('%.2f' % (value / 1000))
-            frame.add_analog_input(channel['scale'], value_kg)
+            frame.add_analog_input(channel['scale'], value)
             channel['scale'] += 1
         elif "analog-output" in name:
             frame.add_analog_output(channel, value)

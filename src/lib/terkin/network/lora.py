@@ -24,6 +24,7 @@ class LoRaManager:
 
     def start(self):
         """ """
+        log.info('[LoRa] Starting LoRa Manager')
         self.start_lora_join()
 
     def start_lora_join(self):
@@ -59,7 +60,7 @@ class LoRaManager:
         app_key = binascii.unhexlify(self.otaa_settings['application_key'])
 
         if not self.lora.has_joined():
-            log.info('[LoRa] joining the network...')
+            log.info('[LoRa] Joining the network')
             if self.otaa_settings.get('device_eui') is None:
                 self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
             else:
@@ -81,9 +82,9 @@ class LoRaManager:
         self.lora_joined = self.lora.has_joined()
 
         if self.lora_joined:
-            log.info('[LoRa] joined...')
+            log.info('[LoRa] Joined successfully')
         else:
-            log.info('[LoRa] did not join in %s attempts', attempts)
+            log.info('[LoRa] Did not join in %s attempts', attempts)
 
         return self.lora_joined
 
@@ -96,7 +97,7 @@ class LoRaManager:
         self.socket.settimeout(6.0)
 
         self.lora_socket = True
-        log.info('[LoRa] socket created')
+        log.info('[LoRa] Socket created')
 
         return self.lora_socket
 
@@ -123,9 +124,9 @@ class LoRaManager:
         try:
             rx, port = self.socket.recvfrom(256)
         except socket.timeout:
-            log.info('[LoRa] no packet received within receive window ')
+            log.info('[LoRa] No packet received within receive window')
 
         if rx:
-            log.info('[LoRa] Received: {}, on port: {}'.format(rx, port))
+            log.info('[LoRa] Received: {} on port: {}'.format(rx, port))
 
         return rx, port

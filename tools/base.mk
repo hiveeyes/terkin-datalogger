@@ -23,6 +23,8 @@ $(eval rshell       := $(venv3path)/bin/rshell)
 $(eval miniterm     := $(venv3path)/bin/miniterm.py)
 
 $(eval bumpversion  := $(venv3path)/bin/bumpversion)
+$(eval pytest       := $(venv3path)/bin/pytest)
+$(eval coverage     := $(venv3path)/bin/coverage)
 
 
 # ------------------
@@ -101,6 +103,32 @@ install-releasetools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-release.txt --upgrade
 
 
+# --------------
+# Software tests
+# --------------
+PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(levelname)-8s: %(message)s' --log-date-format='%Y-%m-%dT%H:%M:%S%z' --verbose"
+
+## Setup requirements for running the testsuite
+setup-tests: check-virtualenv
+	virtualenv --python=python3 --no-site-packages $(venv3path)
+	$(pip3) install --requirement requirements-test.txt
+
+.PHONY: test
+## Run testsuite
+test:
+	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	    $(pytest) test -m "$(marker)"
+
+## Run testsuite, with verbose output
+test-verbose:
+	@export PYTEST_ADDOPTS=$(PYTEST_OPTIONS) && \
+	    $(pytest) --log-cli-level=DEBUG test -m "$(marker)"
+
+## Run testsuite, with coverage report
+test-coverage:
+	$(coverage) run -m pytest -vv
+	$(coverage) report
+
 
 # -------------
 # Miscellaneous
@@ -154,13 +182,14 @@ GREEN_COLOR=\033[32;01m
 RED_COLOR=\033[31;01m
 ORANGE_COLOR=\033[38;5;208m
 YELLOW_COLOR=\033[33;01m
+BLUE_COLOR=\033[34;01m
 CYAN_COLOR=\033[36;01m
 BOLD=\033[1m
 UNDERLINE=\033[4m
 REVERSED=\033[7m
 
 OK=$(GREEN_COLOR)[OK]     $(NO_COLOR)
-INFO=$(NO_COLOR)[INFO]   $(NO_COLOR)
+INFO=$(BLUE_COLOR)[INFO]   $(NO_COLOR)
 ERROR=$(RED_COLOR)[ERROR]  $(NO_COLOR)
 WARNING=$(ORANGE_COLOR)[WARNING]$(NO_COLOR)
 ADVICE=$(CYAN_COLOR)[ADVICE] $(NO_COLOR)

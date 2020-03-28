@@ -7,13 +7,11 @@ import machine
 import network
 import binascii
 
-from copy import deepcopy
 from terkin import logging
+from terkin.sensor.system import AbstractSystemSensor
 from terkin.util import get_platform_info, format_mac_address, backoff_time, Stopwatch
 
 log = logging.getLogger(__name__)
-
-platform_info = get_platform_info()
 
 
 class WiFiManager:
@@ -22,6 +20,7 @@ class WiFiManager:
     """
 
     def __init__(self, manager, settings):
+
         self.manager = manager
         self.settings = settings
 
@@ -37,6 +36,9 @@ class WiFiManager:
 
         # Helper for the ``stay_connected`` thread.
         self.is_running = False
+
+        # Reference to platform information.
+        self.platform_info = get_platform_info()
 
     def start(self):
         """ """
@@ -87,7 +89,7 @@ class WiFiManager:
         https://github.com/pycom/pydocs/blob/master/firmwareapi/pycom/network/wlan.md
         """
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.station = network.WLAN()
         else:
             log.info('WiFi STA: Will exclusively use STA mode on this platform. AP mode not implemented yet.')
@@ -110,7 +112,7 @@ class WiFiManager:
         # Setup network interface.
         log.info("WiFi: Starting interface")
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.configure_antenna()
 
             # FIXME: Make STA or AP or STA_AP configurable.
@@ -309,7 +311,7 @@ class WiFiManager:
         log.info('WiFi STA: Preparing connection to network "{}"'.format(network_name))
 
         auth_mode = None
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             log.info('WiFi STA: Getting auth mode')
             auth_mode = self.get_auth_mode(network_name)
             log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
@@ -361,7 +363,7 @@ class WiFiManager:
         return True
 
     def _connect(self, ssid, password, auth_mode=None, timeout=None):
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             self.station.connect(ssid, (auth_mode, password), timeout=int(timeout * 1000))
         else:
             self.station.connect(ssid, password)
@@ -440,7 +442,7 @@ class WiFiManager:
 
     def get_ssid(self):
         """ """
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             return self.station.ssid()
         else:
             return self.station.config('essid')
@@ -460,7 +462,7 @@ class WiFiManager:
         """
 
         # NVRAM key for storing auth mode per network. Maximum of 15 characters.
-        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name)
+        auth_mode_nvs_key = self.auth_mode_nvs_key(network_name.encode())
 
         # Get WiFi STA auth mode from NVRAM.
         try:
@@ -555,7 +557,7 @@ class WiFiManager:
         """ """
 
         # Get MAC address.
-        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             mac_address = self.station.mac()
         else:
             mac_address = self.station.config('mac')
@@ -593,19 +595,19 @@ class WiFiException(Exception):
     pass
 
 
-class SystemWiFiMetrics:
+class SystemWiFiMetrics(AbstractSystemSensor):
     """
     Runtime information from the WiFi bearer.
     """
 
     def __init__(self, settings, station):
-        self.settings = settings
+        super().__init__(settings)
         self.station = station
 
     def read(self):
         """ """
 
-        if platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             stats = {}
             #stats['system.wifi.channel'] = self.station.config('channel')
 

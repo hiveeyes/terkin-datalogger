@@ -6,8 +6,18 @@ check-download-tools:
 
 download-requirements: check-download-tools
 
-	# Define path to the "dist-packages" installation directory.
+	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
+
+	@echo "$(INFO) Downloading and installing all 3rd-party modules into ${target_dir}"
+
+	@-$(MAKE) download-requirements-real target_dir=${target_dir} && ([ $$? -eq 0 ] \
+		&& echo "$(OK) Installation successful") || echo "$(ERROR) Installation failed"
+
+
+download-requirements-real:
+
+	@# Alias to "wget" program.
 	$(eval fetch := wget --quiet --no-clobber --directory-prefix)
 
 	# Install "upip", the PyPI package manager for MicroPython.
@@ -41,6 +51,8 @@ download-requirements: check-download-tools
 	# Install state machine library
 	#curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
 
+	# pysm==0.3.9
+	curl --location https://github.com/pgularski/pysm/archive/v0.3.9-alpha.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - pysm-0.3.9-alpha/pysm
 
 
 	## API
@@ -71,8 +83,13 @@ download-requirements: check-download-tools
 	$(fetch) $(target_dir)/urllib https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/urllib.parse/urllib/parse.py
 	touch $(target_dir)/urllib/__init__.py
 
-	# Install Pycom MQTT client library
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/pycom/pycom-libraries/60f2592/lib/mqtt/mqtt.py
+	# Install "urequests" module.
+	rm $(target_dir)/urequests.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/urequests.py https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-urequests/urequests/urequests/__init__.py
+
+	# Install "umqtt" module.
+	rm $(target_dir)/umqtt.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/umqtt.py https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-umqtt/umqtt.simple/umqtt/simple.py
 
 	# Install PyCayenneLPP from Git repository.
 	$(eval tmpdir := ./.pycayennelpp.tmp)
@@ -85,13 +102,16 @@ download-requirements: check-download-tools
 
 	# Install SIM800 driver
 	rm $(target_dir)/pythings_sim800.py || true
-	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/a9a8b981/SIM800L.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/pppos/SIM800L.py
 
 
 	## RTC and non-volatile memory
 
 	# Driver for DS3231 RTC
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+
+	# Driver for AT24C32 EEPROM
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/mcauser/micropython-tinyrtc-i2c/1e650122a516513c1a5e348e1755c7dc829deab9/at24c32n.py
 
 
 	## Sensors
@@ -107,7 +127,7 @@ download-requirements: check-download-tools
 	# https://github.com/micropython/micropython/tree/v1.11/drivers/onewire
 	rm $(target_dir)/onewire_native.py || true
 	rm $(target_dir)/ds18x20_native.py || true
-	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/onewire.py
+	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_native.py https://raw.githubusercontent.com/daq-tools/micropython/improve-onewire/drivers/onewire/onewire.py
 	$(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_native.py https://raw.githubusercontent.com/micropython/micropython/v1.11/drivers/onewire/ds18x20.py
 
 	# Pure-Python onewire.py from pycom-libraries for Pycom MicroPython 1.9.4.
@@ -126,6 +146,10 @@ download-requirements: check-download-tools
     # 3. Install driver for MAX17043
 	rm $(target_dir)/max17043.py || true
 	$(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
+
+
+	## GUI
+	#curl --location https://github.com/pfalcon/picotui/archive/master.zip | tar -C $(target_dir) --strip-components=1 -xvf - picotui-master/picotui
 
 
 download-requirements-optional:

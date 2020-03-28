@@ -2,7 +2,7 @@ pycopy-copy
 pycopy-types
 micropython-collections
 micropython-collections.defaultdict
-pycopy-urequests
+#pycopy-urequests
 pycopy-shutil
 # All of these pull in dependencies of vanilla MicroPython
 # essentially breaking Pycom MicroPython.
@@ -14,3 +14,4 @@ pycopy-shutil
 #pycopy-base64
 #pycopy-logging
 #pycopy-json
+#pycopy-uuid

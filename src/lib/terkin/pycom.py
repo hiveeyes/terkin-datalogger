@@ -7,7 +7,6 @@ from terkin import logging
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 
 class MachineResetCause:
@@ -74,6 +73,8 @@ class MachineResetCause:
         Yield dictionary containing reset cause and wakeup reason
         suitable for human consumption through an appropriate log message.
         """
+
+        platform_info = get_platform_info()
 
         reset_cause_magic = machine.reset_cause()
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
