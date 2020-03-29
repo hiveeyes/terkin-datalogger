@@ -165,7 +165,7 @@ class TerkinDatalogger:
         # Run downstream mainloop handlers.
         self.duty_cycle()
 
-        # Sleep how ever.
+        # Sleep how configured
         self.sleep()
 
     def duty_cycle(self):
@@ -205,42 +205,47 @@ class TerkinDatalogger:
         machine.idle()
 
     def sleep(self):
-        """Sleep until the next measurement cycle."""
+        """Sleep or shutoff until the next measurement cycle."""
 
         lightsleep = self.settings.get('main.lightsleep', False)
         deepsleep = self.settings.get('main.deepsleep', False)
+        shutoff = self.settings.get('main.shutoff', False)
         interval = self.get_sleep_time()
 
         # Amend deep sleep intent when masked through maintenance mode.
         if self.device.status.maintenance is True:
             lightsleep = False
             deepsleep = False
+            shutoff = False
             log.info('Device is in maintenance mode. Skipping deep sleep and '
                      'adjusting sleep time to {} seconds.'.format(interval))
 
         # Prepare device shutdown.
         try:
-
             # Shut down sensor peripherals.
             self.sensor_manager.power_off()
 
             # Shut down networking.
-            if deepsleep:
+            if deepsleep or shutoff:
                 self.device.networking.stop()
 
         except Exception as ex:
             log.exc(ex, 'Power off failed')
 
-        # Activate device sleep mode.
-        try:
-            self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
+        if shutoff:
+            # shut off the MCU via DS3231
+            self.shutoff()
+        else:
+            # Activate device sleep mode.
+            try:
+                self.device.hibernate(interval, lightsleep=lightsleep, deepsleep=deepsleep)
 
-        # When hibernation fails, fall back to regular "time.sleep".
-        except Exception as ex:
-            log.exc(ex, 'Failed to hibernate, falling back to regular sleep')
-            # Todo: Emit error message here.
-            log.info('Sleeping for {} seconds'.format(interval))
-            time.sleep(interval)
+            # When hibernation fails, fall back to regular "time.sleep".
+            except Exception as ex:
+                log.exc(ex, 'Failed to hibernate, falling back to regular sleep')
+                # Todo: Emit error message here.
+                log.info('Sleeping for {} seconds'.format(interval))
+                time.sleep(interval)
 
     def get_sleep_time(self):
         """ """
@@ -565,6 +570,7 @@ class TerkinDatalogger:
         return success
 
     def start_buttons(self):
+
         """
         Configure ESP32 touchpads.
         """
@@ -608,3 +614,36 @@ class TerkinDatalogger:
         # Will yield ``ValueError: Touch pad error``.
         #self.button_manager.setup_touchpad('P20', name='Touch8', location='Module-Right-Top-7th')
         #self.button_manager.setup_touchpad('P19', name='Touch9', location='Module-Right-Top-8th')
+
+    def shutoff(self):
+        """ shut off the MCU """
+
+        from DS3231 import DS3231 as DS3231
+        import utime
+
+        ds = DS3231(self.bus)
+        interval = self.settings.get('main.interval.shutoff', 10) * 60
+        (year,month,day,hour,minute,second, dotw, doty) = utime.localtime() # get the current time
+
+        # check if its night or winter
+        night_start = self.settings.get('main.interval.night_start', 0)
+        night_end =  self.settings.get('main.interval.night_end', 0)
+        winter_start = self.settings.get('main.interval.winter_start', 0)
+        winter_end =  self.settings.get('main.interval.winter_end', 0)
+        if night_start > 0 and (hour >= night_start or hour <= night_end):  # double interval for the night
+            interval *= 2
+        if winter_start > 0 and (month >= winter_start or month <= winter_end):  # double interval for winter
+            interval *= 2
+
+        # Compute sleeping duration from measurement interval and elapsed time.
+        elapsed = self.duty_chrono.read()
+        now_secs = utime.mktime(utime.localtime())
+        wake_at = now_secs - elapsed + interval
+        if (wake_at - now_secs) < 180:  # don't shutoff for less than 3 minutes
+            wake_at += interval
+
+        (year,month,day,hour,minute,second, dotw, doty) = utime.localtime(wake_at) # convert the wake up time
+
+        # set alarm
+
+        ds.ClearAlarm() # turn off MCU via MOSFET

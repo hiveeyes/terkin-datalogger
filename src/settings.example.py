@@ -3,19 +3,34 @@
 # General settings.
 main = {
 
-    # Measurement intervals in seconds.
+    # Measurement intervals in seconds, for shutdown in minutes.
     'interval': {
 
         # Apply this interval if device is in field mode.
-        'field': 60.0,
+        'field': 15.0,
 
         # Apply this interval if device is in maintenance mode.
         # https://community.hiveeyes.org/t/wartungsmodus-fur-den-terkin-datenlogger/2274
         'maintenance': 15.0,
+
+        # Apply this interval if device goes into shutoff
+        'shutoff': 10,
+        # night & winter mode: during the night or the interval is doubled (-> in a winter night it is quadrupled)
+        # beginning & end months are included: night from 20 to 5 -> 20.00h to 5.59h, winter from 10 to 2 -> October 1st to February 29th
+        # a start value of 0 means there is no night/winter, night_start > night_end, winter_start > winter_end
+        'night_start': 20,
+        'night_end' : 5,
+        'winter_start' : 10,
+        'winter_end' : 2,
     },
 
+    # the next three options are logically exclusive but if you insist: shutoff > deepsleep > lightsleep
+    # Whether to completely shutoff between measurements (requires DS3231!)
+    'shutoff': False,
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': False,
+    # Whether to use ight sleep between measurement cycles.
+    'lightsleep': False,
 
     # Configure logging.
     'logging': {
@@ -417,6 +432,14 @@ sensors = {
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
+        },
+        {
+            'id': 'max17043-1',
+            'description': 'Akkuspannung und Prozent',
+            'type': 'MAX17043',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x36,
         },
     ],
     'busses': [

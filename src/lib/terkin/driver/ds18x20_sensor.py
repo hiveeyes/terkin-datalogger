@@ -40,7 +40,7 @@ class DS18X20Sensor(AbstractSensor):
 
             platform_info = get_platform_info()
 
-            # Vanilla MicroPython 1.11
+            # Vanilla MicroPython >=1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla or use_native_driver:
                 import ds18x20_native
                 self.driver = ds18x20_native.DS18X20(onewire_bus)
