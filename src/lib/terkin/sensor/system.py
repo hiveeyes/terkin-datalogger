@@ -173,7 +173,6 @@ class SystemVoltage(AbstractSystemSensor):
         """Acquire voltage reading by sampling ADC."""
         # Todo: Make attenuation factor configurable.
 
-        from machine import ADC
         # Sample ADC a few times.
         adc_samples = [0.0] * self.adc_sample_count
         adc_mean = 0.0

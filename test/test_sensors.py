@@ -30,12 +30,22 @@ def test_sensors(mocker, caplog):
     assert "Found 2 I2C devices: [118, 119]." in captured, captured
     assert "Found 2 1-Wire (DS18x20) devices: ['28ff641d8fdf18c1', '28ff641d8fc3944f']" in captured, captured
 
+    # Get hold of the last reading.
+    last_reading = datalogger.storage.last_reading
+
     # Proof it works by verifying last sensor readings.
-    assert datalogger.storage.last_reading['temperature.0x77.i2c:0'] == 15.129645347595215
-    assert datalogger.storage.last_reading['humidity.0x77.i2c:0'] == 77.88673400878906
-    assert datalogger.storage.last_reading['pressure.0x77.i2c:0'] == 1055.163671875
 
-    assert datalogger.storage.last_reading['temperature.28ff641d8fc3944f.onewire:0'] == 48.1875
-    assert datalogger.storage.last_reading['temperature.28ff641d8fdf18c1.onewire:0'] == 48.1875
+    # ADC
+    assert last_reading['system.voltage.battery'] == 4.2
 
-    assert datalogger.storage.last_reading['weight.0'] == 3.845
+    # BME280
+    assert last_reading['temperature.0x77.i2c:0'] == 15.129645347595215
+    assert last_reading['humidity.0x77.i2c:0'] == 77.88673400878906
+    assert last_reading['pressure.0x77.i2c:0'] == 1055.163671875
+
+    # DS18B20
+    assert last_reading['temperature.28ff641d8fc3944f.onewire:0'] == 48.1875
+    assert last_reading['temperature.28ff641d8fdf18c1.onewire:0'] == 48.1875
+
+    # HX711
+    assert last_reading['weight.0'] == 3.845

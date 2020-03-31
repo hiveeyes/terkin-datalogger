@@ -6,8 +6,18 @@ check-download-tools:
 
 download-requirements: check-download-tools
 
-	# Define path to the "dist-packages" installation directory.
+	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
+
+	@echo "$(INFO) Downloading and installing all 3rd-party modules into ${target_dir}"
+
+	@-$(MAKE) download-requirements-real target_dir=${target_dir} && ([ $$? -eq 0 ] \
+		&& echo "$(OK) Installation successful") || echo "$(ERROR) Installation failed"
+
+
+download-requirements-real:
+
+	@# Alias to "wget" program.
 	$(eval fetch := wget --quiet --no-clobber --directory-prefix)
 
 	# Install "upip", the PyPI package manager for MicroPython.
@@ -73,8 +83,9 @@ download-requirements: check-download-tools
 	$(fetch) $(target_dir)/urllib https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/urllib.parse/urllib/parse.py
 	touch $(target_dir)/urllib/__init__.py
 
-	# Install "uurequests" module.
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-urequests/uurequests/uurequests.py
+	# Install "urequests" module.
+	rm $(target_dir)/urequests.py || true
+	$(fetch) $(target_dir) --output-document=$(target_dir)/urequests.py https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-urequests/urequests/urequests/__init__.py
 
 	# Install "umqtt" module.
 	rm $(target_dir)/umqtt.py || true

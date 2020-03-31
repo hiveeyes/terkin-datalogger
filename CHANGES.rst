@@ -154,6 +154,9 @@ Development
   with Python3.6. Thanks, Matthias!
 - Add new make targets for the testsuite to the inline Make documentation.
   Thanks, Markus!
+- Improve error reporting for "make setup"
+- Improve test coverage for HTTP telemetry / urequests module
+- Add test coverage for "system.voltage.battery" by mocking the ADC
 
 
 2019-08-19 0.6.0

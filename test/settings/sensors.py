@@ -78,10 +78,10 @@ sensors = {
             # These settings are matching the resistor values of the Pycom Expansion Board 3.1 and 3.2.
 
             # The sensor type identifier.
-            'type': 'system.battery-voltage',
+            'type': 'system.voltage.battery',
 
             # Enable/disable sensor.
-            'enabled': False,
+            'enabled': True,
 
             # On which Pin to schnuckle this.
             'pin': 'P16',

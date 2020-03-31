@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 @pytest.mark.docker
 @pytest.mark.esp32
 @mock.patch('sys.platform', 'esp32')
-def test_telemetry_wifi_mqtt(mosquitto, caplog, capmqtt):
+def test_uplink_wifi_mqtt(mosquitto, caplog, capmqtt):
 
     # Acquire settings with MQTT telemetry.
     import test.settings.telemetry_mqtt as settings

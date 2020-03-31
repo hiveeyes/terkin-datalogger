@@ -116,8 +116,8 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
 
     # Check the raw LoRa payload.
     from mocket import Mocket
-    assert Mocket.last_request() == bytearray(b'\x00g\x01\xbf\x05z\x00\x0f\x05\ng\x01\xe1\x0bg\x01\xe1\x05g\x00'
-                                              b'\x97\x05s)7\x05h\x9b\x00\x01\x00')
+    assert Mocket.last_request() == bytearray(b'\x00g\x01\xbf\x00t\x01\xa4\x05z\x00\x0f\x05\ng\x01\xe1\x0bg\x01'
+                                              b'\xe1\x05g\x00\x97\x05s)7\x05h\x9b\x00\x01\x00')
 
     # Check the value after decoding from CayenneLPP.
     from cayennelpp import LppFrame
@@ -128,38 +128,42 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
     assert data[0].type == 103
     assert data[0].value == (44.7,)
 
-    # Weight (kg)
-    assert data[1].channel == 5
-    assert data[1].type == 122
-    assert data[1].value == (3.845,)
+    # Voltage
+    assert data[1].channel == 0
+    assert data[1].type == 116
+    assert data[1].value == (4.2,)
+
+    assert data[2].channel == 5
+    assert data[2].type == 122
+    assert data[2].value == (3.845,)
 
     # DS18B20 temperature
-    assert data[2].channel == 10
-    assert data[2].type == 103
-    assert data[2].value == (48.1,)
-    assert data[3].channel == 11
+    assert data[3].channel == 10
     assert data[3].type == 103
     assert data[3].value == (48.1,)
+    assert data[4].channel == 11
+    assert data[4].type == 103
+    assert data[4].value == (48.1,)
 
     # BME280 temperature
-    assert data[4].channel == 5
-    assert data[4].type == 103
-    assert data[4].value == (15.1,)
+    assert data[5].channel == 5
+    assert data[5].type == 103
+    assert data[5].value == (15.1,)
 
     # BME280 pressure
-    assert data[5].channel == 5
-    assert data[5].type == 115
-    assert data[5].value == (1055.1,)
+    assert data[6].channel == 5
+    assert data[6].type == 115
+    assert data[6].value == (1055.1,)
 
     # BME280 humidity
-    assert data[6].channel == 5
-    assert data[6].type == 104
-    assert data[6].value == (77.5,)
+    assert data[7].channel == 5
+    assert data[7].type == 104
+    assert data[7].value == (77.5,)
 
     # EOF?
-    assert data[7].channel == 0
-    assert data[7].type == 1
-    assert data[7].value == (0,)
+    assert data[8].channel == 0
+    assert data[8].type == 1
+    assert data[8].value == (0,)
 
     assert "[LoRa] No downlink message processed" in captured, captured
 

@@ -189,7 +189,35 @@ def monkeypatch_machine():
     machine.I2C = MockedI2C
 
     # ADC peripheral
-    machine.ADC = MagicMock()
+
+    class ADC(MagicMock):
+        ATTN_6DB = 6.0
+
+        def atten(self, attenuation):
+            # ESP32
+            pass
+
+        def read(self):
+            # ESP32
+            return 4.2 * 1000
+
+        def channel(self, *args, **kwargs):
+            return ADCChannel()
+
+    class ADCChannel(MagicMock):
+
+        def __call__(self):
+            return 0.1
+
+        def value_to_voltage(self, value):
+            # No idea what we are doing here.
+            return 4.2 * 1000 / 2
+
+    # Reduce sample count. 1000 will be too much.
+    from terkin.sensor.system import SystemVoltage
+    SystemVoltage.adc_sample_count = const(100)
+
+    machine.ADC = ADC
 
     # UART peripheral
     machine.UART = MagicMock()
