@@ -473,6 +473,10 @@ class TerkinDatalogger:
                 with gc_disabled():
                     sensor_data = sensor.read()
 
+                # Power off HX711 after reading
+                if "HX711Sensor" in sensorname:
+                   sensor.power_off()
+
                 # Evaluate sensor outcome.
                 if sensor_data is None or sensor_data is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
