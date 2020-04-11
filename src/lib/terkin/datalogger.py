@@ -645,5 +645,9 @@ class TerkinDatalogger:
         (year,month,day,hour,minute,second, dotw, doty) = utime.localtime(wake_at) # convert the wake up time
 
         # set alarm
+        ds.ALARM(day,hour,minute.ds.PER_DAY)
 
-        ds.ClearAlarm() # turn off MCU via MOSFET
+        # turn off MCU via MOSFET
+        ds.ClearAlarm() 
+
+        # The End

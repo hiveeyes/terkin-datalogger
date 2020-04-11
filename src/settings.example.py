@@ -3,7 +3,7 @@
 # General settings.
 main = {
 
-    # Measurement intervals in seconds, for shutdown in minutes.
+    # Measurement intervals in seconds, for shutoff in minutes.
     'interval': {
 
         # Apply this interval if device is in field mode.
@@ -15,7 +15,7 @@ main = {
 
         # Apply this interval if device goes into shutoff
         'shutoff': 10,
-        # night & winter mode: during the night or the interval is doubled (-> in a winter night it is quadrupled)
+        # night & winter mode: during the night or winter the interval is doubled (-> in a winter night it is quadrupled)
         # beginning & end months are included: night from 20 to 5 -> 20.00h to 5.59h, winter from 10 to 2 -> October 1st to February 29th
         # a start value of 0 means there is no night/winter, night_start > night_end, winter_start > winter_end
         'night_start': 20,
