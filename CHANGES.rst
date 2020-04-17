@@ -157,7 +157,7 @@ Development
 - Improve error reporting for "make setup"
 - Improve test coverage for HTTP telemetry / urequests module
 - Add test coverage for "system.voltage.battery" by mocking the ADC
-
+- round sensor values according to settings
 
 2019-08-19 0.6.0
 ================

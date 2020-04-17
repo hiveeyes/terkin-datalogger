@@ -481,6 +481,11 @@ class TerkinDatalogger:
                 if sensor_data is None or sensor_data is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
 
+                # round values according to sensor settings
+                if sensor.settings.get('decimals') is not None:
+                    for key, value in sensor_data.items():
+                        sensor_data[key] = round(sensor_data[key], sensor.settings.get('decimals'))
+
                 # Add sensor reading to observations.
                 data.update(sensor_data)
 
