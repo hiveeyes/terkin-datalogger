@@ -86,7 +86,7 @@ class SensorManager:
     def setup_bus(self, bus_settings):
         """
 
-        :param bus_settings: 
+        :param bus_settings:
 
         """
         bus_family = bus_settings.get('family')
@@ -120,7 +120,7 @@ class SensorManager:
     def power_toggle_sensors(self, action):
         """
 
-        :param action: 
+        :param action:
 
         """
         for sensor in self.sensors:
@@ -135,7 +135,7 @@ class SensorManager:
     def power_toggle_busses(self, action):
         """
 
-        :param action: 
+        :param action:
 
         """
         for busname, bus in self.busses.items():
@@ -174,6 +174,11 @@ class OneWireBus(AbstractBus):
                     log.info('Using pure-Python 1-Wire driver on Pycom MicroPython')
                     import onewire_python
                     self.adapter = onewire_python.OneWire(pin)
+
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
+                from terkin.sensor.linux import LinuxSysfsOneWireBus
+                sysfs = self.settings['sysfs']
+                self.adapter = LinuxSysfsOneWireBus(sysfs)
 
             else:
                 raise NotImplementedError('1-Wire driver not implemented on this platform')
@@ -215,7 +220,7 @@ class OneWireBus(AbstractBus):
     def device_address_ascii(address):
         """
 
-        :param address: 
+        :param address:
 
         """
         # Compute ASCII representation of device address.
@@ -239,6 +244,10 @@ class I2CBus(AbstractBus):
                 self.adapter = I2C(self.number, sda=Pin(int(self.pins['sda'][1:])), scl=Pin(int(self.pins['scl'][1:])), freq=self.frequency)
             elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
                 self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
+                import board
+                import busio
+                self.adapter = busio.I2C(board.SCL, board.SDA)
             else:
                 raise NotImplementedError('I2C Bus is not implemented on this platform')
 
@@ -271,7 +280,7 @@ class I2CBus(AbstractBus):
     def power_off(self):
         """
         Turn off the I2C peripheral.
-        
+
         https://docs.pycom.io/firmwareapi/pycom/machine/i2c.html
         """
         log.info('Turning off I2C bus {}'.format(self.name))
