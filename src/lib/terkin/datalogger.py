@@ -135,10 +135,13 @@ class TerkinDatalogger:
         # e.g. ``self.device.publish_properties()``
 
         # Setup sensors.
+        log.info('Setting up sensors')
         self.device.watchdog.feed()
         bus_settings = self.settings.get('sensors.busses', [])
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
+
+        log.info('Setup finished')
 
     def start(self):
         self.start_mainloop()
@@ -261,8 +264,9 @@ class TerkinDatalogger:
         try:
             import pycom
             interval_minutes = pycom.nvs_get('deepsleep')
-            log.info('Deep sleep interval set to %s minute(s) by LoRaWAN downlink message', interval_minutes)
-            interval = interval_minutes * 60
+            if isinstance(interval_minutes, int):
+                log.info('Deep sleep interval set to %s minute(s) by LoRaWAN downlink message', interval_minutes)
+                interval = interval_minutes * 60
 
         # Otherwise, use original configuration setting.
         except Exception as ex:
