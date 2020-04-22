@@ -144,7 +144,8 @@ class NetworkManager:
         self.mode_server.start(self.handle_modeserver)
 
     def stop_modeserver(self):
-        self.mode_server.stop()
+        if self.mode_server:
+            self.mode_server.stop()
 
     def start_httpserver(self):
         """Start HTTP server for managing the device."""

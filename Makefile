@@ -260,3 +260,9 @@ terkin-and-run: check-mcu-port
 ratrack-and-run: check-mcu-port
 	$(MAKE) install-framework
 	$(MAKE) reset-device-attached
+
+install-cpython:
+	.venv3/bin/pip3 install -r requirements-circuitpython.txt
+
+run-cpython:
+	.venv3/bin/python src/main_cpython.py

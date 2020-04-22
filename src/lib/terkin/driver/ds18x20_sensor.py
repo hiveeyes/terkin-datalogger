@@ -50,6 +50,11 @@ class DS18X20Sensor(AbstractSensor):
                 import ds18x20_python
                 self.driver = ds18x20_python.DS18X20(onewire_bus)
 
+            # RaspberryPi
+            elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+                from terkin.sensor.linux import LinuxSysfsDS18B20
+                self.driver = LinuxSysfsDS18B20(onewire_bus)
+
             else:
                 raise NotImplementedError('DS18X20 driver not implemented on this platform')
 

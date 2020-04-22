@@ -4,9 +4,10 @@
 # License: GNU General Public License, Version 3
 from terkin import logging
 from terkin.sensor import AbstractSensor
-from bme280_float import BME280
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 
 class BME280Sensor(AbstractSensor):
@@ -30,7 +31,20 @@ class BME280Sensor(AbstractSensor):
 
         # Initialize the hardware driver.
         try:
-            self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+
+            # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+            if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+                from bme280_float import BME280
+                self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+
+            # Adafruit CircuitPython
+            elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+                import adafruit_bme280
+                self.driver = adafruit_bme280.Adafruit_BME280_I2C(i2c=self.bus.adapter, address=self.address)
+
+            else:
+                raise NotImplementedError('DS18X20 driver not implemented on this platform')
+
             return True
 
         except Exception as ex:
@@ -46,14 +60,26 @@ class BME280Sensor(AbstractSensor):
 
         data = {}
 
-        t, p, h = self.driver.read_compensated_data()
+        # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
 
-        # Prepare readings.
-        values = {
-            "temperature": t,
-            "pressure": p / 100,
-            "humidity": h,
-        }
+            t, p, h = self.driver.read_compensated_data()
+
+            # Prepare readings.
+            values = {
+                "temperature": t,
+                "pressure": p / 100,
+                "humidity": h,
+            }
+
+        # Adafruit CircuitPython
+        elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+
+            values = {
+                "temperature": self.driver.temperature,
+                "humidity": self.driver.humidity,
+                "pressure": self.driver.pressure,
+            }
 
         # Build telemetry payload.
         fieldnames = values.keys()
