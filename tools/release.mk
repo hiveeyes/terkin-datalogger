@@ -26,7 +26,7 @@ prepare-release:
 
 	@# Compute release name.
 	$(eval name := terkin-datalogger)
-	$(eval version := $(shell python3 -c 'import terkin; print(terkin.__version__)'))
+	$(eval version := $(shell PYTHONPATH=./src/lib python3 -c 'import terkin; print(terkin.__version__)'))
 	$(eval releasename := $(name)-$(version))
 
 	@# Define directories.
@@ -51,26 +51,33 @@ create-source-archives: prepare-release
 	$(eval tarfile_source := $(dist_dir)/$(artefact).tar.gz)
 	$(eval zipfile_source := $(dist_dir)/$(artefact).zip)
 
-	@echo "Baking source release artefacts for $(artefact)"
+	@echo "Baking source release artefacts for $(artefact), target is $(dist_dir)"
 
-    # Remove release bundle archives.
+	@# Remove release bundle archives.
 	@rm -f $(tarfile_source)
 	@rm -f $(zipfile_source)
 
-    # Populate build directory.
+	@# Clean build directory.
 	@mkdir -p $(work_dir)
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
 
+	@# Populate build directory.
 	@cp -r dist-packages src/lib src/boot.py src/main.py src/settings.example*.py $(work_dir)
 
-    # Create .tar.gz and .zip archives.
-	tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
-	(cd $(build_dir); zip -9 -r ../$(zipfile_source) $(artefact))
+	@# Clean Python build artefacts.
+	@find $(work_dir) -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
+
+	@# Create .tar.gz and .zip archives.
+	@tar -czf $(tarfile_source) -C $(build_dir) $(artefact)
+	@(cd $(build_dir); zip -q -9 -r ../$(zipfile_source) $(artefact))
+
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
 
 create-mpy-archives: prepare-release
 
-	$(eval artefact := $(releasename)-$(platform)-mpy)
+	$(eval artefact := $(releasename)-$(platform)-mpy-$(MPY_VERSION))
 
 	@# Define directories.
 	$(eval work_dir := $(build_dir)/$(artefact))
@@ -79,49 +86,55 @@ create-mpy-archives: prepare-release
 	$(eval tarfile_mpy := $(dist_dir)/$(artefact).tar.gz)
 	$(eval zipfile_mpy := $(dist_dir)/$(artefact).zip)
 
-	@echo "Baking source release artefacts for $(artefact)"
+	@echo "Baking mpy release artefacts for $(artefact), target is $(dist_dir)"
 
-    # Remove release bundle archives.
+	@# Remove release bundle archives.
 	@rm -f $(tarfile_mpy)
 	@rm -f $(zipfile_mpy)
 
-    # Populate build directory.
+	@# Clean build directory.
 	@mkdir -p $(work_dir)
 	@rm -r $(work_dir)
 	@mkdir -p $(work_dir)
 	@mkdir -p $(work_dir)/lib
 
+	@# Precompile libraries.
+	rm -rf lib-mpy
+	$(MAKE) mpy-compile
+
+	@# Populate build directory.
 	@cp -r lib-mpy src/boot.py src/main.py src/settings.example*.py $(work_dir)
 	@cp -r src/lib/umal.py src/lib/mininet.py $(work_dir)/lib
 
-    # Create .tar.gz and .zip archives.
-	tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)
-	(cd $(build_dir); zip -9 -r ../$(zipfile_mpy) $(artefact))
+	@# Create .tar.gz and .zip archives.
+	@tar -czf $(tarfile_mpy) -C $(build_dir) $(artefact)
+	@(cd $(build_dir); zip -q -9 -r ../$(zipfile_mpy) $(artefact))
 
-build-release: prepare-release create-source-archives create-mpy-archives
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_mpy)) --file $(tarfile_mpy) --replace
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
 
-publish-release: check-github-release build-release
-
-	@echo "Uploading release artefacts for $(releasename) to GitHub"
+make-github-release: prepare-release
 
 	@# Show current releases.
 	@#$(github-release) info --user hiveeyes --repo terkin-datalogger
 
-    # Create Release.
+	@# Create Release.
 	@#$(github-release) release --user hiveeyes --repo terkin-datalogger --tag $(version) --draft
 
 	$(github-release) release --user hiveeyes --repo terkin-datalogger --tag $(version) || true
 
-    # Upload source release artifacts.
-	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_source)) --file $(tarfile_source) --replace
-	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_source)) --file $(zipfile_source) --replace
+packages: check-github-release make-github-release
 
-    # Upload mpy release artifacts.
-	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(tarfile_mpy)) --file $(tarfile_mpy) --replace
-	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(zipfile_mpy)) --file $(zipfile_mpy) --replace
+	@echo "Uploading release artefacts for $(releasename) to GitHub"
 
+    # Source artifacts.
+	$(MAKE) create-source-archives
+
+    # mpy artifacts.
+	MPY_TARGET=pycom MPY_VERSION=1.11 $(MAKE) create-mpy-archives platform=pycom
+	MPY_TARGET=bytecode MPY_VERSION=1.12 $(MAKE) create-mpy-archives platform=genuine
 
 ## Release this piece of software
-release: bumpversion push publish-release
+release: bumpversion push
 	# Synopsis:
 	#   "make release bump=minor"   (major,minor,patch)

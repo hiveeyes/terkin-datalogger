@@ -5,6 +5,7 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Improve packaging
 
 
 2020-04-22 0.7.0
