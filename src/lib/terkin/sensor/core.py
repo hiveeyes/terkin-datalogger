@@ -99,8 +99,10 @@ class SensorManager:
 
         elif bus_family == BusType.I2C:
             i2c = I2CBus(bus_settings)
-            i2c.register_pin("sda", bus_settings['pin_sda'])
-            i2c.register_pin("scl", bus_settings['pin_scl'])
+            if 'pin_sda' in bus_settings:
+                i2c.register_pin("sda", bus_settings['pin_sda'])
+            if 'pin_scl' in bus_settings:
+                i2c.register_pin("scl", bus_settings['pin_scl'])
             i2c.start()
             self.register_bus(i2c)
 
