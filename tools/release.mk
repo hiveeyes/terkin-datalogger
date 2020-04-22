@@ -5,11 +5,11 @@
 $(eval github-release := ./bin/github-release)
 
 check-github-release:
-	@test -e $(github-release) || (echo 'ERROR: "github-release" not found.\nPlease install "github-release" to "./bin/github-release".\nSee https://github.com/aktau/github-release\n'; exit 1)
+	@test -e $(github-release) || (echo 'ERROR: "github-release" not found.\nPlease install "github-release" to "./bin/github-release".\nSee https://github.com/meterup/github-release/releases\n'; exit 1)
 
 install-github-release:
 	# https://github.com/aktau/github-release
-	$(eval url := https://github.com/aktau/github-release/releases/download/v0.7.2/darwin-amd64-github-release.tar.bz2)
+	$(eval url := https://github.com/meterup/github-release/releases/download/v0.7.5/darwin-amd64-github-release.tar.bz2)
 
 	# NotYetImplemented
 	@exit 1
