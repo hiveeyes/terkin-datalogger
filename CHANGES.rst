@@ -5,6 +5,10 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+
+
+2020-04-22 0.7.0
+================
 - Fix sandbox installation issue by nailing pycopy-cpython-upip to 1.2.6
 - Improve sanity checks for sandbox setup
 - Improve RGB-LED signalling
@@ -157,7 +161,8 @@ Development
 - Improve error reporting for "make setup"
 - Improve test coverage for HTTP telemetry / urequests module
 - Add test coverage for "system.voltage.battery" by mocking the ADC
-- round sensor values according to settings
+- Round sensor values according to settings
+- Start supporting CPython on Linux/RaspberryPi. Thanks, @tonke!
 
 2019-08-19 0.6.0
 ================
