@@ -103,9 +103,10 @@ The documentation covers the main features of the MicroPython datalogger firmwar
 and walks you through the setup process of the development sandbox environment
 in detail.
 
-The programming environment is command line based and has been tested
-successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
-shipped with **Windows 10**.
+If you feel you have questions about anything you might 
+encounter during the setup and installation process or 
+if you even have suggestions to improve things, feel free
+to get back to us by creating an issue on the GitHub repository.
 
 Download
 ========
@@ -113,6 +114,13 @@ On the `release page`_ , bundles of the most recent software versions
 are available through ``.tar.gz`` and ``.zip`` archives.
 These are suitable for uploading through Pymakr or similar
 development environments / file synchronization tools.
+
+Configuration
+=============
+Copy the ``settings.example.py`` blueprint into ``settings.py``
+and adjust each configuration setting appropriately. The
+documentation of all parameters is in the file itself
+and should be reasonably self-explanatory.
 
 Sandbox setup
 =============
@@ -122,19 +130,9 @@ software, please follow up at `Setup Terkin Datalogger sandbox`_
 to read about how to install the MicroPython firmware development environment
 and other software components it relies on and how to configure it properly.
 
-
-*************
-Configuration
-*************
-Copy the ``settings.example.py`` blueprint into ``settings.py``
-and adjust each configuration setting appropriately. The
-documentation of all parameters is in the file itself
-and should be reasonably self-explanatory.
-
-If you feel you have questions about the semantics of the
-configuration settings or if you even have suggestions to
-improve things, feel free to get back to us by creating
-an issue on the GitHub repository.
+The programming environment is command line based and has been tested
+successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
+shipped with **Windows 10**.
 
 
 *******************
