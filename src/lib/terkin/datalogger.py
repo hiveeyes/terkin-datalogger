@@ -17,6 +17,7 @@ from terkin.sensor import SensorManager, AbstractSensor
 from terkin.model import SensorReading, DataFrame
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVoltage, SystemUptime
 from terkin.driver.bme280_sensor import BME280Sensor
+from terkin.driver.si7021_sensor import SI7021Sensor
 from terkin.driver.ds18x20_sensor import DS18X20Sensor
 from terkin.driver.hx711_sensor import HX711Sensor
 from terkin.driver.max17043_sensor import MAX17043Sensor
@@ -415,6 +416,17 @@ class TerkinDatalogger:
                 elif sensor_type == 'bme280':
 
                     sensor_object = BME280Sensor(settings=sensor_info)
+                    if 'address' in sensor_info:
+                        sensor_object.set_address(sensor_info['address'])
+                    sensor_object.acquire_bus(sensor_bus)
+
+                    # Start sensor.
+                    sensor_object.start()
+
+                # Setup and register SI7021 sensors.
+                elif sensor_type == 'si7021':
+
+                    sensor_object = SI7021Sensor(settings=sensor_info)
                     if 'address' in sensor_info:
                         sensor_object.set_address(sensor_info['address'])
                     sensor_object.acquire_bus(sensor_bus)

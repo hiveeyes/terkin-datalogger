@@ -413,11 +413,19 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur, Druck und Feuchte außen (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
+        },
+        {
+            'id': 'si7021-1',
+            'description': 'Temperatur und Feuchte (Si7021)',
+            'type': 'Si7021',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x40,
         },
     ],
     'busses': [

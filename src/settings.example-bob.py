@@ -301,11 +301,19 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur und Feuchte außen (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
+        },
+        {
+            'id': 'si7021-1',
+            'description': 'Temperatur und Feuchte (Si7021)',
+            'type': 'Si7021',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x40,
         },
     ],
     'busses': [
@@ -346,6 +354,10 @@ sensor_telemetry_map = {
     "temperature.0x77.i2c:0": "t",
     "humidity.0x77.i2c:0": "h",
     "pressure.0x77.i2c:0": "p",
+
+    # Si7021
+    #"temperature.0x40.i2c:0": "t",
+    #"humidity.0x40.i2c:0": "h",
 
     # DS18B20
     "temperature.1111111111111111.onewire:0": "t_i_1",

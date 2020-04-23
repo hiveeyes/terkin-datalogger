@@ -147,6 +147,9 @@ download-requirements-real:
 	rm $(target_dir)/max17043.py || true
 	$(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
 
+    # 4. Install driver for SI7021
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/SI7021/e5d49689/SI7021.py
+
 
 	## GUI
 	#curl --location https://github.com/pfalcon/picotui/archive/master.zip | tar -C $(target_dir) --strip-components=1 -xvf - picotui-master/picotui
