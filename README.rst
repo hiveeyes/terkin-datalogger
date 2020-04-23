@@ -1,6 +1,9 @@
 .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
     :target: https://github.com/hiveeyes/terkin-datalogger
 
+.. image:: https://img.shields.io/badge/CPython-3.x-green.svg
+    :target: https://github.com/hiveeyes/terkin-datalogger
+
 .. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
     :target: https://github.com/hiveeyes/terkin-datalogger
 
@@ -16,53 +19,52 @@ Data logging for humans, written in MicroPython.
 *****
 About
 *****
-The Terkin Datalogger has been conceived for the
-Bee Observer (BOB) project, funded by the BMBF.
+The Terkin Datalogger is a flexible data logger application
+for MicroPython and CPython environments.
+
+It has been conceived for the Bee Observer (BOB) project and was funded by the BMBF.
 
 - https://bee-observer.hiveeyes.org/bmbf-verbundprojekt
 - https://community.hiveeyes.org/c/bee-observer
 
 
-************
-Introduction
-************
-This document covers the main features of the MicroPython datalogger firmware
-and walks you through the setup process of the development sandbox environment
-in detail.
-
-The programming environment is command line based and has been tested
-successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
-shipped with **Windows 10**.
-
-
 ********
 Features
 ********
+Batteries included.
 
 Overview
 ========
-- Lightweight unopinionated firmware framework
+- Modular firmware framework
 - Flexible configuration settings subsystem
+- Compatible with MicroPython and CPython
 - Concise, readable and modularized code which is easy to follow
 - Decoupled code domains and data models for sensors vs. telemetry
 - Based on approved modules from the MicroPython standard library
-- Convenient development sandbox for quick iteration cycles
-
-Batteries included.
+- Convenient development sandbox and test suite for quick iteration cycles
 
 Architecture
 ============
-- Datalogger and Device
-  Singleton objects representing the data logger application and your logging device.
+- ``Datalogger`` and ``Device``
+  are singleton objects representing the data logger application and your logging device.
 
-- Sensor and HardwareDriver
-  Sensor components wrap hardware drivers to generalize sensor reading.
+- Components of the sensor subsystem wrap hardware drivers to generalize sensor reading.
 
-- Telemetry and TelemetryTransport
-  The telemetry subsystem uses different transport adapters for different
-  connectivity scenarios. MQTT and HTTP over TCP over WiFi is implemented
-  already as well as TTN over LoRaWAN. We are still waiting for confirmation of
-  `LTE Cat M1`_ or `LTE Cat NB1`_ connectivity in Germany (thanks, Ron and Jan!).
+- The telemetry subsystem uses different transport adapters to
+  implement various connectivity scenarios.
+
+Platforms
+=========
+- Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
+- Pycom MicroPython: WiPy, LoPy4, FiPy
+- CPython: RaspberryPi
+
+Peripherals
+===========
+- Sensors: 1-Wire, I2C, ADC, System, WiFi
+- Drivers: DS18B20, BME280, HX711, MAX17043, DS3231, AT24C32.
+- Connectivity: ESP32 for WiFi, SIM800 for GPRS, SX127x for LoRa, Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_.
+- Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN
 
 
 ***********
@@ -89,32 +91,6 @@ watching its log output, we collected some excerpts at
 `Running the Terkin Datalogger`_.
 
 
-*********
-Platforms
-*********
-Beautified output of ``os.uname()`` output the datalogger has been tested on.
-
-Pycom FiPy::
-
-    Python  : 3.4.0
-    lorawan : 1.0.2
-    machine : FiPy with ESP32
-    nodename: FiPy
-    release : 1.20.0.rc11
-    sigfox  : 1.0.1
-    sysname : FiPy
-    version : v1.9.4-0a38f88 on 2019-05-14
-
-PYBOARD-D SF2::
-
-    Python  : 3.4.0
-    machine : PYBD-SF2W with STM32F722IEK
-    nodename: pyboard
-    release : 1.11.0
-    sysname : pyboard
-    version : v1.11-328-gd96391aca on 2019-09-21
-
-
 ***************
 Getting started
 ***************
@@ -122,6 +98,14 @@ Getting started
 Introduction
 ============
 See `Getting started with the Terkin Datalogger`_.
+
+The documentation covers the main features of the MicroPython datalogger firmware
+and walks you through the setup process of the development sandbox environment
+in detail.
+
+The programming environment is command line based and has been tested
+successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
+shipped with **Windows 10**.
 
 Download
 ========
