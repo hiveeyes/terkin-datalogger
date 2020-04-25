@@ -5,8 +5,13 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
-- Improve packaging
 
+2020-04-26 0.7.1
+================
+- Improve packaging
+- Improve compatibility between Genuine MicroPython and Pycom MicroPython
+  - https://github.com/micropython/micropython/issues/5915
+  - https://github.com/pycom/pycom-micropython-sigfox/issues/436
 
 2020-04-22 0.7.0
 ================
