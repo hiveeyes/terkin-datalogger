@@ -277,6 +277,7 @@ class I2CBus(AbstractBus):
 
         # uPy doesn't have deinit so it doesn't need init
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
+            from machine import I2C
             self.adapter.init(mode=I2C.MASTER, baudrate=self.frequency)
 
     def power_off(self):

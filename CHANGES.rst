@@ -6,6 +6,10 @@ Terkin Datalogger CHANGES
 Development
 ===========
 
+2020-04-27 0.7.2
+================
+- Fix ``I2CBus.power_on``. Thanks, @tonke!
+
 2020-04-26 0.7.1
 ================
 - Improve packaging
