@@ -121,6 +121,8 @@ Copy the ``settings.example.py`` blueprint into ``settings.py``
 and adjust each configuration setting appropriately. The
 documentation of all parameters is in the file itself
 and should be reasonably self-explanatory.
+For using Terkin with TTN/LoRaWAN find some more details
+`here <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/README.rst>`_.
 
 Sandbox setup
 =============
