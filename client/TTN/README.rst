@@ -10,9 +10,10 @@ In case of using the Terkin Datalogger firmware with the Hiveeyes.org environmen
 
 ``hiveeyes-USER-LOCATION-NAMEOFHIVE``
 
-and replace upper case strings with your individual lower case namings without additional dashes. ``hiveeyes-USER`` will becomce your  InfluxDB client data base and ``LOCATION-NAMEOFHIVE_sensors`` your InfluxDB measurement name.
+and replace upper case strings with your individual lower case namings without additional dashes. ``hiveeyes-USER`` will become your InfluxDB client data base and ``LOCATION-NAMEOFHIVE_sensors`` will be your InfluxDB measurement name.
 
-In ``settings.py`` networking section enter your TTN device credentials (copy and paste from TTN console) and deactivate all telemetry targets except ``CayenneLPP over TTN-LoRa``. ``datarate`` defines the `bandwidth and spreading factor <https://www.thethingsnetwork.org/docs/lorawan/modulation-data-rate.html>`_ for the joining process while ``'adr' = True`` enables the `Adaptive Data Rate <https://www.thethingsnetwork.org/docs/lorawan/adaptive-data-rate.html>`_.
+In ``settings.py`` networking section enter your TTN device credentials (copy and paste from TTN console) and deactivate all telemetry targets except ``CayenneLPP over TTN-LoRa``. ``datarate`` defines the `bandwidth and spreading factor <https://www.thethingsnetwork.org/docs/lorawan/modulation-data-rate.html>`_ for the joining process while ``'adr' = True`` enables the `Adaptive Data Rate <https://www.thethingsnetwork.org/docs/lorawan/adaptive-data-rate.html>`_ for subsequent
+data packages depending on the LoRa signal quality.
 
 **********
 CayenneLPP
@@ -30,11 +31,11 @@ PutsReq.com
 Telegram Bot
 ************
 
-A Telegram bot for interactinhg with the device via LoRaWAN downlinks is available from the `telegram_terkin_ttn_bot.py <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/telegram_terkin_ttn_bot.py>`_ file.
+A Telegram bot for interacting with the device via LoRaWAN downlinks is available from the `telegram_terkin_ttn_bot.py <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/telegram_terkin_ttn_bot.py>`_ file.
 
 Currently these two capabilities are implemented:
 
 -  ``/pause`` and ``/unpause`` for pausing and continuing the inclusion of sensor data into the payload, e.g for times when you are working on the bees hives
--  ``/sleep MIN`` for remotely setting the Deep Sleep interval in MIN minutes
+-  ``/sleep MIN`` for remotely setting the Deep Sleep interval in ``MIN`` minutes. Send ``/sleep 0`` to return to the interval defined in your device configuration.
 
-Please see `Telegram bot documentation <https://core.telegram.org/bots>`_ for how to get started with a bot at first. An always on server under your control will be needed to run the bot. Remember that downlink messages to the device are not being sent immediately but always shortly after an uplink message has been successfully received by the network. 
+Please see `Telegram bot documentation <https://core.telegram.org/bots>`_ for how to get started with a bot at first. An always-on server under your control will be needed to run the bot. Remember that downlink messages to the device are not being sent immediately but shortly after an uplink message has been successfully received by the network. 
