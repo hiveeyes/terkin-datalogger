@@ -431,29 +431,14 @@ class TelemetryTransportLORA:
 
     lora_socket = None
 
-    def __init__(self, lora_manager, settings):
+    def __init__(self, lora_adapter, settings):
 
         log.info('Telemetry transport: CayenneLPP over LoRaWAN/TTN')
 
-        self.lora_manager = lora_manager
+        self.lora_adapter = lora_adapter
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
         self.datarate = self.settings.get('datarate', 0)
-
-    def ensure_lora_socket(self):
-
-        import socket
-
-        self.lora_manager.wait_for_lora_join(42)
-
-        if self.lora_manager.lora_joined:
-            if self.lora_manager.lora_socket is None:
-                try:
-                    self.lora_manager.create_lora_socket()
-                except:
-                    log.exception("[LoRa] Could not create LoRa socket")
-        else:
-            log.error("[LoRa] Could not join network")
 
     def send(self, dataframe: DataFrame):
         """
@@ -463,7 +448,7 @@ class TelemetryTransportLORA:
         import binascii
         import pycom
 
-        self.ensure_lora_socket()
+        self.lora_adapter.ensure_connectivity()
 
         # clean up payload from sensor data if pause command was received on last uplink
         try:
@@ -481,7 +466,7 @@ class TelemetryTransportLORA:
         # Send payload
         try:
             log.info('[LoRa] Sending payload...')
-            outcome = self.lora_manager.lora_send(payload)
+            outcome = self.lora_adapter.send(payload)
             log.info('[LoRa] Sent %s bytes', outcome)
         except:
             log.exception('[LoRa] Transmission failed')
@@ -491,7 +476,7 @@ class TelemetryTransportLORA:
         # 1) deep sleep interval in minutes and
         # 2) pausing payload submission (1=true,0=false)
         # survives power cycle, reset and deep sleep
-        rx, port = self.lora_manager.lora_receive()
+        rx, port = self.lora_adapter.receive()
 
         if port == 1:
             sleep = int.from_bytes(rx, "big")

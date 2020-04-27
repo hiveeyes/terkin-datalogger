@@ -3,19 +3,51 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-import binascii
 import socket
-import machine
 from terkin import logging
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 
-class LoRaManager:
+class LoRaAdapter:
+
+    def __init__(self, network_manager, settings):
+        self.network_manager = network_manager
+        self.settings = settings
+
+        # LoRa settings.
+        self.otaa_settings = self.settings.get('networking.lora.otaa')
+        #self.generated_device_eui = binascii.hexlify(LoRa().mac())
+
+        # Pycom MicroPython
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            self.driver = LoRaDriverPycom(self.network_manager, self.settings)
+
+        # RaspberryPi (Dragino)
+        elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+            raise NotImplementedError("LoRaWAN not implemented for Dragino")
+
+    def start(self):
+        log.info('[LoRa] Starting LoRa Adapter')
+        return self.driver.start()
+    
+    def ensure_connectivity(self):
+        return self.driver.ensure_connectivity()
+
+    def send(self, payload):
+        return self.driver.send(payload)
+
+    def receive(self):
+        return self.driver.receive()
+
+
+class LoRaDriverPycom:
     """ """
 
-    def __init__(self, manager, settings):
-        self.manager = manager
+    def __init__(self, network_manager, settings):
+        self.network_manager = network_manager
         self.settings = settings
 
         # LoRa settings.
@@ -23,11 +55,6 @@ class LoRaManager:
         #self.generated_device_eui = binascii.hexlify(LoRa().mac())
 
     def start(self):
-        """ """
-        log.info('[LoRa] Starting LoRa Manager')
-        self.start_lora_join()
-
-    def start_lora_join(self):
         """ """
 
         from network import LoRa
@@ -47,7 +74,9 @@ class LoRaManager:
 
         self.lora = LoRa(mode=LoRa.LORAWAN, region=lora_region, adr=lora_adr)
 
-        # restore LoRa state from NVRAM after waking up from DEEPSLEEP. Reset LoRa NVRAM and rejoin otherwise
+        # Restore LoRa state from NVRAM after waking up from DEEPSLEEP.
+        # Otherwise, reset LoRa NVRAM and rejoin.
+        import machine
         if machine.reset_cause() == machine.DEEPSLEEP_RESET:
             self.lora.nvram_restore()
             log.info('[LoRa] LoRaWAN state restored from NVRAM after deep sleep')
@@ -56,6 +85,7 @@ class LoRaManager:
             log.info('[LoRa] LoRaWAN state erased from NVRAM. Rejoin forced')
 
         # Create LoRaWAN OTAA connection to TTN.
+        import binascii
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
         app_key = binascii.unhexlify(self.otaa_settings['application_key'])
 
@@ -66,6 +96,18 @@ class LoRaManager:
             else:
                 dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
                 self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
+
+    def ensure_connectivity(self):
+        self.wait_for_lora_join(42)
+
+        if self.lora_joined:
+            if self.lora_socket is None:
+                try:
+                    self.create_socket()
+                except:
+                    log.exception("[LoRa] Could not create LoRa socket")
+        else:
+            log.error("[LoRa] Could not join network")
 
     def wait_for_lora_join(self, attempts):
         """
@@ -88,7 +130,7 @@ class LoRaManager:
 
         return self.lora_joined
 
-    def create_lora_socket(self):
+    def create_socket(self):
         """ """
 
         # create a lora socket
@@ -101,7 +143,7 @@ class LoRaManager:
 
         return self.lora_socket
 
-    def lora_send(self, payload):
+    def send(self, payload):
         """
 
         :param payload: 
@@ -117,9 +159,8 @@ class LoRaManager:
 
         return success
 
-    def lora_receive(self):
+    def receive(self):
         """ """
-        import binascii
 
         try:
             rx, port = self.socket.recvfrom(256)

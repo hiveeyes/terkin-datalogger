@@ -40,8 +40,8 @@ class NetworkManager:
 
     def start_lora(self):
         """ """
-        from terkin.network.lora import LoRaManager
-        self.lora_manager = LoRaManager(manager=self, settings=self.settings)
+        from terkin.network.lora import LoRaAdapter
+        self.lora_manager = LoRaAdapter(manager=self, settings=self.settings)
         self.lora_manager.start()
 
     def start_gprs(self):
