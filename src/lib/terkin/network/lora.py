@@ -27,7 +27,7 @@ class LoRaAdapter:
 
         # RaspberryPi (Dragino)
         elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
-            raise NotImplementedError("LoRaWAN not implemented for Dragino")
+            self.driver = LoRaDriverDragino(self.network_manager, self.settings)
 
     def start(self):
         log.info('[LoRa] Starting LoRa Adapter')
@@ -171,3 +171,36 @@ class LoRaDriverPycom:
             log.info('[LoRa] Received: {} on port: {}'.format(rx, port))
 
         return rx, port
+
+
+class LoRaDriverDragino:
+    """ """
+
+    def __init__(self, network_manager, settings):
+        self.network_manager = network_manager
+        self.settings = settings
+
+        self.dragino = None
+        self.setup()
+
+    def setup(self):
+        log.info('[LoRa] Setting up LoRa')
+        from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
+        lora_auth = LoRaWANAuthentication(auth_mode='OTAA', deveui=None, appeui=None, appkey=None)
+        lora_config = LoRaWANConfig(auth=lora_auth)
+        self.dragino = Dragino(config=lora_config)
+
+    def start(self):
+        log.info('[LoRa] Starting join')
+        self.dragino.join()
+
+    def ensure_connectivity(self):
+        while not self.dragino.registered():
+            log.info('[LoRa] Waiting for connectivity')
+            time.sleep(1)
+
+    def send(self, payload):
+        return self.dragino.send_bytes(payload)
+
+    def receive(self):
+        return None, None
