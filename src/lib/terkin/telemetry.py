@@ -912,7 +912,7 @@ def to_cayenne_lpp(dataframe: DataFrame):
             elif "temperature" in name:
                 frame.add_temperature(0, value)
         elif "i2c" in name:
-            # assume BME280 on I2C bus as outside sensor and assign the variables to channel 5
+            # assume BME280 or Si7021 on I2C bus as outside sensor and assign the variables to channel 5
             if "temperature" in name:
                 frame.add_temperature(5, value)
             elif "humidity" in name:
