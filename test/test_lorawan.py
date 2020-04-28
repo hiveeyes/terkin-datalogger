@@ -56,7 +56,7 @@ def test_uplink_system_temperature(network_lora, caplog):
     # Proof it works by verifying log output.
     assert "Starting Terkin datalogger" in captured, captured
     assert "platform: LoPy4" in captured, captured
-    assert "[LoRa] Starting LoRa Manager" in captured, captured
+    assert "[LoRa] Starting LoRa Adapter" in captured, captured
     assert "Telemetry transport: CayenneLPP over LoRaWAN/TTN" in captured, captured
     assert "Telemetry status: SUCCESS (1/1)" in captured, captured
 
@@ -110,7 +110,7 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
     # Proof it works by verifying log output.
     assert "Starting Terkin datalogger" in captured, captured
     assert "platform: LoPy4" in captured, captured
-    assert "[LoRa] Starting LoRa Manager" in captured, captured
+    assert "[LoRa] Starting LoRa Adapter" in captured, captured
     assert "Telemetry transport: CayenneLPP over LoRaWAN/TTN" in captured, captured
     assert "Telemetry status: SUCCESS (1/1)" in captured, captured
 
