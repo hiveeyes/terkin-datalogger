@@ -63,13 +63,10 @@ class SI7021Sensor(AbstractSensor):
         # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
         if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
 
-            t = self.driver.temperature()
-            h = self.driver.humidity()
-
             # Prepare readings.
             values = {
-                "temperature": t,
-                "humidity": h,
+                "temperature": self.driver.temperature(),
+                "humidity": self.driver.humidity(),
             }
 
         # Adafruit CircuitPython
@@ -77,7 +74,7 @@ class SI7021Sensor(AbstractSensor):
 
             values = {
                 "temperature": self.driver.temperature,
-                "humidity": self.driver.humidity,
+                "humidity": self.driver.relative_humidity,
             }
 
         # Build telemetry payload.
