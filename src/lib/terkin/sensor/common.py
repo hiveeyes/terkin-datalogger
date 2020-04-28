@@ -69,14 +69,16 @@ class AbstractSensor:
         """ """
         raise NotImplementedError()
 
-    def format_fieldname(self, name, address):
+    def format_fieldname(self, name, address=None, channel=None):
         """
 
         :param name:
         :param address:
 
         """
-        fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
+        parts = [name, channel, address, self.bus.name]
+        parts = [part for part in parts if part is not None]
+        fieldname = '.'.join(parts)
         return fieldname
 
     def serialize(self):

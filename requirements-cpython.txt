@@ -1,0 +1,7 @@
+pyserial==3.4
+gps==3.19
+gpiozero==1.5.1
+Adafruit-Blinka==4.6.0
+adafruit-circuitpython-busdevice==4.3.1
+adafruit-circuitpython-bme280==2.4.1
+adafruit-circuitpython-ads1x15==2.2.1

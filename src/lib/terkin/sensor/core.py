@@ -14,7 +14,7 @@ log.setLevel(logging.DEBUG)
 
 
 class BusType:
-    """ """
+    """  """
 
     I2C = 'i2c'
     OneWire = 'onewire'
@@ -93,7 +93,8 @@ class SensorManager:
 
         if bus_family == BusType.OneWire:
             owb = OneWireBus(bus_settings)
-            owb.register_pin("data", bus_settings['pin_data'])
+            if 'pin_data' in bus_settings:
+                owb.register_pin("data", bus_settings['pin_data'])
             owb.start()
             self.register_bus(owb)
 
@@ -110,12 +111,12 @@ class SensorManager:
             log.error("Invalid bus configuration: %s", bus_settings)
 
     def power_on(self):
-        """ """
+        """  """
         self.power_toggle_busses('power_on')
         self.power_toggle_sensors('power_on')
 
     def power_off(self):
-        """ """
+        """  """
         self.power_toggle_sensors('power_off')
         self.power_toggle_busses('power_off')
 
@@ -155,7 +156,7 @@ class OneWireBus(AbstractBus):
     type = BusType.OneWire
 
     def start(self):
-        """ """
+        """  """
         # Todo: Improve error handling.
         try:
 
@@ -194,7 +195,7 @@ class OneWireBus(AbstractBus):
         return True
 
     def scan_devices(self):
-        """ """
+        """  """
 
         # The 1-Wire bus sometimes needs a fix when coming back from deep sleep.
         #self.adapter.reset()
@@ -208,11 +209,11 @@ class OneWireBus(AbstractBus):
         log.info("Found {} 1-Wire (DS18x20) devices: {}".format(len(self.devices), self.get_devices_ascii()))
 
     def get_devices_ascii(self):
-        """ """
+        """  """
         return list(map(self.device_address_ascii, self.devices))
 
     def serialize(self):
-        """ """
+        """  """
         info = super().serialize()
         if 'devices' in info:
             info['devices'] = self.get_devices_ascii()
@@ -238,20 +239,58 @@ class I2CBus(AbstractBus):
     frequency = 100000
 
     def start(self):
-        """ """
+        """  """
         # Todo: Improve error handling.
-        from machine import I2C
         try:
             if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
+                from machine import I2C
                 self.adapter = I2C(self.number, sda=Pin(int(self.pins['sda'][1:])), scl=Pin(int(self.pins['scl'][1:])), freq=self.frequency)
+
             elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
+                from machine import I2C
                 self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
+
             elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
                 import board
                 import busio
-                self.adapter = busio.I2C(board.SCL, board.SDA)
+
+                def i2c_add_bus(busnum, scl, sda):
+                    """
+                    Register more I2C buses with Adafruit Blinka.
+
+                    Make Adafruit Blinka learn another I2C bus.
+                    Please make sure you define it within /boot/config.txt like::
+
+                    dtoverlay=i2c-gpio,bus=3,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
+                    """
+                    import sys
+                    # Uncache this module, otherwise monkeypatching will fail on subsequent calls.
+                    del sys.modules['microcontroller.pin']
+
+                    # Monkeypatch "board.pin.i2cPorts".
+                    i2c_port = (busnum, scl, sda)
+                    if i2c_port not in board.pin.i2cPorts:
+                        board.pin.i2cPorts += (i2c_port,)
+
+                pin_scl = self.pins['scl']
+                pin_sda = self.pins['sda']
+
+                # When I2C port pins are defined as Integers, register them first.
+                if isinstance(pin_scl, int):
+                    i2c_add_bus(self.number, pin_scl, pin_sda)
+                    SCL = board.pin.Pin(pin_scl)
+                    SDA = board.pin.Pin(pin_sda)
+
+                # When I2C port pins are defined as Strings and start with "board.",
+                # they are probably already Pin aliases of Adafruit Blinka.
+                elif isinstance(pin_scl, str) and pin_scl.startswith('board.'):
+                    SCL = eval(pin_scl)
+                    SDA = eval(pin_sda)
+
+                self.adapter = busio.I2C(SCL, SDA)
+
             else:
-                raise NotImplementedError('I2C Bus is not implemented on this platform')
+                raise NotImplementedError('I2C bus is not implemented on this platform')
 
             self.just_started = True
             self.scan_devices()
@@ -260,7 +299,6 @@ class I2CBus(AbstractBus):
             log.exc(ex, 'I2C hardware driver failed')
 
     def scan_devices(self):
-        """ """
         log.info("Scan I2C bus for devices...")
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)

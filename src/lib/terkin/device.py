@@ -10,7 +10,7 @@ import machine
 
 from umal import ApplicationInfo
 from terkin import logging
-from terkin.telemetry import TelemetryManager, TelemetryAdapter
+from terkin.telemetry.core import TelemetryManager, TelemetryAdapter
 from terkin.util import get_device_id
 from terkin.watchdog import Watchdog
 
