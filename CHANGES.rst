@@ -6,6 +6,12 @@ Terkin Datalogger CHANGES
 Development
 ===========
 
+2020-04-28 0.8.0
+================
+- Support SX127x on Dragino LoRa/GPS HAT for LoRa. Thanks, @tonke!
+- Add TTN/LoRaWAN README. Thanks, @ThiasB!
+- TTN: Add payload converter code for PutsReq.com HTTP endpoint. Thanks, @ThiasB!
+
 2020-04-27 0.7.2
 ================
 - Fix ``I2CBus.power_on``. Thanks, @tonke!
