@@ -40,7 +40,7 @@ class SI7021Sensor(AbstractSensor):
             # Adafruit CircuitPython
             elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
                 import adafruit_si7021
-                self.driver = adafruit_si7021.Adafruit_SI7021_I2C(i2c=self.bus.adapter, address=self.address)
+                self.driver = adafruit_si7021.SI7021(i2c=self.bus.adapter, address=self.address)
 
             else:
                 raise NotImplementedError('Si7021 driver not implemented on this platform')

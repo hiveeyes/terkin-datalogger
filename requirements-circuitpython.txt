@@ -1,2 +1,3 @@
 adafruit-circuitpython-bme280==2.4.1
 adafruit-circuitpython-si7021==3.2.1
+adafruit-circuitpython-busdevice==4.3.1
