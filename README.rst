@@ -57,7 +57,7 @@ Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
 - Pycom MicroPython: WiPy, LoPy4, FiPy
-- CPython: RaspberryPi
+- CPython: RaspberryPi, `Dragino LoRa/GPS HAT`_
 
 Peripherals
 ===========
@@ -201,3 +201,5 @@ Have fun!
 
 .. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
 .. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
+
+.. _Dragino LoRa/GPS HAT: https://wiki.dragino.com/index.php?title=Lora/GPS_HAT
