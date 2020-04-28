@@ -37,7 +37,7 @@ setup-virtualenv2: check-virtualenv
 	virtualenv --python=python2 --no-site-packages $(venv2path)
 
 setup-virtualenv3: check-virtualenv
-	virtualenv --python=python3 --no-site-packages $(venv3path)
+	virtualenv --python=python3 --system-site-packages $(venv3path)
 	$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3

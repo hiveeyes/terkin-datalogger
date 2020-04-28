@@ -105,7 +105,7 @@ download-requirements-real:
 	$(fetch) $(target_dir) --output-document=$(target_dir)/pythings_sim800.py https://raw.githubusercontent.com/hiveeyes/pythings-sim800/pppos/SIM800L.py
 
 	# Install driver support for Dragino LoRa Hat
-	curl --location https://github.com/daq-tools/dragino/archive/terkin.zip | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-terkin/dragino
+	curl --location https://github.com/daq-tools/dragino/archive/terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-terkin/dragino
 
 	# Install updated pySX127x driver
 	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x

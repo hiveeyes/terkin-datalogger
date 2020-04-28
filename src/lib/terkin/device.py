@@ -87,7 +87,10 @@ class TerkinDevice:
             log.info("[WiFi] Interface disabled in settings.")
 
         # Initialize LoRa device.
-        if self.application_info.platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']:
+        platform_info = self.application_info.platform_info
+        is_pycom_lora = platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']
+        is_dragino = platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi
+        if is_pycom_lora or is_dragino:
             if self.settings.get('networking.lora.enabled'):
                 if self.settings.get('networking.lora.antenna_attached'):
                     try:

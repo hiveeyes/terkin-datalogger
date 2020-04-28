@@ -180,13 +180,23 @@ class LoRaDriverDragino:
         self.network_manager = network_manager
         self.settings = settings
 
+        self.otaa_settings = self.settings.get('networking.lora.otaa')
+
         self.dragino = None
         self.setup()
 
     def setup(self):
         log.info('[LoRa] Setting up LoRa')
+
+        # Monkeypatch SX127x library
+        from dragino.SX127x.board_config import BOARD
+        BOARD.DIO3 = None
+
         from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
-        lora_auth = LoRaWANAuthentication(auth_mode='OTAA', deveui=None, appeui=None, appkey=None)
+        lora_auth = LoRaWANAuthentication(auth_mode='OTAA',
+                                          deveui=self.otaa_settings['device_eui'],
+                                          appeui=self.otaa_settings['application_eui'],
+                                          appkey=self.otaa_settings['application_key'])
         lora_config = LoRaWANConfig(auth=lora_auth)
         self.dragino = Dragino(config=lora_config)
 
@@ -200,7 +210,7 @@ class LoRaDriverDragino:
             time.sleep(1)
 
     def send(self, payload):
-        return self.dragino.send_bytes(payload)
+        return self.dragino.send_bytes(list(payload))
 
     def receive(self):
         return None, None

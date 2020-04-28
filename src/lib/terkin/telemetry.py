@@ -450,6 +450,9 @@ class TelemetryTransportLORA:
 
         self.lora_adapter.ensure_connectivity()
 
+        # Default payload.
+        payload = dataframe.payload_out
+
         # clean up payload from sensor data if pause command was received on last uplink
         try:
             _pause = pycom.nvs_get('pause')
