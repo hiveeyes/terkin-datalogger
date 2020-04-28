@@ -53,17 +53,26 @@ Architecture
 - The telemetry subsystem uses different transport adapters to
   implement various connectivity scenarios.
 
+
+****************
+Hardware support
+****************
+
+Architectures
+=============
+- x86_64, ARM, ESP32, STM32
+
 Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
 - Pycom MicroPython: WiPy, LoPy4, FiPy
 - CPython: RaspberryPi, `Dragino LoRa/GPS HAT`_
+- Connectivity: WiFi, SIM800 for GPRS, SX127x for LoRa, Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_
 
 Peripherals
 ===========
 - Sensors: 1-Wire, I2C, ADC, System, WiFi
-- Drivers: DS18B20, BME280, HX711, MAX17043, DS3231, AT24C32.
-- Connectivity: ESP32 for WiFi, SIM800 for GPRS, SX127x for LoRa, Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_.
+- Drivers: DS18B20, BME280, SI7021, HX711, MAX17043, DS3231, AT24C32
 - Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN
 
 
