@@ -8,7 +8,8 @@ Development
 
 2020-04-28 0.8.0
 ================
-- Support SX127x on Dragino LoRa/GPS HAT for LoRa. Thanks, @tonke!
+- Support SX127x on Dragino LoRa/GPS HAT for LoRa. Thanks @tonke and many more, see:
+  https://github.com/mayeranalytics/pySX127x/issues/21#issuecomment-620695583
 - Add TTN/LoRaWAN README. Thanks, @ThiasB!
 - TTN: Add payload converter code for PutsReq.com HTTP endpoint. Thanks, @ThiasB!
 
