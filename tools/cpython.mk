@@ -1,10 +1,13 @@
 install-cpython:
 
-	# Install CircuitPython libraries.
-	.venv3/bin/pip3 install -r requirements-circuitpython.txt
+	@# Define path to the "pip" program.
+	$(eval pip := .venv3/bin/pip3)
 
 	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-packages)
+
+	# Install CircuitPython libraries.
+	$(pip) install -r requirements-cpython.txt
 
 	# Install driver support for Dragino LoRa Hat.
 	curl --location https://github.com/daq-tools/dragino/archive/terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-terkin/dragino

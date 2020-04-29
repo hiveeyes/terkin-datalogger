@@ -1,0 +1,18 @@
+# UART access.
+pyserial==3.4
+
+# GPSD client library.
+gps==3.19
+
+# Raspberry Pi utilities.
+gpiozero==1.5.1
+
+# Adafruit CircuitPython libraries.
+Adafruit-Blinka==4.6.0
+adafruit-circuitpython-busdevice==4.3.1
+adafruit-circuitpython-bme280==2.4.1
+adafruit-circuitpython-ads1x15==2.2.1
+adafruit-circuitpython-si7021==3.2.1
+
+# Victron Energy VE.Direct text protocol driver.
+git+https://github.com/karioja/vedirect@f74c0f2

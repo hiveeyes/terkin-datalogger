@@ -442,7 +442,46 @@ class TerkinDatalogger:
                     sensor_object.acquire_bus(sensor_bus)
 
                     # Start sensor.
-                    sensor_object.start()                    
+                    sensor_object.start()
+
+                elif sensor_type == 'epsolar':
+
+                    from terkin.driver.epsolar_sensor import EPSolarSensor
+                    sensor_object = EPSolarSensor(settings=sensor_info)
+                    # Start sensor.
+                    sensor_object.start()
+
+                elif sensor_type == 'vedirect':
+
+                    from terkin.driver.vedirect_sensor import VEDirectSensor
+                    sensor_object = VEDirectSensor(settings=sensor_info)
+                    # Start sensor.
+                    sensor_object.start()
+
+                elif sensor_type == 'gpsd':
+
+                    from terkin.driver.gpsd_sensor import GpsdSensor
+                    sensor_object = GpsdSensor(settings=sensor_info)
+                    # Start sensor.
+                    sensor_object.start()
+
+                elif sensor_type == 'gpiozero':
+
+                    from terkin.driver.gpiozero_sensor import GPIOZeroSensor
+                    sensor_object = GPIOZeroSensor(settings=sensor_info)
+                    # Start sensor.
+                    sensor_object.start()
+
+                elif sensor_type == 'ads1x15':
+
+                    from terkin.driver.ads1x15_sensor import ADS1x15Sensor
+                    sensor_object = ADS1x15Sensor(settings=sensor_info)
+                    # if 'address' in sensor_info:
+                    #    sensor_object.set_address(sensor_info['address'])
+                    sensor_object.acquire_bus(sensor_bus)
+
+                    # Start sensor.
+                    sensor_object.start()
 
                 else:
                     log.warning('Sensor with id={} has unknown type, skipping registration. '
