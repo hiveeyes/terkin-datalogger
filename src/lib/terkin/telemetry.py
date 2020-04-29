@@ -448,6 +448,10 @@ class TelemetryTransportLORA:
         import binascii
         import pycom
 
+        if self.lora_adapter is None:
+            log.error('LoRa not enabled or no antenna attached')
+            return False
+
         self.lora_adapter.ensure_connectivity()
 
         # Default payload.
