@@ -30,7 +30,7 @@ class ADS1x15Sensor(AbstractSensor):
         self.address = 0x48
 
     def start(self):
-        """Getting the bus"""
+
         if self.bus is None:
             raise KeyError("Bus missing for ADS1x15 sensor")
 
@@ -41,7 +41,7 @@ class ADS1x15Sensor(AbstractSensor):
             if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
                 raise NotImplementedError('ADS1x15 driver not implemented on MicroPython')
 
-            # Adafruit CircuitPython
+            # CPython
             elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
 
                 # Select model.
@@ -67,48 +67,27 @@ class ADS1x15Sensor(AbstractSensor):
             log.exc(ex, 'ADS1x15 hardware driver failed')
 
     def read(self):
-        """ """
 
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
 
-        data = {}
-
-        # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+        # MicroPython
         if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
             raise NotImplementedError('ADS1x15 driver not implemented on MicroPython')
 
-        # Adafruit CircuitPython
+        # CPython
         elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
-
             values = {
                 # "value_raw": self.driver.value,
                 # "voltage_raw": self.driver.voltage,
                 "voltage": self.driver.voltage * self.settings['multiplicator'],
             }
 
-        d = {}
-        for key, value in values.items():
-            key = '{}.{}'.format(key, self.model)
-            d[key] = value
-        values = d
-
         # Build telemetry payload.
-        fieldnames = values.keys()
-        for name in fieldnames:
+        data = {}
+        for key, value in values.items():
+            name = '{}.{}'.format(key, self.model)
             fieldname = self.format_fieldname(name, hex(self.address), self.channel.lower())
-            value = values[name]
             data[fieldname] = value
 
-        if not data:
-            log.warning("I2C device {} has no value: {}".format(self.address, data))
-
-        log.debug("I2C data:     {}".format(data))
-
-        # d = {}
-        # for key, value in data.items():
-        #    key = '{}:{}'.format(self.model, key)
-        #    d[key] = value
-        d = data
-
-        return d
+        return data
