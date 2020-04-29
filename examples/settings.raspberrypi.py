@@ -455,7 +455,7 @@ sensors = {
         },
         {
             'id': 'epsolar-1',
-            'description': 'Epsolar VS1024N Charge Controller',
+            'description': 'EPSolar VS1024N Charge Controller',
             'type': 'epsolar',
             'enabled': True,
             # 'bus': 'serial:0',
