@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2020 Andreas Motl <andreas.motl@terkin.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
 from terkin.sensor import AbstractSensor
@@ -13,9 +12,25 @@ platform_info = get_platform_info()
 
 class VEDirectSensor(AbstractSensor):
     """
-    A generic VEDirect sensor component.
-    Used by terkin/datalogger to register and read() from this sensor.
-    start() & read() are mandatory.
+    About
+    =====
+    Victron Energy VE.Direct sensor component.
+
+    Supported devices
+    =================
+    - SmartSolar MPPT 100/20
+    - SmartSolar MPPT 75/15
+    - BlueSolar MPPT 75/15
+    - BMV 702 battery monitor
+
+    Resources
+    =========
+    - https://github.com/karioja/vedirect
+    - https://www.victronenergy.com/solar-charge-controllers/smartsolar-mppt-75-10-75-15-100-15-100-20
+    - https://www.victronenergy.com/solar-charge-controllers/bluesolar-mppt-150-35
+    - https://www.victronenergy.com/battery-monitors/bmv-700
+    - https://www.victronenergy.com/live/victronconnect:mppt-solarchargers
+
     """
 
     def __init__(self, settings=None):
@@ -24,24 +39,23 @@ class VEDirectSensor(AbstractSensor):
 
         # Can be overwritten by ``.set_address()``.
         self.device = settings['device']
-        self.timeout = 10
+        self.timeout = 5
         self.driver = None
 
     def start(self):
-        """Getting the bus"""
+        log.info('Initializing sensor "Victron Energy VE.Direct"')
 
         # Initialize the hardware driver.
         try:
 
-            # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+            # MicroPython
             if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
-                log.info('VEDirect on MicroPython not available at the moment')
+                raise NotImplementedError('VEDirect driver not implemented on MicroPython')
 
-            # CPython SerialBus EPSolar
+            # CPython
             elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
-                from terkin.lib.vedirect import Vedirect
-                self.driver = Vedirect(device=self.device, timeout=self.timeout)
-                log.info('Initialized Sensor VEDirect')
+                from vedirect import Vedirect
+                self.driver = Vedirect(serialport=self.device, timeout=self.timeout)
 
             else:
                 raise NotImplementedError('VEDirect driver not implemented on this platform')
@@ -52,27 +66,19 @@ class VEDirectSensor(AbstractSensor):
             log.exc(ex, 'VEDirect hardware driver failed')
 
     def read(self):
-        """ """
-        log.info('Initialized Reading Sensor VEDirect')
-        log.info('Acquire reading from VEDirect')
+        log.info('Reading sensor "Victron Energy VE.Direct"')
+
+        # MicroPython
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            raise NotImplementedError('VEDirect driver not implemented on MicroPython')
+
+        # CPython
+        elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+            data_raw = self.driver.read_data_single()
 
         data = {}
-
-        # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
-        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
-            log.info('implement usb/serial bus to VEDirect Device')
-
-        elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
-            data = self.driver.read_data_single()
-
-        if not data:
-            log.warning("Serial device {} has no value: {}".format(self.device, data))
-
-        log.debug("Serial data:     {}".format(data))
-
-        d = {}
-        for key, value in data.items():
+        for key, value in data_raw.items():
             key = 'vedirect:{}'.format(key)
-            d[key] = value
+            data[key] = value
 
-        return d
+        return data

@@ -9,8 +9,8 @@ Acquire 3rd-party packages::
 
 Tests::
 
-    make setup-tests
     apt-get install mosquitto
+    make setup-tests
     make test
 
 Invoke::
