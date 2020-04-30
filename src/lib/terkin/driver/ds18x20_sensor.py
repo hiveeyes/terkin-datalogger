@@ -12,6 +12,19 @@ from terkin.util import get_platform_info
 log = logging.getLogger(__name__)
 
 
+def includeme(sensor_info, sensor_bus):
+    """
+    Create DS18x20 sensor object.
+
+    :param sensor_info:
+    :param sensor_bus:
+    :return: sensor_object
+    """
+    sensor_object = DS18X20Sensor(settings=sensor_info)
+    sensor_object.acquire_bus(sensor_bus)
+    return sensor_object
+
+
 class DS18X20Sensor(AbstractSensor):
     """
     A generic DS18B20 sensor component.
@@ -58,11 +71,12 @@ class DS18X20Sensor(AbstractSensor):
             else:
                 raise NotImplementedError('DS18X20 driver not implemented on this platform')
 
+            return True
+
         except Exception as ex:
             log.exc(ex, 'DS18X20 hardware driver failed')
             return False
 
-        return True
 
     def read(self):
         """ """

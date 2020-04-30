@@ -8,6 +8,7 @@ import machine
 
 from __main__ import bootloader
 
+from terkin.exception import SensorUnknownError
 from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
@@ -290,9 +291,12 @@ class TerkinDatalogger:
     def register_sensors(self):
         """
         Configure and register sensor objects.
-        There are three types of sensors: system, environment & busses. Only the former two are assigned to the latter (if applicable).
+        There are three types of sensors: system, environment & busses.
+
+        The sensors are registered by calling their respective classes
+        from terkin/driver.
+
         Definitions are in 'settings.py'.
-        The sensor are registered by calling their respective classes from terkin/drivers/
         """
 
         # Add sensors.
@@ -314,189 +318,223 @@ class TerkinDatalogger:
 
             sensor_type = sensor_info.get('type', 'unknown').lower()
             sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
-            description = sensor_info.get('description')
 
             # Skip sensor if disabled in configuration.
             if sensor_info.get('enabled') is False:
                 log.info('Sensor with id={} and type={} is disabled, skipping registration'.format(sensor_id, sensor_type))
                 continue
 
-            # skip WiFi sensor registration when WiFi is disabled
+            # Skip WiFi sensor registration when WiFi is disabled.
             if sensor_type == 'system.wifi':
                 if not self.settings.get('networking.wifi.enabled'):
                     log.info('WiFi is disabled, skipping sensor registration')
                     continue
 
-            # Resolve associated bus object.
-            sensor_bus = None
-            sensor_bus_name = None
-            if 'bus' in sensor_info:
-                sensor_info_bus = sensor_info['bus']
-                sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info_bus)
-
-                # Skip sensor if associated bus is disabled in configuration.
-                if sensor_bus is None:
-                    log.info('Bus {} for sensor with id={} and type={} is disabled, '
-                             'skipping registration'.format(sensor_info_bus, sensor_id, sensor_type))
-                    continue
-                sensor_bus_name = sensor_bus.name
-
-            # Human readable sensor address.
-            if 'address' in sensor_info:
-                sensor_address = hex(sensor_info.get('address'))
-            else:
-                sensor_address = None
-
-            # Report sensor registration to user.
-            message = 'Setting up sensor with with id={} and type={} on bus={} with address={} ' \
-                      'described as "{}"'.format(sensor_id, sensor_type, sensor_bus_name, sensor_address, description)
-            log.info(message)
-
-            try:
-
-                # Sensor reporting about free system memory.
-                if sensor_type == 'system.memfree':
-                    sensor_object = SystemMemoryFree(sensor_info)
-
-                # Sensor which reports system temperature.
-                elif sensor_type == 'system.temperature':
-                    sensor_object = SystemTemperature(sensor_info)
-
-                # Sensor which reports battery voltage.
-                elif sensor_type in ['system.voltage.battery', 'system.battery-voltage']:
-                    sensor_object = SystemVoltage(sensor_info)
-
-                # Sensor which reports solar panel voltage.
-                elif sensor_type == 'system.voltage.solar':
-                    sensor_object = SystemVoltage(sensor_info)
-
-                # Sensor which reports system uptime metrics.
-                elif sensor_type == 'system.uptime':
-                    sensor_object = SystemUptime(sensor_info)
-
-                # Sensor which reports WiFi metrics.
-                elif sensor_type == 'system.wifi':
-                    try:
-                        sensor_object = SystemWiFiMetrics(sensor_info, self.device.networking.wifi_manager.station)
-                    except Exception as ex:
-                        log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
-                        continue
-
-                # Initialize buttons / touch pads.
-                elif sensor_type == 'system.touch-buttons':
-                    from terkin.sensor.button import ButtonManager
-                    self.button_manager = ButtonManager()
-                    self.start_buttons()
-
-                # Setup and register HX711 sensors.
-                elif sensor_type == 'hx711':
-                    sensor_object = HX711Sensor(settings=sensor_info)
-                    sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
-                    sensor_object.register_pin('dout', sensor_info['pin_dout'])
-                    sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
-                    sensor_object.register_parameter('scale', sensor_info['scale'])
-                    sensor_object.register_parameter('offset', sensor_info['offset'])
-                    sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
-
-                    # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
-                    # hx711_sensor.select_driver('gerber')
-                    sensor_object.select_driver('heisenberg')
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                # Setup and register DS18X20 sensors.
-                elif sensor_type == 'ds18b20':
-                    sensor_object = DS18X20Sensor(settings=sensor_info)
-                    sensor_object.acquire_bus(sensor_bus)
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                # Setup and register BME280 sensors.
-                elif sensor_type == 'bme280':
-
-                    sensor_object = BME280Sensor(settings=sensor_info)
-                    if 'address' in sensor_info:
-                        sensor_object.set_address(sensor_info['address'])
-                    sensor_object.acquire_bus(sensor_bus)
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                # Setup and register SI7021 sensors.
-                elif sensor_type == 'si7021':
-
-                    sensor_object = SI7021Sensor(settings=sensor_info)
-                    if 'address' in sensor_info:
-                        sensor_object.set_address(sensor_info['address'])
-                    sensor_object.acquire_bus(sensor_bus)
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'max17043':
-
-                    sensor_object = MAX17043Sensor(settings=sensor_info)
-                    if 'address' in sensor_info:
-                        sensor_object.set_address(sensor_info['address'])
-                    sensor_object.acquire_bus(sensor_bus)
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'epsolar':
-
-                    from terkin.driver.epsolar_sensor import EPSolarSensor
-                    sensor_object = EPSolarSensor(settings=sensor_info)
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'vedirect':
-
-                    from terkin.driver.vedirect_sensor import VEDirectSensor
-                    sensor_object = VEDirectSensor(settings=sensor_info)
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'gpsd':
-
-                    from terkin.driver.gpsd_sensor import GpsdSensor
-                    sensor_object = GpsdSensor(settings=sensor_info)
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'gpiozero':
-
-                    from terkin.driver.gpiozero_sensor import GPIOZeroSensor
-                    sensor_object = GPIOZeroSensor(settings=sensor_info)
-                    # Start sensor.
-                    sensor_object.start()
-
-                elif sensor_type == 'ads1x15':
-
-                    from terkin.driver.ads1x15_sensor import ADS1x15Sensor
-                    sensor_object = ADS1x15Sensor(settings=sensor_info)
-                    # if 'address' in sensor_info:
-                    #    sensor_object.set_address(sensor_info['address'])
-                    sensor_object.acquire_bus(sensor_bus)
-
-                    # Start sensor.
-                    sensor_object.start()
-
-                else:
-                    log.warning('Sensor with id={} has unknown type, skipping registration. '
-                                'Sensor settings:\n{}'.format(sensor_id, sensor_info))
-                    continue
-
-                # Register sensor object with sensor manager.
-                self.sensor_manager.register_sensor(sensor_object)
-
-            except Exception as ex:
-                log.exc(ex, 'Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+            self.register_sensor(sensor_info)
 
             # Clean up memory after creating each sensor object.
             #self.device.run_gc()
+
+    def register_sensor(self, sensor_info):
+
+        sensor_type = sensor_info.get('type', 'unknown').lower()
+        sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
+        description = sensor_info.get('description')
+
+        # Resolve associated bus object.
+        sensor_bus = None
+        sensor_bus_name = None
+        if 'bus' in sensor_info:
+            sensor_info_bus = sensor_info['bus']
+            sensor_bus = self.sensor_manager.get_bus_by_name(sensor_info_bus)
+
+            # Skip sensor if associated bus is disabled in configuration.
+            if sensor_bus is None:
+                log.info('Bus {} for sensor with id={} and type={} is disabled, '
+                         'skipping registration'.format(sensor_info_bus, sensor_id, sensor_type))
+                return
+            sensor_bus_name = sensor_bus.name
+
+        # Human readable sensor address.
+        if 'address' in sensor_info:
+            sensor_address = hex(sensor_info.get('address'))
+        else:
+            sensor_address = None
+
+        # Report sensor registration to user.
+        message = 'Setting up sensor with with id={} and type={} on bus={} with address={} ' \
+                  'described as "{}"'.format(sensor_id, sensor_type, sensor_bus_name, sensor_address, description)
+        log.info(message)
+
+        # Backward compat.
+        if sensor_type == 'ds18b20':
+            sensor_type = 'ds18x20'
+
+        # Registration NG
+        # Run self-registration procedure by invoking
+        # the "includeme()" function on each sensor module.
+        try:
+
+            # Load sensor module.
+            import terkin.driver
+            modulename = '{}_sensor'.format(sensor_type)
+            fullname = 'terkin.driver.{}'.format(modulename)
+            log.info('Importing module "{}"'.format(fullname))
+            __import__(fullname)
+            module = getattr(terkin.driver, modulename)
+
+            # Acquire sensor object.
+            includeme = getattr(module, 'includeme')
+            sensor_object = includeme(sensor_info, sensor_bus)
+
+            # Start sensor.
+            sensor_object.start()
+
+            # Register sensor with sensor manager.
+            self.sensor_manager.register_sensor(sensor_object)
+
+            return
+
+        except ModuleNotFoundError as ex:
+            if not fullname.startswith('terkin.driver.system'):
+                log.error('Driver module "{}" not found'.format(fullname))
+                #pass
+
+        except AttributeError as ex:
+            if "has no attribute 'includeme'" in str(ex):
+                log.warning('Driver module "{}" is deprecated, "includeme" is missing'.format(fullname))
+            else:
+                log.exc(ex, 'Driver module "{}" failed'.format(fullname))
+
+        except Exception as ex:
+            log.exc(ex, 'Registering driver module "{}" failed'.format(fullname))
+
+        # Legacy registration
+        try:
+            self.register_sensor_legacy(sensor_info, sensor_bus)
+        except Exception as ex:
+            log.exc(ex, 'Setting up sensor with id={} and type={} failed'.format(sensor_id, sensor_type))
+
+    def register_sensor_legacy(self, sensor_info, sensor_bus):
+
+        sensor_type = sensor_info.get('type', 'unknown').lower()
+
+        # Sensor reporting about free system memory.
+        if sensor_type == 'system.memfree':
+            sensor_object = SystemMemoryFree(sensor_info)
+
+        # Sensor which reports system temperature.
+        elif sensor_type == 'system.temperature':
+            sensor_object = SystemTemperature(sensor_info)
+
+        # Sensor which reports battery voltage.
+        elif sensor_type in ['system.voltage.battery', 'system.battery-voltage']:
+            sensor_object = SystemVoltage(sensor_info)
+
+        # Sensor which reports solar panel voltage.
+        elif sensor_type == 'system.voltage.solar':
+            sensor_object = SystemVoltage(sensor_info)
+
+        # Sensor which reports system uptime metrics.
+        elif sensor_type == 'system.uptime':
+            sensor_object = SystemUptime(sensor_info)
+
+        # Sensor which reports WiFi metrics.
+        elif sensor_type == 'system.wifi':
+            try:
+                sensor_object = SystemWiFiMetrics(sensor_info, self.device.networking.wifi_manager.station)
+            except Exception as ex:
+                log.exc(ex, 'Enabling SystemWiFiMetrics sensor failed')
+                return
+
+        # Initialize buttons / touch pads.
+        elif sensor_type == 'system.touch-buttons':
+            from terkin.sensor.button import ButtonManager
+            self.button_manager = ButtonManager()
+            self.start_buttons()
+
+        # Setup and register HX711 sensors.
+        elif sensor_type == 'hx711':
+            sensor_object = HX711Sensor(settings=sensor_info)
+            sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
+            sensor_object.register_pin('dout', sensor_info['pin_dout'])
+            sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
+            sensor_object.register_parameter('scale', sensor_info['scale'])
+            sensor_object.register_parameter('offset', sensor_info['offset'])
+            sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
+
+            # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
+            # hx711_sensor.select_driver('gerber')
+            sensor_object.select_driver('heisenberg')
+
+            # Start sensor.
+            sensor_object.start()
+
+        # Setup and register SI7021 sensors.
+        elif sensor_type == 'si7021':
+
+            sensor_object = SI7021Sensor(settings=sensor_info)
+            if 'address' in sensor_info:
+                sensor_object.set_address(sensor_info['address'])
+            sensor_object.acquire_bus(sensor_bus)
+
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'max17043':
+
+            sensor_object = MAX17043Sensor(settings=sensor_info)
+            if 'address' in sensor_info:
+                sensor_object.set_address(sensor_info['address'])
+            sensor_object.acquire_bus(sensor_bus)
+
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'epsolar':
+
+            from terkin.driver.epsolar_sensor import EPSolarSensor
+            sensor_object = EPSolarSensor(settings=sensor_info)
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'vedirect':
+
+            from terkin.driver.vedirect_sensor import VEDirectSensor
+            sensor_object = VEDirectSensor(settings=sensor_info)
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'gpsd':
+
+            from terkin.driver.gpsd_sensor import GpsdSensor
+            sensor_object = GpsdSensor(settings=sensor_info)
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'gpiozero':
+
+            from terkin.driver.gpiozero_sensor import GPIOZeroSensor
+            sensor_object = GPIOZeroSensor(settings=sensor_info)
+            # Start sensor.
+            sensor_object.start()
+
+        elif sensor_type == 'ads1x15':
+
+            from terkin.driver.ads1x15_sensor import ADS1x15Sensor
+            sensor_object = ADS1x15Sensor(settings=sensor_info)
+            # if 'address' in sensor_info:
+            #    sensor_object.set_address(sensor_info['address'])
+            sensor_object.acquire_bus(sensor_bus)
+
+            # Start sensor.
+            sensor_object.start()
+
+        else:
+            raise SensorUnknownError('Unknown sensor type "{}"'.format(sensor_type))
+
+        # Register sensor object with sensor manager.
+        self.sensor_manager.register_sensor(sensor_object)
 
     def read_sensors(self) -> DataFrame:
         """

@@ -11,6 +11,22 @@ log = logging.getLogger(__name__)
 platform_info = get_platform_info()
 
 
+def includeme(sensor_info, sensor_bus):
+    """
+    Create BME280 sensor object.
+
+    :param sensor_info:
+    :param sensor_bus:
+    :return: sensor_object
+    """
+    sensor_object = BME280Sensor(settings=sensor_info)
+    if 'address' in sensor_info:
+        sensor_object.set_address(sensor_info['address'])
+    sensor_object.acquire_bus(sensor_bus)
+
+    return sensor_object
+
+
 class BME280Sensor(AbstractSensor):
     """
     A generic BME280 sensor component.
