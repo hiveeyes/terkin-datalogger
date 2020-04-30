@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
 # License: GNU General Public License, Version 3
 import time
 import machine
@@ -526,17 +527,27 @@ class TerkinDatalogger:
                 # Disable garbage collector to guarantee reasonable
                 # realtime behavior before invoking sensor reading.
                 with gc_disabled():
-                    sensor_data = sensor.read()
+                    sensor_outcome = sensor.read()
 
                 # Power off HX711 after reading
                 if "HX711Sensor" in sensorname:
                    sensor.power_off()
 
+                # Backward compat.
+                if isinstance(sensor_outcome, SensorReading):
+                    sensor_reading = sensor_outcome
+                else:
+                    sensor_reading = SensorReading()
+                    sensor_reading.sensor = sensor
+                    sensor_reading.data = sensor_outcome
+
+                sensor_data = sensor_reading.data
+
                 # Evaluate sensor outcome.
                 if sensor_data is None or sensor_data is AbstractSensor.SENSOR_NOT_INITIALIZED:
                     continue
 
-                # round values according to sensor settings
+                # Round values according to sensor settings.
                 if sensor.settings.get('decimals') is not None:
                     for key, value in sensor_data.items():
                         sensor_data[key] = round(sensor_data[key], sensor.settings.get('decimals'))
@@ -547,11 +558,7 @@ class TerkinDatalogger:
                 # Record reading for prettified output.
                 self.record_reading(sensor, sensor_data, richdata)
 
-                # Capture single sensor reading.
-                item = SensorReading()
-                item.sensor = sensor
-                item.data = sensor_data
-                readings.append(item)
+                readings.append(sensor_reading)
 
             except Exception as ex:
                 # Because of the ``gc_disabled`` context manager used above,

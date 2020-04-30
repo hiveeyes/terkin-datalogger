@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
+from terkin.model import SensorReading
 from terkin.sensor import AbstractSensor
 from terkin.util import get_platform_info
 
@@ -25,14 +26,20 @@ class BME280Sensor(AbstractSensor):
         self.address = 0x76
 
     def start(self):
-        """Getting the bus"""
+        """
+        Setup the BME280 sensor.
+
+        :return:
+        """
+
+        # Acquire bus object.
         if self.bus is None:
             raise KeyError("Bus missing for BME280Sensor")
 
         # Initialize the hardware driver.
         try:
 
-            # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+            # MicroPython
             if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
                 from bme280_float import BME280
                 self.driver = BME280(address=self.address, i2c=self.bus.adapter)
@@ -43,15 +50,20 @@ class BME280Sensor(AbstractSensor):
                 self.driver = adafruit_bme280.Adafruit_BME280_I2C(i2c=self.bus.adapter, address=self.address)
 
             else:
-                raise NotImplementedError('DS18X20 driver not implemented on this platform')
+                raise NotImplementedError('BME280 driver not implemented on this platform')
 
             return True
 
         except Exception as ex:
             log.exc(ex, 'BME280 hardware driver failed')
+            return False
 
     def read(self):
-        """ """
+        """
+        Read the BME280 sensor.
+
+        :return: SensorReading
+        """
 
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
@@ -60,7 +72,7 @@ class BME280Sensor(AbstractSensor):
 
         data = {}
 
-        # Vanilla MicroPython 1.11 and Pycom MicroPython 1.9.4
+        # MicroPython
         if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
 
             t, p, h = self.driver.read_compensated_data()
@@ -82,6 +94,7 @@ class BME280Sensor(AbstractSensor):
             }
 
         # Build telemetry payload.
+        # TODO: Push this further into the telemetry domain.
         fieldnames = values.keys()
         for name in fieldnames:
             fieldname = self.format_fieldname(name, hex(self.address))
@@ -93,7 +106,11 @@ class BME280Sensor(AbstractSensor):
 
         log.debug("I2C data:     {}".format(data))
 
-        return data
+        reading = SensorReading()
+        reading.sensor = self
+        reading.data = data
+
+        return reading
 
     @staticmethod
     def int_to_float(t, p, h):
