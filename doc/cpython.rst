@@ -1,23 +1,41 @@
-#############################
-How to run Terkin on CPython?
-#############################
+#########################
+Running Terkin on CPython
+#########################
+
+
+*************
+Prerequisites
+*************
+::
+
+    apt-get install git python-virtualenv python3-virtualenv
+    git clone https://github.com/hiveeyes/terkin-datalogger.git
+    cd terkin-datalogger
 
 Acquire 3rd-party packages::
 
     make setup
+    make setup-tests
+    make setup-cpython
+    make setup-raspberrypi
+    make setup-gpsd
+
+Some adjustments::
+
     rm -r dist-packages/collections dist-packages/types.py
 
-Tests::
 
-    apt-get install mosquitto
-    make setup-tests
-    make test
+*************
+Configuration
+*************
+Create configuration from blueprint::
 
-Invoke::
+    cp src/settings.raspberrypi.py src/settings.py
 
-    # Create configuration.
-    cp src/settings.example.py src/settings.py
 
-    # Run src/main_cpython.py.
-    make install-cpython
+***
+Run
+***
+Invoke ``src/main_cpython.py``::
+
     make run-cpython
