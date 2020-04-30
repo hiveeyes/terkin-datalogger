@@ -2,7 +2,10 @@
 # (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+from terkin import logging
 from terkin.util import get_platform_info
+
+log = logging.getLogger(__name__)
 
 
 class AbstractSensor:
@@ -63,6 +66,15 @@ class AbstractSensor:
         :param bus:
 
         """
+
+        # Skip sensor if associated bus is disabled in configuration.
+        if bus is None:
+            sensor_type = self.settings.get('type', 'unknown').lower()
+            sensor_id = self.settings.get('id', self.settings.get('key', sensor_type))
+            sensor_bus = self.settings.get('bus')
+            log.warning('Bus {} for sensor with id={} and type={} is disabled, '
+                        'skipping registration'.format(sensor_bus, sensor_id, sensor_type))
+
         self.bus = bus
 
     def read(self):

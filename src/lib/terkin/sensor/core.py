@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
 # License: GNU General Public License, Version 3
 from binascii import hexlify
 from machine import Pin
@@ -51,6 +52,10 @@ class SensorManager:
         :param name: 
 
         """
+        if name is None:
+            log.error('Bus "{}" does not exist'.format(name))
+            return
+
         log.info('Trying to find bus by name "%s"', name)
         bus = self.busses.get(name)
         log.info('Found bus by name "%s": %s', name, bus)

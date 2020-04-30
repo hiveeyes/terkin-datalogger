@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import time
-
 from terkin import logging
-from terkin.sensor import AbstractSensor
-from terkin.sensor.core import OneWireBus
+from terkin.sensor import SensorManager, AbstractSensor
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
 
 
-def includeme(sensor_info, sensor_bus):
+def includeme(sensor_manager: SensorManager, sensor_info):
     """
     Create DS18x20 sensor object.
 
+    :param sensor_manager:
     :param sensor_info:
-    :param sensor_bus:
+
     :return: sensor_object
     """
     sensor_object = DS18X20Sensor(settings=sensor_info)
+    sensor_bus = sensor_manager.get_bus_by_name(sensor_info.get('bus'))
     sensor_object.acquire_bus(sensor_bus)
     return sensor_object
 
@@ -107,7 +107,7 @@ class DS18X20Sensor(AbstractSensor):
         effective_devices = []
         for device in self.bus.devices:
 
-            address = OneWireBus.device_address_ascii(device)
+            address = self.bus.device_address_ascii(device)
             device_settings = self.get_device_settings(address)
 
             enabled = device_settings.get('enabled')
@@ -130,7 +130,7 @@ class DS18X20Sensor(AbstractSensor):
         devices = self.get_effective_devices()
         for device in devices:
 
-            address = OneWireBus.device_address_ascii(device)
+            address = self.bus.device_address_ascii(device)
             log.info('Reading DS18X20 device "{}"'.format(address))
             try:
                 value = self.driver.read_temp(device)
@@ -188,7 +188,7 @@ class DS18X20Sensor(AbstractSensor):
         """
 
         # Compute ASCII representation of device address.
-        address = OneWireBus.device_address_ascii(address)
+        address = self.bus.device_address_ascii(address)
 
         # Get device-specific settings from configuration.
         for device_settings in self.settings.get('devices', []):

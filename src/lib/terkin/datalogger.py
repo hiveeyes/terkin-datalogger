@@ -18,9 +18,7 @@ from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.model import SensorReading, DataFrame
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVoltage, SystemUptime
-from terkin.driver.bme280_sensor import BME280Sensor
 from terkin.driver.si7021_sensor import SI7021Sensor
-from terkin.driver.ds18x20_sensor import DS18X20Sensor
 from terkin.driver.hx711_sensor import HX711Sensor
 from terkin.driver.max17043_sensor import MAX17043Sensor
 from terkin.util import gc_disabled, ddformat
@@ -362,7 +360,7 @@ class TerkinDatalogger:
             sensor_address = None
 
         # Report sensor registration to user.
-        message = 'Setting up sensor with with id={} and type={} on bus={} with address={} ' \
+        message = 'Setting up sensor with id={} and type={} on bus={} with address={} ' \
                   'described as "{}"'.format(sensor_id, sensor_type, sensor_bus_name, sensor_address, description)
         log.info(message)
 
@@ -385,7 +383,7 @@ class TerkinDatalogger:
 
             # Acquire sensor object.
             includeme = getattr(module, 'includeme')
-            sensor_object = includeme(sensor_info, sensor_bus)
+            sensor_object = includeme(self.sensor_manager, sensor_info)
 
             # Start sensor.
             sensor_object.start()
