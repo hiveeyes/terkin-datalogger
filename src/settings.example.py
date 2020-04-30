@@ -240,7 +240,7 @@ telemetry = {
                 "gateway": "area-42",
                 "node": "node-01-mqtt-lpp",
             },
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'content_encoding': 'base64',
         },
 
@@ -250,7 +250,7 @@ telemetry = {
             'enabled': False,
 
             'endpoint': 'lora://',
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'settings': {
                 'size': 12,
                 'datarate': 0,
