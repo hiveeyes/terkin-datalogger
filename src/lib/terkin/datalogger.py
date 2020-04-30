@@ -489,13 +489,6 @@ class TerkinDatalogger:
             # Start sensor.
             sensor_object.start()
 
-        elif sensor_type == 'epsolar':
-
-            from terkin.driver.epsolar_sensor import EPSolarSensor
-            sensor_object = EPSolarSensor(settings=sensor_info)
-            # Start sensor.
-            sensor_object.start()
-
         elif sensor_type == 'vedirect':
 
             from terkin.driver.vedirect_sensor import VEDirectSensor
