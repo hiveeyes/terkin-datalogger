@@ -52,8 +52,8 @@ class EPSolarSensor(AbstractSensor):
 
             # CPython
             elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
-                from terkin.lib.epsolar import Epsolar
-                self.driver = Epsolar(device=self.device)
+                from terkin.lib.epsolar import EPSolar
+                self.driver = EPSolar(device=self.device)
 
             else:
                 raise NotImplementedError('EPSolar driver not implemented on this platform')

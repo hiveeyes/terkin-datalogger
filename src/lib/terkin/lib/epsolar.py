@@ -1,36 +1,15 @@
 # -*- coding: utf-8 -*-
 # (c) 2005,2020 Andreas Motl <andreas@hiveeyes.org>
 # (c) 2005,2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
-# (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
-
-import os
-import sys
-import io
 import re
-import serial
-import string
 import json
+import serial
 import struct
 
 
-def main():
-    config = ()
-    epsolar = Epsolar(config)
+class EPSolar:
 
-    # Connect serial port
-    serial_data, serial_read = epsolar.read_serial()
-    print('Serial Data: ', format(serial_data))
-
-    serial_data_converted = epsolar.decode_serial(serial_data)
-    serial_data_decoded = epsolar.serial_data_prepare(serial_data_converted)
-    serial_data_prepared = epsolar.serial_data_prepare(serial_data)
-
-    print(serial_data_prepared)
-    print(serial_data_decoded)
-
-
-class Epsolar:
     def __init__(self, device):
         self.config = device
         self.serial_data = []
@@ -154,4 +133,16 @@ class Epsolar:
 
 
 if __name__ == "__main__":
-    main()
+    config = ()
+    epsolar = Epsolar(config)
+
+    # Connect serial port
+    serial_data, serial_read = epsolar.read_serial()
+    print('Serial Data: ', format(serial_data))
+
+    serial_data_converted = epsolar.decode_serial(serial_data)
+    serial_data_decoded = epsolar.serial_data_prepare(serial_data_converted)
+    serial_data_prepared = epsolar.serial_data_prepare(serial_data)
+
+    print(serial_data_prepared)
+    print(serial_data_decoded)
