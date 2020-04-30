@@ -8,7 +8,7 @@ import machine
 
 from __main__ import bootloader
 
-from terkin.exception import SensorUnknownError
+from terkin.exception import SensorUnknownError, ModuleNotFoundError
 from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
