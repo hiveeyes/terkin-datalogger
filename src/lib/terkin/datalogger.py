@@ -8,7 +8,7 @@ import machine
 
 from __main__ import bootloader
 
-from terkin.exception import SensorUnknownError, ModuleNotFoundError
+from terkin.exception import SensorUnknownError
 from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
@@ -393,10 +393,9 @@ class TerkinDatalogger:
 
             return
 
-        except ModuleNotFoundError as ex:
+        except ImportError as ex:
             if not fullname.startswith('terkin.driver.system'):
                 log.error('Driver module "{}" not found'.format(fullname))
-                #pass
 
         except AttributeError as ex:
             if "has no attribute 'includeme'" in str(ex):
