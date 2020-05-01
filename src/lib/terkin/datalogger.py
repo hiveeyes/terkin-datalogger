@@ -8,7 +8,7 @@ import machine
 
 from __main__ import bootloader
 
-from terkin.exception import SensorUnknownError
+from terkin.exception import SensorUnknownError, ModuleNotFoundError
 from umal import ApplicationInfo, PlatformInfo
 from terkin import __version__
 from terkin import logging
@@ -457,8 +457,8 @@ class TerkinDatalogger:
             sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
             sensor_object.register_pin('dout', sensor_info['pin_dout'])
             sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
-            sensor_object.register_parameter('scale', sensor_info['scale'])
-            sensor_object.register_parameter('offset', sensor_info['offset'])
+            sensor_object.register_parameter('scale', float(sensor_info['scale']))
+            sensor_object.register_parameter('offset', float(sensor_info['offset']))
             sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
 
             # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
