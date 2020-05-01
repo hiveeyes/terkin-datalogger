@@ -266,6 +266,9 @@ sensors = {
     # Whether to prettify sensor log output.
     'prettify_log': True,
 
+    # Whether to power toggle the 1-Wire, I2C or SPI buses.
+    'power_toggle_buses': True,
+
     'system': [
 
         {

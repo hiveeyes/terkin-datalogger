@@ -31,3 +31,9 @@ setup-gpsd:
 
 run-cpython:
 	.venv3/bin/python src/main_cpython.py
+
+setup-dragino:
+	-$(MAKE) setup
+	-$(MAKE) setup-tests
+	-$(MAKE) setup-cpython
+	-$(MAKE) setup-raspberrypi

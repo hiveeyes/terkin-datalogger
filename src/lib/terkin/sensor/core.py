@@ -24,9 +24,10 @@ class BusType:
 class SensorManager:
     """Manages all busses and sensors."""
 
-    def __init__(self):
+    def __init__(self, settings):
         self.sensors = []
         self.busses = {}
+        self.settings = settings
 
     def register_sensor(self, sensor):
         """
@@ -117,13 +118,15 @@ class SensorManager:
 
     def power_on(self):
         """  """
-        self.power_toggle_busses('power_on')
-        self.power_toggle_sensors('power_on')
+        if self.settings.get('sensors.power_toggle_buses', True):
+            self.power_toggle_busses('power_on')
+            self.power_toggle_sensors('power_on')
 
     def power_off(self):
         """  """
-        self.power_toggle_sensors('power_off')
-        self.power_toggle_busses('power_off')
+        if self.settings.get('sensors.power_toggle_buses', True):
+            self.power_toggle_sensors('power_off')
+            self.power_toggle_busses('power_off')
 
     def power_toggle_sensors(self, action):
         """

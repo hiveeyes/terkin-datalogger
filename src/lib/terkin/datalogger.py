@@ -82,7 +82,7 @@ class TerkinDatalogger:
         self.button_manager = None
 
         # Initialize sensor domain.
-        self.sensor_manager = SensorManager()
+        self.sensor_manager = SensorManager(self.settings)
 
     def setup(self):
 
