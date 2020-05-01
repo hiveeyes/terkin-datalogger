@@ -3,10 +3,55 @@ Terkin Datalogger backlog
 #########################
 
 
-**********
-Datalogger
-**********
+***************
+Datalogger 2020
+***************
 
+S1
+==
+- Optional Zeitstempel in MQTT/JSON-Nachricht einfügen.
+- Verschiedene Sendezyklen pro Telemetrie-Eumel ermöglichen.
+- "LoRaDriverDragino.ensure_connectivity()" non-blocking gestalten.
+- Sensor-Wrapper für PyTrack, Gpsd und 2xSolarlader erschließen.
+
+S2
+==
+- Cayenne-Mapping: Use dataframe.readings.
+- Sensor-Gruppen per Tags definieren.
+- Sensor-Metadaten einführen. Beispiel: Timestamp pro Sensor-Reading.
+- data_in => data_out
+
+S3
+==
+- /backup-Verzeichnis optional ansprechen
+- Exceptions auf CPython abfangen
+- Installation von mpy-cross auf RaspberryPi aussparen
+- Sensors: Observation einführen, SensorReading => Reading umbenennen
+- Telemetry: Sequans Modem erschließen
+- Telemetry: ``settings.telemetry_name`` honorieren
+- Improve formatting of "Sensor data" output
+- Setup: Tracer-MT5 code auslagern
+- Setup: gpsd code auslagern
+- Setup: Debian-Paket bauen?
+- Setup: Abhängigkeiten klären: python-spidev python3-spidev + pip spidev!?
+- Setup: /boot/config.txt overlay und /etc/default/gpsd-Konfiguration automatisieren
+- Setup: dpkg-reconfigure UI?
+- Doku bei
+  https://community.hiveeyes.org/t/uberarbeitung-des-terkin-readme-im-repository/3152/5
+  bzw.
+  https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/cpython.rst
+  aktualisieren und veröffentlichen
+- Update credits
+
+S4
+==
+- Telemetry: Uplink messages to Dragino.
+- Telemetry: Pure-LoRa w/o LoRaWAN
+
+
+***************
+Datalogger 2019
+***************
 
 Prio 0.7
 ========
