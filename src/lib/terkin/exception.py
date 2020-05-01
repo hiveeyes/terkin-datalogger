@@ -8,3 +8,7 @@ class SensorReadingError(Exception):
 
 class SensorUnknownError(Exception):
     pass
+
+
+class ModuleNotFoundError(Exception):
+    pass

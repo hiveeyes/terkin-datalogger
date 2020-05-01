@@ -22,10 +22,10 @@ CayenneLPP
 `CayenneLPP <https://developers.mydevices.com/cayenne/docs/lora/#lora-cayenne-low-power-payload>`_ is our sensor data encoding standard of choice in conjuntion with LoRaWAN transmissions. It ensures small data packages and consequently little air times for actually sending the data. The `upstream CayenneLPP Python library <https://github.com/smlng/pycayennelpp>`_ has been extended to also encode ``load`` and ``voltage`` readings. In order to forward those variables into your TTN payload you would need to insert the given decoder.js code into your TTN App. In TTN console under Payload Formats switch to Custom and paste the Javascript from `decoder.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/decoder.js>`_. The decoder function is backward compatible to the build-in CayenneLPP decoder.
 
 ***********
-PutsReq.com
+PutsReq HTTP Endpoint
 ***********
 
-`PutsReq.com <https://putsreq.com>`_ will serve as your HTTP endpoint in the `TTN HTTP integration <https://www.thethingsnetwork.org/docs/applications/http/>`_. It's a free service for inspecting and rewriting HTTP POST requests to a response that our data aquisition service (DAQ) at `swarm.hiveeyes.org <https://swarm.hiveeyes.org>`_ will be able to understand and process. An endpoint for common use is already set up and can be requested from @thiasB but you can of course set up your own endpoint and use the Javascript provided in `putsreq.com.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/putsreq.com.js>`_ for the payload rewrite.
+An instance of `PutsReq.com <https://putsreq.com>`_ hosted on hiveeyes.org will serve as your HTTP endpoint in the `TTN HTTP integration <https://www.thethingsnetwork.org/docs/applications/http/>`_. It's a free service for inspecting and rewriting HTTP POST requests to a response that our data aquisition service (DAQ) at `swarm.hiveeyes.org <https://swarm.hiveeyes.org>`_ will be able to understand and process. An endpoint URL for common use is already set up and can be requested from @thiasB but you can of course set up your own endpoint and use the Javascript provided in `putsreq.com.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/putsreq.com.js>`_ for the payload rewrite.
 
 ************
 Telegram Bot
