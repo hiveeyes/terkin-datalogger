@@ -118,13 +118,13 @@ class SensorManager:
 
     def power_on(self):
         """  """
-        if self.settings.get('power_toggle_busses', True):
+        if self.settings.get('sensors.power_toggle_buses', True):
             self.power_toggle_busses('power_on')
             self.power_toggle_sensors('power_on')
 
     def power_off(self):
         """  """
-        if self.settings.get('power_toggle_busses', True):
+        if self.settings.get('sensors.power_toggle_buses', True):
             self.power_toggle_sensors('power_off')
             self.power_toggle_busses('power_off')
 
