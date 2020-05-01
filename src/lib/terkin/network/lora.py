@@ -98,7 +98,8 @@ class LoRaDriverPycom:
                 self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
 
     def ensure_connectivity(self):
-        self.wait_for_lora_join(42)
+
+        self.wait_for_join()
 
         if self.lora_joined:
             if self.lora_socket is None:
@@ -109,17 +110,17 @@ class LoRaDriverPycom:
         else:
             log.error("[LoRa] Could not join network")
 
-    def wait_for_lora_join(self, attempts):
+    def wait_for_join(self):
         """
 
-        :param attempts: 
-
+        :param attempts:
         """
+        attempts = self.otaa_settings.get('join_attempt_count', 42)
         self.lora_joined = None
         for i in range(0, attempts):
             while not self.lora.has_joined():
                 log.info('[LoRa] Not joined yet...')
-                time.sleep(2.5)
+                time.sleep(self.otaa_settings.get('join_attempt_interval', 2.5))
 
         self.lora_joined = self.lora.has_joined()
 

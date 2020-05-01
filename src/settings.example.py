@@ -119,6 +119,8 @@ networking = {
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
+            #'join_attempt_count': 42,
+            #'join_attempt_interval': 2.5,
         },
         'antenna_attached': False,
     },
