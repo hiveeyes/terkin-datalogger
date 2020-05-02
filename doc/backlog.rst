@@ -47,6 +47,10 @@ S4
 ==
 - Telemetry: Uplink messages to Dragino.
 - Telemetry: Pure-LoRa w/o LoRaWAN
+- Telemetry: Improve handling for "no-lora-connectivity" (by @Thias)
+- Sensors: Add more sensors for standard CPython
+    - https://github.com/giampaolo/psutil
+    - https://pypi.org/project/PySensors/
 
 
 ***************
