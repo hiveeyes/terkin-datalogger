@@ -50,11 +50,12 @@ class TerkinConfiguration:
         log.info('Starting TerkinConfiguration on path "{}"'.format(self.CONFIG_PATH))
         #os.stat(self.CONFIG_PATH)
 
-        try:
-            log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
-            ensure_directory(self.BACKUP_PATH)
-        except Exception as ex:
-            log.exc(ex, 'Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
+        if self.get('main.backup.enabled', False):
+            try:
+                log.info('Ensuring existence of backup directory at "{}"'.format(self.BACKUP_PATH))
+                ensure_directory(self.BACKUP_PATH)
+            except Exception as ex:
+                log.exc(ex, 'Ensuring existence of backup directory at "{}" failed'.format(self.BACKUP_PATH))
 
     def __getitem__(self, key, default=None):
         return self.get(key, default=default)

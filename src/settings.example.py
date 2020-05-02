@@ -37,8 +37,12 @@ main = {
         'timeout': 60000,
     },
 
-    # Configure backup.
+    # Configuration file backup.
     'backup': {
+
+        # Enable or disable.
+        'enabled': True,
+
         # How many backup files to keep around.
         'file_count': 7,
     },
