@@ -64,6 +64,12 @@ class BME280Sensor(AbstractSensor):
                 import adafruit_bme280
                 self.driver = adafruit_bme280.Adafruit_BME280_I2C(i2c=self.bus.adapter, address=self.address)
 
+            # RPi.bme280
+            elif platform_info.vendor == platform_info.MICROPYTHON.Odroid:
+                import bme280
+                self.calibration_params = bme280.load_calibration_params(self.bus.adapter, self.address)
+                self.driver = bme280.sample(self.bus.adapter, self.address)
+
             else:
                 raise NotImplementedError('BME280 driver not implemented on this platform')
 
@@ -107,6 +113,16 @@ class BME280Sensor(AbstractSensor):
                 "humidity": self.driver.humidity,
                 "pressure": self.driver.pressure,
             }
+
+        # Adafruit CircuitPython
+        elif platform_info.vendor == platform_info.MICROPYTHON.Odroid:
+
+            values = {
+                "temperature": self.driver.temperature,
+                "humidity": self.driver.humidity,
+                "pressure": self.driver.pressure,
+            }
+
 
         # Build telemetry payload.
         # TODO: Push this further into the telemetry domain.
