@@ -497,12 +497,12 @@ sensors = {
         # Make Adafruit Blinka learn another I2C bus.
         # Please make sure you define it within /boot/config.txt like::
         #
-        # dtoverlay=i2c-gpio,bus=3,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
+        # dtoverlay=i2c-gpio,bus=5,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
         # """
         {
-            "id": "bus-i2c-3",
+            "id": "bus-i2c-5",
             "family": "i2c",
-            "number": 3,
+            "number": 5,
             "enabled": True,
             "pin_sda": 37,
             "pin_scl": 38,
