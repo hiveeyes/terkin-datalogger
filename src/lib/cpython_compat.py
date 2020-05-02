@@ -10,9 +10,14 @@ from mock import Mock, MagicMock
 
 
 def monkeypatch():
+
+    # Reconfigure logging.
+    setup_logging()
+    monkeypatch_logging()
+
+    # Reconfigure other libraries.
     monkeypatch_stdlib()
     monkeypatch_exceptions()
-    monkeypatch_logging()
     monkeypatch_machine()
     monkeypatch_network()
     monkeypatch_hal()
@@ -60,9 +65,10 @@ def monkeypatch_stdlib():
 
 def monkeypatch_exceptions():
 
+    import traceback
+
     def print_exception(exc, file=sys.stdout):
-        # file.write(str(exc))
-        raise exc
+        traceback.print_exception(exc, exc, exc.__traceback__)
 
     sys.print_exception = print_exception
 
@@ -374,3 +380,20 @@ def monkeypatch_logging():
         self.log(logging.ERROR, msg + "\n" + buf.getvalue(), *args)
 
     logging.Logger.exc = exc
+
+    import terkin
+    terkin.logging = logging
+
+    from terkin.logging import getLogger
+
+
+def setup_logging():
+
+    import logging
+
+    # Configure CPython logger.
+    log_format = '%(asctime)-15s [%(name)-36s] %(levelname)-7s: %(message)s'
+    logging.basicConfig(
+        format=log_format,
+        stream=sys.stderr,
+        level=logging.INFO)
