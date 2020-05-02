@@ -26,7 +26,7 @@ setup-sbc:
 	$(eval pip := .venv3/bin/pip3)
 
 	# Install modules.
-	$(pip) install -r requirements-raspberrypi.txt
+	$(pip) install -r requirements-sbc.txt
 
 setup-gpsd:
 	sudo apt install gpsd gpsd-clients
