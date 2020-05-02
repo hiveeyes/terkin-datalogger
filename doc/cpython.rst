@@ -19,10 +19,6 @@ Acquire 3rd-party packages::
     make setup-sbc
     make setup-gpsd
 
-Some adjustments::
-
-    rm -r dist-packages/collections dist-packages/types.py
-
 
 *************
 Configuration
