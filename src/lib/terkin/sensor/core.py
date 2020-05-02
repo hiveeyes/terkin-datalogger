@@ -331,7 +331,7 @@ class I2CBus(AbstractBus):
             log.exc(ex, 'I2C hardware driver failed')
 
     def scan_devices(self):
-        log.info("Scan I2C bus for devices...")
+        log.info('Scan I2C with id={} bus for devices...'.format(self.number))
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
