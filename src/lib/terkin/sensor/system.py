@@ -166,8 +166,7 @@ class SystemVoltage(AbstractSystemSensor):
             self.adc = ADC(id=0)
 
         else:
-            raise NotImplementedError('Reading the ADC is '
-                                      'not implemented on this platform')
+            raise NotImplementedError('machine.ADC support is not implemented on this platform')
 
     def read(self):
         """Acquire voltage reading by sampling ADC."""

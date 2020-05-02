@@ -30,8 +30,7 @@ class HX711:
             self.pSCK = Pin(pd_sck, mode=Pin.OUT)
             self.pOUT = Pin(dout, mode=Pin.IN, pull=Pin.PULL_UP)
         else:
-            raise NotImplementedError('HX711 is '
-                    'not implemented on this platform')
+            raise NotImplementedError('HX711 is not implemented on this platform')
 
         self.initialized = False
 

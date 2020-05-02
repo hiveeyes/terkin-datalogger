@@ -43,7 +43,7 @@ class BME280Sensor(AbstractSensor):
 
     def start(self):
         """
-        Setup the BME280 sensor.
+        Setup the BME280 sensor driver.
 
         :return:
         """

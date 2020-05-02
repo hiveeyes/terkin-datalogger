@@ -10,8 +10,7 @@ from terkin import logging
 from terkin.sensor.common import AbstractBus
 
 log = logging.getLogger(__name__)
-
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 class BusType:
@@ -57,9 +56,9 @@ class SensorManager:
             log.error('Bus "{}" does not exist'.format(name))
             return
 
-        log.info('Trying to find bus by name "%s"', name)
+        log.debug('Trying to find bus by name "%s"', name)
         bus = self.busses.get(name)
-        log.info('Found bus by name "%s": %s', name, bus)
+        log.debug('Found bus by name "%s": %s', name, bus)
         return bus
 
     def get_sensor_by_name(self, name):
@@ -192,7 +191,7 @@ class OneWireBus(AbstractBus):
                 self.adapter = LinuxSysfsOneWireBus(sysfs)
 
             else:
-                raise NotImplementedError('1-Wire driver not implemented on this platform')
+                raise NotImplementedError('1-Wire bus support is not implemented on this platform')
 
             self.scan_devices()
 
@@ -298,7 +297,7 @@ class I2CBus(AbstractBus):
                 self.adapter = busio.I2C(SCL, SDA)
 
             else:
-                raise NotImplementedError('I2C bus is not implemented on this platform')
+                raise NotImplementedError('I2C bus support is not implemented on this platform')
 
             self.just_started = True
             self.scan_devices()

@@ -12,7 +12,7 @@ from terkin.util import file_remove, file_exists, ensure_directory
 
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 def backup_file(filename, backup_path, backup_count):

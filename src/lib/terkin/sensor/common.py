@@ -62,9 +62,8 @@ class AbstractSensor:
 
     def acquire_bus(self, bus):
         """
-
+        Associate sensor object with bus object.
         :param bus:
-
         """
 
         # Skip sensor if associated bus is disabled in configuration.
@@ -110,7 +109,9 @@ class AbstractBus:
         self.settings = settings
         self.number = self.settings['number']
 
+        # HAL driver adapter.
         self.adapter = None
+
         # TODO: Publish found 1-Wire devices to MQTT bus and HTTP API.
         self.devices = []
         self.pins = {}

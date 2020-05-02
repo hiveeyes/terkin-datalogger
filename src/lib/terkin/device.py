@@ -84,14 +84,14 @@ class TerkinDevice:
             except Exception as ex:
                 log.exc(ex, 'Starting network services failed')
         else:
-            log.info("[WiFi] Interface disabled in settings.")
+            log.info("[WiFi] Interface not enabled in settings.")
 
         # Initialize LoRa device.
         platform_info = self.application_info.platform_info
         is_pycom_lora = platform_info.device_name in ['LoPy', 'LoPy4', 'FiPy']
         is_dragino = platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi
-        if is_pycom_lora or is_dragino:
-            if self.settings.get('networking.lora.enabled'):
+        if self.settings.get('networking.lora.enabled'):
+            if is_pycom_lora or is_dragino:
                 if self.settings.get('networking.lora.antenna_attached'):
                     try:
                         self.networking.start_lora()
@@ -103,9 +103,9 @@ class TerkinDevice:
                     log.info("[LoRa] Disabling LoRa interface as no antenna has been attached. "
                                  "ATTENTION: Running LoRa without antenna will wreck your device.")
             else:
-                log.info("[LoRa] Interface disabled in settings.")
+                log.error("[LoRa] This is not a LoRa capable device.")
         else:
-            log.info("[LoRa] This is not a LoRa capable device.")
+            log.info("[LoRa] Interface not enabled in settings.")
 
         # Initialize GPRS modem.
         if self.settings.get('networking.gprs.enabled'):
@@ -116,7 +116,7 @@ class TerkinDevice:
                 log.exc(ex, 'Unable to start GPRS modem')
                 self.status.networking = False
         else:
-            log.info("[GPRS] Interface disabled in settings.")
+            log.info("[GPRS] Interface not enabled in settings.")
 
         # Inform about networking status.
         #self.networking.print_status()

@@ -77,7 +77,7 @@ class HX711Sensor(AbstractSensor):
             return True
 
         except Exception as ex:
-            log.exc(ex, 'HX711 hardware driver failed')
+            log.exc(ex, 'HX711 hardware driver failed. Reason: {}'.format(ex))
 
     def read(self):
         """ """
