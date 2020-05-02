@@ -12,7 +12,6 @@ from mock import Mock, MagicMock
 def monkeypatch():
 
     # Setup logging.
-    setup_logging()
     monkeypatch_logging()
 
     # Reconfigure other libraries.
@@ -119,6 +118,7 @@ def monkeypatch_pycom():
 
 
 def monkeypatch_logging():
+
     import io
     import logging
 
@@ -128,20 +128,3 @@ def monkeypatch_logging():
         self.log(logging.ERROR, msg + "\n" + buf.getvalue(), *args)
 
     logging.Logger.exc = exc
-
-    import terkin
-    terkin.logging = logging
-
-    from terkin.logging import getLogger
-
-
-def setup_logging():
-
-    import logging
-
-    # Configure CPython logger.
-    log_format = '%(asctime)-15s [%(name)-36s] %(levelname)-7s: %(message)s'
-    logging.basicConfig(
-        format=log_format,
-        stream=sys.stderr,
-        level=logging.INFO)

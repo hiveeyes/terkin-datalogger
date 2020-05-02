@@ -54,7 +54,7 @@ setup(name='terkin',
       keywords='sensor networks data acquisition transformation daq routing '
                'telemetry m2m iot mqtt http',
       package_dir={
-          '': 'src',
+          '': 'src/lib',
       },
       #packages=find_packages(),
       include_package_data=True,
@@ -69,7 +69,7 @@ setup(name='terkin',
       ],
       entry_points={
           'console_scripts': [
-              'terkin = main_cpython:main',
+              'terkin = terkin.boot:cli',
           ],
       },
 )
