@@ -267,6 +267,10 @@ class I2CBus(AbstractBus):
                 from machine import I2C
                 self.adapter = I2C(self.number, mode=I2C.MASTER, pins=(self.pins['sda'], self.pins['scl']), baudrate=self.frequency)
 
+            elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Odroid:
+                from smbus2 import SMBus
+                self.adapter = SMBus(self.number)
+
             elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
                 import board
                 import busio
@@ -306,11 +310,23 @@ class I2CBus(AbstractBus):
 
                 self.adapter = busio.I2C(SCL, SDA)
 
-            else:
-                raise NotImplementedError('I2C bus support is not implemented on this platform')
+                log.warning('This Platform: ' + str(self.platform_info.vendor))
+                raise NotImplementedError('I2C bus is not implemented on this platform')
 
             self.just_started = True
-            self.scan_devices()
+
+            if not self.platform_info.vendor == self.platform_info.MICROPYTHON.Odroid:
+                self.scan_devices()
+
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Odroid:
+
+                self.devices = self.scan_devices_smbus2()
+                log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+
+            else:
+
+                raise NotImplementedError('I2C bus support is not implemented on this platform')
+
             self.ready = True
 
         except Exception as ex:
@@ -321,6 +337,34 @@ class I2CBus(AbstractBus):
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
         log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+
+    def scan_devices_smbus2(self, start=0x03, end=0x78):
+        try:
+            list = []
+            for i in range(start, end):
+                val = 1
+                try:
+                    self.adapter.read_byte(i)
+                except OSError as e:
+                    val = e.args[0]
+                finally:
+                    if val != 5:  # No device
+                        if val == 1:
+                            res = "Available"
+                        elif val == 16:
+                            res = "Busy"
+                        elif val == 110:
+                            res = "Timeout"
+                        else:
+                            res = "Error code: " + str(val)
+                        # print(hex(i) + " -> " + res)
+                        if res == 'Available':
+                            # print(i)
+                            list.append(i)
+            return list
+
+        except Exception as exp:
+            log.exc(exp, 'scan smbus2 failed')
 
     def power_on(self):
         """

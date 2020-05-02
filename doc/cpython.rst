@@ -16,7 +16,7 @@ Acquire 3rd-party packages::
 
     make setup
     make setup-cpython
-    make setup-raspberrypi
+    make setup-sbc
     make setup-gpsd
 
 Some adjustments::
