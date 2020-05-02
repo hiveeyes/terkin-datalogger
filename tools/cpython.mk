@@ -36,6 +36,5 @@ run-cpython:
 
 setup-dragino:
 	-$(MAKE) setup
-	-$(MAKE) setup-tests
 	-$(MAKE) setup-cpython
 	-$(MAKE) setup-raspberrypi

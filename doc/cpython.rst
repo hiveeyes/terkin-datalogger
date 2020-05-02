@@ -15,7 +15,6 @@ Prerequisites
 Acquire 3rd-party packages::
 
     make setup
-    make setup-tests
     make setup-cpython
     make setup-raspberrypi
     make setup-gpsd

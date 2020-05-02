@@ -51,8 +51,8 @@ class SystemTemperature(AbstractSystemSensor):
         import machine
 
         if not hasattr(machine, 'temperature'):
-            raise NotImplementedError('Reading the MCU core temperature is '
-                                      'not implemented on this platform')
+            raise NotImplementedError(
+                'Reading the MCU core temperature is not implemented on this platform')
 
         rawvalue = machine.temperature()
 
@@ -145,8 +145,18 @@ class SystemVoltage(AbstractSystemSensor):
         assert type(self.adc_attenuation_db) is float, 'VCC Error: ADC attenuation value "adc_attenuation_db" invalid'
 
         # ADC channel used for sampling the raw value.
-        from machine import ADC
+        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
+            from machine import ADC, Pin
+            self.adc = ADC(Pin(int(self.pin[1:])))
 
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
+            from machine import ADC
+            self.adc = ADC(id=0)
+
+        else:
+            raise NotImplementedError('machine.ADC support is not implemented on this platform')
+
+        # Configure attenuation.
         if self.adc_attenuation_db == 0.0:
             self.adc_atten = ADC.ATTN_0DB
         elif self.adc_attenuation_db == 2.5:
@@ -157,16 +167,6 @@ class SystemVoltage(AbstractSystemSensor):
             self.adc_atten = ADC.ATTN_11DB
         else:
             raise ValueError('ADC attenuation value (adc_attenuation_db) not allowed : {}'.format(self.adc_attenuation_db))
-
-        if self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
-            from machine import Pin
-            self.adc = ADC(Pin(int(self.pin[1:])))
-
-        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
-            self.adc = ADC(id=0)
-
-        else:
-            raise NotImplementedError('machine.ADC support is not implemented on this platform')
 
     def read(self):
         """Acquire voltage reading by sampling ADC."""
