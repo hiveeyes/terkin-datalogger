@@ -1,13 +1,18 @@
 setup-cpython:
 
-	@# Define path to the "pip" program.
+	@# Define program paths.
 	$(eval pip := .venv3/bin/pip3)
+	$(eval python := .venv3/bin/python)
 
-	@# Define path to the "dist-packages" installation directory.
-	$(eval target_dir := ./dist-packages)
+	# Install Terkin
+	$(python) setup.py develop
 
 	# Install CircuitPython libraries.
 	$(pip) install -r requirements-cpython.txt
+
+
+	@# Define path to the "dist-packages" installation directory.
+	$(eval target_dir := ./dist-packages)
 
 	# Install driver support for Dragino LoRa Hat.
 	curl --location https://github.com/daq-tools/dragino/archive/terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-terkin/dragino
@@ -20,17 +25,14 @@ setup-raspberrypi:
 	@# Define path to the "pip" program.
 	$(eval pip := .venv3/bin/pip3)
 
-	# Install HAL libraries.
-	sudo apt install python-spidev python3-spidev
-
-	# Install HAL libraries.
+	# Install modules.
 	$(pip) install -r requirements-raspberrypi.txt
 
 setup-gpsd:
 	sudo apt install gpsd gpsd-clients
 
 run-cpython:
-	.venv3/bin/python src/main_cpython.py
+	.venv3/bin/terkin --daemon
 
 setup-dragino:
 	-$(MAKE) setup
