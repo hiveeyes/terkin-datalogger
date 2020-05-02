@@ -284,9 +284,13 @@ class I2CBus(AbstractBus):
 
                     dtoverlay=i2c-gpio,bus=3,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
                     """
-                    import sys
+
                     # Uncache this module, otherwise monkeypatching will fail on subsequent calls.
-                    del sys.modules['microcontroller.pin']
+                    import sys
+                    try:
+                        del sys.modules['microcontroller.pin']
+                    except:
+                        pass
 
                     # Monkeypatch "board.pin.i2cPorts".
                     i2c_port = (busnum, scl, sda)
