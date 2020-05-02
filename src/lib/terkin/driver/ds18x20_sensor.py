@@ -51,13 +51,13 @@ class DS18x20Sensor(AbstractSensor):
 
             # Vanilla MicroPython 1.11
             if platform_info.vendor == platform_info.MICROPYTHON.Vanilla or use_native_driver:
-                import DS18x20_native
-                self.driver = DS18x20_native.DS18x20(onewire_bus)
+                import ds18x20_native
+                self.driver = ds18x20_native.DS18X20(onewire_bus)
 
             # Pycom MicroPython 1.9.4
             elif platform_info.vendor == platform_info.MICROPYTHON.Pycom:
-                import DS18x20_python
-                self.driver = DS18x20_python.DS18x20(onewire_bus)
+                import ds18x20_python
+                self.driver = ds18x20_python.DS18X20(onewire_bus)
 
             # RaspberryPi
             elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
