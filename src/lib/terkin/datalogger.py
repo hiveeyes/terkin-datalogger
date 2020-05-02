@@ -320,7 +320,7 @@ class TerkinDatalogger:
             sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
 
             # Skip sensor if disabled in configuration.
-            if sensor_info.get('enabled') is False:
+            if sensor_info.get('enabled', False):
                 log.debug('Sensor with id={} and type={} is disabled, skipping registration'.format(sensor_id, sensor_type))
                 continue
 
