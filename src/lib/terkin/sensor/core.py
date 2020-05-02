@@ -156,6 +156,15 @@ class SensorManager:
                 except Exception as ex:
                     log.exc(ex, 'Sending {} to sensor {} failed'.format(action, busname))
 
+    def start_sensors(self):
+        log.info("Starting all sensors")
+        for sensor in self.sensors:
+            if hasattr(sensor, 'start'):
+                try:
+                    sensor.start()
+                except Exception as ex:
+                    log.exc(ex, 'Starting sensor "{}" failed. Reason: {}.'.format(sensor.type, ex))
+
 
 class OneWireBus(AbstractBus):
     """Initialize the 1-Wire hardware driver and represent as bus object."""
@@ -194,6 +203,7 @@ class OneWireBus(AbstractBus):
                 raise NotImplementedError('1-Wire bus support is not implemented on this platform')
 
             self.scan_devices()
+            self.ready = True
 
         except Exception as ex:
             log.exc(ex, '1-Wire hardware driver failed')
@@ -301,6 +311,7 @@ class I2CBus(AbstractBus):
 
             self.just_started = True
             self.scan_devices()
+            self.ready = True
 
         except Exception as ex:
             log.exc(ex, 'I2C hardware driver failed')

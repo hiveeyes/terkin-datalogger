@@ -38,8 +38,8 @@ class DS18x20Sensor(AbstractSensor):
         :return:
         """
 
-        if self.bus is None:
-            raise KeyError("Bus missing for DS18X20Sensor")
+        # Ensure a bus object exists and is ready.
+        self.ensure_bus()
 
         # Initialize the DS18x20 hardware driver.
         onewire_bus = self.bus.adapter

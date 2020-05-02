@@ -141,6 +141,7 @@ class TerkinDatalogger:
         bus_settings = self.settings.get('sensors.busses', [])
         self.sensor_manager.setup_busses(bus_settings)
         self.register_sensors()
+        self.sensor_manager.start_sensors()
 
         log.info('Setup finished')
 
@@ -385,9 +386,6 @@ class TerkinDatalogger:
             includeme = getattr(module, 'includeme')
             sensor_object = includeme(self.sensor_manager, sensor_info)
 
-            # Start sensor.
-            sensor_object.start()
-
             # Register sensor with sensor manager.
             self.sensor_manager.register_sensor(sensor_object)
 
@@ -464,9 +462,6 @@ class TerkinDatalogger:
             # hx711_sensor.select_driver('gerber')
             sensor_object.select_driver('heisenberg')
 
-            # Start sensor.
-            sensor_object.start()
-
         # Setup and register SI7021 sensors.
         elif sensor_type == 'si7021':
 
@@ -475,9 +470,6 @@ class TerkinDatalogger:
                 sensor_object.set_address(sensor_info['address'])
             sensor_object.acquire_bus(sensor_bus)
 
-            # Start sensor.
-            sensor_object.start()
-
         elif sensor_type == 'max17043':
 
             sensor_object = MAX17043Sensor(settings=sensor_info)
@@ -485,29 +477,20 @@ class TerkinDatalogger:
                 sensor_object.set_address(sensor_info['address'])
             sensor_object.acquire_bus(sensor_bus)
 
-            # Start sensor.
-            sensor_object.start()
-
         elif sensor_type == 'vedirect':
 
             from terkin.driver.vedirect_sensor import VEDirectSensor
             sensor_object = VEDirectSensor(settings=sensor_info)
-            # Start sensor.
-            sensor_object.start()
 
         elif sensor_type == 'gpsd':
 
             from terkin.driver.gpsd_sensor import GpsdSensor
             sensor_object = GpsdSensor(settings=sensor_info)
-            # Start sensor.
-            sensor_object.start()
 
         elif sensor_type == 'gpiozero':
 
             from terkin.driver.gpiozero_sensor import GPIOZeroSensor
             sensor_object = GPIOZeroSensor(settings=sensor_info)
-            # Start sensor.
-            sensor_object.start()
 
         elif sensor_type == 'ads1x15':
 
@@ -516,9 +499,6 @@ class TerkinDatalogger:
             # if 'address' in sensor_info:
             #    sensor_object.set_address(sensor_info['address'])
             sensor_object.acquire_bus(sensor_bus)
-
-            # Start sensor.
-            sensor_object.start()
 
         else:
             raise SensorUnknownError('Unknown sensor type "{}"'.format(sensor_type))

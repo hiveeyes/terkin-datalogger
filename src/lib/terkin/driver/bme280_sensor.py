@@ -48,9 +48,8 @@ class BME280Sensor(AbstractSensor):
         :return:
         """
 
-        # Acquire bus object.
-        if self.bus is None:
-            raise KeyError("Bus missing for BME280Sensor")
+        # Ensure a bus object exists and is ready.
+        self.ensure_bus()
 
         # Initialize the hardware driver.
         try:

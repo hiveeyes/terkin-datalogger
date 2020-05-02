@@ -76,6 +76,10 @@ class AbstractSensor:
 
         self.bus = bus
 
+    def ensure_bus(self):
+        if self.bus is None or not self.bus.ready:
+            raise KeyError('Bus "{}" not ready for "{}"'.format(self.bus.name, self.__class__.__name__))
+
     def read(self):
         """ """
         raise NotImplementedError()
@@ -115,6 +119,9 @@ class AbstractBus:
         # TODO: Publish found 1-Wire devices to MQTT bus and HTTP API.
         self.devices = []
         self.pins = {}
+
+        # Indicate whether the bus driver is ready.
+        self.ready = False
 
         # Indicate whether the bus driver just has been started.
         self.just_started = None
