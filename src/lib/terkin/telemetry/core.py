@@ -7,9 +7,10 @@ from copy import copy
 from urllib.parse import urlsplit, urlencode
 from terkin import logging
 from terkin.model import DataFrame
-from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat
+from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat, get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 #log.setLevel(logging.DEBUG)
 
@@ -452,7 +453,17 @@ class TelemetryTransportLORA:
         """
 
         import binascii
-        import pycom
+
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            import pycom
+            nvram_get = pycom.nvs_get
+            nvram_set = pycom.nvs_set
+            nvram_erase = pycom.nvs_erase
+        elif platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            import esp32
+            nvram_get = esp32.nvs_get
+            nvram_set = esp32.nvs_set
+            nvram_erase = esp32.nvs_erase
 
         if self.lora_adapter is None:
             log.error('LoRa not enabled or no antenna attached')
@@ -464,15 +475,16 @@ class TelemetryTransportLORA:
         payload = dataframe.payload_out
 
         # clean up payload from sensor data if pause command was received on last uplink
-        try:
-            _pause = pycom.nvs_get('pause')
-        except:
-            _pause = None
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            try:
+                _pause = nvram_get('pause')
+            except:
+                _pause = None
 
-        if ( _pause is None ) or ( _pause == 0 ):
-            payload = dataframe.payload_out + binascii.unhexlify(b'000100')
-        elif _pause == 1:
-            payload = binascii.unhexlify(b'000101')
+            if ( _pause is None ) or ( _pause == 0 ):
+                payload = dataframe.payload_out + binascii.unhexlify(b'000100')
+            elif _pause == 1:
+                payload = binascii.unhexlify(b'000101')
 
         log.info('[LoRa] Uplink payload (hex): %s', binascii.hexlify(payload).decode())
 
@@ -491,29 +503,30 @@ class TelemetryTransportLORA:
         # survives power cycle, reset and deep sleep
         rx, port = self.lora_adapter.receive()
 
-        if port == 1:
-            sleep = int.from_bytes(rx, "big")
-            if sleep == 0:
-                # use value from settings file
-                log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
-                try:
-                    pycom.nvs_erase('deepsleep')
-                except:
-                    pass
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            if port == 1:
+                sleep = int.from_bytes(rx, "big")
+                if sleep == 0:
+                    # use value from settings file
+                    log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
+                    try:
+                        nvram_erase('deepsleep')
+                    except:
+                        pass
+                else:
+                    # Use deepsleep interval received via LoRa.
+                    log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
+                    nvram_set('deepsleep', sleep)
+
+            elif port == 2:
+                pause = int.from_bytes(rx, "big")
+                log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
+                nvram_set('pause', pause)
+
             else:
-                # Use deepsleep interval received via LoRa.
-                log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
-                pycom.nvs_set('deepsleep', sleep)
+                log.info('[LoRa] No downlink message processed')
 
-        elif port == 2:
-            pause = int.from_bytes(rx, "big")
-            log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
-            pycom.nvs_set('pause', pause)
-
-        else:
-            log.info('[LoRa] No downlink message processed')
-
-        return True
+            return True
 
 
 class TelemetryTransportMQTT:

@@ -76,13 +76,25 @@ class LoRaDriverPycom:
 
         # Restore LoRa state from NVRAM after waking up from DEEPSLEEP.
         # Otherwise, reset LoRa NVRAM and rejoin.
-        import machine
-        if machine.reset_cause() == machine.DEEPSLEEP_RESET:
-            self.lora.nvram_restore()
-            log.info('[LoRa] LoRaWAN state restored from NVRAM after deep sleep')
-        else:
-            self.lora.nvram_erase()
-            log.info('[LoRa] LoRaWAN state erased from NVRAM. Rejoin forced')
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            import machine
+            # Restore LoRaWAN status after wake up from deep sleep
+            if machine.reset_cause() == machine.DEEPSLEEP_RESET:
+                self.lora.nvram_restore()
+                log.info('[LoRa] LoRaWAN state restored from NVRAM after deep sleep')
+            # Otherwise reset LoRaWAN status and deep sleep interval from NVRAM
+            else:
+                self.lora.nvram_erase()
+                log.info('[LoRa] LoRaWAN state erased from NVRAM. Rejoin forced')
+
+                if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+                    import pycom
+                    nvram_get   = pycom.nvs_get
+                    nvram_erase = pycom.nvs_erase
+                elif platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+                    import esp32
+                    nvram_get   = esp32.nvs_get
+                    nvram_erase = esp32.nvs_erase
 
         # Create LoRaWAN OTAA connection to TTN.
         import binascii
