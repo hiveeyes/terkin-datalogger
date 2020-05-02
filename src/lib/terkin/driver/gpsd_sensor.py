@@ -10,6 +10,8 @@ from terkin.util import get_platform_info
 log = logging.getLogger(__name__)
 platform_info = get_platform_info()
 
+abc
+def
 
 class GpsdSensor(AbstractSensor):
     """

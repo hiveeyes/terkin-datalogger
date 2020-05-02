@@ -320,7 +320,7 @@ class TerkinDatalogger:
 
             # Skip sensor if disabled in configuration.
             if sensor_info.get('enabled') is False:
-                log.info('Sensor with id={} and type={} is disabled, skipping registration'.format(sensor_id, sensor_type))
+                log.debug('Sensor with id={} and type={} is disabled, skipping registration'.format(sensor_id, sensor_type))
                 continue
 
             # Skip WiFi sensor registration when WiFi is disabled.
@@ -482,15 +482,6 @@ class TerkinDatalogger:
             from terkin.driver.vedirect_sensor import VEDirectSensor
             sensor_object = VEDirectSensor(settings=sensor_info)
 
-        elif sensor_type == 'gpsd':
-
-            from terkin.driver.gpsd_sensor import GpsdSensor
-            sensor_object = GpsdSensor(settings=sensor_info)
-
-        elif sensor_type == 'gpiozero':
-
-            from terkin.driver.gpiozero_sensor import GPIOZeroSensor
-            sensor_object = GPIOZeroSensor(settings=sensor_info)
 
         elif sensor_type == 'ads1x15':
 
