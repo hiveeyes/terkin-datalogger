@@ -4,12 +4,23 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
+from terkin.sensor import SensorManager, AbstractSensor
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
 platform_info = get_platform_info()
 
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create Gpsd sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = GpsdSensor(settings=sensor_info)
+    return sensor_object
 
 class GpsdSensor(AbstractSensor):
     """

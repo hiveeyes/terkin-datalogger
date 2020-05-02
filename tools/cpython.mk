@@ -20,13 +20,13 @@ setup-cpython:
 	# Install updated pySX127x driver.
 	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x
 
-setup-raspberrypi:
+setup-sbc:
 
 	@# Define path to the "pip" program.
 	$(eval pip := .venv3/bin/pip3)
 
 	# Install modules.
-	$(pip) install -r requirements-raspberrypi.txt
+	$(pip) install -r requirements-sbc.txt
 
 setup-gpsd:
 	sudo apt install gpsd gpsd-clients
@@ -37,4 +37,5 @@ run-cpython:
 setup-dragino:
 	-$(MAKE) setup
 	-$(MAKE) setup-cpython
-	-$(MAKE) setup-raspberrypi
+	-$(MAKE) setup-sbc
+	-$(MAKE) setup-gpsd
