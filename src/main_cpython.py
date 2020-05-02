@@ -17,6 +17,8 @@ Have fun!
 """
 import os
 import sys
+import click
+
 base = os.path.abspath('.')
 sys.path = [os.path.join(base, 'dist-packages'), os.path.join(base, 'src', 'lib')] + sys.path
 
@@ -35,18 +37,21 @@ from terkin.boot import start_bootloader
 
 
 # Global reference to Datalogger object.
+bootloader = None
 datalogger = None
 
 
-def main():
+@click.command()
+@click.option("--daemon", is_flag=True, default=False, help="Run in daemon mode.")
+def main(daemon):
     """Start the data logger application."""
-
-    print('[main.py] INFO: Starting bootloader')
-    start_bootloader()
 
     print('[main.py] INFO: Loading Terkin Datalogger')
     global bootloader
     global datalogger
+
+    print('[main.py] INFO: Starting bootloader')
+    bootloader = start_bootloader()
 
     print('[main.py] INFO: Loading modules')
     from terkin.datalogger import TerkinDatalogger
@@ -55,7 +60,10 @@ def main():
     datalogger.setup()
 
     try:
-        datalogger.start()
+        if daemon:
+            datalogger.start()
+        else:
+            datalogger.duty_cycle()
 
     except KeyboardInterrupt:
         log.info("Received KeyboardInterrupt within main thread")

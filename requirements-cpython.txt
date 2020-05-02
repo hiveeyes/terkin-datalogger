@@ -1,3 +1,6 @@
+# Command line interface
+click==7.1.2
+
 # UART access.
 pyserial==3.4
 
