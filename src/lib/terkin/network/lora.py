@@ -32,7 +32,7 @@ class LoRaAdapter:
     def start(self):
         log.info('[LoRa] Starting LoRa Adapter')
         return self.driver.start()
-    
+
     def ensure_connectivity(self):
         return self.driver.ensure_connectivity()
 
@@ -44,7 +44,9 @@ class LoRaAdapter:
 
 
 class LoRaDriverPycom:
-    """ """
+    """
+    LoRa driver for Pycom MicroPython
+    """
 
     def __init__(self, network_manager, settings):
         self.network_manager = network_manager
@@ -55,7 +57,7 @@ class LoRaDriverPycom:
         #self.generated_device_eui = binascii.hexlify(LoRa().mac())
 
     def start(self):
-        """ """
+        """ Start driver """
 
         from network import LoRa
 
@@ -151,7 +153,7 @@ class LoRaDriverPycom:
         return self.lora_joined
 
     def create_socket(self):
-        """ """
+        """ Create socket for LoRa communication """
 
         # create a lora socket
         self.socket = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
@@ -165,9 +167,8 @@ class LoRaDriverPycom:
 
     def send(self, payload):
         """
-
-        :param payload: 
-
+        Send a LoRa packet.
+        :param payload:
         """
         self.socket.setblocking(True)
 
@@ -180,7 +181,9 @@ class LoRaDriverPycom:
         return success
 
     def receive(self):
-        """ """
+        """
+        Receive a LoRa packet.
+        """
 
         try:
             rx, port = self.socket.recvfrom(256)
@@ -194,7 +197,9 @@ class LoRaDriverPycom:
 
 
 class LoRaDriverDragino:
-    """ """
+    """
+    LoRa driver for Dragino LoRa/GPS HAT on Raspberry Pi.
+    """
 
     def __init__(self, network_manager, settings):
         self.network_manager = network_manager
@@ -218,7 +223,7 @@ class LoRaDriverDragino:
                                           appeui=self.otaa_settings['application_eui'],
                                           appkey=self.otaa_settings['application_key'])
         lora_config = LoRaWANConfig(auth=lora_auth)
-        self.dragino = Dragino(config=lora_config)
+        self.dragino = Dragino(config=lora_config, logging_level=logging.DEBUG)
 
     def start(self):
         log.info('[LoRa] Starting join')
@@ -230,7 +235,8 @@ class LoRaDriverDragino:
             time.sleep(1)
 
     def send(self, payload):
-        return self.dragino.send_bytes(list(payload))
+        self.dragino.send_bytes(list(payload))
+        return len(payload)
 
     def receive(self):
         return None, None

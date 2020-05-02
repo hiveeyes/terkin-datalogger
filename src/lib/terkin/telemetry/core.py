@@ -489,10 +489,13 @@ class TelemetryTransportLORA:
         log.info('[LoRa] Uplink payload (hex): %s', binascii.hexlify(payload).decode())
 
         # Send payload
+        success = False
         try:
             log.info('[LoRa] Sending payload...')
             outcome = self.lora_adapter.send(payload)
             log.info('[LoRa] Sent %s bytes', outcome)
+            success = True
+
         except:
             log.exception('[LoRa] Transmission failed')
             return False
@@ -526,7 +529,12 @@ class TelemetryTransportLORA:
             else:
                 log.info('[LoRa] No downlink message processed')
 
-            return True
+            success = success and True
+
+        else:
+            log.warning('[LoRa] Processing downlink messages not implemented for Dragino')
+
+        return success
 
 
 class TelemetryTransportMQTT:
