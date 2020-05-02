@@ -448,6 +448,7 @@ class TerkinDatalogger:
             from terkin.sensor.button import ButtonManager
             self.button_manager = ButtonManager()
             self.start_buttons()
+            return
 
         # Setup and register HX711 sensors.
         elif sensor_type == 'hx711':
