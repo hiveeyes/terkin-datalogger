@@ -79,7 +79,7 @@ class SensorManager:
         for bus_settings in busses_settings:
 
             if bus_settings.get("enabled") is False:
-                log.info('Bus with id "{}" and family "{}" is disabled, '
+                log.debug('Bus with id "{}" and family "{}" is disabled, '
                          'skipping registration'.format(bus_settings.get('id'), bus_settings.get('family')))
                 continue
 
@@ -310,6 +310,7 @@ class I2CBus(AbstractBus):
 
                 self.adapter = busio.I2C(SCL, SDA)
 
+            else:
                 log.warning('This Platform: ' + str(self.platform_info.vendor))
                 raise NotImplementedError('I2C bus is not implemented on this platform')
 
@@ -321,11 +322,8 @@ class I2CBus(AbstractBus):
             if self.platform_info.vendor == self.platform_info.MICROPYTHON.Odroid:
 
                 self.devices = self.scan_devices_smbus2()
+                log.info("Scan I2C bus via smbus2 for devices...")
                 log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
-
-            else:
-
-                raise NotImplementedError('I2C bus support is not implemented on this platform')
 
             self.ready = True
 
