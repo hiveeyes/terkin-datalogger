@@ -96,6 +96,13 @@ class LoRaDriverPycom:
                     nvram_get   = esp32.nvs_get
                     nvram_erase = esp32.nvs_erase
 
+                try:
+                    if nvram_get('deepsleep') is not None:
+                        nvram_erase('deepsleep')
+                        log.info('[LoRa] Deep sleep interval erased from NVRAM. Return to settings value')
+                except:
+                    pass
+
         # Create LoRaWAN OTAA connection to TTN.
         import binascii
         app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
