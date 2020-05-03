@@ -69,7 +69,7 @@ setup(name='terkin',
       ],
       entry_points={
           'console_scripts': [
-              'terkin = terkin.boot:cli',
+              'terkin = terkin_cpython.main:cli',
           ],
       },
 )

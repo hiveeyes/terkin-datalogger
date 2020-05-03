@@ -36,8 +36,8 @@ sys.path = [os.path.join(base, 'dist-packages'), os.path.join(base, 'src')] + sy
 
 # Make environment compatible with CPython.
 log.info('Setting up CPython compatibility layer')
-import cpython_compat
-cpython_compat.monkeypatch()
+from terkin_cpython.compat import monkeypatch
+monkeypatch()
 
 
 log.info('Loading settings')
