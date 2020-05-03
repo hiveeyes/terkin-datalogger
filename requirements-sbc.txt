@@ -1,6 +1,3 @@
-# Mocks some HAL modules not available on CPython.
-esp32-machine-emulator==1.1.3
-
 # SPI HAL module.
 spidev==3.4
 

@@ -57,16 +57,13 @@ download-requirements-real:
 
 	## API
 
-	# Install MicroWebSrv and MicroDNSSrv libraries
-	# https://github.com/jczic/MicroWebSrv
-	# https://github.com/jczic/MicroDNSSrv
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSrv.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSocket.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
-
 	# Install MicroWebSrv2
+	# https://github.com/jczic/MicroWebSrv
 	curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
+
+	# Install MicroDNSSrv
+	# https://github.com/jczic/MicroDNSSrv
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
 
 	# Install BLE GATTS Wrapper for Pycom devices
 	# https://github.com/cmisztur/pycom-ble-gatt-wrapper
@@ -151,11 +148,16 @@ download-requirements-real:
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/SI7021/e5d49689/SI7021.py
 
 
+download-requirements-ui:
+
+	@# Define path to the "dist-packages" installation directory.
+	$(eval target_dir := ./dist-packages)
+
 	## GUI
-	#curl --location https://github.com/pfalcon/picotui/archive/master.zip | tar -C $(target_dir) --strip-components=1 -xvf - picotui-master/picotui
+	curl --location https://github.com/hiveeyes/picotui/archive/micropython.zip | tar -C ${target_dir} --strip-components=1 -xvf - picotui-micropython/picotui
 
 
-download-requirements-optional:
+download-requirements-ratrack:
 
 	## Ratrack
 

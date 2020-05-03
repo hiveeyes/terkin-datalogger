@@ -6,6 +6,35 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst'), encoding="utf-8").read()
 
 requires = [
+
+    # Runtime
+    'mock==4.0.2',
+
+    # Mocks some HAL modules not available on CPython.
+    'esp32-machine-emulator==1.1.3',
+
+    # Command line interface
+    'click==7.1.2',
+
+    # UART access.
+    'pyserial==3.4',
+
+    # GPSD client library.
+    'gps==3.19',
+
+    # Raspberry Pi utilities.
+    'gpiozero==1.5.1',
+
+    # Adafruit CircuitPython libraries.
+    'Adafruit-Blinka==4.6.0',
+    'adafruit-circuitpython-busdevice==4.3.1',
+    'adafruit-circuitpython-bme280==2.4.1',
+    'adafruit-circuitpython-ads1x15==2.2.1',
+    'adafruit-circuitpython-si7021==3.2.1',
+
+    # Victron Energy VE.Direct text protocol driver.
+    #'git+https://github.com/karioja/vedirect@f74c0f2',
+
 ]
 
 extras = {
@@ -56,7 +85,11 @@ setup(name='terkin',
       package_dir={
           '': 'src/lib',
       },
-      #packages=find_packages(),
+      packages=find_packages('src/lib'),
+      py_modules=[
+          'umal',
+          'mininet',
+      ],
       include_package_data=True,
       package_data={
       },
