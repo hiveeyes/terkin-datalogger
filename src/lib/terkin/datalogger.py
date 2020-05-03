@@ -7,11 +7,11 @@ import time
 import machine
 
 from __main__ import bootloader
-
-from terkin.exception import SensorUnknownError
 from umal import ApplicationInfo, PlatformInfo
+
 from terkin import __version__
 from terkin import logging
+from terkin.exception import SensorUnknownError
 from terkin.configuration import TerkinConfiguration
 from terkin.device import TerkinDevice
 from terkin.network import SystemWiFiMetrics

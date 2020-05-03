@@ -30,6 +30,12 @@ class NetworkManager:
 
     def stop(self):
         """ """
+        self.stop_modeserver()
+
+        # This helps the webserver to get rid of any listening sockets.
+        # https://github.com/jczic/MicroWebSrv2/issues/8
+        self.stop_httpserver()
+
         if self.wifi_manager:
             self.wifi_manager.stop()
             if self.device.status.maintenance is not True:
@@ -164,10 +170,10 @@ class NetworkManager:
         self.http_api.start()
 
     def stop_httpserver(self):
-        if self.settings.get('services.api.http.enabled', False):
+        if self.http_api:
             try:
                 log.info('Shutting down HTTP server')
-                self.http_api.webserver.Stop()
+                self.http_api.stop()
             except Exception as ex:
                 log.exc(ex, 'Shutting down HTTP server failed')
 

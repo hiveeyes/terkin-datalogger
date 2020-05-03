@@ -474,14 +474,14 @@ class TelemetryTransportLORA:
         # Default payload.
         payload = dataframe.payload_out
 
-        # clean up payload from sensor data if pause command was received on last uplink
+        # Clean up payload from sensor data if pause command was received on last uplink.
         if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
             try:
                 _pause = nvram_get('pause')
             except:
                 _pause = None
 
-            if ( _pause is None ) or ( _pause == 0 ):
+            if _pause is None or _pause == 0:
                 payload = dataframe.payload_out + binascii.unhexlify(b'000100')
             elif _pause == 1:
                 payload = binascii.unhexlify(b'000101')
@@ -854,7 +854,7 @@ class BeepBobTopology(IdentityTopology):
 
         # Rename all fields to designated BEEP-BOB fields.
         egress_data = {}
-        mapping = self.settings.get('sensor_telemetry_map')
+        mapping = self.settings.get('telemetry.maps.bee-observer', self.settings.get('sensor_telemetry_map'))
         mapping['key'] = 'key'
         for sensor_field, telemetry_field in mapping.items():
             sensor_field = sensor_field.lower()

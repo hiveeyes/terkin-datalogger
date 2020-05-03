@@ -79,12 +79,13 @@ class TerkinDevice:
                 log.exc(ex, 'IP stack not available')
                 self.status.networking = False
 
-            try:
-                self.networking.start_services()
-            except Exception as ex:
-                log.exc(ex, 'Starting network services failed')
         else:
             log.info("[WiFi] Interface not enabled in settings.")
+
+        try:
+            self.networking.start_services()
+        except Exception as ex:
+            log.exc(ex, 'Starting network services failed')
 
         # Initialize LoRa device.
         platform_info = self.application_info.platform_info

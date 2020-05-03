@@ -73,6 +73,9 @@ class TerkinHttpApi:
             self.webserver.SetEmbeddedConfig()
             self.webserver.StartManaged()
 
+    def stop(self):
+        self.webserver.Stop()
+
     def captive(self):
         """
         Configure transparent captive portal.
