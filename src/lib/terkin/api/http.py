@@ -20,8 +20,7 @@ from copy import deepcopy
 from MicroWebSrv2 import MicroWebSrv2, WebRoute, HttpRequest, GET, POST, PUT
 
 from terkin import logging
-from terkin.sensor import BusType
-from terkin.sensor.core import serialize_som
+from terkin.sensor.common import serialize_som
 
 log = logging.getLogger(__name__)
 
