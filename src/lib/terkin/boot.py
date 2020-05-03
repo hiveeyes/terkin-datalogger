@@ -39,6 +39,10 @@ log.info('Setting up CPython compatibility layer')
 import cpython_compat
 cpython_compat.monkeypatch()
 
+# Fix: RuntimeError: Click will abort further execution because Python 3
+#      was configured to use ASCII as encoding for the environment.
+os.environ['LANG'] = 'en_US.UTF-8'
+
 
 log.info('Loading settings')
 import settings
