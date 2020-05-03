@@ -139,9 +139,12 @@ class NetworkManager:
 
     def start_modeserver(self):
         """Start UDP server for pulling device into maintenance mode."""
+
+        # UDP server settings.
         #ip = self.wifi_manager.get_ip_address()
         ip = '0.0.0.0'
-        port = 666
+        port = self.settings.get('services.api.modeserver.port', 666)
+
         log.info('Starting mode server on {}:{}'.format(ip, port))
         from terkin.api.udp import UdpServer
         self.mode_server = UdpServer(ip, port)
