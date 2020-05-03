@@ -16,83 +16,78 @@ in order to get an idea about how to operate the sandbox of this software.
 Have fun!
 """
 import os
-import sys
 import click
 import logging
+from terkin_cpython.util import setup_logging, configure_pythonpath, patch_system, start_bootloader, load_settings
 
-
-# Configure CPython logger.
-log_format = '%(asctime)-15s [%(name)-30s] %(levelname)-7s: %(message)s'
-logging.basicConfig(
-    format=log_format,
-    stream=sys.stderr,
-    level=logging.INFO)
-
+# Configure logging.
+setup_logging()
 log = logging.getLogger()
-
-# Reconfigure module search path.
-base = os.path.abspath('.')
-sys.path = [os.path.join(base, 'dist-packages'), os.path.join(base, 'src')] + sys.path
-
-# Make environment compatible with CPython.
-log.info('Setting up CPython compatibility layer')
-from terkin_cpython.compat import monkeypatch
-monkeypatch()
-
-# Fix: RuntimeError: Click will abort further execution because Python 3
-#      was configured to use ASCII as encoding for the environment.
-os.environ['LANG'] = 'en_US.UTF-8'
-
-
-log.info('Loading settings')
-import settings
-
-# Global references to Bootloader and Datalogger objects.
-bootloader = None
-datalogger = None
 
 
 @click.command()
+@click.option("--config", required=True, help="Path to settings file.")
+@click.option("--site-packages", help="Path to additional Python modules.")
 @click.option("--daemon", is_flag=True, default=False, help="Run in daemon mode.")
-def cli(daemon):
+def cli(**options):
+
+    # Reconfigure module search path.
+    if 'site_packages' in options and options['site_packages']:
+        search_path = options['site_packages']
+    else:
+        search_path = os.path.abspath(os.path.join('.', 'dist-packages'))
+    configure_pythonpath(search_path)
+
+    # Bootstrap datalogger application.
+    app = TerkinApplication(config=options['config'], daemon=options['daemon'])
+    app.start()
+
+
+class TerkinApplication:
     """Start the data logger application."""
 
-    global bootloader
-    global datalogger
+    def __init__(self, config=None, daemon=False):
+        self.config = config
+        self.daemon = daemon
+        self.bootloader = None
+        self.datalogger = None
 
-    log.info('Starting bootloader')
-    bootloader = start_bootloader()
+    def start(self):
 
-    log.info('Loading modules')
-    from terkin.datalogger import TerkinDatalogger
+        # Make environment compatible with CPython.
+        patch_system()
 
-    log.info('Setting up Terkin')
-    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-    datalogger.setup()
+        log.info('Starting bootloader')
+        self.bootloader = start_bootloader()
 
-    log.info('Starting Terkin')
-    try:
-        if daemon:
-            datalogger.start()
-        else:
-            datalogger.duty_cycle()
+        log.info('Loading modules')
+        from terkin.datalogger import TerkinDatalogger
 
-    except KeyboardInterrupt:
+        log.info('Loading settings')
+        settings = load_settings(settings_file=self.config)
 
-        if datalogger.device.status.networking:
-            datalogger.device.networking.stop_modeserver()
-            datalogger.device.networking.wifi_manager.stop()
+        log.info('Setting up Terkin')
+        self.datalogger = TerkinDatalogger(settings, platform_info=self.bootloader.platform_info)
+        self.datalogger.setup()
+
+        log.info('Starting Terkin')
+        try:
+            if self.daemon:
+                self.datalogger.start()
+            else:
+                self.datalogger.duty_cycle()
+
+        except KeyboardInterrupt:
+            self.shutdown()
+
+    def shutdown(self):
+
+        log.info('Shutting down Terkin')
+
+        if self.datalogger.device.status.networking:
+            self.datalogger.device.networking.stop_modeserver()
+            self.datalogger.device.networking.wifi_manager.stop()
 
             # This helps the webserver to get rid of any listening sockets.
             # https://github.com/jczic/MicroWebSrv2/issues/8
-            datalogger.device.networking.stop_httpserver()
-
-
-def start_bootloader():
-    """
-    Invoke bootloader.
-    """
-    from umal import MicroPythonBootloader
-    bootloader = MicroPythonBootloader()
-    sys.modules['__main__'].bootloader = bootloader
-    return bootloader
+            self.datalogger.device.networking.stop_httpserver()

@@ -3,13 +3,9 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import sys
-import time
-sys.modules['utime'] = time
-
-from mock import Mock, MagicMock
 
 
-def monkeypatch():
+def monkeypatch_cpython():
 
     # Setup logging.
     monkeypatch_logging()
@@ -22,6 +18,11 @@ def monkeypatch():
 
 
 def monkeypatch_stdlib():
+
+    from mock import Mock
+
+    import time
+    sys.modules['utime'] = time
 
     import builtins
     builtins.const = int
@@ -71,11 +72,13 @@ def monkeypatch_exceptions():
 
 
 def monkeypatch_machine():
+
+    from mock import Mock
+
     import uuid
     import machine
 
     # Some primitives.
-    from mock import Mock, MagicMock
     machine.enable_irq = Mock()
     machine.disable_irq = Mock()
     machine.unique_id = lambda: str(uuid.uuid4().fields[-1])[:5].encode()
@@ -109,6 +112,8 @@ def wake_reason():
 
 
 def monkeypatch_pycom():
+
+    from mock import MagicMock
 
     import network
     network.Bluetooth = MagicMock()

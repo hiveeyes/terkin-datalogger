@@ -71,9 +71,12 @@ class TerkinConfiguration:
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             self.CONFIG_PATH = '/flash'
             self.BACKUP_PATH = '/flash/backup'
-        else:
+        elif platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
             self.CONFIG_PATH = '/'
             self.BACKUP_PATH = '/backup'
+        else:
+            self.CONFIG_PATH = os.path.abspath('.')
+            self.BACKUP_PATH = os.path.join(self.CONFIG_PATH, 'backup')
 
     def get(self, key, default=None):
         """

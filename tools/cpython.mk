@@ -32,7 +32,7 @@ setup-gpsd:
 	sudo apt install gpsd gpsd-clients
 
 run-cpython:
-	.venv3/bin/terkin --daemon
+	.venv3/bin/terkin --config=src/settings.py --daemon
 
 setup-dragino:
 	-$(MAKE) setup
