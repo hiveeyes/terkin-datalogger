@@ -5,13 +5,66 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Fix LoRa subsystem
+- Add Si7021 sensor. Thanks, @thiasB!
+- Add a bunch of sensors for RaspberryPi. Thanks, @tonke!
+- Improve drivers VEDirect, EPSolar, ADS1x15. Thanks, @tonke!
+- Fix tests
+- Update TTN decoder.js. Thanks, @thiasB!
+- Improve reading sensors by returning SensorReading object from driver
+- Improve registering sensors by moving the setup to the sensor modules
+- Improve CPython/RaspberryPi setup tooling and documentation
+- Improve new sensor registration architecture once more
+- Clean up EPSolar hardware driver
+- Self-register EPSolarSensor
+- Resolve woes with ModuleNotFoundError
+- Switch settings to new LPP format scheme. Thanks, @thiasB!
+- Import scale parameters as floating point number. Thanks, @thiasB!
+- Update TTN README. Thanks, @thiasB!
+- Enable native DS18x20 driver by default. Thanks, @ClemensGruber and @thiasB!
+- Nail RaspberryPi dependencies
+- Add ``sensors.power_toggle_buses`` setting, defaults to True. Thanks, @tonke!
+- Improve PyTrack sensor. Thanks, @tonke!
+- Update Dragino setup tooling
+- Add "join_attempt_count" and "join_attempt_interval" settings re. LoRa. Thanks, @tonke!
+- Add setup.py for CPython
+- Improve logging and exception handling for CPython
+- Make configuration file backup optional
+- Improve sensor registration and startup
+- Add "terkin" commandline entrypoint
+- Trim CPython compatibility layer
+- Improve CPython bootstrapping and logging
+- Improve gpiozero and gpsd sensors. Thanks, @tonke!
+- Add BME280 on Odroid XU4 based on smbus2. Thanks, @tonke!
+- Fix setup.py re. encoding of README.rst
+- LoRa: Ignore downlink messages for sleep interval and data payload inclusion
+  on devices not running Pycom or Vanilla MicroPython. Thanks, @thiasB!
+- LoRa: return to sleep interval from settings after reset. Thanks, @thiasB!
+- Improve I2C bus support for Odroid XU4. Thanks, @tonke!
+- Improve GPSD sensor. Thanks, @tonke!
+- Use I2C bus 5 as secondary on Raspberry Pi. Thanks, @tonke!
+- Improve sensor enablement evaluation. Now, sensor
+  sections have to be enabled explicitly within settings.
+- Fix button manager setup
+- Update documentation
+- Fix DS18x20 module names
+- Fix tests and improve test robustness
+- Fix LANG locale setting for Click at runtime. Thanks, @tonke!
+- Improve CPython bootstrapping
+- Fix webserver imports
+- Move UDP modeserver implementation
+- Don't start WiFi by default
+- Make UDP modeserver and HTTP API ports configurable
+- Various networking improvements
+- Improve CPython setup
+- Add UI spike on CPython based on Picotui
 
 2020-04-28 0.8.0
 ================
 - Support SX127x on Dragino LoRa/GPS HAT for LoRa. Thanks @tonke and many more, see:
   https://github.com/mayeranalytics/pySX127x/issues/21#issuecomment-620695583
-- Add TTN/LoRaWAN README. Thanks, @ThiasB!
-- TTN: Add payload converter code for PutsReq.com HTTP endpoint. Thanks, @ThiasB!
+- Add TTN/LoRaWAN README. Thanks, @thiasB!
+- TTN: Add payload converter code for PutsReq.com HTTP endpoint. Thanks, @thiasB!
 
 2020-04-27 0.7.2
 ================
