@@ -7,7 +7,6 @@ import time
 import socket
 import machine
 from terkin import logging
-from terkin.network.wifi import WiFiManager
 from terkin.util import format_exception, Eggtimer
 
 log = logging.getLogger(__name__)
@@ -22,19 +21,24 @@ class NetworkManager:
 
         self.device.watchdog.feed()
 
-        self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
+        self.wifi_manager = None
         self.lora_manager = None
         self.gprs_manager = None
+
         self.mode_server = None
         self.http_api = None
 
     def stop(self):
         """ """
-        if self.device.status.maintenance is not True:
-            self.wifi_manager.power_off()
+        if self.wifi_manager:
+            self.wifi_manager.stop()
+            if self.device.status.maintenance is not True:
+                self.wifi_manager.power_off()
 
     def start_wifi(self):
         """ """
+        from terkin.network.wifi import WiFiManager
+        self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.wifi_manager.start()
 
     def start_lora(self):

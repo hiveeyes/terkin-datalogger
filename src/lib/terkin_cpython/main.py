@@ -63,7 +63,6 @@ class TerkinApplication:
         log.info('Loading modules')
         from terkin.datalogger import TerkinDatalogger
 
-        log.info('Loading settings')
         settings = load_settings(settings_file=self.config)
 
         log.info('Setting up Terkin')
@@ -85,9 +84,5 @@ class TerkinApplication:
         log.info('Shutting down Terkin')
 
         if self.datalogger.device.status.networking:
-            self.datalogger.device.networking.stop_modeserver()
-            self.datalogger.device.networking.wifi_manager.stop()
+            self.datalogger.device.networking.stop()
 
-            # This helps the webserver to get rid of any listening sockets.
-            # https://github.com/jczic/MicroWebSrv2/issues/8
-            self.datalogger.device.networking.stop_httpserver()
