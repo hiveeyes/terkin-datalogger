@@ -51,9 +51,11 @@ def start_bootloader():
 
 def load_settings(settings_file):
 
+    log.info('Loading settings from "{}"'.format(settings_file))
+
     # Sanity checks.
     if not os.path.exists(settings_file):
-        raise FileNotFoundError('Configuration file "{}" not found'.format(settings_file))
+        raise FileNotFoundError('Settings file "{}" not found'.format(settings_file))
 
     # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path/67692#67692
     import importlib.util
