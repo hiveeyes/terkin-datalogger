@@ -7,7 +7,6 @@ import time
 import socket
 import machine
 from terkin import logging
-from terkin.network.ip import UdpServer
 from terkin.network.wifi import WiFiManager
 from terkin.util import format_exception, Eggtimer
 
@@ -140,6 +139,7 @@ class NetworkManager:
         ip = '0.0.0.0'
         port = 666
         log.info('Starting mode server on {}:{}'.format(ip, port))
+        from terkin.api.udp import UdpServer
         self.mode_server = UdpServer(ip, port)
         self.mode_server.start(self.handle_modeserver)
 
