@@ -29,6 +29,7 @@ log = logging.getLogger()
 @click.option("--config", required=True, help="Path to settings file.")
 @click.option("--site-packages", help="Path to additional Python modules.")
 @click.option("--daemon", is_flag=True, default=False, help="Run in daemon mode.")
+@click.option("--ui", is_flag=True, default=False, help="Start user interface.")
 def cli(**options):
 
     # Reconfigure module search path.
@@ -40,7 +41,10 @@ def cli(**options):
 
     # Bootstrap datalogger application.
     app = TerkinApplication(config=options['config'], daemon=options['daemon'])
-    app.start()
+    if options['ui']:
+        app.start_ui()
+    else:
+        app.start()
 
 
 class TerkinApplication:
@@ -86,3 +90,18 @@ class TerkinApplication:
         if self.datalogger.device.status.networking:
             self.datalogger.device.networking.stop()
 
+    def start_ui(self):
+
+        # Make environment compatible with CPython.
+        patch_system()
+
+        from terkin.ui import TerkinUi
+
+        ui = TerkinUi()
+        try:
+            ui.start()
+            ui.example_listbox()
+            #ui.example_menu()
+
+        finally:
+            ui.stop()
