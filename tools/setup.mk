@@ -59,7 +59,8 @@ download-requirements-real:
 
 	# Install MicroWebSrv2
 	# https://github.com/jczic/MicroWebSrv
-	curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
+	#curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
+	curl --location https://github.com/daq-tools/MicroWebSrv2/archive/improve-setup.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-improve-setup/MicroWebSrv2
 
 	# Install MicroDNSSrv
 	# https://github.com/jczic/MicroDNSSrv

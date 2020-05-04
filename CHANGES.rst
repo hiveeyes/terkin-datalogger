@@ -58,6 +58,7 @@ Development
 - Various networking improvements
 - Improve CPython setup
 - Add UI spike on CPython based on Picotui
+- Upgrade MicroWebSrv2 module
 
 2020-04-28 0.8.0
 ================
