@@ -17,10 +17,6 @@ class LoRaAdapter:
         self.network_manager = network_manager
         self.settings = settings
 
-        # LoRa settings.
-        self.otaa_settings = self.settings.get('networking.lora.otaa')
-        #self.generated_device_eui = binascii.hexlify(LoRa().mac())
-
         # Pycom MicroPython
         if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
             self.driver = LoRaDriverPycom(self.network_manager, self.settings)
@@ -52,25 +48,21 @@ class LoRaDriverPycom:
         self.network_manager = network_manager
         self.settings = settings
 
-        # LoRa settings.
-        self.otaa_settings = self.settings.get('networking.lora.otaa')
-        #self.generated_device_eui = binascii.hexlify(LoRa().mac())
-
     def start(self):
         """ Start driver """
 
         from network import LoRa
 
-        if self.otaa_settings['region']   == 'AS923':
+        if self.settings.get('networking.lora.region')   == 'AS923':
             lora_region = LoRa.AS923
-        elif self.otaa_settings['region'] == 'AU915':
+        elif self.settings.get('networking.lora.region') == 'AU915':
             lora_region = LoRa.AU915
-        elif self.otaa_settings['region'] == 'EU868':
+        elif self.settings.get('networking.lora.region') == 'EU868':
             lora_region = LoRa.EU868
-        elif self.otaa_settings['region'] == 'US915':
+        elif self.settings.get('networking.lora.region') == 'US915':
             lora_region = LoRa.US915
 
-        lora_adr = self.otaa_settings['adr'] or False
+        lora_adr = self.settings.get('networking.lora.adr') or False
 
         self.lora_socket = None
 
@@ -107,15 +99,15 @@ class LoRaDriverPycom:
 
         # Create LoRaWAN OTAA connection to TTN.
         import binascii
-        app_eui = binascii.unhexlify(self.otaa_settings['application_eui'])
-        app_key = binascii.unhexlify(self.otaa_settings['application_key'])
+        app_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.application_eui'))
+        app_key = binascii.unhexlify(self.settings.get('networking.lora.otaa.application_key'))
 
         if not self.lora.has_joined():
             log.info('[LoRa] Joining the network')
-            if self.otaa_settings.get('device_eui') is None:
+            if self.settings.get('networking.lora.otaa.device_eui') is None:
                 self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
             else:
-                dev_eui = binascii.unhexlify(self.otaa_settings['device_eui'])
+                dev_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.device_eui'))
                 self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
 
     def ensure_connectivity(self):
@@ -132,23 +124,19 @@ class LoRaDriverPycom:
             log.error("[LoRa] Could not join network")
 
     def wait_for_join(self):
-        """
+        """ wait for device activation to complete """
 
-        :param attempts:
-        """
-        attempts = self.otaa_settings.get('join_attempt_count', 42)
         self.lora_joined = None
-        for i in range(0, attempts):
-            while not self.lora.has_joined():
-                log.info('[LoRa] Not joined yet...')
-                time.sleep(self.otaa_settings.get('join_attempt_interval', 2.5))
+        while not self.lora.has_joined():
+            log.info('[LoRa] Not joined yet...')
+            time.sleep(self.settings.get('networking.lora.otaa.join_check_interval', 2.5))
 
         self.lora_joined = self.lora.has_joined()
 
         if self.lora_joined:
             log.info('[LoRa] Joined successfully')
         else:
-            log.info('[LoRa] Did not join in %s attempts', attempts)
+            log.info('[LoRa] Failed to join network')
 
         return self.lora_joined
 
@@ -205,8 +193,6 @@ class LoRaDriverDragino:
         self.network_manager = network_manager
         self.settings = settings
 
-        self.otaa_settings = self.settings.get('networking.lora.otaa')
-
         self.dragino = None
         self.setup()
 
@@ -219,9 +205,9 @@ class LoRaDriverDragino:
 
         from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
         lora_auth = LoRaWANAuthentication(auth_mode='OTAA',
-                                          deveui=self.otaa_settings['device_eui'],
-                                          appeui=self.otaa_settings['application_eui'],
-                                          appkey=self.otaa_settings['application_key'])
+                                          deveui=self.settings.get('networking.lora.otaa.device_eui'),
+                                          appeui=self.settings.get('networking.lora.otaa.application_eui'),
+                                          appkey=self.settings.get('networking.lora.otaa.application_key'))
         lora_config = LoRaWANConfig(auth=lora_auth)
         self.dragino = Dragino(config=lora_config, logging_level=logging.DEBUG)
 

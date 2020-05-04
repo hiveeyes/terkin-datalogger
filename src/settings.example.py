@@ -116,17 +116,17 @@ networking = {
 
     # LoRaWAN/TTN
     'lora': {
-        'enabled': False,
+        'enabled': True,
+        'antenna_attached': True,
+        'region': 'EU868',
+        'adr': False,
+        'activation': 'otaa',
         'otaa': {
-            'region': 'EU868',
-            'adr': False,
-            'device_eui': '<GENERATED_FROM_LORA_MAC>',
+            'device_eui': '<GENERATED_FROM_LORA_MAC_OR_TTN>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
-            #'join_attempt_count': 42,
-            #'join_attempt_interval': 2.5,
+            #'join_check_interval': 2.5,
         },
-        'antenna_attached': False,
     },
 
     # GPRS/SIM800
