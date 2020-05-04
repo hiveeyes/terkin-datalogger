@@ -122,6 +122,11 @@ networking = {
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
         },
+        'apb': {
+            'dev_addr' : '<FROM TTN CONSOLE>',
+            'nwk_swkey': '<FROM TTN CONSOLE>',
+            'app_swkey': '<FROM TTN CONSOLE>',
+        },
     },
 
     # GPRS/SIM800

@@ -127,6 +127,11 @@ networking = {
             'application_key': '<REGISTRATION NEEDED>',
             #'join_check_interval': 2.5,
         },
+        'apb': {
+            'dev_addr' : '<FROM TTN CONSOLE>',
+            'nwk_swkey': '<FROM TTN CONSOLE>',
+            'app_swkey': '<FROM TTN CONSOLE>',
+        },
     },
 
     # GPRS/SIM800
