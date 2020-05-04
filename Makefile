@@ -70,6 +70,8 @@ include tools/pycom.mk
 include tools/micropython.mk
 include tools/bluetooth.mk
 
+include tools/cpython.mk
+
 
 # ----
 # Help

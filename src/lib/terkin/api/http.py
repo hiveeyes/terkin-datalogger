@@ -20,8 +20,7 @@ from copy import deepcopy
 from MicroWebSrv2 import MicroWebSrv2, WebRoute, HttpRequest, GET, POST, PUT
 
 from terkin import logging
-from terkin.sensor import BusType
-from terkin.sensor.core import serialize_som
+from terkin.sensor.common import serialize_som
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +51,9 @@ class TerkinHttpApi:
             'Application-Version': TerkinHttpApi.device.application_info.version,
         }
 
+        # Webserver settings.
+        webserver_port = settings.get('services.api.http.port', 80)
+
         # Conditionally initialize webserver.
         # TCP port 80 and files in /flash/www.
         # TODO: Make port and htdocs folder configurable.
@@ -59,6 +61,7 @@ class TerkinHttpApi:
         if webserver is None:
             log.info('Creating new HTTP server object')
             webserver = MicroWebSrv2()
+            webserver.BindAddress = ('0.0.0.0', webserver_port)
         self.webserver = webserver
 
     def start(self):
@@ -69,6 +72,9 @@ class TerkinHttpApi:
             log.info('Starting HTTP server')
             self.webserver.SetEmbeddedConfig()
             self.webserver.StartManaged()
+
+    def stop(self):
+        self.webserver.Stop()
 
     def captive(self):
         """

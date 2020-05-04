@@ -806,3 +806,18 @@ Here: Setting ``main.interval.field`` to ``None``.
       File "/flash/lib/terkin/datalogger.py", line 187, in loop
       File "/flash/lib/terkin/datalogger.py", line 221, in sleep
     TypeError: can't convert NoneType to float
+
+::
+
+    Traceback (most recent call last):
+      File "/usr/lib/python3/dist-packages/virtualenv.py", line 2379, in <module>
+        main()
+      File "/usr/lib/python3/dist-packages/virtualenv.py", line 724, in main
+        symlink=options.symlink)
+      File "/usr/lib/python3/dist-packages/virtualenv.py", line 950, in create_environment
+        site_packages=site_packages, clear=clear, symlink=symlink))
+      File "/home/pi/terkin-datalogger/.venv3/lib/python3.7/posixpath.py", line 378, in abspath
+        path = os.fspath(path)
+    TypeError: expected str, bytes or os.PathLike object, not NoneType
+
+=> Don't run "make" commands within virtualenv.

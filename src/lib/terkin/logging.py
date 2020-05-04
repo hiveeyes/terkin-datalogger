@@ -75,7 +75,10 @@ def getLogger(name=None, level=logging.INFO):
     :param level:  (Default value = logging.INFO)
 
     """
-    from logging import _loggers
+    try:
+        from logging import _loggers
+    except ImportError:
+        return logging.getLogger(name=name)
 
     if name is None:
         name = "root"

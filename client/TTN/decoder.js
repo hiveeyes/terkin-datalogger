@@ -27,12 +27,12 @@
  *  Voltage             3316    116     74      2           0.01 V Unsigned MSB
  *  Current             3317    117     75      2           0.001 A Unsigned MSB
  *  Frequency           3318    118     76      4           1 Hz Unsigned MSB
- *  Percentage          3320    120     78      1           1% Unsigned
- *  Altitude            3321    121     79      2           1m Signed MSB
- *  Load                3322    122     7A      3           0.001 Signed MSB
+ *  Percentage          3320    120     78      1           1 % Unsigned
+ *  Altitude            3321    121     79      2           1 m Signed MSB
+ *  Load                3322    122     7A      3           0.001 kg Signed MSB
  *  Power               3328    128     80      2           1 W Unsigned MSB
- *  Distance            3330    130     82      4           0.001m Unsigned MSB
- *  Energy              3331    131     83      4           0.001kWh Unsigned MSB
+ *  Distance            3330    130     82      4           0.001 m Unsigned MSB
+ *  Energy              3331    131     83      4           0.001 kWh Unsigned MSB
  *  Direction           3332    132     84      2           1º Unsigned MSB
  *  Switch              3342    142     8E      1           0/1
  * 

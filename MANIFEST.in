@@ -1,0 +1,6 @@
+include setup.cfg *.rst *.md LICENSE
+exclude .bumpversion.cfg
+exclude *.txt
+recursive-include src/lib *.py *.ini *.json
+recursive-exclude src/lib __pycache__ *.pyc
+prune test

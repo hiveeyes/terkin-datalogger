@@ -38,6 +38,12 @@ class MicroPythonVendor:
     # https://github.com/pycom/pycom-micropython-sigfox
     Pycom = 2
 
+    # RaspberryPi.
+    RaspberryPi = 3
+
+    # Odroid.
+    Odroid = 4
+
 
 class PlatformInfo:
     """
@@ -76,6 +82,17 @@ class PlatformInfo:
         if sys.platform in ['pyboard']:
             self.mcu = McuFamily.STM32
             self.vendor = MicroPythonVendor.Vanilla
+
+        try:
+            linux_firmware = open('/sys/firmware/devicetree/base/model').read()
+            if 'Raspberry' in linux_firmware:
+                self.mcu = McuFamily.STM32
+                self.vendor = MicroPythonVendor.RaspberryPi
+            elif 'Odroid' in linux_firmware:
+                self.mcu = McuFamily.STM32
+                self.vendor = MicroPythonVendor.Odroid
+        except:
+            pass
 
         self.device_name = sys.platform
 
@@ -126,6 +143,9 @@ class MicroPythonBootloader:
 
         elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             paths = ['/{}'.format(path) for path in paths]
+
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
+            paths = ['./dist-packages', './src/lib']
 
         else:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)

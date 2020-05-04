@@ -3,10 +3,89 @@ Terkin Datalogger backlog
 #########################
 
 
-**********
-Datalogger
-**********
+***************
+Datalogger 2020
+***************
 
+S1
+==
+- Optional Zeitstempel in MQTT/JSON-Nachricht einfügen.
+- Verschiedene Sendezyklen pro Telemetrie-Eumel ermöglichen.
+- "LoRaDriverDragino.ensure_connectivity()" non-blocking gestalten.
+- Sensor-Wrapper für PyTrack, Gpsd und 2xSolarlader erschließen.
+
+S2
+==
+- Cayenne-Mapping: Use dataframe.readings.
+- Sensor-Gruppen per Tags definieren.
+- Sensor-Metadaten einführen. Beispiel: Timestamp pro Sensor-Reading.
+- data_in => data_out
+
+S3
+==
+- /backup-Verzeichnis optional ansprechen
+- Exceptions auf CPython abfangen
+- Installation von mpy-cross auf RaspberryPi aussparen
+- Sensors: Observation einführen, SensorReading => Reading umbenennen
+- Telemetry: Sequans Modem erschließen
+- Telemetry: ``settings.telemetry_name`` honorieren
+- Improve formatting of "Sensor data" output
+- Setup: Tracer-MT5 code auslagern
+- Setup: gpsd code auslagern
+- Setup: Debian-Paket bauen?
+- Setup: Abhängigkeiten klären: python-spidev python3-spidev + pip spidev!?
+- Setup: /boot/config.txt overlay und /etc/default/gpsd-Konfiguration automatisieren
+- Setup: dpkg-reconfigure UI?
+- Doku bei
+  https://community.hiveeyes.org/t/uberarbeitung-des-terkin-readme-im-repository/3152/5
+  bzw.
+  https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/cpython.rst
+  aktualisieren und veröffentlichen
+- Update credits
+
+S4
+==
+- Telemetry: Uplink messages to Dragino.
+- Telemetry: Pure-LoRa w/o LoRaWAN
+- Telemetry: Improve handling for "no-lora-connectivity" (by @Thias)
+- Sensors: Add more sensors for standard CPython
+    - Standard Linux
+        - free -m
+    - https://github.com/giampaolo/psutil
+    - https://pypi.org/project/PySensors/
+    - https://elinux.org/RPI_vcgencmd_usage
+        - vcgencmd measure_temp
+- Infra: Starting TerkinConfiguration on path "/"
+
+S5
+==
+- I2C-Busse auf rasi12bplus
+- raspi-config nonint
+- Support Odroid XU4 within Adafruit Blinka adafruit_platformdetect
+- Resolve https://github.com/hiveeyes/terkin-datalogger/commit/a945518845b9fb0f5a97dafde90ab4d60de0ed14
+- ``terkin --sensor=bme280`` vs. ``terkin --no-sensors``
+- Plattformweiche für Makefile re. mpy-cross
+- When EPSolar is enabled, improve log message "AttributeError: 'NoneType' object has no attribute 'read_serial'"
+- 2x "Reading sensor port "ADS1x15Sensor"" without further classification
+- LoRa wiederherstellen
+- Adafruit PureIO fails to access ADS1x15 sensor attached to I2C bus using smbus when run as non-root.
+- "Reading sensor GPSD" takes ages when it has no Fix.
+- Improve GPSD configuration re. "with PPS" and with or without "-n" option
+- C-UTF8 Fehler auf Odroid::
+
+    RuntimeError: Click will abort further execution because Python 3 was configured to use ASCII as encoding for the environment. Consult https://click.palletsprojects.com/python3/ for mitigation steps.
+
+    This system supports the C.UTF-8 locale which is recommended. You might be able to resolve your issue by exporting the following environment variables:
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+    tools/cpython.mk:35: recipe for target 'run-cpython' failed
+- Wait for "[Dragino                       ] DEBUG  : TX Complete" before confirming TX on Dragino
+
+
+***************
+Datalogger 2019
+***************
 
 Prio 0.7
 ========

@@ -3,5 +3,5 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 
-from .core import BusType, SensorManager
+from .core import SensorManager, BusType, OneWireBus, I2CBus
 from .common import AbstractSensor

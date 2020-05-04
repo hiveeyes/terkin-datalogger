@@ -1,12 +1,30 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
-from bme280_float import BME280
+from terkin.model import SensorReading
+from terkin.sensor import SensorManager, AbstractSensor
+from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
+
+
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create BME280 sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = BME280Sensor(settings=sensor_info)
+    sensor_bus = sensor_manager.get_bus_by_name(sensor_info.get('bus'))
+    sensor_object.acquire_bus(sensor_bus)
+
+    return sensor_object
 
 
 class BME280Sensor(AbstractSensor):
@@ -21,23 +39,52 @@ class BME280Sensor(AbstractSensor):
         super().__init__(settings=settings)
 
         # Can be overwritten by ``.set_address()``.
-        self.address = 0x76
+        self.address = self.settings.get('address', 0x76)
 
     def start(self):
-        """Getting the bus"""
-        if self.bus is None:
-            raise KeyError("Bus missing for BME280Sensor")
+        """
+        Setup the BME280 sensor driver.
+
+        :return:
+        """
+
+        # Ensure a bus object exists and is ready.
+        self.ensure_bus()
 
         # Initialize the hardware driver.
         try:
-            self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+
+            # MicroPython
+            if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+                from bme280_float import BME280
+                self.driver = BME280(address=self.address, i2c=self.bus.adapter)
+
+            # Adafruit CircuitPython
+            elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+                import adafruit_bme280
+                self.driver = adafruit_bme280.Adafruit_BME280_I2C(i2c=self.bus.adapter, address=self.address)
+
+            # RPi.bme280
+            elif platform_info.vendor == platform_info.MICROPYTHON.Odroid:
+                import bme280
+                self.calibration_params = bme280.load_calibration_params(self.bus.adapter, self.address)
+                self.driver = bme280.sample(self.bus.adapter, self.address)
+
+            else:
+                raise NotImplementedError('BME280 driver not implemented on this platform')
+
             return True
 
         except Exception as ex:
             log.exc(ex, 'BME280 hardware driver failed')
+            return False
 
     def read(self):
-        """ """
+        """
+        Read the BME280 sensor.
+
+        :return: SensorReading
+        """
 
         if self.bus is None or self.driver is None:
             return self.SENSOR_NOT_INITIALIZED
@@ -46,16 +93,39 @@ class BME280Sensor(AbstractSensor):
 
         data = {}
 
-        t, p, h = self.driver.read_compensated_data()
+        # MicroPython
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
 
-        # Prepare readings.
-        values = {
-            "temperature": t,
-            "pressure": p / 100,
-            "humidity": h,
-        }
+            t, p, h = self.driver.read_compensated_data()
+
+            # Prepare readings.
+            values = {
+                "temperature": t,
+                "pressure": p / 100,
+                "humidity": h,
+            }
+
+        # Adafruit CircuitPython
+        elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
+
+            values = {
+                "temperature": self.driver.temperature,
+                "humidity": self.driver.humidity,
+                "pressure": self.driver.pressure,
+            }
+
+        # Adafruit CircuitPython
+        elif platform_info.vendor == platform_info.MICROPYTHON.Odroid:
+
+            values = {
+                "temperature": self.driver.temperature,
+                "humidity": self.driver.humidity,
+                "pressure": self.driver.pressure,
+            }
+
 
         # Build telemetry payload.
+        # TODO: Push this further into the telemetry domain.
         fieldnames = values.keys()
         for name in fieldnames:
             fieldname = self.format_fieldname(name, hex(self.address))
@@ -67,7 +137,11 @@ class BME280Sensor(AbstractSensor):
 
         log.debug("I2C data:     {}".format(data))
 
-        return data
+        reading = SensorReading()
+        reading.sensor = self
+        reading.data = data
+
+        return reading
 
     @staticmethod
     def int_to_float(t, p, h):

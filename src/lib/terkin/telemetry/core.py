@@ -7,9 +7,10 @@ from copy import copy
 from urllib.parse import urlsplit, urlencode
 from terkin import logging
 from terkin.model import DataFrame
-from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat
+from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat, get_platform_info
 
 log = logging.getLogger(__name__)
+platform_info = get_platform_info()
 
 #log.setLevel(logging.DEBUG)
 
@@ -25,7 +26,7 @@ class TelemetryManager:
     def add_adapter(self, adapter):
         """
 
-        :param adapter: 
+        :param adapter:
 
         """
         self.adapters.append(adapter)
@@ -33,7 +34,7 @@ class TelemetryManager:
     def transmit(self, dataframe: DataFrame):
         """
 
-        :param data: 
+        :param data:
 
         """
         outcomes = {}
@@ -114,7 +115,7 @@ class TelemetryAdapter:
     def format_uri(self, **kwargs):
         """
 
-        :param **kwargs: 
+        :param **kwargs:
 
         """
         data = copy(self.address)
@@ -193,7 +194,7 @@ class TelemetryAdapter:
 
 class CSVTelemetryAdapter(TelemetryAdapter):
     """Telemetry node client: Network participant API.
-    
+
     This will make your node talk CSV.
 
 
@@ -206,8 +207,8 @@ class CSVTelemetryAdapter(TelemetryAdapter):
     def transmit(self, data, **kwargs):
         """
 
-        :param data: 
-        :param **kwargs: 
+        :param data:
+        :param **kwargs:
 
         """
         uri = self.format_uri(**kwargs)
@@ -229,7 +230,8 @@ class TelemetryClient:
     FORMAT_JSON = 'json'
     FORMAT_CSV = 'csv'
 
-    FORMAT_CAYENNELPP = 'lpp'
+    FORMAT_CAYENNELPP_HIVEEYES = 'lpp-hiveeyes'
+    FORMAT_CAYENNELPP_RATRACK = 'lpp-ratrack'
 
     CONTENT_ENCODING_IDENTITY = 'identity'
     CONTENT_ENCODING_BASE64 = 'base64'
@@ -277,8 +279,13 @@ class TelemetryClient:
         elif self.format == TelemetryClient.FORMAT_JSON:
             payload = json.dumps(dataframe.data_out)
 
-        elif self.format == TelemetryClient.FORMAT_CAYENNELPP:
-            payload = to_cayenne_lpp(dataframe)
+        elif self.format == TelemetryClient.FORMAT_CAYENNELPP_HIVEEYES:
+            from terkin.telemetry.formatter import to_cayenne_lpp_hiveeyes
+            payload = to_cayenne_lpp_hiveeyes(dataframe)
+
+        elif self.format == TelemetryClient.FORMAT_CAYENNELPP_RATRACK:
+            from terkin.telemetry.formatter import to_cayenne_lpp_ratrack
+            payload = to_cayenne_lpp_ratrack(dataframe)
 
         elif self.format == TelemetryClient.FORMAT_CSV:
             raise NotImplementedError('Serialization format "CSV" not implemented yet')
@@ -431,29 +438,14 @@ class TelemetryTransportLORA:
 
     lora_socket = None
 
-    def __init__(self, lora_manager, settings):
+    def __init__(self, lora_adapter, settings):
 
         log.info('Telemetry transport: CayenneLPP over LoRaWAN/TTN')
 
-        self.lora_manager = lora_manager
+        self.lora_adapter = lora_adapter
         self.settings = settings or {}
         self.size = self.settings.get('size', 12)
         self.datarate = self.settings.get('datarate', 0)
-
-    def ensure_lora_socket(self):
-
-        import socket
-
-        self.lora_manager.wait_for_lora_join(42)
-
-        if self.lora_manager.lora_joined:
-            if self.lora_manager.lora_socket is None:
-                try:
-                    self.lora_manager.create_lora_socket()
-                except:
-                    log.exception("[LoRa] Could not create LoRa socket")
-        else:
-            log.error("[LoRa] Could not join network")
 
     def send(self, dataframe: DataFrame):
         """
@@ -461,28 +453,49 @@ class TelemetryTransportLORA:
         """
 
         import binascii
-        import pycom
 
-        self.ensure_lora_socket()
+        if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
+            import pycom
+            nvram_get = pycom.nvs_get
+            nvram_set = pycom.nvs_set
+            nvram_erase = pycom.nvs_erase
+        elif platform_info.vendor == platform_info.MICROPYTHON.Vanilla:
+            import esp32
+            nvram_get = esp32.nvs_get
+            nvram_set = esp32.nvs_set
+            nvram_erase = esp32.nvs_erase
 
-        # clean up payload from sensor data if pause command was received on last uplink
-        try:
-            _pause = pycom.nvs_get('pause')
-        except:
-            _pause = None
+        if self.lora_adapter is None:
+            log.error('LoRa not enabled or no antenna attached')
+            return False
 
-        if ( _pause is None ) or ( _pause == 0 ):
-            payload = dataframe.payload_out + binascii.unhexlify(b'000100')
-        elif _pause == 1:
-            payload = binascii.unhexlify(b'000101')
+        self.lora_adapter.ensure_connectivity()
+
+        # Default payload.
+        payload = dataframe.payload_out
+
+        # Clean up payload from sensor data if pause command was received on last uplink.
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            try:
+                _pause = nvram_get('pause')
+            except:
+                _pause = None
+
+            if _pause is None or _pause == 0:
+                payload = dataframe.payload_out + binascii.unhexlify(b'000100')
+            elif _pause == 1:
+                payload = binascii.unhexlify(b'000101')
 
         log.info('[LoRa] Uplink payload (hex): %s', binascii.hexlify(payload).decode())
 
         # Send payload
+        success = False
         try:
             log.info('[LoRa] Sending payload...')
-            outcome = self.lora_manager.lora_send(payload)
+            outcome = self.lora_adapter.send(payload)
             log.info('[LoRa] Sent %s bytes', outcome)
+            success = True
+
         except:
             log.exception('[LoRa] Transmission failed')
             return False
@@ -491,42 +504,48 @@ class TelemetryTransportLORA:
         # 1) deep sleep interval in minutes and
         # 2) pausing payload submission (1=true,0=false)
         # survives power cycle, reset and deep sleep
-        rx, port = self.lora_manager.lora_receive()
+        rx, port = self.lora_adapter.receive()
 
-        if port == 1:
-            sleep = int.from_bytes(rx, "big")
-            if sleep == 0:
-                # use value from settings file
-                log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
-                try:
-                    pycom.nvs_erase('deepsleep')
-                except:
-                    pass
+        if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+            if port == 1:
+                sleep = int.from_bytes(rx, "big")
+                if sleep == 0:
+                    # use value from settings file
+                    log.info('[LoRa] Received "reset deep sleep interval" command, erasing from NVRAM.')
+                    try:
+                        nvram_erase('deepsleep')
+                    except:
+                        pass
+                else:
+                    # Use deepsleep interval received via LoRa.
+                    log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
+                    nvram_set('deepsleep', sleep)
+
+            elif port == 2:
+                pause = int.from_bytes(rx, "big")
+                log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
+                nvram_set('pause', pause)
+
             else:
-                # Use deepsleep interval received via LoRa.
-                log.info('[LoRa] Received "set deep sleep interval" command, will sleep for %s minutes.', sleep)
-                pycom.nvs_set('deepsleep', sleep)
+                log.info('[LoRa] No downlink message processed')
 
-        elif port == 2:
-            pause = int.from_bytes(rx, "big")
-            log.info('[LoRa] Received "pause payload submission" command: %s', bool(pause))
-            pycom.nvs_set('pause', pause)
+            success = success and True
 
         else:
-            log.info('[LoRa] No downlink message processed')
+            log.warning('[LoRa] Processing downlink messages not implemented for Dragino')
 
-        return True
+        return success
 
 
 class TelemetryTransportMQTT:
     """
     MQTT transport for Terkin Telemetry.
-    
+
     This is currently based on the "Pycom MicroPython MQTT module" just called ``mqtt.py``.
     https://github.com/pycom/pycom-libraries/blob/master/lib/mqtt/mqtt.py
-    
+
     Originally, this was based on the "umqtt.robust" library::
-    
+
         micropython -m upip install micropython-umqtt.robust micropython-umqtt.simple
 
 
@@ -631,7 +650,7 @@ class MQTTAdapter:
     """
     MQTT adapter wrapping the lowlevel MQTT driver.
     Handles a single connection to an MQTT broker.
-    
+
     TODO: Try to make this module reasonably compatible again
           by becoming an adapter for different implementations.
           E.g., what about Paho?
@@ -697,8 +716,8 @@ class MQTTAdapter:
     def publish(self, topic, payload, retain=False, qos=1):
         """
 
-        :param topic: 
-        :param payload: 
+        :param topic:
+        :param payload:
         :param retain:  (Default value = False)
         :param qos:  (Default value = 1)
 
@@ -793,9 +812,9 @@ class IdentityTopology:
 
 class BeepBobTopology(IdentityTopology):
     """Define how to communicate with BEEP for BOB.
-    
+
     https://en.wikipedia.org/wiki/Bebop
-    
+
     - https://beep.nl/
     - https://github.com/beepnl/BEEP
     - https://hiverize.org/
@@ -812,12 +831,12 @@ class BeepBobTopology(IdentityTopology):
 
     def encode(self, dataframe: DataFrame):
         """Encode telemetry data matching the BEEP-BOB interface.
-        
+
         https://gist.github.com/vkuhlen/51f7968266659f37d076bd66d57cdbbd
         https://github.com/Hiverize/FiPy/blob/master/logger/beep.py
-        
+
         Example::
-        
+
             {
                 't': 22.66734,
                 'h': 52.41612,
@@ -829,13 +848,13 @@ class BeepBobTopology(IdentityTopology):
                 't_i_4': 23.1875
             }
 
-        :param data: 
+        :param data:
 
         """
 
         # Rename all fields to designated BEEP-BOB fields.
         egress_data = {}
-        mapping = self.settings.get('sensor_telemetry_map')
+        mapping = self.settings.get('telemetry.maps.bee-observer', self.settings.get('sensor_telemetry_map'))
         mapping['key'] = 'key'
         for sensor_field, telemetry_field in mapping.items():
             sensor_field = sensor_field.lower()
@@ -852,10 +871,10 @@ class MqttKitTopology(IdentityTopology):
     setups like multi-project or multi-tenant scenarios. Even for single
     users, the infinite number of available channels is very convenient
     for ad hoc operation scenarios.
-    
+
     - https://getkotori.org/
     - https://getkotori.org/docs/applications/mqttkit.html
-    
+
     - https://hiveeyes.org/
     - https://hiveeyes.org/docs/system/acquisition/
 
@@ -876,87 +895,3 @@ class TelemetryTransportError(Exception):
 class TelemetryAdapterError(Exception):
     """ """
     pass
-
-
-def to_cayenne_lpp(dataframe: DataFrame):
-    """
-    Serialize dataframe to binary CayenneLPP format.
-
-    :param dataframe:
-    """
-
-    from cayennelpp import LppFrame
-    frame = LppFrame()
-
-    channel = {}
-    channel['temp']    = 0
-    channel['ana_out'] = 0
-    channel['hum']     = 0
-    channel['press']   = 0
-    channel['scale']   = 0
-
-    # TODO: Iterate ``dataframe.readings`` to get more metadata from sensor configuration.
-    # It is a list of ``SensorReading`` instances, each having a ``sensor`` and ``data`` attribute.
-
-    for key, value in dataframe.data_out.items():
-
-        #log.debug('-' * 42)
-
-        # TODO: Maybe implement different naming conventions.
-        name = key.split("_")[0]
-        # try:
-        #     channel = int(key.split(":")[1])
-        # except IndexError:
-        #     channel = 0
-
-        if "temperature" in name:
-            frame.add_temperature(channel['temp'], value)
-            channel['temp'] += 1
-        elif "voltage" in name:
-            frame.add_analog_output(channel['ana_out'], value)
-            channel['ana_out'] += 1
-        elif "humidity" in name:
-            frame.add_humidity(channel['hum'], value)
-            channel['hum'] += 1
-        elif "pressure" in name:
-            frame.add_barometer(channel['press'], value)
-            channel['press'] += 1
-        elif "weight" in name:
-            frame.add_analog_input(channel['scale'], value)
-            channel['scale'] += 1
-        elif "analog-output" in name:
-            frame.add_analog_output(channel, value)
-        elif "analog-input" in name:
-            frame.add_analog_input(channel, value)
-        elif "digital-input" in name:
-            frame.add_digital_input(channel, value)
-        elif "digital_output" in name:
-            frame.add_digital_output(channel, value)
-        elif "illuminance" in name:
-            frame.add_luminosity(channel, value)
-        elif "barometer" in name:
-            frame.add_barometer(channel, value)
-        elif "presence" in name:
-            frame.add_presence(channel, value)
-        elif "accelerometer" in name:
-            frame.add_accelerometer(channel, value)
-        elif "gyrometer" in name:
-            frame.add_gyrometer(channel, value)
-        elif "gps" in name:
-            frame.add_gps(channel, value)
-
-        # TODO: Fork cayenneLPP and implement load cell telemetry.
-        # TODO: Add load encoder as ID 122 (3322)
-        # http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html#extlabel
-        # http://www.openmobilealliance.org/tech/profiles/lwm2m/3322.xml
-
-        # elif False and "load" in name:
-        #     frame.add_load(channel, value)
-
-        # TODO: Map memfree and other baseline sensors appropriately.
-
-        else:
-            # TODO: raise Exception here?
-            log.info('[CayenneLPP] Sensor type "{}" not found in CayenneLPP'.format(name))
-
-    return frame.bytes()

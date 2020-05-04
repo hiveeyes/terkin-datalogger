@@ -48,12 +48,7 @@ def main():
         log.info("Received KeyboardInterrupt within main thread")
 
         if datalogger.device.networking is not None:
-            datalogger.device.networking.stop_modeserver()
-            datalogger.device.networking.wifi_manager.stop()
-
-            # This helps the webserver to get rid of any listening sockets.
-            # https://github.com/jczic/MicroWebSrv2/issues/8
-            datalogger.device.networking.stop_httpserver()
+            datalogger.device.networking.stop()
 
 
 if __name__ == '__main__':

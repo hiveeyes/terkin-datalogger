@@ -37,8 +37,12 @@ main = {
         'timeout': 60000,
     },
 
-    # Configure backup.
+    # Configuration file backup.
     'backup': {
+
+        # Enable or disable.
+        'enabled': True,
+
         # How many backup files to keep around.
         'file_count': 7,
     },
@@ -159,18 +163,22 @@ sensors = {
         {
             # Sensor which reports free system memory.
             'type': 'system.memfree',
+            'enabled': True,
         },
         {
             # Sensor which reports system temperature.
             'type': 'system.temperature',
+            'enabled': True,
         },
         {
             # Sensor which reports system uptime metrics.
             'type': 'system.uptime',
+            'enabled': True,
         },
         {
             # Sensor which reports system WiFi metrics.
             'type': 'system.wifi',
+            'enabled': True,
         },
         {
             # Settings for button events, e.g. through ESP32 touch pads.
@@ -263,6 +271,7 @@ sensors = {
             'pin_pdsck': 'P21',
             'scale': 4.424242,
             'offset': -73000,
+            'decimals' : 3,
         },
         {
             'id': 'ds18b20-1',
@@ -300,11 +309,19 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur und Feuchte außen (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
+        },
+        {
+            'id': 'si7021-1',
+            'description': 'Temperatur und Feuchte (Si7021)',
+            'type': 'Si7021',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x40,
         },
     ],
     'busses': [
@@ -322,7 +339,7 @@ sensors = {
             "number": 0,
             "enabled": True,
             "pin_data": "P11",
-            #"driver": "native",
+            "driver": "native",
         },
     ]
 }
@@ -345,6 +362,10 @@ sensor_telemetry_map = {
     "temperature.0x77.i2c:0": "t",
     "humidity.0x77.i2c:0": "h",
     "pressure.0x77.i2c:0": "p",
+
+    # Si7021
+    #"temperature.0x40.i2c:0": "t",
+    #"humidity.0x40.i2c:0": "h",
 
     # DS18B20
     "temperature.1111111111111111.onewire:0": "t_i_1",

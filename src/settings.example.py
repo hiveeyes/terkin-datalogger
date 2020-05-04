@@ -37,8 +37,12 @@ main = {
         'timeout': 60000,
     },
 
-    # Configure backup.
+    # Configuration file backup.
     'backup': {
+
+        # Enable or disable.
+        'enabled': True,
+
         # How many backup files to keep around.
         'file_count': 7,
     },
@@ -119,6 +123,8 @@ networking = {
             'device_eui': '<GENERATED_FROM_LORA_MAC>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
+            #'join_attempt_count': 42,
+            #'join_attempt_interval': 2.5,
         },
         'antenna_attached': False,
     },
@@ -240,7 +246,7 @@ telemetry = {
                 "gateway": "area-42",
                 "node": "node-01-mqtt-lpp",
             },
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'content_encoding': 'base64',
         },
 
@@ -250,7 +256,7 @@ telemetry = {
             'enabled': False,
 
             'endpoint': 'lora://',
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'settings': {
                 'size': 12,
                 'datarate': 0,
@@ -266,23 +272,30 @@ sensors = {
     # Whether to prettify sensor log output.
     'prettify_log': True,
 
+    # Whether to power toggle the 1-Wire, I2C or SPI buses.
+    'power_toggle_buses': True,
+
     'system': [
 
         {
             # Sensor which reports free system memory.
             'type': 'system.memfree',
+            'enabled': True,
         },
         {
             # Sensor which reports system temperature.
             'type': 'system.temperature',
+            'enabled': True,
         },
         {
             # Sensor which reports system uptime metrics.
             'type': 'system.uptime',
+            'enabled': True,
         },
         {
             # Sensor which reports system WiFi metrics.
             'type': 'system.wifi',
+            'enabled': True,
         },
         {
             # Settings for button events, e.g. through ESP32 touch pads.
@@ -375,6 +388,7 @@ sensors = {
             'pin_pdsck': 'P21',
             'scale': 4.424242,
             'offset': -73000,
+            'decimals': 3,
         },
         {
             'id': 'ds18b20-1',
@@ -412,11 +426,19 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur, Druck und Feuchte außen (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
             'address': 0x77,
+        },
+        {
+            'id': 'si7021-1',
+            'description': 'Temperatur und Feuchte (Si7021)',
+            'type': 'Si7021',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x40,
         },
     ],
     'busses': [
@@ -442,7 +464,7 @@ sensors = {
             "number": 0,
             "enabled": True,
             "pin_data": "P11",
-            #"driver": "native",
+            "driver": "native",
         },
     ]
 }

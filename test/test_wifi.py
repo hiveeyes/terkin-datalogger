@@ -42,8 +42,8 @@ def test_wifi_esp32(monkeypatch, caplog):
             assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
             assert "Network stack ready" in captured, captured
 
-            assert "[LoRa] This is not a LoRa capable device" in captured, captured
-            assert "[GPRS] Interface disabled in settings" in captured, captured
+            assert "[LoRa] Interface not enabled in settings" in captured, captured
+            assert "[GPRS] Interface not enabled in settings" in captured, captured
             assert "Reading 0 sensor ports" in captured, captured
             assert "Sensor data:  {}" in captured, captured
             assert "Telemetry status: SUCCESS (0/0)" in captured, captured

@@ -120,7 +120,7 @@ erase-fs: check-mcu-port
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
 
 
-## Erase flash filesystem for Pycom devices
+## Erase complete Pycom device
 erase-device: check-mcu-port
 
 	@# Ask the user to confirm erasing.
