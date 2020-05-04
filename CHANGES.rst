@@ -5,6 +5,9 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+
+2020-05-04 0.9.0
+================
 - Fix LoRa subsystem
 - Add Si7021 sensor. Thanks, @thiasB!
 - Add a bunch of sensors for RaspberryPi. Thanks, @tonke!
@@ -59,6 +62,7 @@ Development
 - Improve CPython setup
 - Add UI spike on CPython based on Picotui
 - Upgrade MicroWebSrv2 module
+- Improve packaging and prepare upload to PyPI
 
 2020-04-28 0.8.0
 ================

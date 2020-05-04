@@ -1,70 +1,31 @@
 # -*- coding: utf-8 -*-
-import os
 from setuptools import setup, find_packages
 
-here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst'), encoding="utf-8").read()
-
 requires = [
-
-    # 3rd-party libraries
-    'terkin-micropython-libraries==0.8.0',
-
-    # Runtime
-    'mock==4.0.2',
-
-    # Mocks some HAL modules not available on CPython.
-    'esp32-machine-emulator==1.1.3',
-
-    # Command line interface
-    'click==7.1.2',
-
-    # UART access.
-    'pyserial==3.4',
-
-    # GPSD client library.
-    'gps==3.19',
-
-    # Adafruit CircuitPython libraries.
-    'Adafruit-Blinka==4.6.0',
-    'adafruit-circuitpython-busdevice==4.3.1',
-    'adafruit-circuitpython-bme280==2.4.1',
-    'adafruit-circuitpython-ads1x15==2.2.1',
-    'adafruit-circuitpython-si7021==3.2.1',
-
-    # Victron Energy VE.Direct text protocol driver.
-    #'git+https://github.com/karioja/vedirect@f74c0f2',
-
+    'pycopy-cpython-micropython==0.2',
+    'pycopy-cpython-usocket==0.1',
+    'pycopy-cpython-uio==0.3',
 ]
 
 extras = {
-    'sbc': [
-        # SPI HAL module.
-        'spidev==3.4',
-
-        # Raspberry Pi utilities.
-        'gpiozero==1.5.1',
-    ],
-    'lorawan': [
-        # Required for LoRaWAN.
-        'pycrypto==2.6.1',
-    ],
 }
 
-setup(name='terkin',
+setup(name='terkin-micropython-libraries',
       version='0.8.0',
-      description='A flexible data logger for MicroPython and CPython',
-      long_description=README,
-      license="AGPL 3, EUPL 1.2",
+      description='Terkin MicroPython runtime libraries',
+      long_description='This package contains all MicroPython runtime libraries '
+                       'required to run Terkin, even on CPython.',
+      license="MIT, Apache 2.0",
       classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: MicroPython",
+        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: MIT License",
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
         "Development Status :: 4 - Beta",
-        "Environment :: Console",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         "Intended Audience :: Information Technology",
@@ -94,13 +55,9 @@ setup(name='terkin',
       keywords='sensor networks data acquisition transformation daq routing '
                'telemetry m2m iot mqtt http',
       package_dir={
-          '': 'src/lib',
+          '': 'dist-packages',
       },
-      packages=find_packages('src/lib'),
-      py_modules=[
-          'umal',
-          'mininet',
-      ],
+      packages=find_packages('dist-packages'),
       include_package_data=True,
       package_data={
       },
@@ -112,8 +69,5 @@ setup(name='terkin',
       dependency_links=[
       ],
       entry_points={
-          'console_scripts': [
-              'terkin = terkin_cpython.main:cli',
-          ],
       },
 )

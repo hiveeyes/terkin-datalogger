@@ -13,9 +13,6 @@ pyserial==3.4
 # GPSD client library.
 gps==3.19
 
-# Raspberry Pi utilities.
-gpiozero==1.5.1
-
 # Adafruit CircuitPython libraries.
 Adafruit-Blinka==4.6.0
 adafruit-circuitpython-busdevice==4.3.1

@@ -134,7 +134,14 @@ packages: check-github-release make-github-release
 	MPY_TARGET=pycom MPY_VERSION=1.11 $(MAKE) create-mpy-archives platform=pycom
 	MPY_TARGET=bytecode MPY_VERSION=1.12 $(MAKE) create-mpy-archives platform=genuine
 
+sdist:
+	@$(python3) setup.py sdist
+	@$(python3) setup_libraries.py bdist_wheel
+
+pypi-upload: install-releasetools
+	twine upload --skip-existing --verbose dist/*.tar.gz dist/*.whl
+
 ## Release this piece of software
-release: bumpversion push
-	# Synopsis:
-	#   "make release bump=minor"   (major,minor,patch)
+release: bumpversion push sdist pypi-upload
+	@# Synopsis:
+	@#   "make release bump=minor"   (major,minor,patch)

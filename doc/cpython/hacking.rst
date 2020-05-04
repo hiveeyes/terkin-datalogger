@@ -1,5 +1,5 @@
 #########################
-Running Terkin on CPython
+Hacking Terkin on CPython
 #########################
 
 
@@ -12,6 +12,10 @@ Prerequisites
     git clone https://github.com/hiveeyes/terkin-datalogger.git
     cd terkin-datalogger
 
+
+*******
+Install
+*******
 Acquire 3rd-party packages::
 
     make setup
@@ -31,6 +35,6 @@ Create configuration from blueprint::
 ***
 Run
 ***
-Invoke ``src/main_cpython.py``::
+Invoke ``src/lib/terkin_cpython/main.py`` in daemon mode::
 
     make run-cpython

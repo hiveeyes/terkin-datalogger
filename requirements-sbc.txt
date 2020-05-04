@@ -1,5 +1,8 @@
 # SPI HAL module.
 spidev==3.4
 
+# Raspberry Pi utilities.
+gpiozero==1.5.1
+
 # Required for LoRaWAN.
 pycrypto==2.6.1
