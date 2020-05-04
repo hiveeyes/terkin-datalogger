@@ -315,7 +315,6 @@ class I2CBus(AbstractBus):
                 self.adapter = busio.I2C(SCL, SDA)
 
             else:
-                log.warning('This Platform: ' + str(self.platform_info.vendor))
                 raise NotImplementedError('I2C bus is not implemented on this platform')
 
             self.just_started = True
