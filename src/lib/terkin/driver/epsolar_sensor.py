@@ -94,6 +94,9 @@ class EPSolarSensor(AbstractSensor):
             #serial_data_prepared = self.driver.serial_data_prepare(serial_data)
             data_raw = serial_data_decoded
 
+        else:
+            raise NotImplementedError('EPSolar driver not implemented on this platform')
+
         data = {}
         for key, value in data_raw.items():
             key = 'epsolar.{}'.format(key)

@@ -43,7 +43,7 @@ class TerkinDatalogger:
     """
 
     # Application metadata.
-    name = 'Terkin MicroPython Datalogger'
+    name = 'Terkin Datalogger'
     version = __version__
 
     # For the singleton factory.
