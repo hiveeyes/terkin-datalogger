@@ -115,7 +115,7 @@ class TelemetryAdapter:
     def format_uri(self, **kwargs):
         """
 
-        :param **kwargs:
+        :param kwargs:
 
         """
         data = copy(self.address)
@@ -208,7 +208,7 @@ class CSVTelemetryAdapter(TelemetryAdapter):
         """
 
         :param data:
-        :param **kwargs:
+        :param kwargs:
 
         """
         uri = self.format_uri(**kwargs)

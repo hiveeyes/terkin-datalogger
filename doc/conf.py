@@ -101,8 +101,8 @@ html_theme_options = {
     'base_url': 'https://terkin.org/docs/',
 
     # Set the color and the accent color
-    'color_primary': 'orange',
-    'color_accent': 'light-orange',
+    'color_primary': 'teal',
+    #'color_accent': 'light-green',
 
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/hiveeyes/terkin-datalogger/',

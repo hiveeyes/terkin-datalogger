@@ -95,7 +95,7 @@ S6
 - Bootzeit wieder reduzieren (dist-packages aufräumen)
   - Publish Terkin MicroPython Assets to GitHub w/o Dragino stuff
 - Captive Portal (@clemens, @flower4bees)
-
+- Statemachine via pysm (@poesel)
 
 
 ***************
