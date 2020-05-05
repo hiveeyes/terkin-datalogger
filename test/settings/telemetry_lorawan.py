@@ -26,15 +26,16 @@ networking = {
     # LoRaWAN/TTN
     'lora': {
         'enabled': True,
+        'region': 'EU868',
+        'adr': False,
+        'antenna_attached': True,
+        'activation': 'otaa',
         'otaa': {
-            'region': 'EU868',
-            'adr': False,
             # No worries, these are not real values.
             'device_eui': '80B3D549904B5FD0',
             'application_eui': '80B3D57ED0018E9D',
             'application_key': '830A4A65419E669393C0ED4DDB32372D',
         },
-        'antenna_attached': True,
     },
 
 }
