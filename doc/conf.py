@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src/'))
+sys.path.insert(0, os.path.abspath('../src/lib'))
 
 
 # -- Project information -----------------------------------------------------
@@ -47,8 +47,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-autodoc_mock_imports = ["machine", "bootloader"]
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
@@ -125,3 +123,14 @@ html_theme_options = {
         "index": "A flexible data logger for MicroPython and CPython",
     },
 }
+
+
+# -- Autodoc options -------------------------------------------
+from terkin_cpython.util import patch_system
+patch_system()
+
+from umal import MicroPythonBootloader
+bootloader = MicroPythonBootloader()
+setattr(sys.modules['__main__'], 'bootloader', bootloader)
+
+#autodoc_mock_imports = ["machine"]
