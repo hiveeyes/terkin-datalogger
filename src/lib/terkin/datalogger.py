@@ -622,18 +622,8 @@ class TerkinDatalogger:
         import utime
 
         ds = DS3231(self.bus)
-        interval = self.settings.get('main.interval.shutoff', 10) * 60
+        interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert to minutes
         (year,month,day,hour,minute,second, dotw, doty) = utime.localtime() # get the current time
-
-        # check if its night or winter
-        night_start = self.settings.get('main.interval.night_start', 0)
-        night_end =  self.settings.get('main.interval.night_end', 0)
-        winter_start = self.settings.get('main.interval.winter_start', 0)
-        winter_end =  self.settings.get('main.interval.winter_end', 0)
-        if night_start > 0 and (hour >= night_start or hour <= night_end):  # double interval for the night
-            interval *= 2
-        if winter_start > 0 and (month >= winter_start or month <= winter_end):  # double interval for winter
-            interval *= 2
 
         # Compute sleeping duration from measurement interval and elapsed time.
         elapsed = self.duty_chrono.read()
