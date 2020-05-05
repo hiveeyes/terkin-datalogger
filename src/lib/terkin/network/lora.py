@@ -111,12 +111,12 @@ class LoRaDriverPycom:
                     dev_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.device_eui'))
                     self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
 
-        elif self.settings.get('networking.lora.activation') == 'apb':
+        elif self.settings.get('networking.lora.activation') == 'abp':
             # join a network using ABP (Activation By Personalisation)
             import struct
-            dev_addr = struct.unpack(">l", binascii.unhexlify(self.settings.get('networking.lora.apb.dev_addr')))[0]
-            nwk_swkey = binascii.unhexlify(self.settings.get('networking.lora.apb.nwk_swkey'))
-            app_swkey = binascii.unhexlify(self.settings.get('networking.lora.apb.app_swkey'))
+            dev_addr = struct.unpack(">l", binascii.unhexlify(self.settings.get('networking.lora.abp.device_address')))[0]
+            nwk_swkey = binascii.unhexlify(self.settings.get('networking.lora.abp.network_session_key'))
+            app_swkey = binascii.unhexlify(self.settings.get('networking.lora.abp.app_session_key'))
 
             self.lora.join(activation=LoRa.ABP, auth=(dev_addr, nwk_swkey, app_swkey), timeout=0, dr=0)
 
@@ -220,14 +220,14 @@ class LoRaDriverDragino:
                                               deveui=self.settings.get('networking.lora.otaa.device_eui'),
                                               appeui=self.settings.get('networking.lora.otaa.application_eui'),
                                               appkey=self.settings.get('networking.lora.otaa.application_key'))
-        elif self.settings.get('networking.lora.activation') == 'apb':
+        elif self.settings.get('networking.lora.activation') == 'abp':
             # join a network using ABP (Activation By Personalisation)
             import struct
             import binascii
-            lora_auth = LoRaWANAuthentication(auth_mode='APB',
-                                              devaddr=self.settings.get('networking.lora.apb.dev_addr'),
-                                              nwskey=self.settings.get('networking.lora.apb.nwk_swkey'),
-                                              appskey=self.settings.get('networking.lora.apb.app_swkey'))
+            lora_auth = LoRaWANAuthentication(auth_mode='ABP',
+                                              devaddr=self.settings.get('networking.lora.abp.device_address'),
+                                              nwskey=self.settings.get('networking.lora.abp.network_session_key'),
+                                              appskey=self.settings.get('networking.lora.abp.app_session_key'))
 
         lora_config = LoRaWANConfig(auth=lora_auth)
         self.dragino = Dragino(config=lora_config, logging_level=logging.DEBUG)

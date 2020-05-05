@@ -120,17 +120,17 @@ networking = {
         'antenna_attached': True,
         'region': 'EU868',
         'adr': False,
-        'activation': 'otaa',
+        'activation': 'otaa',   # abp
         'otaa': {
             'device_eui': '<GENERATED_FROM_LORA_MAC_OR_TTN>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
             #'join_check_interval': 2.5,
         },
-        'apb': {
-            'dev_addr' : '<FROM TTN CONSOLE>',
-            'nwk_swkey': '<FROM TTN CONSOLE>',
-            'app_swkey': '<FROM TTN CONSOLE>',
+        'abp': {
+            'device_address': '<FROM TTN CONSOLE>',
+            'network_session_key': '<FROM TTN CONSOLE>',
+            'app_session_key': '<FROM TTN CONSOLE>',
         },
     },
 
