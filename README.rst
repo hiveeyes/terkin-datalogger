@@ -65,15 +65,16 @@ Architectures
 Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
-- Pycom MicroPython: WiPy, LoPy4, FiPy
-- CPython: RaspberryPi, `Dragino LoRa/GPS HAT`_
-- Connectivity: WiFi, SIM800 for GPRS, SX127x for LoRa, Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_
+- Pycom MicroPython: WiPy, GPy, LoPy4, FiPy
+- CPython: Linux x86_64, Linux ARM (Raspberry Pi), macOS, WSL2
 
 Peripherals
 ===========
 - Sensors: 1-Wire, I2C, ADC, System, WiFi
-- Drivers: DS18B20, BME280, SI7021, HX711, MAX17043, DS3231, AT24C32
-- Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN
+- Drivers: DS18B20, BME280, SI7021, ADS1x15, HX711, MAX17043, DS3231, AT24C32
+- Adapters: GPSD, EPSolar ViewStar PWM charge controller, Victron Energy VE.Direct MPPT charge controller
+- Connectivity: WiFi, SIM800 for GPRS, SX127x for LoRa (LoPy4, FiPy and `Dragino LoRa/GPS HAT`_), Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_
+- Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN OTAA+ABP
 
 
 ***********

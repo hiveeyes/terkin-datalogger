@@ -14,7 +14,7 @@ class VEDirectSensor(AbstractSensor):
     """
     About
     =====
-    Victron Energy VE.Direct sensor component.
+    Victron Energy VE.Direct MPPT charge controller sensor component.
 
     Supported devices
     =================

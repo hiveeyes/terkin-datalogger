@@ -27,7 +27,7 @@ class EPSolarSensor(AbstractSensor):
     """
     About
     =====
-    EPSolar ViewStar PWM Charge Controller sensor component.
+    EPSolar ViewStar PWM charge controller sensor component.
 
     Supported devices
     =================
