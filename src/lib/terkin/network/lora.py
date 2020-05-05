@@ -225,9 +225,9 @@ class LoRaDriverDragino:
             import struct
             import binascii
             lora_auth = LoRaWANAuthentication(auth_mode='APB',
-                                              dev_addr  = struct.unpack(">l", binascii.unhexlify(self.settings.get('networking.lora.apb.dev_addr')))[0],
-                                              nwk_swkey = binascii.unhexlify(self.settings.get('networking.lora.apb.nwk_swkey')),
-                                              app_swkey = binascii.unhexlify(self.settings.get('networking.lora.apb.app_swkey')))
+                                              devaddr=self.settings.get('networking.lora.apb.dev_addr'),
+                                              nwskey=self.settings.get('networking.lora.apb.nwk_swkey'),
+                                              appskey=self.settings.get('networking.lora.apb.app_swkey'))
 
         lora_config = LoRaWANConfig(auth=lora_auth)
         self.dragino = Dragino(config=lora_config, logging_level=logging.DEBUG)
