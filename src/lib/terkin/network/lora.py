@@ -98,21 +98,23 @@ class LoRaDriverPycom:
                     pass
 
         import binascii
+
+        # Over-the-Air Activation (OTAA)
         if self.settings.get('networking.lora.activation') == 'otaa':
-            # Create LoRaWAN OTAA connection to TTN.
             app_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.application_eui'))
             app_key = binascii.unhexlify(self.settings.get('networking.lora.otaa.application_key'))
 
             if not self.lora.has_joined():
-                log.info('[LoRa] Joining the network')
+                log.info('[LoRa] Attaching to the LoRaWAN network using OTAA')
                 if self.settings.get('networking.lora.otaa.device_eui') is None:
                     self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
                 else:
                     dev_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.device_eui'))
                     self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
 
+        # Activation by Personalization (ABP)
         elif self.settings.get('networking.lora.activation') == 'abp':
-            # join a network using ABP (Activation By Personalisation)
+            log.info('[LoRa] Attaching to the LoRaWAN network using ABP')
             import struct
             dev_addr = struct.unpack(">l", binascii.unhexlify(self.settings.get('networking.lora.abp.device_address')))[0]
             nwk_swkey = binascii.unhexlify(self.settings.get('networking.lora.abp.network_session_key'))
@@ -214,16 +216,16 @@ class LoRaDriverDragino:
         BOARD.DIO3 = None
 
         from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
+
+        # Over-the-Air Activation (OTAA)
         if self.settings.get('networking.lora.activation') == 'otaa':
-            # Create LoRaWAN OTAA connection to TTN.
             lora_auth = LoRaWANAuthentication(auth_mode='OTAA',
                                               deveui=self.settings.get('networking.lora.otaa.device_eui'),
                                               appeui=self.settings.get('networking.lora.otaa.application_eui'),
                                               appkey=self.settings.get('networking.lora.otaa.application_key'))
+
+        # Activation by Personalization (ABP)
         elif self.settings.get('networking.lora.activation') == 'abp':
-            # join a network using ABP (Activation By Personalisation)
-            import struct
-            import binascii
             lora_auth = LoRaWANAuthentication(auth_mode='ABP',
                                               devaddr=self.settings.get('networking.lora.abp.device_address'),
                                               nwskey=self.settings.get('networking.lora.abp.network_session_key'),

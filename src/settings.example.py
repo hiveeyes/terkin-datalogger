@@ -120,6 +120,9 @@ networking = {
         'antenna_attached': True,
         'region': 'EU868',
         'adr': False,
+
+        # Over-the-Air Activation (OTAA) vs. Activation by Personalization (ABP)
+        # https://www.thethingsnetwork.org/forum/t/what-is-the-difference-between-otaa-and-abp-devices/2723
         'activation': 'otaa',   # abp
         'otaa': {
             'device_eui': '<GENERATED_FROM_LORA_MAC_OR_TTN>',
