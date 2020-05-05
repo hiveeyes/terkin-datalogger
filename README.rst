@@ -66,7 +66,7 @@ Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
 - Pycom MicroPython: WiPy, GPy, LoPy4, FiPy
-- CPython: Linux x86_64, Linux ARM (Raspberry Pi), macOS, WSL2
+- CPython: Linux x86_64, Linux ARM (BeagleBone, Odroid, Raspberry Pi), macOS, WSL2
 
 Peripherals
 ===========
