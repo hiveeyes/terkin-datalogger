@@ -1,3 +1,4 @@
+## Setup prerequisites for CPython
 setup-cpython:
 
 	@# Define program paths.
@@ -20,6 +21,7 @@ setup-cpython:
 	# Install updated pySX127x driver.
 	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x
 
+## Setup prerequisites for CPython on single-board-computers (SBC)
 setup-sbc:
 
 	@# Define path to the "pip" program.
@@ -31,9 +33,11 @@ setup-sbc:
 setup-gpsd:
 	sudo apt install gpsd gpsd-clients
 
+## Invoke datalogger on CPython
 run-cpython:
 	.venv3/bin/terkin --config=src/settings.py --daemon
 
+## Setup prerequisites for running on Raspberry Pi / Dragino
 setup-dragino:
 	-$(MAKE) setup
 	-$(MAKE) setup-cpython
