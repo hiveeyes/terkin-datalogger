@@ -104,7 +104,7 @@ sensors = {
             'pin_adc_in': 'P18'
         },
     },
-    'busses': [
+    'buses': [
         {
             "family": "i2c",
             "number": 0,

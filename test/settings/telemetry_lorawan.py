@@ -49,7 +49,7 @@ telemetry = {
             'enabled': True,
 
             'endpoint': 'lora://',
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'settings': {
                 'size': 12,
                 'datarate': 0,
@@ -70,18 +70,22 @@ sensors = {
         {
             # Sensor which reports free system memory.
             'type': 'system.memfree',
+            'enabled': True,
         },
         {
             # Sensor which reports system temperature.
             'type': 'system.temperature',
+            'enabled': True,
         },
         {
             # Sensor which reports system uptime metrics.
             'type': 'system.uptime',
+            'enabled': True,
         },
         {
             # Sensor which reports system WiFi metrics.
             'type': 'system.wifi',
+            'enabled': True,
         },
 
     ],

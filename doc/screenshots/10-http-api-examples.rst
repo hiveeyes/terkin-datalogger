@@ -146,11 +146,11 @@ Get last reading
 Peripherals
 ***********
 
-Busses
-======
+Buses
+=====
 ::
 
-    $ http GET "http://$(cat .terkin/floatip)/api/v1/peripherals/busses"
+    $ http GET "http://$(cat .terkin/floatip)/api/v1/peripherals/buses"
 
     {
         "i2c:0": {

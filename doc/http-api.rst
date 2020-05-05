@@ -107,9 +107,9 @@ Retrieve global static ``settings.py`` in Python format::
 Peripherals endpoints
 *********************
 
-Request information about busses::
+Request information about buses::
 
-    GET /api/v1/peripherals/busses
+    GET /api/v1/peripherals/buses
 
 Request information about sensors::
 

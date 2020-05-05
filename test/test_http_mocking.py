@@ -2,8 +2,10 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+import time
 import json
 import socket
+
 import pytest
 import requests
 import httpretty
@@ -186,6 +188,8 @@ def test_httpserver_socket(httpserver_ipv4):
     # Invoke HTTP request.
     url = httpserver.url_for("/api/data")
     send_request(url, method, json=data)
+
+    time.sleep(0.2)
 
     # Proof that worked.
     assert len(httpserver.log) == 1, "pytest-httpserver didn't capture any request"

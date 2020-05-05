@@ -35,18 +35,22 @@ sensors = {
         {
             # Sensor which reports free system memory.
             'type': 'system.memfree',
+            'enabled': True,
         },
         {
             # Sensor which reports system temperature.
             'type': 'system.temperature',
+            'enabled': True,
         },
         {
             # Sensor which reports system uptime metrics.
             'type': 'system.uptime',
+            'enabled': True,
         },
         {
             # Sensor which reports system WiFi metrics.
             'type': 'system.wifi',
+            'enabled': True,
         },
         {
             # Settings for button events, e.g. through ESP32 touch pads.
@@ -146,7 +150,7 @@ sensors = {
             'address': 0x77,
         }
     ],
-    'busses': [
+    'buses': [
         {
             "id": "i2c:0",
             "family": "i2c",

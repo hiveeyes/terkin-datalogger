@@ -39,9 +39,9 @@ def test_basic_esp32(caplog):
             # Proof it works by verifying log output.
             assert "Starting Terkin datalogger" in captured, captured
             assert "platform: esp32" in captured, captured
-            assert "[WiFi] Interface disabled in settings." in captured, captured
-            assert "[LoRa] This is not a LoRa capable device." in captured, captured
-            assert "[GPRS] Interface disabled in settings." in captured, captured
+            assert "[WiFi] Interface not enabled in settings." in captured, captured
+            assert "[LoRa] Interface not enabled in settings." in captured, captured
+            assert "[GPRS] Interface not enabled in settings." in captured, captured
             assert "Reading 0 sensor ports" in captured, captured
             assert "Sensor data:  {}" in captured, captured
             assert "Telemetry status: SUCCESS (0/0)" in captured, captured
