@@ -24,6 +24,7 @@ Walkthrough
    the documentation at `operate the Terkin Datalogger Sandbox`_.
 2. Disable deep sleep and watchdog features in your ``settings.py``.
 3. Provision source code and restart the device
+
 ::
 
     # Start MicroTerkin Agent
