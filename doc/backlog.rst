@@ -81,6 +81,21 @@ S5
         export LANG=C.UTF-8
     tools/cpython.mk:35: recipe for target 'run-cpython' failed
 - Wait for "[Dragino                       ] DEBUG  : TX Complete" before confirming TX on Dragino
+- Transmit timestamps over LoRa
+  https://github.com/smlng/pycayennelpp/pull/42
+
+S6
+==
+- Improve platform_info.MICROPYTHON.RaspberryPi: Not everything is specific to RaspberryPi here,
+  e.g. pyserial-based drivers like EPSolar or VEDirect
+- Besseres Abfangen von Fehlern in der LoRaWAN/TTN config
+- Umbau der dragino.py-Bibliothek auf Basis von https://pypi.org/project/pyLoRa/
+  - Ask Rui Silva about making it compatible with Dragino.
+- LoRa: Improve timeout behaviour, see https://community.hiveeyes.org/t/lora-joins-dauern-teilweise-seeeeeeeehr-lange/3186
+- Bootzeit wieder reduzieren (dist-packages aufräumen)
+  - Publish Terkin MicroPython Assets to GitHub w/o Dragino stuff
+- Captive Portal (@clemens, @flower4bees)
+
 
 
 ***************
@@ -90,7 +105,6 @@ Datalogger 2019
 Prio 0.7
 ========
 - Sensor-Mapping for @clemens, @wtf and @mko
-- Rename "busses" to "buses"
 - Use WLAN power_save, see https://docs.pycom.io/firmwareapi/pycom/network/wlan/
 - Investigate if re-reading ``settings.py`` works
   https://forum.pycom.io/topic/5296/reread-setting-py-while-the-program-is-running
