@@ -116,7 +116,7 @@ networking = {
 
     # LoRaWAN/TTN
     'lora': {
-        'enabled': True,
+        'enabled': False,
         'antenna_attached': True,
         'region': 'EU868',
         'adr': False,
