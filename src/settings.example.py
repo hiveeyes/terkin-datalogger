@@ -446,7 +446,7 @@ sensors = {
             'address': 0x40,
         },
     ],
-    'busses': [
+    'buses': [
         {
             "id": "bus-i2c-0",
             "family": "i2c",

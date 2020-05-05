@@ -488,7 +488,7 @@ sensors = {
             'enabled': True,
         },
     ],
-    'busses': [
+    'buses': [
         {
             "id": "bus-i2c-1",
             "family": "i2c",

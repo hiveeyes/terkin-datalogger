@@ -21,11 +21,11 @@ class BusType:
 
 
 class SensorManager:
-    """Manages all busses and sensors."""
+    """Manages all buses and sensors."""
 
     def __init__(self, settings):
         self.sensors = []
-        self.busses = {}
+        self.buses = {}
         self.settings = settings
 
     def register_sensor(self, sensor):
@@ -44,7 +44,7 @@ class SensorManager:
         """
         bus_name = bus.name
         log.info('Registering bus "%s"', bus_name)
-        self.busses[bus_name] = bus
+        self.buses[bus_name] = bus
 
     def get_bus_by_name(self, name):
         """
@@ -57,7 +57,7 @@ class SensorManager:
             return
 
         log.debug('Trying to find bus by name "%s"', name)
-        bus = self.busses.get(name)
+        bus = self.buses.get(name)
         log.debug('Found bus by name "%s": %s', name, bus)
         return bus
 
@@ -69,14 +69,14 @@ class SensorManager:
         """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
-    def setup_busses(self, busses_settings):
-        """Register configured I2C, OneWire and SPI busses.
+    def setup_buses(self, buses_settings):
+        """Register configured I2C, OneWire and SPI buses.
 
-        :param busses_settings: 
+        :param buses_settings: 
 
         """
-        log.info("Starting all busses %s", busses_settings)
-        for bus_settings in busses_settings:
+        log.info("Starting all buses %s", buses_settings)
+        for bus_settings in buses_settings:
 
             if bus_settings.get("enabled") is False:
                 log.debug('Bus with id "{}" and family "{}" is disabled, '
@@ -116,16 +116,18 @@ class SensorManager:
             log.error("Invalid bus configuration: %s", bus_settings)
 
     def power_on(self):
-        """  """
+        """Send power-on to all buses and sensors"""
         if self.settings.get('sensors.power_toggle_buses', True):
-            self.power_toggle_busses('power_on')
+            self.power_toggle_buses('power_on')
+        if self.settings.get('sensors.power_toggle_sensors', True):
             self.power_toggle_sensors('power_on')
 
     def power_off(self):
-        """  """
-        if self.settings.get('sensors.power_toggle_buses', True):
+        """Send power-off to all buses and sensors"""
+        if self.settings.get('sensors.power_toggle_sensors', True):
             self.power_toggle_sensors('power_off')
-            self.power_toggle_busses('power_off')
+        if self.settings.get('sensors.power_toggle_buses', True):
+            self.power_toggle_buses('power_off')
 
     def power_toggle_sensors(self, action):
         """
@@ -142,13 +144,13 @@ class SensorManager:
                 except Exception as ex:
                     log.exc(ex, 'Sending {} to sensor {} failed'.format(action, sensorname))
 
-    def power_toggle_busses(self, action):
+    def power_toggle_buses(self, action):
         """
 
         :param action:
 
         """
-        for busname, bus in self.busses.items():
+        for busname, bus in self.buses.items():
             if hasattr(bus, action):
                 log.info('Sending {} to bus {}'.format(action, busname))
                 try:

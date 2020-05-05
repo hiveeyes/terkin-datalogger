@@ -467,8 +467,8 @@ Development
 - ds18x20: fix runtime issues, resetting OneWire before scanning for devices
 - Little cleanup
 - SensorManager
-    - Add bus driver for i2c and onewire busses
-    - Settings: add busses to (sensor-)settings
+    - Add bus driver for i2c and onewire buses
+    - Settings: add buses to (sensor-)settings
     - Convention: Bus address ``<BUS_FAMILY>:<BUS_NUMBER>``
 - Makefile|libs:
     - Add bme280, Pycoproc, Quectel L76 GNSS library (Pytrack Board)

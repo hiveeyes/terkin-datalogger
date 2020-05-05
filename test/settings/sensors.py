@@ -150,7 +150,7 @@ sensors = {
             'address': 0x77,
         }
     ],
-    'busses': [
+    'buses': [
         {
             "id": "i2c:0",
             "family": "i2c",

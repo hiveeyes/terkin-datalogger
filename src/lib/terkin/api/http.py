@@ -242,10 +242,10 @@ class TerkinHttpApi:
         buffer.seek(0)
         return buffer
 
-    @WebRoute(GET, '/api/v1/peripherals/busses')
+    @WebRoute(GET, '/api/v1/peripherals/buses')
     def sensor_index(microWebSrv2, request: HttpRequest):
         sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
-        som_info = serialize_som(sensor_manager.busses)
+        som_info = serialize_som(sensor_manager.buses)
         TerkinHttpApi.respond_json(request, som_info)
 
     @WebRoute(GET, '/api/v1/peripherals/sensors')
@@ -258,9 +258,9 @@ class TerkinHttpApi:
     def sensor_index_ds18b20(microWebSrv2, request: HttpRequest):
         sensor_manager = TerkinHttpApi.device.application_info.application.sensor_manager
         ds18b20_sensors = []
-        #print('sensor_manager.busses:', sensor_manager.busses)
+        #print('sensor_manager.buses:', sensor_manager.buses)
 
-        # Collect information about all DS18B20 sensors connected to all 1-Wire busses.
+        # Collect information about all DS18B20 sensors connected to all 1-Wire buses.
         for sensor in sensor_manager.sensors:
             if not hasattr(sensor, 'type') or sensor.type != 'DS18B20':
                 continue

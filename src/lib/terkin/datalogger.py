@@ -139,8 +139,8 @@ class TerkinDatalogger:
         # Setup sensors.
         log.info('Setting up sensors')
         self.device.watchdog.feed()
-        bus_settings = self.settings.get('sensors.busses', [])
-        self.sensor_manager.setup_busses(bus_settings)
+        bus_settings = self.settings.get('sensors.buses', self.settings.get('sensors.busses', []))
+        self.sensor_manager.setup_buses(bus_settings)
         self.register_sensors()
         self.sensor_manager.start_sensors()
 
@@ -291,7 +291,7 @@ class TerkinDatalogger:
     def register_sensors(self):
         """
         Configure and register sensor objects.
-        There are three types of sensors: system, environment & busses.
+        There are three types of sensors: system, environment & buses.
 
         The sensors are registered by calling their respective classes
         from terkin/driver.
