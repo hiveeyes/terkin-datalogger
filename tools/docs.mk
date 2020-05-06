@@ -5,5 +5,5 @@ setup-docs: setup-virtualenv3
 
 ## Build the documentation
 docs-html: setup-docs
-	touch doc/index.rst
+	touch doc/source/index.rst
 	export SPHINXBUILD="`pwd`/$(sphinx)"; cd doc; make html

@@ -643,7 +643,7 @@ Development
 **Baby steps.**
 
 - Initial commit
-- Add .gitignore to exclude `*_local.py` configuration files
+- Add .gitignore to exclude ``*_local.py`` configuration files
 - WIP: Hands on FiPy
 - First stable version
 
@@ -659,3 +659,4 @@ Development
 .. _@pinguin999: https://github.com/pinguin999
 .. _@rohlan: https://github.com/rohlan
 .. _@emmanuel-florent: https://github.com/emmanuel-florent
+.. _@robert-hh: https://github.com/robert-hh/

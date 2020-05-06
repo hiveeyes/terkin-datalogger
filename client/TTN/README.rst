@@ -1,3 +1,7 @@
+:orphan:
+
+.. _setup-lorawan-ttn:
+
 #################
 LoRaWAN/TTN Setup
 #################

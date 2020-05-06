@@ -1,28 +1,72 @@
-.. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+.. _terkin-readme:
 
-.. image:: https://img.shields.io/badge/CPython-3.x-green.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+######
+Terkin
+######
 
-.. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+.. container:: align-center
 
-|
+    .. image:: https://assets.okfn.org/images/ok_buttons/ok_80x15_red_green.png
+        :target: https://okfn.org/opendata/
 
-#################
-Terkin Datalogger
-#################
+    .. image:: https://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png
+        :target: https://okfn.org/opendata/
 
-Data logging for humans, written in MicroPython.
+    .. image:: https://assets.okfn.org/images/ok_buttons/os_80x15_orange_grey.png
+        :target: https://okfn.org/opendata/
+
+    |
+
+    .. figure:: https://ptrace.getkotori.org/2016-05-23_chart-recorder.png
+        :alt: Chart recorder
+        :width: 200px
+
+    *Data logging for humans, written in MicroPython.*
+
+----
+
+- **Documentation**: https://terkin.org/
+
+- **Source Code**: https://github.com/hiveeyes/terkin-datalogger
+
+- **PyPI**: https://pypi.org/project/terkin/
+
+- **Status**:
+
+  .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
+        :target: https://micropython.org
+
+  .. image:: https://img.shields.io/badge/CPython-3.x-green.svg
+        :target: https://python.org
+
+  .. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
+        :target: https://github.com/hiveeyes/terkin-datalogger
+
+  .. image:: https://img.shields.io/pypi/status/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+  .. image:: https://img.shields.io/pypi/v/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+  .. image:: https://img.shields.io/pypi/l/terkin.svg
+        :target: https://github.com/hiveeyes/terkin-datalogger/blob/master/LICENSE
+
+  .. image:: https://img.shields.io/pypi/dm/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+----
 
 
-*****
-About
-*****
-The Terkin Datalogger is a flexible data logger application
-for MicroPython and CPython environments.
+***********
+At a glance
+***********
 
-It has been conceived for the Bee Observer (BOB) project and was funded by the BMBF.
+Terkin is a flexible data logger application for MicroPython and
+CPython environments. It provides a lot of sensor-, networking-
+and telemetry-connectivity options.
+
+Terkin has been conceived for the Bee Observer (BOB)
+and Hiveeyes projects and was funded by the BMBF.
 
 - https://bee-observer.hiveeyes.org/bmbf-verbundprojekt
 - https://community.hiveeyes.org/c/bee-observer
@@ -147,47 +191,19 @@ successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
 shipped with **Windows 10**.
 
 
-*******************
-Project information
-*******************
-
-About
-=====
-These links will guide you to the source code of the
-»Terkin Datalogger« and its documentation.
-
-- `Terkin Datalogger on GitHub <https://github.com/hiveeyes/terkin-datalogger>`_
-
-Contributing
-============
-We are always happy to receive code contributions, ideas, suggestions
-and problem reports from the community.
-
-So, if you'd like to contribute you're most welcome.
-Spend some time taking a look around, locate a bug, design issue or
-spelling mistake and then send us a pull request or `create an issue`_.
-
-Thanks in advance for your efforts, we really appreciate any help or feedback.
-
-Licenses
-========
-This software is copyright © 2017-2020 The Hiveeyes Developers and contributors. All rights reserved.
-
-It is and will always be **free and open source software**.
-
-Use of the source code included here is governed by the GNU General Public License
-`GNU-GPL-3.0`_ and the European Union Public License `EUPL-1.2`_.
-Please also have a look at the notices about licenses of third-party components.
-
-
 ****************
 Acknowledgements
 ****************
-This firmware is an effort of many people. So, thanks to all
-the `contributors`_ who got their hands dirty and helped to
-co-create and conceive it in one way or another.
+This software is an effort of many people. Thanks to all the
+`contributors`_ who helped to co-create and conceive
+it in one way or another. You know who you are.
 
-You know who you are.
+
+*******
+License
+*******
+This project is licensed under the terms of the AGPL license.
+
 
 
 ----
@@ -209,7 +225,7 @@ Have fun!
 .. _LTE Cat M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
 .. _LTE Cat NB1: https://docs.pycom.io/tutorials/lte/nb-iot.html
 
-.. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
+.. _GNU-AGPL-3.0: https://opensource.org/licenses/AGPL-3.0
 .. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
 
 .. _Dragino LoRa/GPS HAT: https://wiki.dragino.com/index.php?title=Lora/GPS_HAT

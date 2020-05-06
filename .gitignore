@@ -21,4 +21,4 @@ presets.mk
 *~
 .coverage
 /spikes
-/doc/_build
+/doc/build
