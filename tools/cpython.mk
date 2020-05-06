@@ -38,8 +38,28 @@ run-cpython:
 	.venv3/bin/terkin --config=src/settings.py --daemon
 
 run-cpython-callgraph:
-	# .venv3/bin/pip install pycallgraph graphviz
-	.venv3/bin/pycallgraph --include "__main__" --include "umal.*" --include "terkin.*" graphviz -- .venv3/bin/terkin --config=src/settings.py
+
+	# Setup
+	$(pip3) install pycallgraph2 graphviz
+
+	@# All
+	@#$(eval pycg_options :=  --no-groups --include="__main__" --include="umal.*" --include="terkin.*" --exclude="terkin.configuration.*" --exclude="terkin.logging.*" --exclude="terkin.util.*" --exclude="terkin.exception.*")
+
+	@# Reduced
+	@#$(eval pycg_options :=  --no-groups --include="terkin.*" --exclude="terkin.configuration.*" --exclude="terkin.logging.*" --exclude="terkin.util.*" --exclude="terkin.exception.*")
+
+	@# Slim 1
+	@#$(eval pycg_options :=  --no-groups --include="terkin.*" --exclude="terkin.driver.*" --exclude="terkin.configuration.*" --exclude="terkin.logging.*" --exclude="terkin.util.*" --exclude="terkin.exception.*")
+
+	@# Main + Network
+	$(eval pycg_options :=  --no-groups --include="terkin.datalogger.*" --include="terkin.device.*" --include="terkin.network.*" --include="terkin.telemetry.*")
+
+	# Generate "pycallgraph.png"
+	.venv3/bin/pycallgraph ${pycg_options} graphviz -- .venv3/bin/terkin --config=src/settings.py
+
+	# Generate "pycallgraph.dot"
+	.venv3/bin/pycallgraph ${pycg_options} graphviz --output-format=dot --output-file=pycallgraph.dot -- .venv3/bin/terkin --config=src/settings.py
+	dot -Tsvg pycallgraph.dot > pycallgraph.svg
 
 
 ## Setup prerequisites for running on Raspberry Pi / Dragino
