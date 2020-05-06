@@ -37,6 +37,11 @@ setup-gpsd:
 run-cpython:
 	.venv3/bin/terkin --config=src/settings.py --daemon
 
+run-cpython-callgraph:
+	# .venv3/bin/pip install pycallgraph graphviz
+	.venv3/bin/pycallgraph --include "__main__" --include "umal.*" --include "terkin.*" graphviz -- .venv3/bin/terkin --config=src/settings.py
+
+
 ## Setup prerequisites for running on Raspberry Pi / Dragino
 setup-dragino:
 	-$(MAKE) setup
