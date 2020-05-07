@@ -1,6 +1,11 @@
+// -------------------------------
+// Hiveeyes
+// https://swarm.hiveeyes.org/api/
+// -------------------------------
+
 const input = JSON.parse(request.body);
 
-var output = {};
+var output  = {};
 
 output    = input.payload_fields;
 output.sf = Number(input.metadata.data_rate.split('BW')[0].substring(2));
