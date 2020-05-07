@@ -52,10 +52,11 @@ It's a free service for inspecting and rewriting HTTP POST requests to a
 response that our data acquisition service (DAQ) at `swarm.hiveeyes.org <https://swarm.hiveeyes.org>`_
 will be able to understand and process.
 
-An endpoint URL for common use is already set up and can be requested from
-@thiasB but you can of course set up your own endpoint and use the Javascript
-provided in `putsreq.hiveeyes.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/putsreq.hiveeyes.js>`_
-for the payload rewrite.
+HTTP endpoint URLs for common use are already set up and can be requested from
+@thiasB or @ClemensGruber but you can of course set up your own endpoint and use the
+Javascript provided in
+- `putsreq.hiveeyes.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.hiveeyes.js>`_ for the Hiveeyes.org target, or
+- `putsreq.beep-bob.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.beep-bob.js>`_ for the bee-observer.org target
 
 ************
 Telegram Bot
