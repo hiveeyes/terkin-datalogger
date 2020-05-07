@@ -54,7 +54,7 @@ will be able to understand and process.
 
 An endpoint URL for common use is already set up and can be requested from
 @thiasB but you can of course set up your own endpoint and use the Javascript
-provided in `putsreq.com.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/putsreq.com.js>`_
+provided in `putsreq.hiveeyes.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/putsreq.hiveeyes.js>`_
 for the payload rewrite.
 
 ************
