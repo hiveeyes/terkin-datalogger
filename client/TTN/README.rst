@@ -55,6 +55,7 @@ will be able to understand and process.
 HTTP endpoint URLs for common use are already set up and can be requested from
 @thiasB or @ClemensGruber but you can of course set up your own endpoint and use the
 Javascript provided in
+
 - `putsreq.hiveeyes.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.hiveeyes.js>`_ for the Hiveeyes.org target, or
 - `putsreq.beep-bob.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.beep-bob.js>`_ for the bee-observer.org target
 
