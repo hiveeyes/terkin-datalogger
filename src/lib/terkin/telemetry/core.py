@@ -51,10 +51,9 @@ class TelemetryManager:
 
 
 class TelemetryAdapter:
-    """Telemetry node client: Network participant API
+    """
+    Telemetry node client: Network participant API
     Todo: Implement exponential backoff instead of MAX_FAILURES.
-
-
     """
 
     MAX_FAILURES = 3

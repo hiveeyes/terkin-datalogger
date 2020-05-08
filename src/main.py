@@ -10,7 +10,8 @@
 # License: GNU General Public License, Version 3
 #
 """
-Please check https://community.hiveeyes.org/t/operate-the-terkin-datalogger-sandbox/2332
+Dokumentation can be found on: https://terkin.org
+Please check https://terkin.org/docs/setup/index.html https://community.hiveeyes.org/t/operate-the-terkin-datalogger-sandbox/2332
 in order to get an idea about how to operate the sandbox of this software.
 
 Have fun!

@@ -15,7 +15,6 @@ class Watchdog:
     
     https://docs.pycom.io/firmwareapi/pycom/machine/wdt/
 
-
     """
 
     def __init__(self, device=None, settings=None):
@@ -28,8 +27,9 @@ class Watchdog:
         self.timeout = self.settings.get('main.watchdog.timeout', 10000)
 
     def start(self):
-        """ """
-
+        """ 
+        Start the watchdog.
+        """
         if not self.enabled:
             log.info('Skipping watchdog timer (WDT)')
             return
@@ -44,23 +44,27 @@ class Watchdog:
         self.feed()
 
     def resume(self):
-        """ """
+        """ 
+        Resume the watchdog.
+        """
         log.info('Resuming watchdog')
         self.suspended = False
         self.reconfigure_minimum_timeout(self.timeout)
 
     def suspend(self):
-        """Disabling a started watchdog is not possible, so let's
-        just configure it to an ultra large timeout value.
-
-
         """
+        Disabling a started watchdog is not possible, so let's
+        just configure it to an ultra large timeout value.
+        """
+
         log.info('Suspending watchdog')
         self.suspended = True
         self.reconfigure_minimum_timeout(999999999)
 
     def feed(self):
-        """ """
+        """ 
+        Feed the watchdog.
+        """
 
         if not self.enabled:
             return

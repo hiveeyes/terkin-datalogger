@@ -54,7 +54,9 @@ class TerkinDevice:
         self.rtc = None
 
     def start_networking(self):
-        """ """
+        """ 
+        Start all configured networking devices.
+        """
         log.info('Starting networking')
 
         from terkin.network import NetworkManager, WiFiException
@@ -123,7 +125,10 @@ class TerkinDevice:
         #self.networking.print_status()
 
     def start_rtc(self):
-        """The RTC is used to keep track of the date and time."""
+        """
+        The RTC is used to keep track of the date and time.
+        Syncs RTC with a NTP server.
+        """
         # https://docs.pycom.io/firmwareapi/pycom/machine/rtc.html
         # https://medium.com/@chrismisztur/pycom-uasyncio-installation-94931fc71283
         import time
@@ -136,12 +141,12 @@ class TerkinDevice:
         log.info('RTC: %s', self.rtc.now())
 
     def run_gc(self):
-        """Curate the garbage collector.
+        """
+        Curate the garbage collector.
         https://docs.pycom.io/firmwareapi/micropython/gc.html
         
         For a "quick fix", issue the following periodically.
         https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329/9
-
 
         """
         import gc

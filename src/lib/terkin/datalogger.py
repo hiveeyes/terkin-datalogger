@@ -249,7 +249,9 @@ class TerkinDatalogger:
             time.sleep(interval)
 
     def get_sleep_time(self):
-        """ """
+        """ 
+        Calculate the next sleep intervall.
+        """
 
         interval = self.settings.get('main.interval', 60.0)
 
@@ -336,7 +338,9 @@ class TerkinDatalogger:
             #self.device.run_gc()
 
     def register_sensor(self, sensor_info):
-
+        """
+        Register one sensor.
+        """
         sensor_type = sensor_info.get('type', 'unknown').lower()
         sensor_id = sensor_info.get('id', sensor_info.get('key', sensor_type))
         description = sensor_info.get('description')

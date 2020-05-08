@@ -32,7 +32,9 @@ def format_exception(ex):
 
 
 def get_device_id():
-    """ """
+    """ 
+    MAC address of device if supported.
+    """
     import machine
     from ubinascii import hexlify
     return hexlify(machine.unique_id()).decode()
@@ -153,7 +155,8 @@ def ddformat(data, indent=0):
 
 
 def _flatten(input_obj, key_prefix, separator='_'):
-    """Flatten any type of python object into one-level dict object.
+    """
+    Flatten any type of python object into one-level dict object.
     https://github.com/evamayerova/python-flatten/blob/master/flatten_to_dict/flatten_to_dict.py
 
     :param input_obj: param key_prefix:

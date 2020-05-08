@@ -7,7 +7,9 @@ import time
 
 
 class SensorReading:
-
+    """
+    Object for holding a sensor reading.
+    """
     def __init__(self):
 
         # Reference to the sensor object.
@@ -21,7 +23,9 @@ class SensorReading:
 
 
 class DataFrame:
-
+    """
+    A collection of sensor readings to be send from device.
+    """
     def __init__(self):
 
         # List of SensorReading objects.

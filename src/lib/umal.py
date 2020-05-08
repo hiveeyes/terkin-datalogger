@@ -65,7 +65,9 @@ class PlatformInfo:
         self.resolve_platform()
 
     def resolve_platform(self):
-        """ """
+        """ 
+        Resolve MCU and vendor of this platform.
+        """
 
         import sys
 
@@ -98,7 +100,9 @@ class PlatformInfo:
 
 
 class ApplicationInfo:
-    """ """
+    """ 
+    Collects various information. Most importantly transports the settings for further use in the Datalogger.
+    """
 
     def __init__(self, name=None, version=None, settings=None, application=None, platform_info: PlatformInfo = None):
         self.name = name
@@ -116,7 +120,9 @@ class ApplicationInfo:
 
 
 class MicroPythonBootloader:
-    """ """
+    """ 
+    Very basic tasks for running the system.
+    """
 
     def __init__(self):
         self.platform_info = PlatformInfo()
