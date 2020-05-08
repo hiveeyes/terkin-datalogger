@@ -57,7 +57,8 @@ HTTP endpoint URLs for common use are already set up and can be requested from
 Javascript provided in
 
 - `putsreq.hiveeyes.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.hiveeyes.js>`_ for the Hiveeyes.org target, or
-- `putsreq.beep-bob.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.beep-bob.js>`_ for the bee-observer.org target
+- `putsreq.bee-observer.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.bee-observer.js>`_ for the bee-observer.org target, or
+- `putsreq.beep.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.beep.js>`_ for the beep.nl target
 
 ************
 Telegram Bot
