@@ -10,7 +10,10 @@ import network
 
 
 class MiniNet:
-    """ """
+    """ 
+    Used by the sandbox for 'make connect-wifi' to upload the program via ftp.
+    Not used in the rest of the program.
+    """
 
     def __init__(self):
         print('INFO:  Starting MiniNet')
