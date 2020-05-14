@@ -69,6 +69,14 @@ class SensorManager:
         """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
+    def get_sensors_by_family(self, family):
+        """
+        Return all sensors filtered by family.
+        """
+        for sensor in self.sensors:
+            if sensor.family == family:
+                yield sensor
+
     def setup_buses(self, buses_settings):
         """Register configured I2C, OneWire and SPI buses.
 

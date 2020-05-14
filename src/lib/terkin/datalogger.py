@@ -457,6 +457,7 @@ class TerkinDatalogger:
         # Setup and register HX711 sensors.
         elif sensor_type == 'hx711':
             sensor_object = HX711Sensor(settings=sensor_info)
+            sensor_object.family = 'scale'
             sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
             sensor_object.register_pin('dout', sensor_info['pin_dout'])
             sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
@@ -684,3 +685,17 @@ class TerkinDatalogger:
         # Will yield ``ValueError: Touch pad error``.
         #self.button_manager.setup_touchpad('P20', name='Touch8', location='Module-Right-Top-7th')
         #self.button_manager.setup_touchpad('P19', name='Touch9', location='Module-Right-Top-8th')
+
+    def scale_wizard(self):
+        """
+        Invoke scale adjustment wizard.
+
+        Synopsis:
+
+        - Invoke Terkin datalogger.
+        - Interrupt by pressing CTRL+C.
+        - Type ``datalogger.scale_wizard()``.
+        """
+        from terkin.sensor.scale import ScaleAdjustment
+        adj = ScaleAdjustment(sensor_manager=self.sensor_manager)
+        adj.start_wizard()
