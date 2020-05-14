@@ -92,12 +92,14 @@ S6
   e.g. pyserial-based drivers like EPSolar or VEDirect
 - Besseres Abfangen von Fehlern in der LoRaWAN/TTN config
 - Umbau der dragino.py-Bibliothek auf Basis von https://pypi.org/project/pyLoRa/
-  - Ask Rui Silva about making it compatible with Dragino.
+  - Ask Rui Silva upfront about his interest to make it compatible with Dragino.
 - LoRa: Improve timeout behaviour, see https://community.hiveeyes.org/t/lora-joins-dauern-teilweise-seeeeeeeehr-lange/3186
 - Bootzeit wieder reduzieren (dist-packages aufräumen)
   - Publish Terkin MicroPython Assets to GitHub w/o Dragino stuff
 - Captive Portal (@clemens, @flower4bees)
 - Statemachine via pysm (@poesel)
+- Unlock ADS1x15 from @robert-hh, see https://github.com/robert-hh/ads1x15
+- Unlock INA219, see https://github.com/hiveeyes/terkin-datalogger/issues/39
 
 Documentation
 =============
@@ -105,6 +107,9 @@ Documentation
 - Pictures
 - LICENSE => AGPL
 - setup.py => Link to documentation and download
+- https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
+- https://www.sphinx-doc.org/en/master/usage/extensions/autosummary.html
+- Document "make run-cpython-callgraph"
 
 ***************
 Datalogger 2019
