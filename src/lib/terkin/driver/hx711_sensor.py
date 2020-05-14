@@ -3,9 +3,35 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
+from terkin.sensor import SensorManager, AbstractSensor
 
 log = logging.getLogger(__name__)
+
+
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create MAX17043 sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = HX711Sensor(settings=sensor_info)
+
+    sensor_object.family = 'scale'
+    sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
+    sensor_object.register_pin('dout', sensor_info['pin_dout'])
+    sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
+    sensor_object.register_parameter('scale', float(sensor_info['scale']))
+    sensor_object.register_parameter('offset', float(sensor_info['offset']))
+    sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
+
+    # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
+    # hx711_sensor.select_driver('gerber')
+    sensor_object.select_driver('heisenberg')
+
+    return sensor_object
 
 
 class HX711Sensor(AbstractSensor):

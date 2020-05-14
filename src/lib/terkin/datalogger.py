@@ -18,10 +18,6 @@ from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.model import SensorReading, DataFrame
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVoltage, SystemUptime
-from terkin.driver.si7021_sensor import SI7021Sensor
-from terkin.driver.hx711_sensor import HX711Sensor
-from terkin.driver.max17043_sensor import MAX17043Sensor
-from terkin.driver.bme280_sensor import BME280Sensor
 from terkin.util import gc_disabled, ddformat
 
 log = logging.getLogger(__name__)
@@ -457,50 +453,6 @@ class TerkinDatalogger:
             self.button_manager = ButtonManager()
             self.start_buttons()
             return
-
-        # Setup and register HX711 sensors.
-        elif sensor_type == 'hx711':
-            sensor_object = HX711Sensor(settings=sensor_info)
-            sensor_object.family = 'scale'
-            sensor_object.set_address(sensor_info.get('number', sensor_info.get('address', 0)))
-            sensor_object.register_pin('dout', sensor_info['pin_dout'])
-            sensor_object.register_pin('pdsck', sensor_info['pin_pdsck'])
-            sensor_object.register_parameter('scale', float(sensor_info['scale']))
-            sensor_object.register_parameter('offset', float(sensor_info['offset']))
-            sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
-
-            # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
-            # hx711_sensor.select_driver('gerber')
-            sensor_object.select_driver('heisenberg')
-
-        # Setup and register SI7021 sensors.
-        elif sensor_type == 'si7021':
-
-            sensor_object = SI7021Sensor(settings=sensor_info)
-            if 'address' in sensor_info:
-                sensor_object.set_address(sensor_info['address'])
-            sensor_object.acquire_bus(sensor_bus)
-
-        elif sensor_type == 'max17043':
-
-            sensor_object = MAX17043Sensor(settings=sensor_info)
-            if 'address' in sensor_info:
-                sensor_object.set_address(sensor_info['address'])
-            sensor_object.acquire_bus(sensor_bus)
-
-        elif sensor_type == 'vedirect':
-
-            from terkin.driver.vedirect_sensor import VEDirectSensor
-            sensor_object = VEDirectSensor(settings=sensor_info)
-
-
-        elif sensor_type == 'ads1x15':
-
-            from terkin.driver.ads1x15_sensor import ADS1x15Sensor
-            sensor_object = ADS1x15Sensor(settings=sensor_info)
-            # if 'address' in sensor_info:
-            #    sensor_object.set_address(sensor_info['address'])
-            sensor_object.acquire_bus(sensor_bus)
 
         else:
             raise SensorUnknownError('Unknown sensor type "{}"'.format(sensor_type))

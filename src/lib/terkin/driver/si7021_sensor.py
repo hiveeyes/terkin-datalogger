@@ -3,11 +3,27 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
+from terkin.sensor import SensorManager, AbstractSensor
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
 platform_info = get_platform_info()
+
+
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create SI7021 sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = SI7021Sensor(settings=sensor_info)
+    sensor_bus = sensor_manager.get_bus_by_name(sensor_info.get('bus'))
+    sensor_object.acquire_bus(sensor_bus)
+
+    return sensor_object
 
 
 class SI7021Sensor(AbstractSensor):
@@ -22,7 +38,7 @@ class SI7021Sensor(AbstractSensor):
         super().__init__(settings=settings)
 
         # Can be overwritten by ``.set_address()``.
-        self.address = 0x40
+        self.address = self.settings.get('address', 0x40)
 
     def start(self):
         """Getting the bus"""
