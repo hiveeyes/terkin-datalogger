@@ -74,7 +74,7 @@ class SensorManager:
         Return all sensors filtered by family.
         """
         for sensor in self.sensors:
-            if sensor.family == family:
+            if hasattr(sensor, 'family') and sensor.family == family:
                 yield sensor
 
     def setup_buses(self, buses_settings):

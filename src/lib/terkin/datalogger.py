@@ -136,6 +136,10 @@ class TerkinDatalogger:
         # Todo: Signal readyness by publishing information about the device (Microhomie).
         # e.g. ``self.device.publish_properties()``
 
+        self.setup_sensors()
+
+    def setup_sensors(self):
+
         # Setup sensors.
         log.info('Setting up sensors')
         self.device.watchdog.feed()
@@ -696,6 +700,11 @@ class TerkinDatalogger:
         - Interrupt by pressing CTRL+C.
         - Type ``datalogger.scale_wizard()``.
         """
+
+        # Setup sensors.
+        self.setup_sensors()
+
+        # Invoke scale adjustment routine.
         from terkin.sensor.scale import ScaleAdjustment
         adj = ScaleAdjustment(sensor_manager=self.sensor_manager)
         adj.start_wizard()

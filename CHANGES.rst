@@ -5,6 +5,7 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Add minimal weight scale adjustment wizard
 
 2020-05-04 0.9.0
 ================

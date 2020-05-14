@@ -33,7 +33,10 @@ class ScaleAdjustment:
         self.adjustment_weight = None
 
     def start_wizard(self):
+        self.cls()
+        self.print_section('Weight scale adjustment', '=')
         self.select_sensor()
+        self.start_sensor()
         self.read_unloaded()
         self.read_loaded()
         self.done()
@@ -41,22 +44,31 @@ class ScaleAdjustment:
     def select_sensor(self):
         while True:
             try:
-                print('Select scale')
-                sensors = self.sensor_manager.get_sensors_by_family('scale')
+                self.print_section('Step 1: Select sensor device')
+                print()
+                sensors = list(self.sensor_manager.get_sensors_by_family('scale'))
                 for index, sensor in enumerate(sensors):
-                    print('{}: {}'.format(index, sensor.id))
+                    print('{}: {}'.format(index, sensor.settings.get('id')))
+                print()
                 sensor_index = int(input('Type index: '))
                 self.sensor = sensors[sensor_index]
+                print()
                 break
             except KeyboardInterrupt:
                 break
             except Exception as ex:
                 log.exc(ex, 'Error while selecting sensor')
 
+    def start_sensor(self):
+        if hasattr(self.sensor, 'power_on'):
+            self.sensor.power_on()
+        if hasattr(self.sensor, 'loadcell') and hasattr(self.sensor.loadcell, 'initialize'):
+            self.sensor.loadcell.initialize()
+
     def read_unloaded(self):
         while True:
             try:
-                print('Step 1: Unloaded scale')
+                self.print_section('Step 2: Unloaded scale')
                 print('Please remove all weight from the scale.')
                 print('When done, press any key to continue.')
                 self.wait_for_keypress()
@@ -71,9 +83,11 @@ class ScaleAdjustment:
     def read_loaded(self):
         while True:
             try:
-                print('Step 2: Loaded scale')
+                self.print_section('Step 3: Loaded scale')
                 print('Please load the scale with a known weight.')
                 print('When done, input the kilogram value.')
+                print()
+
                 self.adjustment_weight = float(input('Weight (kg): ').replace(',', '.'))
                 self.value_loaded = float(self.sensor.loadcell.get_reading().raw)
                 print()
@@ -87,7 +101,7 @@ class ScaleAdjustment:
         """
         Compute and output loadCellZeroOffset and loadCellKgDivider.
         """
-        print('Step 3: Configure settings')
+        self.print_section('Step 4: Configure settings')
         print('Please use the computed values for configuring your settings.py')
         print()
 
@@ -96,5 +110,16 @@ class ScaleAdjustment:
         print('offset:', offset)
         print('scale: ', divider)
 
+    def cls(self):
+        sys.stdout.write(b"\x1b[2J")
+        sys.stdout.write(b"\x1b[0;0H")
+
     def wait_for_keypress(self):
         sys.stdin.read(1)
+
+    def print_section(self, message, char='-'):
+        print()
+        length = len(message)
+        print(char * length)
+        print(message)
+        print(char * length)
