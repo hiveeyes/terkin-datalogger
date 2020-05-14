@@ -211,11 +211,11 @@ This project is licensed under the terms of the AGPL license.
 Have fun!
 
 
-.. _Setup Terkin Datalogger sandbox: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/sandbox-setup.rst
-.. _contributors: https://github.com/hiveeyes/terkin-datalogger/blob/master/CONTRIBUTORS.rst
+.. _Setup Terkin Datalogger sandbox: https://terkin.org/docs/development/
+.. _contributors: https://terkin.org/docs/project/contributors.html
 .. _create an issue: https://github.com/hiveeyes/terkin-datalogger/issues/new
-.. _Getting started with the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst
-.. _Running the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/0.4.0/doc/screenshots/05-running.rst
+.. _Getting started with the Terkin Datalogger: https://terkin.org/docs/getting-started/
+.. _Running the Terkin Datalogger: https://terkin.org/docs/gallery/screenshots/05-running.html
 .. _release page: https://github.com/hiveeyes/terkin-datalogger/releases
 
 .. _Pycom FiPy: https://pycom.io/product/fipy/
