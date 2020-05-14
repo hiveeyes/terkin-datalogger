@@ -137,6 +137,15 @@ networking = {
         },
     },
 
+    # LTE
+    'lte': {
+        'enabled': False,
+        'band': 8,
+        'apn': 'iot.1nce.net',
+        'attach_timeout': 10.0,
+        'connect_timeout': 5.0,
+    },
+
     # GPRS/SIM800
     # https://github.com/hiveeyes/pythings-sim800
     'gprs': {

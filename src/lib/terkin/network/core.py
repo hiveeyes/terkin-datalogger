@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import sys
 import time
@@ -23,6 +23,7 @@ class NetworkManager:
 
         self.wifi_manager = None
         self.lora_manager = None
+        self.lte_manager = None
         self.gprs_manager = None
 
         self.mode_server = None
@@ -41,6 +42,9 @@ class NetworkManager:
             if self.device.status.maintenance is not True:
                 self.wifi_manager.power_off()
 
+        if self.lte_manager:
+            self.lte_manager.stop()
+
     def start_wifi(self):
         """ """
         from terkin.network.wifi import WiFiManager
@@ -52,6 +56,12 @@ class NetworkManager:
         from terkin.network.lora import LoRaAdapter
         self.lora_manager = LoRaAdapter(network_manager=self, settings=self.settings)
         self.lora_manager.start()
+
+    def start_lte(self):
+        """ """
+        from terkin.network.lte import SequansLTE
+        self.lte_manager = SequansLTE(network_manager=self, settings=self.settings)
+        self.lte_manager.start()
 
     def start_gprs(self):
         from terkin.network.gprs import GPRSManager

@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
-# (c) 2019 Matthias Mehldau <wetter@hiveeyes.org>
+# (c) 2019-2020 Matthias Mehldau <wetter@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import ure
 import time
 
+from terkin import logging
 
-class SQNS:
+log = logging.getLogger(__name__)
+
+
+class SequansLTE:
     """
     Synopsis::
     
-        sq = SQNS()
+        sq = SequansLTE()
         sq.info()
         sq.firmware_info()
     
@@ -22,60 +25,109 @@ class SQNS:
 
     """
 
-    def __init__(self):
+    def __init__(self, network_manager, settings):
+        self.network_manager = network_manager
+        self.settings = settings
+
         from network import LTE
         self.lte = LTE()
-        self.at('RRC:setDbgPerm full')
 
-    def connect(self):
+        import machine
+        self.chrono = machine.Timer.Chrono()
+        self.chrono.start()
+
+    def start(self):
         self.lte.init()
+        self.attach()
+        self.connect()
+
+    def stop(self):
+        self.lte.disconnect()
+        time.sleep(0.25)
+
+        self.lte.deinit()
+        time.sleep(0.25)
 
     def attach(self):
-        self.lte.attach(band=8, apn="iot.1nce.net")
-        while not self.lte.isattached():  # do we have a timeout?
-            time.sleep(1)
-            try:
-                csq_at = self.lte.send_at_cmd("AT+CSQ")
-                csq_line_regex = ure.compile("\n")
-                csq_line = csq_line_regex.split(csq_at)
-                csq_string_regex = ure.compile(" ")
-                csq_string = csq_string_regex.split(csq_line[1])
-                csq_comma = csq_string[1]
-                csq_num_regex = ure.compile(",")
-                csq_num = csq_num_regex.split(csq_comma)
-                csq = csq_num[0]
-                print("[LTE   ]   ... still attaching ... (CSQ: " + csq + ")")
-            except:
-                csq = "-999.0"
-                print("[LTE   ]   ... no CSQ recevied, let us hope I am still attaching " + csq)
+        log.info('Attaching to LTE')
+        self.lte.attach(band=self.settings.get('networking.lte.band'), apn=self.settings.get('networking.lte.apn'))
 
-    def at(self, command):
-        """
+        self.chrono.reset()
+        while True:
 
-        :param command: 
+            if self.lte.isattached():
+                break
 
-        """
-        self.raw('AT!="{}"'.format(command))
+            if self.chrono.read() > self.settings.get('networking.lte.attach_timeout'):
+                raise Exception('Attaching to LTE timed out')
 
-    def raw(self, command):
-        """
+            time.sleep(0.25)
 
-        :param command: 
+    def connect(self):
+        log.info('Connecting to LTE')
+        self.lte.connect()
 
-        """
-        print('Sending command {}'.format(command))
-        print(self.lte.send_at_cmd(command))
+        self.chrono.reset()
+        while True:
+
+            if self.lte.isconnected():
+                break
+
+            if self.chrono.read() > self.settings.get('networking.lte.connect_timeout'):
+                raise Exception('Connecting to LTE timed out')
+
+            time.sleep(0.25)
 
     def imei(self):
         """ """
         self.at('AT+CGSN=1')
 
     def info(self):
-        """ """
+        """
+        Get infos from Modem.
+        """
+
+        log.info('Signal strength: {}'.format(self.get_signal_strength()))
+
+        self.at('RRC:setDbgPerm full')
+        self.at('RRC:showcaps')
+        self.at('showver')
+
         # https://forum.pycom.io/topic/4022/unable-to-update-gpy-modem-firmware/8
         self.at('AT')
         self.at('ATI')
         self.at('ATZ')
+
+    def get_signal_strength(self):
+        csq_at = self.lte.send_at_cmd("AT+CSQ")
+        csq_line_regex = ure.compile("\n")
+        csq_line = csq_line_regex.split(csq_at)
+        csq_string_regex = ure.compile(" ")
+        csq_string = csq_string_regex.split(csq_line[1])
+        csq_comma = csq_string[1]
+        csq_num_regex = ure.compile(",")
+        csq_num = csq_num_regex.split(csq_comma)
+        csq = csq_num[0]
+        return csq
+
+    def at(self, command):
+        """
+
+        :param command:
+
+        """
+        return self.raw('AT!="{}"'.format(command))
+
+    def raw(self, command):
+        """
+
+        :param command:
+
+        """
+        log.info('Sending: {}'.format(command))
+        answer = self.lte.send_at_cmd(command)
+        log.info('Answer:  {}'.format(answer))
+        return answer
 
     def firmware_info(self):
         """ """
@@ -85,7 +137,3 @@ class SQNS:
     def unbrick(self):
         """ """
         raise NotImplementedError('https://forum.pycom.io/topic/4022/unable-to-update-gpy-modem-firmware/21')
-
-
-# Activate this to deploy a global instance of this object.
-#global sq; sq = SQNS()

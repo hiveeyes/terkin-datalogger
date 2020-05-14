@@ -110,6 +110,17 @@ class TerkinDevice:
         else:
             log.info("[LoRa] Interface not enabled in settings.")
 
+        # Initialize LTE modem.
+        if self.settings.get('networking.lte.enabled'):
+            try:
+                self.networking.start_lte()
+                self.status.networking = True
+            except Exception as ex:
+                log.exc(ex, 'Unable to start LTE modem')
+                self.status.networking = False
+        else:
+            log.info("[LTE]  Interface not enabled in settings.")
+
         # Initialize GPRS modem.
         if self.settings.get('networking.gprs.enabled'):
             try:
