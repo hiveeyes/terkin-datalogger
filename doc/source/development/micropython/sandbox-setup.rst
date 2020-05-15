@@ -38,13 +38,18 @@ Setup
 Prerequisites
 =============
 To perform the next steps, please install the following software
-packages on your machine::
+packages on your machine.
 
-    apt install make patch wget git python python3 python-virtualenv lftp
+On older Debian/Ubuntu distributions, use::
 
+    apt install make patch wget curl lftp git python python3 python-virtualenv
+
+On newer Debian/Ubuntu distributions, use::
+
+    apt install make patch wget curl lftp git python2 python3 virtualenv
 
 Depending on your operating system, add your user to the group ``dialout``
-in order to allow access to Serial. On Debian:
+in order to allow access to Serial. On Debian::
 
     addgroup $USER dialout
     # relogin or run

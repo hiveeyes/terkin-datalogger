@@ -8,6 +8,7 @@ Development
 - Add minimal weight scale adjustment wizard
 - Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch!
 - Refactor more sensors for self-registration
+- Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
 
 2020-05-04 0.9.0
 ================
