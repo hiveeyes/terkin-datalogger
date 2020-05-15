@@ -117,7 +117,7 @@ networking = {
     # LoRaWAN/TTN
     'lora': {
         'enabled': False,
-        'antenna_attached': True,
+        'antenna_attached': False,
         'region': 'EU868',
         'adr': False,
 
@@ -350,7 +350,7 @@ sensors = {
             'description': 'Battery',
 
             # Enable/disable sensor.
-            'enabled': True,
+            'enabled': False,
 
             # On which Pin to schnuckle this.
             'pin': 'P16',
@@ -400,7 +400,7 @@ sensors = {
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
-            'enabled': True,
+            'enabled': False,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
             'offset': -73000,
@@ -443,11 +443,11 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur, Druck und Feuchte außen (BME280)',
+            'description': 'Temperatur, Druck und Feuchte (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
-            'address': 0x77,
+            'address': 0x76,
         },
         {
             'id': 'si7021-1',
