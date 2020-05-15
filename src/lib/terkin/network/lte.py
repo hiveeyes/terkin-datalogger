@@ -13,11 +13,11 @@ log = logging.getLogger(__name__)
 class SequansLTE:
     """
     Synopsis::
-    
+
         sq = SequansLTE()
         sq.info()
         sq.firmware_info()
-    
+
         sq.at('showphy')
 
     See also:
@@ -79,8 +79,10 @@ class SequansLTE:
             time.sleep(0.25)
 
     def imei(self):
-        """ """
-        self.at('AT+CGSN=1')
+        """
+        Return IMEI.
+        """
+        return self.at('AT+CGSN=1')
 
     def info(self):
         """

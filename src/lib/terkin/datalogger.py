@@ -24,7 +24,9 @@ log = logging.getLogger(__name__)
 
 
 class TransientStorage:
-    """ """
+    """
+    Store last sensor reading for serving through HTTP API.
+    """
 
     def __init__(self):
         self.last_reading = {}

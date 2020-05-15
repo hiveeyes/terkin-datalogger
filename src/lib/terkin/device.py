@@ -25,7 +25,10 @@ class DeviceStatus:
 
 
 class TerkinDevice:
-    """ """
+    """
+    Singleton object for enabling different device-related subsystems
+    and providing lowlevel routines for sleep/resume functionality.
+    """
 
     def __init__(self, application_info: ApplicationInfo):
 
@@ -155,7 +158,7 @@ class TerkinDevice:
         """
         Curate the garbage collector.
         https://docs.pycom.io/firmwareapi/micropython/gc.html
-        
+
         For a "quick fix", issue the following periodically.
         https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329/9
 
