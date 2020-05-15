@@ -102,7 +102,9 @@ class TerkinDatalogger:
 
         # Turn off LTE modem and Bluetooth as we don't use them yet.
         # TODO: Make this configurable.
-        if self.application_info.platform_info.device_name in ['GPy', 'FiPy']:
+        has_lte_modem = self.application_info.platform_info.device_name in ['GPy', 'FiPy']
+        lte_enabled = self.settings.get('networking.lte.enabled')
+        if has_lte_modem and not lte_enabled:
             self.device.power_off_lte_modem()
 
         self.device.power_off_bluetooth()

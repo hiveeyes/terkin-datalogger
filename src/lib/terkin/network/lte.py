@@ -55,6 +55,8 @@ class SequansLTE:
         self.chrono.reset()
         while True:
 
+            log.info('Signal strength: {}'.format(self.get_signal_strength()))
+
             if self.lte.isattached():
                 break
 
@@ -96,9 +98,9 @@ class SequansLTE:
         self.at('showver')
 
         # https://forum.pycom.io/topic/4022/unable-to-update-gpy-modem-firmware/8
-        self.at('AT')
-        self.at('ATI')
-        self.at('ATZ')
+        #self.at('AT')
+        #self.at('ATI')
+        #self.at('ATZ')
 
     def get_signal_strength(self):
         csq_at = self.lte.send_at_cmd("AT+CSQ")
