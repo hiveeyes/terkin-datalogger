@@ -42,11 +42,11 @@ packages on your machine.
 
 On older Debian/Ubuntu distributions, use::
 
-    apt install make patch wget curl lftp git python python3 python-virtualenv
+    apt install make patch wget curl lftp expect telnet git python python3 python-virtualenv
 
 On newer Debian/Ubuntu distributions, use::
 
-    apt install make patch wget curl lftp git python2 python3 virtualenv
+    apt install make patch wget curl lftp expect telnet git python2 python3 virtualenv
 
 Depending on your operating system, add your user to the group ``dialout``
 in order to allow access to Serial. On Debian::
