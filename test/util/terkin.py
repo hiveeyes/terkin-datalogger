@@ -34,7 +34,23 @@ def invoke_datalogger_pycom(caplog, settings):
     return invoke_datalogger(caplog, settings, pycom=True)
 
 
-def invoke_datalogger(caplog, settings, pycom=False):
+def invoke_datalogger_raspberrypi(caplog, settings):
+
+    import fake_rpi
+
+    # Fake RPi
+    sys.modules['RPi'] = fake_rpi.RPi
+
+    # Fake GPIO
+    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
+
+    # Fake smbus (I2C)
+    sys.modules['smbus'] = fake_rpi.smbus
+
+    return invoke_datalogger(caplog, settings, raspberrypi=True)
+
+
+def invoke_datalogger(caplog, settings, pycom=False, raspberrypi=False):
 
     # Use a fake filesystem.
     with FakeFS():
@@ -42,6 +58,27 @@ def invoke_datalogger(caplog, settings, pycom=False):
         # Pycom mounts the main filesystem at "/flash".
         if pycom:
             os.mkdir('/flash')
+
+        if raspberrypi:
+            os.makedirs('/sys/firmware/devicetree/base')
+            with open('/sys/firmware/devicetree/base/model', 'w') as f:
+                f.write('Raspberry')
+
+            os.makedirs('/sys/bus/w1/devices/w1_bus_master1')
+            with open('/sys/bus/w1/devices/w1_bus_master1/w1_master_slaves', 'w') as f:
+                f.writelines(['28-ff641d8fdf18c1\n', '28-ff641d8fc3944f\n'])
+
+            os.makedirs('/sys/bus/w1/devices/w1_bus_master1/28-ff641d8fdf18c1')
+            with open('/sys/bus/w1/devices/w1_bus_master1/28-ff641d8fdf18c1/w1_slave', 'w') as f:
+                f.write('YES\nt=48187')
+
+            os.makedirs('/sys/bus/w1/devices/w1_bus_master1/28-ff641d8fc3944f')
+            with open('/sys/bus/w1/devices/w1_bus_master1/28-ff641d8fc3944f/w1_slave', 'w') as f:
+                f.write('YES\nt=48187')
+
+            os.makedirs('/dev')
+            with open('/dev/i2c-3', 'w') as f:
+                f.write('nonsense')
 
         # Capture log output.
         with caplog.at_level(logging.DEBUG):
