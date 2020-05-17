@@ -83,20 +83,18 @@ class SensorManager:
         :param buses_settings: 
 
         """
-        prettify_log = self.settings.get('sensors.prettify_log', False)
-        if prettify_log:
-            from terkin.util import ddformat
-            log.info('Starting all buses:\n\n%s', ddformat(buses_settings, indent=18))
-        else:
-            log.info('Starting all buses: %s', buses_settings)
 
+        effective_buses = []
+        effective_bus_ids = []
         for bus_settings in buses_settings:
 
-            if bus_settings.get("enabled") is False:
-                log.debug('Bus with id "{}" and family "{}" is disabled, '
-                         'skipping registration'.format(bus_settings.get('id'), bus_settings.get('family')))
-                continue
+            if bus_settings.get("enabled"):
+                effective_buses.append(bus_settings)
+                effective_bus_ids.append(bus_settings['id'])
 
+        log.info('Starting buses: %s', effective_bus_ids)
+
+        for bus_settings in effective_buses:
             try:
                 self.setup_bus(bus_settings)
             except Exception as ex:
@@ -222,8 +220,9 @@ class OneWireBus(AbstractBus):
             self.ready = True
 
         except Exception as ex:
-            log.exc(ex, '1-Wire hardware driver failed')
-            return False
+            #log.exc(ex, '1-Wire hardware driver failed')
+            #return False
+            raise
 
         return True
 
@@ -347,7 +346,8 @@ class I2CBus(AbstractBus):
             self.ready = True
 
         except Exception as ex:
-            log.exc(ex, 'I2C hardware driver failed')
+            #log.exc(ex, 'I2C hardware driver failed')
+            raise
 
     def scan_devices(self):
         log.info('Scan I2C with id={} bus for devices...'.format(self.number))
