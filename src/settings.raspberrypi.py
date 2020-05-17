@@ -441,6 +441,14 @@ sensors = {
             'address': 0x76,
         },
         {
+            'id': 'bmp280-1',
+            'description': 'BMP280 on ic2:1 0x77',
+            'type': 'BMP280',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x77,
+        },
+        {
             'id': 'ads1x15-1',
             'description': 'ads1115 P0',
             'type': 'ads1x15',
@@ -490,6 +498,22 @@ sensors = {
             'type': 'gpiozero',
             'enabled': True,
         },
+        {
+            'id': 'ina219-1',
+            'description': 'INA219 on ic2:1 0x40',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x40,
+        },
+        {
+            'id': 'ina219-2',
+            'description': 'INA219 on ic2:1 0x44',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x44,
+        },
     ],
     'buses': [
         {
@@ -500,14 +524,13 @@ sensors = {
             "pin_sda": 'board.SDA',
             "pin_scl": 'board.SCL',
         },
-        # """
+
         # Register more I2C buses with Adafruit Blinka.
         #
         # Make Adafruit Blinka learn another I2C bus.
         # Please make sure you define it within /boot/config.txt like::
         #
         # dtoverlay=i2c-gpio,bus=5,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
-        # """
         {
             "id": "bus-i2c-5",
             "family": "i2c",
