@@ -628,13 +628,11 @@ class TelemetryTransportMQTT:
 
         # Reporting.
         log.info('MQTT topic:   %s', topic)
-        """
         prettify_log = False
         if prettify_log:
             log.info('MQTT payload:\n\ns', dformat(payload, indent=48))
         else:
             log.info('MQTT payload: %s', payload)
-        """
 
         try:
             connection = self.get_connection()

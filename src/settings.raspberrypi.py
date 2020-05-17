@@ -393,7 +393,7 @@ sensors = {
         {
             'id': 'ds18b20-1',
             'name': 'temperature',
-            'description': 'Wabengasse 1',
+            'description': '',
             'type': 'DS18B20',
             'enabled': True,
             'bus': 'onewire:0',
@@ -401,7 +401,7 @@ sensors = {
                 {
                     'id': 'ds18b20-r1c1',
                     'address': '0517c482cfff',
-                    'description': 'DS18B20:0517c482cfff on Onewire:0',
+                    'description': 'DS18B20:0517c482cfff on onewire:0',
                     'enabled': True,
                     #'offset': 0.42,
 
@@ -413,7 +413,7 @@ sensors = {
                 {
                     'id': 'ds18b20-r1c2',
                     'address': '2222222222222222',
-                    'description': 'Reihe 1, Spalte 2',
+                    'description': 'DS18B20:2222222222222222 on onewire:0',
                     'enabled': False,
                     #'offset': -0.42,
 
@@ -544,7 +544,6 @@ sensors = {
             "family": "onewire",
             "number": 0,
             "enabled": True,
-            # "pin_data": "P11",
             "driver": "sysfs",
             "sysfs": "/sys/bus/w1/devices/w1_bus_master1/",
         },

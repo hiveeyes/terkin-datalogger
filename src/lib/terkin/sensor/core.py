@@ -353,7 +353,7 @@ class I2CBus(AbstractBus):
         log.info('Scan I2C with id={} bus for devices...'.format(self.number))
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
-        log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+        log.info("Found {} I2C devices: {}".format(len(self.devices), self.devices))
 
     def scan_devices_smbus2(self, start=0x03, end=0x78):
         try:

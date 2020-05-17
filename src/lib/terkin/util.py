@@ -150,7 +150,7 @@ def ddformat(data, indent=0):
         item = data[key]
         value = item['value']
         text = item.get('description', '')
-        buffer.write('{}{:<40}{:>10}    {}\n'.format(padding, key, value, text))
+        buffer.write('{}{:<35}{:>25} {:>25}\n'.format(padding, key, value, text))
     return buffer.getvalue()
 
 

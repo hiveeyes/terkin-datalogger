@@ -116,7 +116,6 @@ sensors = {
         {
             'id': 'ds18b20-1',
             'name': 'temperature',
-            'description': 'Wabengasse 1',
             'type': 'DS18B20',
             'enabled': True,
             'bus': 'onewire:0',
@@ -125,7 +124,6 @@ sensors = {
                     'enabled': True,
                     'id': 'ds18b20-w1r1',
                     'address': '28FF641D8FDF18C1',
-                    'description': 'Wabengasse 1, Rahmen 1',
                     'telemetry_name': 'inside.temperature.brood_1',
                     'realm': 'inside',
                     'type': 'temperature',
@@ -135,7 +133,6 @@ sensors = {
                 {
                     'id': 'ds18b20-w1r2',
                     'address': '28ff641d8fc3944f',
-                    'description': 'Wabengasse 1, Rahmen 2',
                     'enabled': True,
                     #'offset': -0.42,
                 },
@@ -143,7 +140,7 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur und Feuchte',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',

@@ -8,6 +8,7 @@ from test.util.terkin import invoke_datalogger_pycom
 
 
 @pytest.mark.sensors
+@pytest.mark.micropython
 @mock.patch('sys.platform', 'FiPy')
 def test_sensors(mocker, caplog):
     """
@@ -27,7 +28,7 @@ def test_sensors(mocker, caplog):
     captured = caplog.text
 
     # Proof it works by verifying log output.
-    assert "Found 2 I2C devices: [118, 119]." in captured, captured
+    assert "Found 2 I2C devices: [118, 119]" in captured, captured
     assert "Found 2 1-Wire (DS18x20) devices: ['28ff641d8fdf18c1', '28ff641d8fc3944f']" in captured, captured
 
     # Get hold of the last reading.
