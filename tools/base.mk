@@ -34,10 +34,10 @@ check-virtualenv:
 	@$(MAKE) check-program program="virtualenv" hint="Install on Debian-based systems using 'apt install python-virtualenv python3-virtualenv' or use the package manager of your choice"
 
 setup-virtualenv2: check-virtualenv
-	virtualenv --python=python2 --no-site-packages $(venv2path)
+	virtualenv --python=python2 $(venv2path)
 
 setup-virtualenv3: check-virtualenv
-	@test -e $(python3) || virtualenv --python=python3 --no-site-packages $(venv3path)
+	@test -e $(python3) || virtualenv --python=python3 $(venv3path)
 	@$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3

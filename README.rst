@@ -90,7 +90,7 @@ Overview
 Architecture
 ============
 - ``Datalogger`` and ``Device``
-  are singleton objects representing the data logger application and your logging device.
+  are singleton objects representing the data logger application and the logging device.
 
 - Components of the sensor subsystem wrap hardware drivers to generalize sensor reading.
 
@@ -110,13 +110,13 @@ Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
 - Pycom MicroPython: WiPy, GPy, LoPy4, FiPy
-- CPython: Linux x86_64, Linux ARM (BeagleBone, Odroid, Raspberry Pi), macOS, WSL2
+- CPython: Linux x86_64, Linux ARM (BeagleBone, Odroid, Raspberry Pi), macOS, WSL
 
 Peripherals
 ===========
 - Sensors: 1-Wire, I2C, ADC, System, WiFi
-- Drivers: DS18B20, BME280, SI7021, ADS1x15, HX711, MAX17043, DS3231, AT24C32
-- Adapters: GPSD, EPSolar ViewStar PWM charge controller, Victron Energy VE.Direct MPPT charge controller
+- Drivers: DS18B20, BME280, BMP280, SI7021, ADS1x15, HX711, MAX17043, DS3231, AT24C32, INA219
+- Adapters: GPSD, EPSolar ViewStar PWM charge controller, Victron Energy VE.Direct MPPT charge controller, Raspberry Pi USV+
 - Connectivity: WiFi, SIM800 for GPRS, SX127x for LoRa (LoPy4, FiPy and `Dragino LoRa/GPS HAT`_), Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_
 - Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN OTAA+ABP
 

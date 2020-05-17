@@ -101,6 +101,18 @@ S6
 - Unlock ADS1x15 from @robert-hh, see https://github.com/robert-hh/ads1x15
 - Unlock INA219, see https://github.com/hiveeyes/terkin-datalogger/issues/39
 
+S7
+==
+- Make "settings-user.json" work
+- Update Annapurna firmware images
+- Send annotations
+- Improve tests using
+    - https://pypi.org/project/fake-rpi/
+    - https://pypi.org/project/serial_mock/
+- Detect and mitigate connection-loss with LTE-connectivity
+- Add reading ``/sys/class/thermal/thermal_zone0/temp``
+
+
 Documentation
 =============
 - README header
@@ -110,6 +122,9 @@ Documentation
 - https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
 - https://www.sphinx-doc.org/en/master/usage/extensions/autosummary.html
 - Document "make run-cpython-callgraph"
+- Improve documentation structure re. MicroPython sandbox
+
+
 
 ***************
 Datalogger 2019

@@ -1,8 +1,14 @@
+# I2C SMBus HAL module.
+smbus==1.1.post2
+
 # SPI HAL module.
 spidev==3.4
 
 # Raspberry Pi utilities.
 gpiozero==1.5.1
+
+# RPI USV+ Raspberry Pi - USV+
+rpi-piusv==0.1.0
 
 # Required for LoRaWAN.
 pycrypto==2.6.1
