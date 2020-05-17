@@ -18,7 +18,7 @@ from terkin.network import SystemWiFiMetrics
 from terkin.sensor import SensorManager, AbstractSensor
 from terkin.model import SensorReading, DataFrame
 from terkin.sensor.system import SystemMemoryFree, SystemTemperature, SystemVoltage, SystemUptime
-from terkin.util import gc_disabled, ddformat
+from terkin.util import gc_disabled
 
 log = logging.getLogger(__name__)
 
@@ -370,8 +370,10 @@ class TerkinDatalogger:
             sensor_address = None
 
         # Report sensor registration to user.
-        message = 'Setting up sensor with id={} and type={} on bus={} with address={} ' \
-                  'described as "{}"'.format(sensor_id, sensor_type, sensor_bus_name, sensor_address, description)
+        message = 'Setting up sensor with id={} and type={} on bus={} with address={}'.format(
+            sensor_id, sensor_type, sensor_bus_name, sensor_address)
+        if description:
+            message += ' described as "{}"'.format(description)
         log.info(message)
 
         # Backward compat.
@@ -540,6 +542,7 @@ class TerkinDatalogger:
         # Debugging: Print sensor data before running telemetry.
         prettify_log = self.settings.get('sensors.prettify_log', False)
         if prettify_log:
+            from terkin.util import ddformat
             log.info('Sensor data:\n\n%s', ddformat(richdata, indent=11))
         else:
             log.info('Sensor data:  %s', data)

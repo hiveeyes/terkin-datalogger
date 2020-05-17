@@ -83,7 +83,13 @@ class SensorManager:
         :param buses_settings: 
 
         """
-        log.info("Starting all buses %s", buses_settings)
+        prettify_log = self.settings.get('sensors.prettify_log', False)
+        if prettify_log:
+            from terkin.util import ddformat
+            log.info('Starting all buses:\n\n%s', ddformat(buses_settings, indent=18))
+        else:
+            log.info('Starting all buses: %s', buses_settings)
+
         for bus_settings in buses_settings:
 
             if bus_settings.get("enabled") is False:
