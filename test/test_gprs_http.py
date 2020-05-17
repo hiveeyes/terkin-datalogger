@@ -51,7 +51,7 @@ def test_uplink_gprs_http(caplog, sim800mock):
 
     # Mix together different settings.
     from test.settings import telemetry_gprs
-    from test.settings import sensors as sensor_settings
+    from test.settings import sensors_micropython as sensor_settings
     telemetry_gprs.sensors = sensor_settings.sensors
 
     # Invoke datalogger with LoRaWAN telemetry settings for a single duty cycle.

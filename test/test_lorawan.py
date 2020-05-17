@@ -98,7 +98,7 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
 
     # Mix together different settings.
     from test.settings import telemetry_lorawan
-    from test.settings import sensors as sensor_settings
+    from test.settings import sensors_micropython as sensor_settings
     mocker.patch('test.settings.telemetry_lorawan.sensors', sensor_settings.sensors)
 
     # Invoke datalogger with LoRaWAN telemetry settings for a single duty cycle.
