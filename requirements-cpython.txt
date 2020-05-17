@@ -19,6 +19,8 @@ adafruit-circuitpython-busdevice==4.3.1
 adafruit-circuitpython-bme280==2.4.1
 adafruit-circuitpython-ads1x15==2.2.1
 adafruit-circuitpython-si7021==3.2.1
+adafruit-circuitpython-bmp280==3.2.1
+adafruit-circuitpython-ina219==3.4.2
 
 # Victron Energy VE.Direct text protocol driver.
 git+https://github.com/karioja/vedirect@f74c0f2

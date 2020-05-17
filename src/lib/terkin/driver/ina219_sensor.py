@@ -126,11 +126,12 @@ class INA219Sensor(AbstractSensor):
                 # The power through the load in Watt.
                 "power": self.driver.power,
 
-                "bus_voltage_rangetemperature": self.driver.bus_voltage_range,
-                "gain": self.driver.gain,
-                "bus_adc_resolution": self.driver.bus_adc_resolution,
-                "shunt_adc_resolution": self.driver.shunt_adc_resolution,
-                "mode": self.driver.mode,
+                # Some more values about how the INA219 has been configured.
+                # "bus_voltage_range": self.driver.bus_voltage_range,
+                # "gain": self.driver.gain,
+                # "bus_adc_resolution": self.driver.bus_adc_resolution,
+                # "shunt_adc_resolution": self.driver.shunt_adc_resolution,
+                # "mode": self.driver.mode,
 
             }
 
