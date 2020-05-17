@@ -24,7 +24,7 @@ main = {
         'enabled': True,
 
         # Log configuration settings at system startup.
-        'configuration': True,
+        'configuration': False,
     },
 
     # Configure Watchdog.
