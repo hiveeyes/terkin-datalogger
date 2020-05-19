@@ -93,7 +93,7 @@ download-requirements-real:
 	$(eval tmpdir := ./.pycayennelpp.tmp)
 	rm -rf $(tmpdir)
 	mkdir -p $(tmpdir)
-	git clone https://github.com/hiveeyes/pycayennelpp $(tmpdir)
+	git clone --branch add_unix_time_support https://github.com/hiveeyes/pycayennelpp $(tmpdir)
 	rm -r $(tmpdir)/cayennelpp/tests
 	cp -r $(tmpdir)/cayennelpp $(target_dir)/
 	rm -rf $(tmpdir)

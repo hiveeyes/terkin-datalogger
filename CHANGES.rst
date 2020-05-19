@@ -9,6 +9,7 @@ Development
 - Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch!
 - Refactor more sensors for self-registration
 - Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
+- Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
 
 2020-05-04 0.9.0
 ================
