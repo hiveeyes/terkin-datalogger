@@ -16,7 +16,7 @@ def test_sensors(mocker, caplog):
     """
 
     # Acquire minimal settings.
-    from test.settings import sensors as sensor_settings
+    from test.settings import sensors_micropython as sensor_settings
 
     # Pretend the HX711 to be ready.
     mocker.patch('terkin.lib.hx711_heisenberg.HX711Heisenberg.is_ready', mock.Mock(return_value=True))
