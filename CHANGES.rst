@@ -10,6 +10,7 @@ Development
 - Refactor more sensors for self-registration
 - Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
 - Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
+- Add updated MicroPython "datetime" module to satisfy PyCayenneLPP
 
 2020-05-04 0.9.0
 ================

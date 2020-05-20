@@ -42,6 +42,10 @@ download-requirements-real:
 	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/logging/logging/__init__.py
 	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/logging/logging/handlers.py
 
+	# Install updated "micropython-datetime" module
+	rm $(target_dir)/datetime.py || true
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-datetime/datetime/datetime.py
+
 	# Install slightly updated "dotty_dict" module
 	# https://github.com/pawelzny/dotty_dict
 	mkdir -p $(target_dir)/dotty_dict
