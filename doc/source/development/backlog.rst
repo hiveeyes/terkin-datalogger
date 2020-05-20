@@ -111,6 +111,9 @@ S7
     - https://pypi.org/project/serial_mock/
 - Detect and mitigate connection-loss with LTE-connectivity
 - Add reading ``/sys/class/thermal/thermal_zone0/temp``
+- Tweak MQTT configuration to publish just to designated MQTT topic
+- neocon in "make console" einbauen
+- Set system time from NTP or GPS
 
 
 Documentation

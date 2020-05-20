@@ -5,10 +5,26 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Rework LoRaWAN settings and remove ``join_attempt_count`` since we can't control
+  the join attempts. Thanks, @thiasB!
+- Add APB activation method for LoRaWAN. Thanks, @thiasB!
+- Rename "busses" to "buses" all over the place
+- Fix ABP auth parameter passing for Dragino
+- Improve inline documentation and logging re. LoRaWAN OTAA vs. ABP
+- Disable LoRa by default
+- LoRaWAN: consider restored join status for both, OTAA and ABP activation. Thanks, @thiasB!
+- Add Sphinx documentation. Thanks, @poesel!
+- Update Makefile tooling for upgrading Pycom MicroPython firmware
+- Add Makefile target to generate callgraph
 - Add minimal weight scale adjustment wizard
-- Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch!
+- Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch and @tonke!
 - Refactor more sensors for self-registration
 - Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
+- Add sensor wrappers for BMP280 and INA219. Thanks, @tonke!
+- Don't log configuration on startup by default. Thanks, @tonke!
+- Improve registering buses
+- Add sensor tests for SBCs
+- Add sensor wrapper for PiUSV. Thanks, @tonke!
 - Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
 - Add updated MicroPython "datetime" module to satisfy PyCayenneLPP
 
