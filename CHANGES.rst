@@ -27,6 +27,8 @@ Development
 - Add sensor wrapper for PiUSV. Thanks, @tonke!
 - Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
 - Add updated MicroPython "datetime" module to satisfy PyCayenneLPP
+- Improve firmware builder
+- Add make target to upload "settings.py"
 
 2020-05-04 0.9.0
 ================

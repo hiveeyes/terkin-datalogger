@@ -76,8 +76,11 @@ reset-device-attached: check-mcu-port
 	@echo
 
 reset-ampy:
-	$(ampy) --port $(serial_port) --delay 1 reset
+	$(ampy) --port $(mcu_port) --delay 1 reset
 	@echo
+
+upload-settings:
+	$(ampy) --port $(mcu_port) put src/settings.py /flash/settings.py
 
 
 # -------------------------
