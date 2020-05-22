@@ -5,6 +5,9 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+
+2020-05-22 0.10.0
+=================
 - Rework LoRaWAN settings and remove ``join_attempt_count`` since we can't control
   the join attempts. Thanks, @thiasB!
 - Add APB activation method for LoRaWAN. Thanks, @thiasB!
