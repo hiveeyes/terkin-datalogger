@@ -23,10 +23,10 @@ sync-frozen:
 
 
 build-firmware-esp32-generic: install-buildtools
-	$(python3) -m tools.build --vendor=genuine --micropython="$(FWB_MICROPYTHON_GENUINE)" --toolchain="$(FWB_XTENSA_GCC)" --espidf="$(FWB_ESPIDF_GENUINE)" --architecture="esp32" --board="GENERIC_SPIRAM" --label="Annapurna-0.2.0" --manifest="mpy_manifest.py"  --release-path="./dist"
+	$(python3) -m tools.build --vendor=genuine --micropython="$(FWB_MICROPYTHON_GENUINE)" --toolchain="$(FWB_XTENSA_GCC)" --espidf="$(FWB_ESPIDF_GENUINE)" --architecture="esp32" --board="GENERIC_SPIRAM" --label="Annapurna-0.2.0" --manifest="mpy_manifest.py" --release-path="./dist"
 
 build-firmware-esp32-pycom: install-buildtools
-	$(python3) -m tools.build --vendor=pycom --micropython="$(FWB_MICROPYTHON_PYCOM)" --toolchain="$(FWB_XTENSA_GCC)" --espidf="$(FWB_ESPIDF_PYCOM)" --architecture="esp32" --board="LOPY4" --sources='dist-packages/*,src/lib/*' --release-path="./dist"
+	$(python3) -m tools.build --vendor=pycom --micropython="$(FWB_MICROPYTHON_PYCOM)" --toolchain="$(FWB_XTENSA_GCC)" --espidf="$(FWB_ESPIDF_PYCOM)" --architecture="esp32" --board="GPY,LOPY4,FIPY" --sources='dist-packages/*,src/lib/*' --main-files='src/boot.py,src/main.py' --release-path="./dist"
 
 install-buildtools: setup-virtualenv3
 	@$(pip3) install --quiet --requirement requirements-build.txt --upgrade
