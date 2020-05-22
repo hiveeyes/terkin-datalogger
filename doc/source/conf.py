@@ -22,7 +22,7 @@ copyright = '2017-2020, The Terkin Developers'
 author = 'The Terkin Developers'
 
 # The full version, including alpha/beta/rc tags
-release = '0.9.0'
+release = '0.10.0'
 
 
 # -- General configuration ---------------------------------------------------
