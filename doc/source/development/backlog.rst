@@ -126,7 +126,13 @@ Documentation
 - https://www.sphinx-doc.org/en/master/usage/extensions/autosummary.html
 - Document "make run-cpython-callgraph"
 - Improve documentation structure re. MicroPython sandbox
+- Add https://community.hiveeyes.org/t/operate-the-terkin-sandbox-using-the-microterkin-agent/2332
+- Setup with firmware image:
 
+    - Download .tar.gz
+    - Upload using ``pycom-fwtool-cli --verbose --port $MCU_PORT flash --tar dist/firmware/FiPy-1.20.2.rc6-0.9.0-annapurna.tar.gz``
+    - Edit settings.py
+    - Upload settings.py using ``make upload-settings``
 
 
 ***************

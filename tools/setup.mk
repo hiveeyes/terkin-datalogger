@@ -56,7 +56,7 @@ download-requirements-real:
 	#curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
 
 	# pysm==0.3.9
-	curl --location https://github.com/pgularski/pysm/archive/v0.3.9-alpha.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - pysm-0.3.9-alpha/pysm
+	#curl --location https://github.com/pgularski/pysm/archive/v0.3.9-alpha.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - pysm-0.3.9-alpha/pysm
 
 
 	## API
