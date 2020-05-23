@@ -100,6 +100,8 @@ class LoRaDriverPycom:
         if not self.lora.has_joined():
             import binascii
 
+            datarate_join = self.settings.get('networking.lora.datarate_join')
+
             # Over-the-Air Activation (OTAA)
             if self.settings.get('networking.lora.activation') == 'otaa':
                 app_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.application_eui'))
@@ -107,10 +109,10 @@ class LoRaDriverPycom:
 
                 log.info('[LoRa] Attaching to the LoRaWAN network using OTAA')
                 if self.settings.get('networking.lora.otaa.device_eui') is None:
-                    self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
+                    self.lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0, dr=datarate_join)
                 else:
                     dev_eui = binascii.unhexlify(self.settings.get('networking.lora.otaa.device_eui'))
-                    self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=0)
+                    self.lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0, dr=datarate_join)
 
             # Activation by Personalization (ABP)
             elif self.settings.get('networking.lora.activation') == 'abp':
@@ -120,7 +122,7 @@ class LoRaDriverPycom:
                 app_swkey = binascii.unhexlify(self.settings.get('networking.lora.abp.app_session_key'))
 
                 log.info('[LoRa] Attaching to the LoRaWAN network using ABP')
-                self.lora.join(activation=LoRa.ABP, auth=(dev_addr, nwk_swkey, app_swkey), timeout=0, dr=0)
+                self.lora.join(activation=LoRa.ABP, auth=(dev_addr, nwk_swkey, app_swkey), timeout=0, dr=datarate_join)
 
     def ensure_connectivity(self):
 
