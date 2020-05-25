@@ -111,6 +111,7 @@ download-requirements-real:
 
 	# Driver for DS3231 RTC
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/hiveeyes/DS3231micro/add-temperature/DS3231micro.py
 
 	# Driver for AT24C32 EEPROM
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/mcauser/micropython-tinyrtc-i2c/1e650122a516513c1a5e348e1755c7dc829deab9/at24c32n.py
