@@ -119,7 +119,8 @@ networking = {
         'enabled': False,
         'antenna_attached': False,
         'region': 'EU868',
-        'adr': False,
+        'datarate_join': 5, # 5 -> SF7BW125, 0 -> SF12BW125
+        'adr': True, # Adaptive data rate
 
         # Over-the-Air Activation (OTAA) vs. Activation by Personalization (ABP)
         # https://www.thethingsnetwork.org/forum/t/what-is-the-difference-between-otaa-and-abp-devices/2723
