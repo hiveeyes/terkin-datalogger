@@ -64,6 +64,12 @@ S5
 - I2C-Busse auf rasi12bplus
 - raspi-config nonint
 - Support Odroid XU4 within Adafruit Blinka adafruit_platformdetect
+  - https://github.com/adafruit/Adafruit_Blinka/issues/188
+  - https://github.com/adafruit/Adafruit_Python_PlatformDetect/pull/82
+  - https://github.com/adafruit/Adafruit_Blinka/pull/294
+- FYI: SBC bus number detection for I2C and SPI
+  - https://github.com/adafruit/Adafruit_Blinka/pull/274
+  - https://github.com/adafruit/Adafruit_Blinka/pull/275
 - Resolve https://github.com/hiveeyes/terkin-datalogger/commit/a945518845b9fb0f5a97dafde90ab4d60de0ed14
 - ``terkin --sensor=bme280`` vs. ``terkin --no-sensors``
 - Plattformweiche für Makefile re. mpy-cross
