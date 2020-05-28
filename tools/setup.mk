@@ -94,13 +94,13 @@ download-requirements-real:
 	$(fetch) $(target_dir) --output-document=$(target_dir)/umqtt.py https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-umqtt/umqtt.simple/umqtt/simple.py
 
 	# Install PyCayenneLPP from Git repository.
-	$(eval tmpdir := ./.pycayennelpp.tmp)
-	rm -rf $(tmpdir)
-	mkdir -p $(tmpdir)
-	git clone --branch add_unix_time_support https://github.com/hiveeyes/pycayennelpp $(tmpdir)
-	rm -r $(tmpdir)/cayennelpp/tests
-	cp -r $(tmpdir)/cayennelpp $(target_dir)/
-	rm -rf $(tmpdir)
+	#$(eval tmpdir := ./.pycayennelpp.tmp)
+	#rm -rf $(tmpdir)
+	#mkdir -p $(tmpdir)
+	#git clone --branch add_unix_time_support https://github.com/hiveeyes/pycayennelpp $(tmpdir)
+	#rm -r $(tmpdir)/cayennelpp/tests
+	#cp -r $(tmpdir)/cayennelpp $(target_dir)/
+	#rm -rf $(tmpdir)
 
 	# Install SIM800 driver
 	rm $(target_dir)/pythings_sim800.py || true

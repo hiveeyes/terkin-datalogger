@@ -6,6 +6,7 @@ Terkin Datalogger CHANGES
 Development
 ===========
 - Add DS3231micro.py driver. Thanks, @poesel!
+- Upgrade to PyCayenneLPP 1.5.0. Thanks, @smlng!
 
 2020-05-22 0.10.0
 =================
