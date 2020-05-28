@@ -134,6 +134,19 @@ packages: check-github-release make-github-release
 	MPY_TARGET=pycom MPY_VERSION=1.11 $(MAKE) create-mpy-archives platform=pycom
 	MPY_TARGET=bytecode MPY_VERSION=1.12 $(MAKE) create-mpy-archives platform=genuine
 
+firmwares: prepare-release
+
+	$(MAKE) build-firmware-esp32-pycom
+
+	$(eval imagefile := dist/firmware/GPy-1.20.2.rc6-$(version)-annapurna.tar.gz)
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(imagefile)) --file $(imagefile) --replace
+
+	$(eval imagefile := dist/firmware/LoPy4-1.20.2.rc6-$(version)-annapurna.tar.gz)
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(imagefile)) --file $(imagefile) --replace
+
+	$(eval imagefile := dist/firmware/FiPy-1.20.2.rc6-$(version)-annapurna.tar.gz)
+	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(imagefile)) --file $(imagefile) --replace
+
 sdist:
 	@$(python3) setup.py sdist
 	@$(python3) setup_libraries.py bdist_wheel
