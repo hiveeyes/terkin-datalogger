@@ -4,7 +4,6 @@ micropython-collections
 micropython-collections.defaultdict
 #pycopy-urequests
 pycopy-shutil
-micropython-pycayennelpp
 # All of these pull in dependencies of vanilla MicroPython
 # essentially breaking Pycom MicroPython.
 #pycopy-abc
