@@ -482,6 +482,14 @@ sensors = {
             'bus': 'i2c:1',
             'address': 0x44,
         },
+        {
+            'id': 'max17043-1',
+            'description': 'Akkuspannung und -prozent (MAX17043)',
+            'type': 'MAX17043',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x36,
+        },        
     ],
     'buses': [
         {
