@@ -69,6 +69,14 @@ class SensorManager:
         """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
+    def get_sensor_by_type(self, type):
+        """
+        Return all sensors filtered by type.
+        """
+        for sensor in self.sensors:
+            if hasattr(sensor, 'type') and sensor.type == type:
+                yield sensor
+
     def get_sensors_by_family(self, family):
         """
         Return all sensors filtered by family.

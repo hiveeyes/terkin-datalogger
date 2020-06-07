@@ -8,6 +8,7 @@ Development
 - Add DS3231micro.py driver. Thanks, @poesel!
 - Upgrade to PyCayenneLPP 1.5.0. Thanks, @smlng!
 - Add "make firmwares" release target
+- Add "get_sensor_by_type" helper method
 
 
 2020-05-22 0.10.0
