@@ -12,7 +12,7 @@ from terkin.util import file_remove, file_exists, ensure_directory
 
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 
 def backup_file(filename, backup_path, backup_count):
@@ -42,10 +42,10 @@ def backup_file(filename, backup_path, backup_count):
 
 
 class RotatingFile:
-    """A rotating file handler like RotatingFileHandler.
+    """
+    A rotating file handler like RotatingFileHandler.
     
     From logging.handlers.
-
 
     """
 
@@ -54,9 +54,10 @@ class RotatingFile:
         self.backup_count = backup_count
 
     def write(self, buffer):
-        """Write to file.
+        """
+        Remove oldest backup, rotate name and write buffer to file.
 
-        :param buffer: 
+        :param buffer: buffer to write
 
         """
         if self.backup_count:
@@ -87,9 +88,10 @@ class RotatingFile:
 
     def rename_file(self, oldfile, newfile):
         """
+        Rename fila
 
-        :param oldfile: 
-        :param newfile: 
+        :param oldfile: old file name
+        :param newfile: new file name
 
         """
         #log.info('Renaming backup file {} to {}'.format(oldfile, newfile))

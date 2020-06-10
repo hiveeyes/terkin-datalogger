@@ -38,6 +38,12 @@ class MicroPythonVendor:
     # https://github.com/pycom/pycom-micropython-sigfox
     Pycom = 2
 
+    # RaspberryPi.
+    RaspberryPi = 3
+
+    # Odroid.
+    Odroid = 4
+
 
 class PlatformInfo:
     """
@@ -59,7 +65,9 @@ class PlatformInfo:
         self.resolve_platform()
 
     def resolve_platform(self):
-        """ """
+        """ 
+        Resolve MCU and vendor of this platform.
+        """
 
         import sys
 
@@ -77,11 +85,24 @@ class PlatformInfo:
             self.mcu = McuFamily.STM32
             self.vendor = MicroPythonVendor.Vanilla
 
+        try:
+            linux_firmware = open('/sys/firmware/devicetree/base/model').read()
+            if 'Raspberry' in linux_firmware:
+                self.mcu = McuFamily.STM32
+                self.vendor = MicroPythonVendor.RaspberryPi
+            elif 'Odroid' in linux_firmware:
+                self.mcu = McuFamily.STM32
+                self.vendor = MicroPythonVendor.Odroid
+        except:
+            pass
+
         self.device_name = sys.platform
 
 
 class ApplicationInfo:
-    """ """
+    """ 
+    Collects various information. Most importantly transports the settings for further use in the Datalogger.
+    """
 
     def __init__(self, name=None, version=None, settings=None, application=None, platform_info: PlatformInfo = None):
         self.name = name
@@ -99,7 +120,9 @@ class ApplicationInfo:
 
 
 class MicroPythonBootloader:
-    """ """
+    """ 
+    Very basic tasks for running the system.
+    """
 
     def __init__(self):
         self.platform_info = PlatformInfo()
@@ -126,6 +149,9 @@ class MicroPythonBootloader:
 
         elif self.platform_info.vendor == self.platform_info.MICROPYTHON.Vanilla:
             paths = ['/{}'.format(path) for path in paths]
+
+        elif self.platform_info.vendor == self.platform_info.MICROPYTHON.RaspberryPi:
+            paths = ['./dist-packages', './src/lib']
 
         else:
             print('[umal]    ERROR: MicroPython platform not supported:', self.platform_info.vendor)

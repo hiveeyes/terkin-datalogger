@@ -39,7 +39,7 @@ main = {
         'enabled': True,
 
         # Log configuration settings at system startup.
-        'configuration': True,
+        'configuration': False,
     },
 
     # Configure Watchdog.
@@ -52,8 +52,12 @@ main = {
         'timeout': 60000,
     },
 
-    # Configure backup.
+    # Configuration file backup.
     'backup': {
+
+        # Enable or disable.
+        'enabled': True,
+
         # How many backup files to keep around.
         'file_count': 7,
     },
@@ -128,14 +132,34 @@ networking = {
     # LoRaWAN/TTN
     'lora': {
         'enabled': False,
+        'antenna_attached': False,
+        'region': 'EU868',
+        'datarate_join': 5, # 5 -> SF7BW125, 0 -> SF12BW125
+        'adr': True, # Adaptive data rate
+
+        # Over-the-Air Activation (OTAA) vs. Activation by Personalization (ABP)
+        # https://www.thethingsnetwork.org/forum/t/what-is-the-difference-between-otaa-and-abp-devices/2723
+        'activation': 'otaa',   # abp
         'otaa': {
-            'region': 'EU868',
-            'adr': False,
-            'device_eui': '<GENERATED_FROM_LORA_MAC>',
+            'device_eui': '<GENERATED_FROM_LORA_MAC_OR_TTN>',
             'application_eui': '<REGISTRATION NEEDED>',
             'application_key': '<REGISTRATION NEEDED>',
+            #'join_check_interval': 2.5,
         },
-        'antenna_attached': False,
+        'abp': {
+            'device_address': '<FROM TTN CONSOLE>',
+            'network_session_key': '<FROM TTN CONSOLE>',
+            'app_session_key': '<FROM TTN CONSOLE>',
+        },
+    },
+
+    # LTE
+    'lte': {
+        'enabled': False,
+        'band': 8,
+        'apn': 'iot.1nce.net',
+        'attach_timeout': 10.0,
+        'connect_timeout': 5.0,
     },
 
     # GPRS/SIM800
@@ -255,7 +279,7 @@ telemetry = {
                 "gateway": "area-42",
                 "node": "node-01-mqtt-lpp",
             },
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'content_encoding': 'base64',
         },
 
@@ -265,7 +289,7 @@ telemetry = {
             'enabled': False,
 
             'endpoint': 'lora://',
-            'format': 'lpp',
+            'format': 'lpp-hiveeyes',
             'settings': {
                 'size': 12,
                 'datarate': 0,
@@ -281,23 +305,30 @@ sensors = {
     # Whether to prettify sensor log output.
     'prettify_log': True,
 
+    # Whether to power toggle the 1-Wire, I2C or SPI buses.
+    'power_toggle_buses': True,
+
     'system': [
 
         {
             # Sensor which reports free system memory.
             'type': 'system.memfree',
+            'enabled': True,
         },
         {
             # Sensor which reports system temperature.
             'type': 'system.temperature',
+            'enabled': True,
         },
         {
             # Sensor which reports system uptime metrics.
             'type': 'system.uptime',
+            'enabled': True,
         },
         {
             # Sensor which reports system WiFi metrics.
             'type': 'system.wifi',
+            'enabled': True,
         },
         {
             # Settings for button events, e.g. through ESP32 touch pads.
@@ -335,7 +366,7 @@ sensors = {
             'description': 'Battery',
 
             # Enable/disable sensor.
-            'enabled': True,
+            'enabled': False,
 
             # On which Pin to schnuckle this.
             'pin': 'P16',
@@ -385,11 +416,12 @@ sensors = {
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
-            'enabled': True,
+            'enabled': False,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
-            'scale': 4.424242,
             'offset': -73000,
+            'scale': 4.424242,
+            'decimals': 3,
         },
         {
             'id': 'ds18b20-1',
@@ -427,22 +459,54 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur und Feuchte außen',
+            'description': 'Temperatur, Druck und Feuchte (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
+            'address': 0x76,
+        },
+        {
+            'id': 'bmp280-1',
+            'description': 'BMP280 on ic2:1 0x77',
+            'type': 'BMP280',
+            'enabled': False,
+            'bus': 'i2c:1',
             'address': 0x77,
         },
         {
+            'id': 'si7021-1',
+            'description': 'Temperatur und Feuchte (Si7021)',
+            'type': 'Si7021',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x40,
+        },
+        {
+            'id': 'ina219-1',
+            'description': 'INA219 on ic2:1 0x40',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x40,
+        },
+        {
+            'id': 'ina219-2',
+            'description': 'INA219 on ic2:1 0x44',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x44,
+        },
+        {
             'id': 'max17043-1',
-            'description': 'Akkuspannung und Prozent',
+            'description': 'Akkuspannung und -prozent (MAX17043)',
             'type': 'MAX17043',
             'enabled': False,
             'bus': 'i2c:0',
             'address': 0x36,
         },
     ],
-    'busses': [
+    'buses': [
         {
             "id": "bus-i2c-0",
             "family": "i2c",
@@ -463,9 +527,9 @@ sensors = {
             "id": "bus-onewire-0",
             "family": "onewire",
             "number": 0,
-            "enabled": True,
+            "enabled": False,
             "pin_data": "P11",
-            #"driver": "native",
+            "driver": "native",
         },
     ]
 }

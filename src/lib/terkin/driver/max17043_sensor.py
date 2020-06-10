@@ -1,10 +1,25 @@
 # -*- coding: utf-8 -*-
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
-from max17043 import DFRobot_MAX17043 as MAX17043
+from terkin.sensor import SensorManager, AbstractSensor
 
 log = logging.getLogger(__name__)
+
+
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create MAX17043 sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = MAX17043Sensor(settings=sensor_info)
+    sensor_bus = sensor_manager.get_bus_by_name(sensor_info.get('bus'))
+    sensor_object.acquire_bus(sensor_bus)
+
+    return sensor_object
 
 
 class MAX17043Sensor(AbstractSensor):
@@ -21,7 +36,7 @@ class MAX17043Sensor(AbstractSensor):
         super().__init__(settings=settings)
 
         # Can be overwritten by ``.set_address()``.
-        self.address = 0x36
+        self.address = self.settings.get('address', 0x36)
 
     def start(self):
         """Getting the bus"""
@@ -30,6 +45,7 @@ class MAX17043Sensor(AbstractSensor):
 
         # Initialize the hardware driver.
         try:
+            from max17043 import DFRobot_MAX17043 as MAX17043
             self.driver = MAX17043(i2c=self.bus.adapter)
             return True
 

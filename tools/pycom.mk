@@ -64,7 +64,7 @@ check-mcu-device:
 
 install-pycom-firmware-confirm: check-pycom-fwtool check-firmware-upgrade-port check-mcu-device
 	@# Ask the user to confirm firmware installation.
-	@$(MAKE) confirm text="Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(pycom_firmware_port)\""
+	@$(MAKE) confirm text='Install Pycom firmware \"$(pycom_firmware_file)\" on the device connected to \"$(pycom_firmware_port)\"'
 
 
 # ===========================
@@ -72,7 +72,7 @@ install-pycom-firmware-confirm: check-pycom-fwtool check-firmware-upgrade-port c
 # ===========================
 
 # FIXME: Expand this to more hardware
-pycom_firmware_file := $(MCU_DEVICE)-1.20.0.rc13.tar.gz
+pycom_firmware_file := $(MCU_DEVICE)-1.20.2.rc6-0.10.1-vanilla-squirrel.tar.gz
 
 # Download Pycom firmware to your workstation
 download-pycom-firmware:
@@ -80,12 +80,17 @@ download-pycom-firmware:
 	@# Define path to the "dist-packages" installation directory.
 	$(eval target_dir := ./dist-firmwares)
 	$(eval fetch := wget --no-clobber --unlink --directory-prefix)
+	$(eval url := https://packages.hiveeyes.org/hiveeyes/foss/pycom/vanilla/${pycom_firmware_file})
 
 	@mkdir -p $(target_dir)
-	$(fetch) $(target_dir) https://packages.hiveeyes.org/hiveeyes/foss/pycom/vanilla/$(pycom_firmware_file)
+	@if test -e "${pycom_firmware_file}"; then \
+		cp ${pycom_firmware_file} ${target_dir} || true; \
+	else \
+		echo '$(INFO) Downloading firmware from "$(url)"'; \
+		$(fetch) ${target_dir} ${url}; \
+	fi
 
 	@#$(eval url := "https://software.pycom.io/downloads/$(pycom_firmware_file)")
-	@#@echo "INFO: Downloading firmware from \"$(url)\""
 	@#$(fetch) --output-document=$(target_dir)/$(pycom_firmware_file) "$(url)" | true
 
 ## Display chip_id
@@ -94,7 +99,7 @@ chip_id: check-mcu-port
 
 ## Install Pycom firmware on device
 install-pycom-firmware: install-pycom-firmware-confirm download-pycom-firmware
-	echo "INFO: Installing firmware \"$(pycom_firmware_file)\""
+	@echo "$(INFO) Installing firmware \"$(pycom_firmware_file)\""
 	$(pycom_fwtool_cli) --verbose --port "$(pycom_firmware_port)" flash --tar "dist-firmwares/$(pycom_firmware_file)"
 
 ## Format flash filesystem with LittleFS
@@ -120,7 +125,7 @@ erase-fs: check-mcu-port
 	$(pycom_fwtool_cli) --port ${pycom_firmware_port} erase_fs
 
 
-## Erase flash filesystem for Pycom devices
+## Erase complete Pycom device
 erase-device: check-mcu-port
 
 	@# Ask the user to confirm erasing.

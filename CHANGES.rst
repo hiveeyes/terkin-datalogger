@@ -5,6 +5,118 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Add DS3231micro.py driver. Thanks, @poesel!
+- Upgrade to PyCayenneLPP 1.5.0. Thanks, @smlng!
+- Add "make firmwares" release target
+- Add "get_sensor_by_type" helper method
+- Switch to "DS3231tokei" library. Thanks, @poesel!
+
+
+2020-05-22 0.10.0
+=================
+- Rework LoRaWAN settings and remove ``join_attempt_count`` since we can't control
+  the join attempts. Thanks, @thiasB!
+- Add APB activation method for LoRaWAN. Thanks, @thiasB!
+- Rename "busses" to "buses" all over the place
+- Fix ABP auth parameter passing for Dragino
+- Improve inline documentation and logging re. LoRaWAN OTAA vs. ABP
+- Disable LoRa by default
+- LoRaWAN: consider restored join status for both, OTAA and ABP activation. Thanks, @thiasB!
+- Add Sphinx documentation. Thanks, @poesel!
+- Update Makefile tooling for upgrading Pycom MicroPython firmware
+- Add Makefile target to generate callgraph
+- Add minimal weight scale adjustment wizard
+- Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch and @tonke!
+- Refactor more sensors for self-registration
+- Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
+- Add sensor wrappers for BMP280 and INA219. Thanks, @tonke!
+- Don't log configuration on startup by default. Thanks, @tonke!
+- Improve registering buses
+- Add sensor tests for SBCs
+- Add sensor wrapper for PiUSV. Thanks, @tonke!
+- Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
+- Add updated MicroPython "datetime" module to satisfy PyCayenneLPP
+- Improve firmware builder
+- Add make target to upload "settings.py"
+
+2020-05-04 0.9.0
+================
+- Fix LoRa subsystem
+- Add Si7021 sensor. Thanks, @thiasB!
+- Add a bunch of sensors for RaspberryPi. Thanks, @tonke!
+- Improve drivers VEDirect, EPSolar, ADS1x15. Thanks, @tonke!
+- Fix tests
+- Update TTN decoder.js. Thanks, @thiasB!
+- Improve reading sensors by returning SensorReading object from driver
+- Improve registering sensors by moving the setup to the sensor modules
+- Improve CPython/RaspberryPi setup tooling and documentation
+- Improve new sensor registration architecture once more
+- Clean up EPSolar hardware driver
+- Self-register EPSolarSensor
+- Resolve woes with ModuleNotFoundError
+- Switch settings to new LPP format scheme. Thanks, @thiasB!
+- Import scale parameters as floating point number. Thanks, @thiasB!
+- Update TTN README. Thanks, @thiasB!
+- Enable native DS18x20 driver by default. Thanks, @ClemensGruber and @thiasB!
+- Nail RaspberryPi dependencies
+- Add ``sensors.power_toggle_buses`` setting, defaults to True. Thanks, @tonke!
+- Improve PyTrack sensor. Thanks, @tonke!
+- Update Dragino setup tooling
+- Add "join_attempt_count" and "join_attempt_interval" settings re. LoRa. Thanks, @tonke!
+- Add setup.py for CPython
+- Improve logging and exception handling for CPython
+- Make configuration file backup optional
+- Improve sensor registration and startup
+- Add "terkin" commandline entrypoint
+- Trim CPython compatibility layer
+- Improve CPython bootstrapping and logging
+- Improve gpiozero and gpsd sensors. Thanks, @tonke!
+- Add BME280 on Odroid XU4 based on smbus2. Thanks, @tonke!
+- Fix setup.py re. encoding of README.rst
+- LoRa: Ignore downlink messages for sleep interval and data payload inclusion
+  on devices not running Pycom or Vanilla MicroPython. Thanks, @thiasB!
+- LoRa: return to sleep interval from settings after reset. Thanks, @thiasB!
+- Improve I2C bus support for Odroid XU4. Thanks, @tonke!
+- Improve GPSD sensor. Thanks, @tonke!
+- Use I2C bus 5 as secondary on Raspberry Pi. Thanks, @tonke!
+- Improve sensor enablement evaluation. Now, sensor
+  sections have to be enabled explicitly within settings.
+- Fix button manager setup
+- Update documentation
+- Fix DS18x20 module names
+- Fix tests and improve test robustness
+- Fix LANG locale setting for Click at runtime. Thanks, @tonke!
+- Improve CPython bootstrapping
+- Fix webserver imports
+- Move UDP modeserver implementation
+- Don't start WiFi by default
+- Make UDP modeserver and HTTP API ports configurable
+- Various networking improvements
+- Improve CPython setup
+- Add UI spike on CPython based on Picotui
+- Upgrade MicroWebSrv2 module
+- Improve packaging and prepare upload to PyPI
+
+2020-04-28 0.8.0
+================
+- Support SX127x on Dragino LoRa/GPS HAT for LoRa. Thanks @tonke and many more, see:
+  https://github.com/mayeranalytics/pySX127x/issues/21#issuecomment-620695583
+- Add TTN/LoRaWAN README. Thanks, @thiasB!
+- TTN: Add payload converter code for PutsReq.com HTTP endpoint. Thanks, @thiasB!
+
+2020-04-27 0.7.2
+================
+- Fix ``I2CBus.power_on``. Thanks, @tonke!
+
+2020-04-26 0.7.1
+================
+- Improve packaging
+- Improve compatibility between Genuine MicroPython and Pycom MicroPython
+  - https://github.com/micropython/micropython/issues/5915
+  - https://github.com/pycom/pycom-micropython-sigfox/issues/436
+
+2020-04-22 0.7.0
+================
 - Fix sandbox installation issue by nailing pycopy-cpython-upip to 1.2.6
 - Improve sanity checks for sandbox setup
 - Improve RGB-LED signalling
@@ -157,7 +269,8 @@ Development
 - Improve error reporting for "make setup"
 - Improve test coverage for HTTP telemetry / urequests module
 - Add test coverage for "system.voltage.battery" by mocking the ADC
-
+- Round sensor values according to settings
+- Start supporting CPython on Linux/RaspberryPi. Thanks, @tonke!
 
 2019-08-19 0.6.0
 ================
@@ -387,8 +500,8 @@ Development
 - ds18x20: fix runtime issues, resetting OneWire before scanning for devices
 - Little cleanup
 - SensorManager
-    - Add bus driver for i2c and onewire busses
-    - Settings: add busses to (sensor-)settings
+    - Add bus driver for i2c and onewire buses
+    - Settings: add buses to (sensor-)settings
     - Convention: Bus address ``<BUS_FAMILY>:<BUS_NUMBER>``
 - Makefile|libs:
     - Add bme280, Pycoproc, Quectel L76 GNSS library (Pytrack Board)
@@ -563,7 +676,7 @@ Development
 **Baby steps.**
 
 - Initial commit
-- Add .gitignore to exclude `*_local.py` configuration files
+- Add .gitignore to exclude ``*_local.py`` configuration files
 - WIP: Hands on FiPy
 - First stable version
 
@@ -579,3 +692,4 @@ Development
 .. _@pinguin999: https://github.com/pinguin999
 .. _@rohlan: https://github.com/rohlan
 .. _@emmanuel-florent: https://github.com/emmanuel-florent
+.. _@robert-hh: https://github.com/robert-hh/

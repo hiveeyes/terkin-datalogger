@@ -2,7 +2,10 @@
 # (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+from terkin import logging
 from terkin.util import get_platform_info
+
+log = logging.getLogger(__name__)
 
 
 class AbstractSensor:
@@ -59,24 +62,38 @@ class AbstractSensor:
 
     def acquire_bus(self, bus):
         """
-
+        Associate sensor object with bus object.
         :param bus:
-
         """
+
+        # Skip sensor if associated bus is disabled in configuration.
+        if bus is None:
+            sensor_type = self.settings.get('type', 'unknown').lower()
+            sensor_id = self.settings.get('id', self.settings.get('key', sensor_type))
+            sensor_bus = self.settings.get('bus')
+            log.warning('Bus {} for sensor with id={} and type={} is disabled, '
+                        'skipping registration'.format(sensor_bus, sensor_id, sensor_type))
+
         self.bus = bus
+
+    def ensure_bus(self):
+        if self.bus is None or not self.bus.ready:
+            raise KeyError('Bus "{}" not ready for "{}"'.format(self.bus.name, self.__class__.__name__))
 
     def read(self):
         """ """
         raise NotImplementedError()
 
-    def format_fieldname(self, name, address):
+    def format_fieldname(self, name, address=None, channel=None):
         """
 
         :param name:
         :param address:
 
         """
-        fieldname = '{name}.{address}.{bus}'.format(name=name, address=address, bus=self.bus.name)
+        parts = [name, channel, address, self.bus.name]
+        parts = [part for part in parts if part is not None]
+        fieldname = '.'.join(parts)
         return fieldname
 
     def serialize(self):
@@ -96,10 +113,15 @@ class AbstractBus:
         self.settings = settings
         self.number = self.settings['number']
 
+        # HAL driver adapter.
         self.adapter = None
+
         # TODO: Publish found 1-Wire devices to MQTT bus and HTTP API.
         self.devices = []
         self.pins = {}
+
+        # Indicate whether the bus driver is ready.
+        self.ready = False
 
         # Indicate whether the bus driver just has been started.
         self.just_started = None

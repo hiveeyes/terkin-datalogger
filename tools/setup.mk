@@ -42,6 +42,10 @@ download-requirements-real:
 	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/logging/logging/__init__.py
 	$(fetch) $(target_dir)/logging https://raw.githubusercontent.com/pfalcon/pycopy-lib/52d356b5/logging/logging/handlers.py
 
+	# Install updated "micropython-datetime" module
+	rm $(target_dir)/datetime.py || true
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/daq-tools/pycopy-lib/improve-datetime/datetime/datetime.py
+
 	# Install slightly updated "dotty_dict" module
 	# https://github.com/pawelzny/dotty_dict
 	mkdir -p $(target_dir)/dotty_dict
@@ -52,21 +56,19 @@ download-requirements-real:
 	#curl --location https://github.com/fgmacedo/python-statemachine/archive/v0.7.1.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - python-statemachine-0.7.1/statemachine
 
 	# pysm==0.3.9
-	curl --location https://github.com/pgularski/pysm/archive/v0.3.9-alpha.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - pysm-0.3.9-alpha/pysm
+	#curl --location https://github.com/pgularski/pysm/archive/v0.3.9-alpha.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - pysm-0.3.9-alpha/pysm
 
 
 	## API
 
-	# Install MicroWebSrv and MicroDNSSrv libraries
-	# https://github.com/jczic/MicroWebSrv
-	# https://github.com/jczic/MicroDNSSrv
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSrv.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebSocket.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroWebSrv/b50ed11/microWebTemplate.py
-	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
-
 	# Install MicroWebSrv2
-	curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
+	# https://github.com/jczic/MicroWebSrv
+	#curl --location https://github.com/jczic/MicroWebSrv2/archive/v2.0.6.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-2.0.6/MicroWebSrv2
+	curl --location https://github.com/daq-tools/MicroWebSrv2/archive/improve-setup.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - MicroWebSrv2-improve-setup/MicroWebSrv2
+
+	# Install MicroDNSSrv
+	# https://github.com/jczic/MicroDNSSrv
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/jczic/MicroDNSSrv/4cd90f6/microDNSSrv.py
 
 	# Install BLE GATTS Wrapper for Pycom devices
 	# https://github.com/cmisztur/pycom-ble-gatt-wrapper
@@ -108,7 +110,9 @@ download-requirements-real:
 	## RTC and non-volatile memory
 
 	# Driver for DS3231 RTC
-	$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/micropython-Chinese-Community/mpy-lib/db40eda7/misc/DS3231/DS3231.py
+	#$(fetch) $(target_dir) https://raw.githubusercontent.com/hiveeyes/DS3231micro/add-temperature/DS3231micro.py
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/poesel/Power_DS3231_Adapter/master/src/DS3231tokei.py
 
 	# Driver for AT24C32 EEPROM
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/mcauser/micropython-tinyrtc-i2c/1e650122a516513c1a5e348e1755c7dc829deab9/at24c32n.py
@@ -147,12 +151,23 @@ download-requirements-real:
 	rm $(target_dir)/max17043.py || true
 	$(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
 
+    # 4. Install driver for SI7021
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/SI7021/e5d49689/SI7021.py
+
+	# 5. Install INA219 library
+	$(fetch) $(target_dir) https://raw.githubusercontent.com/chrisb2/pyb_ina219/f427017/ina219.py
+
+
+download-requirements-ui:
+
+	@# Define path to the "dist-packages" installation directory.
+	$(eval target_dir := ./dist-packages)
 
 	## GUI
-	#curl --location https://github.com/pfalcon/picotui/archive/master.zip | tar -C $(target_dir) --strip-components=1 -xvf - picotui-master/picotui
+	curl --location https://github.com/hiveeyes/picotui/archive/micropython.zip | tar -C ${target_dir} --strip-components=1 -xvf - picotui-micropython/picotui
 
 
-download-requirements-optional:
+download-requirements-ratrack:
 
 	## Ratrack
 

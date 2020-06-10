@@ -9,7 +9,6 @@ pycopy-shutil
 #pycopy-abc
 #pycopy-glob
 #pycopy-os.path
-#pycopy-datetime
 #pycopy-urllib.parse
 #pycopy-base64
 #pycopy-logging

@@ -7,14 +7,12 @@
 # (c) 2019-2020 Jan Hoffmann <jan.hoffmann@bergamsee.de>
 # (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
 #
-# License: GNU General Public License, Version 3
+# License: GNU Affero General Public License, Version 3
 #
-"""
-Please check https://community.hiveeyes.org/t/operate-the-terkin-datalogger-sandbox/2332
-in order to get an idea about how to operate the sandbox of this software.
+# Documentation: https://terkin.org
+#
+# Have fun!
 
-Have fun!
-"""
 
 print('[main.py] INFO: Loading settings')
 import settings
@@ -38,22 +36,20 @@ def main():
     print('[main.py] INFO: Loading modules')
     from terkin.datalogger import TerkinDatalogger
 
+    # Setup datalogger.
     datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
     datalogger.setup()
 
+    # Invoke datalogger.
     try:
         datalogger.start()
 
     except KeyboardInterrupt:
-        log.info("Received KeyboardInterrupt within main thread")
+        log.info("Received KeyboardInterrupt")
 
-        if datalogger.device.networking is not None:
-            datalogger.device.networking.stop_modeserver()
-            datalogger.device.networking.wifi_manager.stop()
-
-            # This helps the webserver to get rid of any listening sockets.
-            # https://github.com/jczic/MicroWebSrv2/issues/8
-            datalogger.device.networking.stop_httpserver()
+        # Shut down networking.
+        #if datalogger.device.networking is not None:
+        #    datalogger.device.networking.stop()
 
 
 if __name__ == '__main__':

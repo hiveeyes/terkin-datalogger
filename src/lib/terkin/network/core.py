@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Richard Pobering <richard@hiveeyes.org>
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2020 Richard Pobering <richard@hiveeyes.org>
+# (c) 2019-2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import sys
 import time
 import socket
 import machine
 from terkin import logging
-from terkin.network.ip import UdpServer
-from terkin.network.wifi import WiFiManager
 from terkin.util import format_exception, Eggtimer
 
 log = logging.getLogger(__name__)
@@ -23,26 +21,47 @@ class NetworkManager:
 
         self.device.watchdog.feed()
 
-        self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
+        self.wifi_manager = None
         self.lora_manager = None
+        self.lte_manager = None
         self.gprs_manager = None
+
         self.mode_server = None
         self.http_api = None
 
     def stop(self):
         """ """
-        if self.device.status.maintenance is not True:
-            self.wifi_manager.power_off()
+        self.stop_modeserver()
+
+        # This helps the webserver to get rid of any listening sockets.
+        # https://github.com/jczic/MicroWebSrv2/issues/8
+        self.stop_httpserver()
+
+        if self.wifi_manager:
+            self.wifi_manager.stop()
+            if self.device.status.maintenance is not True:
+                self.wifi_manager.power_off()
+
+        if self.lte_manager:
+            self.lte_manager.stop()
 
     def start_wifi(self):
         """ """
+        from terkin.network.wifi import WiFiManager
+        self.wifi_manager = WiFiManager(manager=self, settings=self.settings)
         self.wifi_manager.start()
 
     def start_lora(self):
         """ """
-        from terkin.network.lora import LoRaManager
-        self.lora_manager = LoRaManager(manager=self, settings=self.settings)
+        from terkin.network.lora import LoRaAdapter
+        self.lora_manager = LoRaAdapter(network_manager=self, settings=self.settings)
         self.lora_manager.start()
+
+    def start_lte(self):
+        """ """
+        from terkin.network.lte import SequansLTE
+        self.lte_manager = SequansLTE(network_manager=self, settings=self.settings)
+        self.lte_manager.start()
 
     def start_gprs(self):
         from terkin.network.gprs import GPRSManager
@@ -136,15 +155,20 @@ class NetworkManager:
 
     def start_modeserver(self):
         """Start UDP server for pulling device into maintenance mode."""
+
+        # UDP server settings.
         #ip = self.wifi_manager.get_ip_address()
         ip = '0.0.0.0'
-        port = 666
+        port = self.settings.get('services.api.modeserver.port', 666)
+
         log.info('Starting mode server on {}:{}'.format(ip, port))
+        from terkin.api.udp import UdpServer
         self.mode_server = UdpServer(ip, port)
         self.mode_server.start(self.handle_modeserver)
 
     def stop_modeserver(self):
-        self.mode_server.stop()
+        if self.mode_server:
+            self.mode_server.stop()
 
     def start_httpserver(self):
         """Start HTTP server for managing the device."""
@@ -156,10 +180,10 @@ class NetworkManager:
         self.http_api.start()
 
     def stop_httpserver(self):
-        if self.settings.get('services.api.http.enabled', False):
+        if self.http_api:
             try:
                 log.info('Shutting down HTTP server')
-                self.http_api.webserver.Stop()
+                self.http_api.stop()
             except Exception as ex:
                 log.exc(ex, 'Shutting down HTTP server failed')
 

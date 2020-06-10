@@ -14,6 +14,9 @@ _chrono = None
 
 
 def get_chronometer():
+    """
+    Get a timer that counts from boot.
+    """
     global _chrono
     if _chrono:
         return _chrono
@@ -35,7 +38,9 @@ else:
 
 
 class TimedLogRecord(logging.LogRecord):
-    """ """
+    """ 
+    Assign a time (since boot) to a log record.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         chrono = get_chronometer()
@@ -75,7 +80,10 @@ def getLogger(name=None, level=logging.INFO):
     :param level:  (Default value = logging.INFO)
 
     """
-    from logging import _loggers
+    try:
+        from logging import _loggers
+    except ImportError:
+        return logging.getLogger(name=name)
 
     if name is None:
         name = "root"
@@ -114,12 +122,16 @@ loggers_backup = {
 
 
 def disable_logging():
-    """ """
+    """ 
+    Disabe logging.
+    """
     Logger.log = noop
     ExtendedLogger.log = noop
 
 
 def enable_logging():
-    """ """
+    """ 
+    Enable logging.
+    """
     Logger.log = loggers_backup['Logger']
     ExtendedLogger.log = loggers_backup['ExtendedLogger']

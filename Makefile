@@ -63,12 +63,15 @@ include tools/help.mk
 include tools/base.mk
 include tools/setup.mk
 include tools/build.mk
+include tools/docs.mk
 include tools/release.mk
 
 include tools/terkin.mk
 include tools/pycom.mk
 include tools/micropython.mk
 include tools/bluetooth.mk
+
+include tools/cpython.mk
 
 
 # ----

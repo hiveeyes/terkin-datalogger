@@ -2,6 +2,7 @@
 .idea
 .pioenvs
 *.pyc
+*.egg-info
 settings.py
 /dist-packages
 /dist-packages-mpy
@@ -20,3 +21,4 @@ presets.mk
 *~
 .coverage
 /spikes
+/doc/build
