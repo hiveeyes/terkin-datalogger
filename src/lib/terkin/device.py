@@ -186,7 +186,7 @@ class TerkinDevice:
     def blink_led(self, color, count=1):
         """
 
-        :param color: 
+        :param color: rgb value as three hex values 0-255, e.g. 0x00FF00 for green
         :param count:  (Default value = 1)
 
         """
@@ -199,6 +199,15 @@ class TerkinDevice:
                     time.sleep(0.15)
                     pycom.rgbled(0x000000)
                     time.sleep(0.10)
+        elif self.settings.get('main.rgb_led.simple', False):
+            led = machine.Pin(int(self.settings.get('main.rgb_led.pin')[1:]),machine.Pin.OUT)
+            for _ in range(count):
+                led.value(1)
+                time.sleep(0.15)
+                led.value(0)
+                time.sleep(0.10)
+            
+
 
     def start_telemetry(self):
         """ """
