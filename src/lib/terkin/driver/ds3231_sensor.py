@@ -2,7 +2,7 @@
 # License: GNU General Public License, Version 3
 from terkin import logging
 from terkin.sensor import AbstractSensor
-from DS3231 import DS3231 as DS3231
+import DS3231tokei as DS3231
 from machine import RTC
 
 log = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class DS3231Sensor(AbstractSensor):
 
         data = {}
 
-        temperature = self.driver.Temperature()
+        temperature = self.driver.getTemperature()
 
         # Prepare readings.
         values = {
@@ -76,13 +76,13 @@ class DS3231Sensor(AbstractSensor):
         """ set the system time to RTC time """
 
         rtc = RTC()
-        [year,month,day,dotw,hour,minute,second] = self.DateTime() # get the date/time from the DS3231
+        [year,month,day,dotw,hour,minute,second] = self.getDateTime() # get the date/time from the DS3231
         if year > 2019: # check valid data 
-            rtc.datetime([year,month,dotw,day,hour,minute,second,0])   # set date/time
+            rtc.init((year,month,day,dotw,hour,minute,second,0))    # set date/time
+            log.debug("Time set:     {}".format(rtc.datetime()))
         else:
             log.warning("DS3231 date/time not set, not setting RTC")
 
-        log.debug("Time set:     {}".format(rtc.datetime()))
 
 
     

@@ -618,26 +618,57 @@ class TerkinDatalogger:
     def shutoff(self):
         """ shut off the MCU """
 
-        from DS3231 import DS3231 as DS3231
+        import DS3231tokei
         import utime
+        from machine import Pin, RTC
 
-        ds = DS3231(self.bus)
-        interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert to minutes
-        (year,month,day,hour,minute,second, dotw, doty) = utime.localtime() # get the current time
+        # LED an
+        led = Pin(14,Pin.OUT)
+        horn = Pin(26,Pin.OUT)
+        led.value(1)
+        horn.value(1)
+        utime.sleep(1)
+        led.value(0)
+        horn.value(0)
+
+        bus = self.sensor_manager.get_bus_by_name('i2c:0')
+        ds = DS3231tokei.DS3231(bus.adapter)
+        interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert from minutes to seconds
+        (year,month,day,dotw,hour,minute,second) = ds.getDateTime() # get the current time
+
+        print('Time is: ', day,hour,minute)
+
+        rtc = RTC() # create RTC
+        if year < 2001:
+            year = 2001 # sanity check, as of mpy 1.12 year must be >= 2001
+        rtc.init((year,month,day,dotw,hour,minute,second,0)) # set time
 
         # Compute sleeping duration from measurement interval and elapsed time.
-        elapsed = self.duty_chrono.read()
+        elapsed = int(self.duty_chrono.read())
         now_secs = utime.mktime(utime.localtime())
         wake_at = now_secs - elapsed + interval
         if (wake_at - now_secs) < 180:  # don't shutoff for less than 3 minutes
             wake_at += interval
 
+        print('Now:',now_secs, 'Wake at:', wake_at)
+
         (year,month,day,hour,minute,second, dotw, doty) = utime.localtime(wake_at) # convert the wake up time
 
         # set alarm
-        ds.ALARM(day,hour,minute.ds.PER_DAY)
+        ds.setAlarm2(day,hour,minute, DS3231tokei.A2_ON_HOUR_MINUTE)
+
+        print('Wake at: ', day,hour,minute)
 
         # turn off MCU via MOSFET
-        ds.ClearAlarm() 
+        print('Good night')
+
+        utime.sleep(1)
+
+        ds.enableAlarm2()
+        ds.resetAlarm2()        
 
         # The End
+
+    
+
+
