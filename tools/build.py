@@ -42,6 +42,8 @@ from glob import glob
 import os
 import sys
 import json
+from pathlib import Path
+
 import click
 from shell_utils import shell, cd, env, path
 from tools.notify import notify_user
@@ -80,11 +82,11 @@ class Artefact:
 
     def save(self, release_path):
         if self.firmware:
-            extension = os.path.splitext(self.firmware)[-1]
+            extension = ''.join(Path(self.firmware).suffixes[-2:])
             shell(f'mkdir -p "{release_path}/firmware"', silent=True)
             shell(f'cp "{self.firmware}" "{release_path}/firmware/{self.name}{extension}"', silent=True)
         if self.application:
-            extension = os.path.splitext(self.application)[-1]
+            extension = ''.join(Path(self.application).suffixes[-1:])
             shell(f'mkdir -p "{release_path}/application"', silent=True)
             shell(f'cp "{self.application}" "{release_path}/application/{self.name}{extension}"', silent=True)
 
@@ -94,7 +96,7 @@ class MicroPythonBuilder:
     def __init__(self,
                  vendor=None, label=None,
                  micropython_path=None, toolchain_path=None, espidf_path=None,
-                 architecture=None, board=None, manifest=None, sources=None, pycom_variant=None,
+                 architecture=None, manifest=None, sources=None, main_files=None, pycom_variant=None,
                  verbose=False):
         self.vendor = vendor
         self.label = label
@@ -102,15 +104,15 @@ class MicroPythonBuilder:
         self.toolchain_path = toolchain_path
         self.espidf_path = espidf_path
         self.architecture = architecture
-        self.board = board
         self.manifest = manifest
         self.sources = sources
+        self.main_files = main_files
         self.pycom_variant = pycom_variant
         self.verbose = verbose
 
         self.pycom_frozen_path = f'{self.micropython_path}/esp32/frozen/Custom'
 
-    def build_genuine(self, manifest):
+    def build_genuine(self, board, manifest):
 
         click.secho(f'Building {yellow(self.vendor.title())} MicroPython firmware '
                     f'for {yellow(self.architecture)} with manifest file {yellow(self.manifest)}.')
@@ -118,23 +120,23 @@ class MicroPythonBuilder:
         with env(ESPIDF=self.espidf_path):
 
             # Build release.
-            shell(f'make -j8 --directory=ports/{self.architecture} BOARD={self.board} FROZEN_MANIFEST={manifest}')
+            shell(f'make -j8 --directory=ports/{self.architecture} BOARD={board} FROZEN_MANIFEST={manifest}')
 
             # Find release artefact.
             try:
 
                 # TODO: Put ESP-IDF version into the release name.
-                release_board = f'{self.architecture.upper()}-{self.board.replace("_", "-")}'
-                release_version = shell(f"""cat {self.micropython_path}/ports/{self.architecture}/build-{self.board}/genhdr/mpversion.h | grep MICROPY_GIT_TAG | cut -d'"' -f2""", capture=True, silent=True).stdout.strip()
+                release_board = f'{self.architecture.upper()}-{board.replace("_", "-")}'
+                release_version = shell(f"""cat {self.micropython_path}/ports/{self.architecture}/build-{board}/genhdr/mpversion.h | grep MICROPY_GIT_TAG | cut -d'"' -f2""", capture=True, silent=True).stdout.strip()
                 release_label = self.label
 
-                firmware_path = f'{self.micropython_path}/ports/{self.architecture}/build-{self.board}/firmware.bin'
-                application_path = f'{self.micropython_path}/ports/{self.architecture}/build-{self.board}/application.elf'
+                firmware_path = f'{self.micropython_path}/ports/{self.architecture}/build-{board}/firmware.bin'
+                application_path = f'{self.micropython_path}/ports/{self.architecture}/build-{board}/application.elf'
                 return Artefact.make(name=f'{release_board}-{release_version}-{release_label}', firmware=firmware_path, application=application_path)
             except:
                 pass
 
-    def build_pycom(self):
+    def build_pycom(self, board):
 
         click.secho(f'Building {yellow(self.vendor.title())} MicroPython firmware '
                     f'for {yellow(self.architecture)} with frozen modules from {yellow(str(self.sources))}.')
@@ -153,14 +155,14 @@ class MicroPythonBuilder:
         with env(IDF_PATH=self.espidf_path):
 
             # Build release.
-            shell(f'make -j8 --directory=esp32 BOARD={self.board} VARIANT={pycom_variant} FS=LFS release')
+            shell(f'make -j8 --directory=esp32 BOARD={board} VARIANT={pycom_variant} FS=LFS release')
 
             # Find release artefact.
             try:
-                release_board = shell(f"echo '{self.board}' | tr '[IOY]' '[ioy]'", capture=True, silent=True).stdout.strip()
+                release_board = shell(f"echo '{board}' | tr '[IOY]' '[ioy]'", capture=True, silent=True).stdout.strip()
                 release_version = shell(f"""cat esp32/pycom_version.h | grep SW_VERSION_NUMBER | tail -n1 | cut -d'"' -f2""", capture=True, silent=True).stdout.strip()
                 firmware_path = f'{self.micropython_path}/esp32/{build_dir}/{release_board}-{release_version}.tar.gz'
-                application_path = f'{self.micropython_path}/esp32/{build_dir}/{self.board}/release/application.elf'
+                application_path = f'{self.micropython_path}/esp32/{build_dir}/{board}/release/application.elf'
                 return Artefact.make(name=f'{release_board}-{release_version}', firmware=firmware_path, application=application_path)
             except:
                 pass
@@ -180,11 +182,22 @@ class MicroPythonBuilder:
 
     def sync_frozen(self):
         frozen_path = self.pycom_frozen_path
+
         click.secho(f'Copying sources from {yellow(str(self.sources))} to frozen path {frozen_path}.')
-        shell(f'rsync -auv --delete --exclude=__pycache__ {" ".join(self.sources)} {frozen_path}')
+        shell(f'rsync -auv --delete --exclude=__pycache__ --exclude=*.egg-info --exclude=terkin_cpython --exclude=ratrack {" ".join(self.sources)} {frozen_path}')
+
+        click.secho(f'Copying main files from {yellow(str(self.main_files))} to frozen path {frozen_path}.')
+        for main_file in self.main_files:
+            filename = os.path.basename(main_file)
+            target_file = os.path.join(frozen_path, '_' + filename)
+            shell(f'cp {main_file} {target_file}')
+
+        # MicroWebSrv2 is too large to be frozen into the firmware, so remove it.
         shell(f'rm -r {frozen_path}/MicroWebSrv2', check=False, silent=True)
 
-    def build(self):
+    def build(self, board):
+
+        click.secho(f'Building firmware for board {yellow(board)}')
 
         if self.label:
             os.environ['MICROPY_LABEL'] = self.label
@@ -196,9 +209,9 @@ class MicroPythonBuilder:
         with path(self.toolchain_path, python_path, prepend=True):
             with cd(self.micropython_path):
                 if self.vendor == MicroPythonVendor.Genuine:
-                    return self.build_genuine(self.manifest)
+                    return self.build_genuine(board, self.manifest)
                 elif self.vendor == MicroPythonVendor.Pycom:
-                    return self.build_pycom()
+                    return self.build_pycom(board)
                 else:
                     raise NotImplementedError(f'Building MicroPython vendor {yellow(self.vendor)} not implemented yet')
 
@@ -206,6 +219,13 @@ class MicroPythonBuilder:
 def notify(message):
     title = 'MicroPython Builder'
     notify_user(title, message)
+
+
+def read_list(argument):
+    if argument:
+        return argument.split(',')
+    else:
+        return []
 
 
 @click.command()
@@ -222,45 +242,49 @@ def notify(message):
                               'WIPY, LOPY, SIPY, GPY, LOPY4, FIPY')
 @click.option('--manifest', help='Path to the MicroPython manifest.py file (genuine)')
 @click.option('--sources', help='Paths to copy into frozen folder, comma separated (pycom)')
+@click.option('--main-files', help='boot.py and main.py to copy into frozen folder, comma separated (pycom)')
 @click.option('--pycom-variant', help='Pycom VARIANT (BASE, PYBYTES)')
 @click.option('--release-path', help='Where to store release artefacts')
 @click.option('--verbose', is_flag=True, help='Increase verbosity')
 @click.version_option(version=__VERSION__)
 @click.help_option()
-def main(vendor, label, micropython, toolchain, espidf, architecture, board, manifest, sources, pycom_variant, release_path, verbose):
+def main(vendor, label, micropython, toolchain, espidf, architecture, board, manifest, sources, main_files, pycom_variant, release_path, verbose):
 
     notify('Starting build process')
 
     if manifest:
         manifest = os.path.abspath(manifest)
 
-    if sources:
-        sources = sources.split(',')
-        here = os.path.abspath(os.path.curdir)
-        sources = [os.path.join(here, source) for source in sources]
+    here = os.path.abspath(os.path.curdir)
+    sources = list(map(lambda item: os.path.join(here, item), read_list(sources)))
+    main_files = list(map(lambda item: os.path.join(here, item), read_list(main_files)))
+    
+    boards = read_list(board)
 
     builder = MicroPythonBuilder(
         vendor=vendor, label=label,
         micropython_path=micropython, toolchain_path=toolchain, espidf_path=espidf,
-        architecture=architecture, board=board,
-        manifest=manifest, sources=sources, pycom_variant=pycom_variant,
+        architecture=architecture,
+        manifest=manifest, sources=sources, main_files=main_files, pycom_variant=pycom_variant,
         verbose=verbose)
 
-    artefact = builder.build()
+    for board in boards:
 
-    if artefact and artefact.firmware:
-        notify('Build succeeded')
-        click.secho(f'{green("SUCCESS")}: Firmware image building succeeded.')
-        print(artefact.to_json())
-
-        if release_path:
-            release_path = os.path.abspath(release_path)
-            artefact.save(release_path)
-            click.secho(f'{green("SUCCESS")}: Artefacts have been saved into {release_path}.')
-
-    else:
-        notify('Build failed')
-        click.secho(f'{red("WARNING")}: No release artefacts found.')
+        artefact = builder.build(board)
+    
+        if artefact and artefact.firmware:
+            notify('Build succeeded')
+            click.secho(f'{green("SUCCESS")}: Firmware image building succeeded.')
+            print(artefact.to_json())
+    
+            if release_path:
+                release_path = os.path.abspath(release_path)
+                artefact.save(release_path)
+                click.secho(f'{green("SUCCESS")}: Artefacts have been saved into {release_path}.')
+    
+        else:
+            notify('Build failed')
+            click.secho(f'{red("WARNING")}: No release artefacts found.')
 
 
 if __name__ == '__main__':

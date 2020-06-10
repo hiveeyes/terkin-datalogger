@@ -51,10 +51,9 @@ class TelemetryManager:
 
 
 class TelemetryAdapter:
-    """Telemetry node client: Network participant API
+    """
+    Telemetry node client: Network participant API
     Todo: Implement exponential backoff instead of MAX_FAILURES.
-
-
     """
 
     MAX_FAILURES = 3
@@ -115,7 +114,7 @@ class TelemetryAdapter:
     def format_uri(self, **kwargs):
         """
 
-        :param **kwargs:
+        :param kwargs:
 
         """
         data = copy(self.address)
@@ -208,7 +207,7 @@ class CSVTelemetryAdapter(TelemetryAdapter):
         """
 
         :param data:
-        :param **kwargs:
+        :param kwargs:
 
         """
         uri = self.format_uri(**kwargs)
@@ -555,7 +554,7 @@ class TelemetryTransportMQTT:
 
     def __init__(self, uri, format):
 
-        log.info('Telemetry transport: MQTT over TCP over WiFi')
+        log.info('Telemetry transport: MQTT over TCP')
 
         # Addressing.
         self.uri = uri

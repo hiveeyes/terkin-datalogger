@@ -8,7 +8,7 @@ README = open(os.path.join(here, 'README.rst'), encoding="utf-8").read()
 requires = [
 
     # 3rd-party libraries
-    'terkin-micropython-libraries==0.9.0',
+    'terkin-micropython-libraries==0.10.0',
 
     # Runtime
     'mock==4.0.2',
@@ -31,6 +31,9 @@ requires = [
     'adafruit-circuitpython-bme280==2.4.1',
     'adafruit-circuitpython-ads1x15==2.2.1',
     'adafruit-circuitpython-si7021==3.2.1',
+    'adafruit-circuitpython-bmp280==3.2.1',
+    'adafruit-circuitpython-ina219==3.4.2',
+
 
     # Victron Energy VE.Direct text protocol driver.
     #'git+https://github.com/karioja/vedirect@f74c0f2',
@@ -39,8 +42,15 @@ requires = [
 
 extras = {
     'sbc': [
+
+        # I2C SMBus HAL module.
+        'smbus==1.1.post2',
+
         # SPI HAL module.
         'spidev==3.4',
+
+        # RPI USV+ Raspberry Pi - USV+
+        'rpi-piusv==0.1.0',
 
         # Raspberry Pi utilities.
         'gpiozero==1.5.1',
@@ -52,7 +62,7 @@ extras = {
 }
 
 setup(name='terkin',
-      version='0.9.0',
+      version='0.10.0',
       description='A flexible data logger for MicroPython and CPython',
       long_description=README,
       license="AGPL 3, EUPL 1.2",

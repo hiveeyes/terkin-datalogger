@@ -6,4 +6,7 @@ monkeypatch_terkin()
 from test.util.micropython import monkeypatch
 monkeypatch()
 
+from test.util.adafruit import monkeypatch
+monkeypatch()
+
 from test.fixtures import *

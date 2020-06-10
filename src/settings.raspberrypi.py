@@ -24,7 +24,7 @@ main = {
         'enabled': True,
 
         # Log configuration settings at system startup.
-        'configuration': True,
+        'configuration': False,
     },
 
     # Configure Watchdog.
@@ -393,7 +393,7 @@ sensors = {
         {
             'id': 'ds18b20-1',
             'name': 'temperature',
-            'description': 'Wabengasse 1',
+            'description': '',
             'type': 'DS18B20',
             'enabled': True,
             'bus': 'onewire:0',
@@ -401,7 +401,7 @@ sensors = {
                 {
                     'id': 'ds18b20-r1c1',
                     'address': '0517c482cfff',
-                    'description': 'DS18B20:0517c482cfff on Onewire:0',
+                    'description': 'DS18B20:0517c482cfff on onewire:0',
                     'enabled': True,
                     #'offset': 0.42,
 
@@ -413,7 +413,7 @@ sensors = {
                 {
                     'id': 'ds18b20-r1c2',
                     'address': '2222222222222222',
-                    'description': 'Reihe 1, Spalte 2',
+                    'description': 'DS18B20:2222222222222222 on onewire:0',
                     'enabled': False,
                     #'offset': -0.42,
 
@@ -439,6 +439,14 @@ sensors = {
             'enabled': True,
             'bus': 'i2c:3',
             'address': 0x76,
+        },
+        {
+            'id': 'bmp280-1',
+            'description': 'BMP280 on ic2:1 0x77',
+            'type': 'BMP280',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x77,
         },
         {
             'id': 'ads1x15-1',
@@ -490,6 +498,30 @@ sensors = {
             'type': 'gpiozero',
             'enabled': True,
         },
+        {
+            'id': 'ina219-1',
+            'description': 'INA219 on ic2:1 0x40',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x40,
+        },
+        {
+            'id': 'ina219-2',
+            'description': 'INA219 on ic2:1 0x44',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x44,
+        },
+        {
+            'id': 'max17043-1',
+            'description': 'Akkuspannung und -prozent (MAX17043)',
+            'type': 'MAX17043',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x36,
+        },                
     ],
     'buses': [
         {
@@ -500,14 +532,13 @@ sensors = {
             "pin_sda": 'board.SDA',
             "pin_scl": 'board.SCL',
         },
-        # """
+
         # Register more I2C buses with Adafruit Blinka.
         #
         # Make Adafruit Blinka learn another I2C bus.
         # Please make sure you define it within /boot/config.txt like::
         #
         # dtoverlay=i2c-gpio,bus=5,i2c_gpio_delay_us=1,i2c_gpio_sda=26,i2c_gpio_scl=20
-        # """
         {
             "id": "bus-i2c-5",
             "family": "i2c",
@@ -521,7 +552,6 @@ sensors = {
             "family": "onewire",
             "number": 0,
             "enabled": True,
-            # "pin_data": "P11",
             "driver": "sysfs",
             "sysfs": "/sys/bus/w1/devices/w1_bus_master1/",
         },

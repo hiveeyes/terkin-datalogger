@@ -269,9 +269,9 @@ sensors = {
             'enabled': True,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
-            'scale': 4.424242,
             'offset': -73000,
-            'decimals' : 3,
+            'scale': 4.424242,
+            'decimals': 3,
         },
         {
             'id': 'ds18b20-1',

@@ -5,6 +5,39 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Add DS3231micro.py driver. Thanks, @poesel!
+- Upgrade to PyCayenneLPP 1.5.0. Thanks, @smlng!
+- Add "make firmwares" release target
+- Add "get_sensor_by_type" helper method
+- Switch to "DS3231tokei" library. Thanks, @poesel!
+
+
+2020-05-22 0.10.0
+=================
+- Rework LoRaWAN settings and remove ``join_attempt_count`` since we can't control
+  the join attempts. Thanks, @thiasB!
+- Add APB activation method for LoRaWAN. Thanks, @thiasB!
+- Rename "busses" to "buses" all over the place
+- Fix ABP auth parameter passing for Dragino
+- Improve inline documentation and logging re. LoRaWAN OTAA vs. ABP
+- Disable LoRa by default
+- LoRaWAN: consider restored join status for both, OTAA and ABP activation. Thanks, @thiasB!
+- Add Sphinx documentation. Thanks, @poesel!
+- Update Makefile tooling for upgrading Pycom MicroPython firmware
+- Add Makefile target to generate callgraph
+- Add minimal weight scale adjustment wizard
+- Add Sequans LTE Modem support for Pycom GPy/FiPy devices. Thanks, @wetterfrosch and @tonke!
+- Refactor more sensors for self-registration
+- Adjust sandbox for installation on newer Debian/Ubuntu distributions. Thanks, Jan!
+- Add sensor wrappers for BMP280 and INA219. Thanks, @tonke!
+- Don't log configuration on startup by default. Thanks, @tonke!
+- Improve registering buses
+- Add sensor tests for SBCs
+- Add sensor wrapper for PiUSV. Thanks, @tonke!
+- Update PyCayenneLPP library to include "Generic" and "Unix Time" types.
+- Add updated MicroPython "datetime" module to satisfy PyCayenneLPP
+- Improve firmware builder
+- Add make target to upload "settings.py"
 
 2020-05-04 0.9.0
 ================
@@ -643,7 +676,7 @@ Development
 **Baby steps.**
 
 - Initial commit
-- Add .gitignore to exclude `*_local.py` configuration files
+- Add .gitignore to exclude ``*_local.py`` configuration files
 - WIP: Hands on FiPy
 - First stable version
 
@@ -659,3 +692,4 @@ Development
 .. _@pinguin999: https://github.com/pinguin999
 .. _@rohlan: https://github.com/rohlan
 .. _@emmanuel-florent: https://github.com/emmanuel-florent
+.. _@robert-hh: https://github.com/robert-hh/

@@ -1,28 +1,72 @@
-.. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+.. _terkin-readme:
 
-.. image:: https://img.shields.io/badge/CPython-3.x-green.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+######
+Terkin
+######
 
-.. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
-    :target: https://github.com/hiveeyes/terkin-datalogger
+.. container:: align-center
 
-|
+    .. image:: https://assets.okfn.org/images/ok_buttons/ok_80x15_red_green.png
+        :target: https://okfn.org/opendata/
 
-#################
-Terkin Datalogger
-#################
+    .. image:: https://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png
+        :target: https://okfn.org/opendata/
 
-Data logging for humans, written in MicroPython.
+    .. image:: https://assets.okfn.org/images/ok_buttons/os_80x15_orange_grey.png
+        :target: https://okfn.org/opendata/
+
+    |
+
+    .. figure:: https://ptrace.getkotori.org/2016-05-23_chart-recorder.png
+        :alt: Chart recorder
+        :width: 200px
+
+    *Data logging for humans, written in MicroPython.*
+
+----
+
+- **Documentation**: https://terkin.org/
+
+- **Source Code**: https://github.com/hiveeyes/terkin-datalogger
+
+- **PyPI**: https://pypi.org/project/terkin/
+
+- **Status**:
+
+  .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
+        :target: https://micropython.org
+
+  .. image:: https://img.shields.io/badge/CPython-3.x-green.svg
+        :target: https://python.org
+
+  .. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
+        :target: https://github.com/hiveeyes/terkin-datalogger
+
+  .. image:: https://img.shields.io/pypi/status/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+  .. image:: https://img.shields.io/pypi/v/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+  .. image:: https://img.shields.io/pypi/l/terkin.svg
+        :target: https://github.com/hiveeyes/terkin-datalogger/blob/master/LICENSE
+
+  .. image:: https://img.shields.io/pypi/dm/terkin.svg
+        :target: https://pypi.org/project/terkin/
+
+----
 
 
-*****
-About
-*****
-The Terkin Datalogger is a flexible data logger application
-for MicroPython and CPython environments.
+***********
+At a glance
+***********
 
-It has been conceived for the Bee Observer (BOB) project and was funded by the BMBF.
+Terkin is a flexible data logger application for MicroPython and
+CPython environments. It provides a lot of sensor-, networking-
+and telemetry-connectivity options.
+
+Terkin has been conceived for the Bee Observer (BOB)
+and Hiveeyes projects and was funded by the BMBF.
 
 - https://bee-observer.hiveeyes.org/bmbf-verbundprojekt
 - https://community.hiveeyes.org/c/bee-observer
@@ -46,7 +90,7 @@ Overview
 Architecture
 ============
 - ``Datalogger`` and ``Device``
-  are singleton objects representing the data logger application and your logging device.
+  are singleton objects representing the data logger application and the logging device.
 
 - Components of the sensor subsystem wrap hardware drivers to generalize sensor reading.
 
@@ -66,13 +110,13 @@ Platforms
 =========
 - Genuine MicroPython: PYBOARD-D, TTGO T-Call, TTGO T-Beam
 - Pycom MicroPython: WiPy, GPy, LoPy4, FiPy
-- CPython: Linux x86_64, Linux ARM (BeagleBone, Odroid, Raspberry Pi), macOS, WSL2
+- CPython: Linux x86_64, Linux ARM (BeagleBone, Odroid, Raspberry Pi), macOS, WSL
 
 Peripherals
 ===========
 - Sensors: 1-Wire, I2C, ADC, System, WiFi
-- Drivers: DS18B20, BME280, SI7021, ADS1x15, HX711, MAX17043, DS3231, AT24C32
-- Adapters: GPSD, EPSolar ViewStar PWM charge controller, Victron Energy VE.Direct MPPT charge controller
+- Drivers: DS18B20, BME280, BMP280, SI7021, ADS1x15, HX711, MAX17043, DS3231, AT24C32, INA219
+- Adapters: GPSD, EPSolar ViewStar PWM charge controller, Victron Energy VE.Direct MPPT charge controller, Raspberry Pi USV+
 - Connectivity: WiFi, SIM800 for GPRS, SX127x for LoRa (LoPy4, FiPy and `Dragino LoRa/GPS HAT`_), Sequans Monarch for `LTE Cat M1`_ or `LTE Cat NB1`_
 - Telemetry: WiFi/MQTT, WiFi/HTTP, SIM800/HTTP, LoRaWAN/TTN OTAA+ABP
 
@@ -147,47 +191,19 @@ successfully on **Linux**, **macOS** and the Windows Subsystem for Linux (WSL)
 shipped with **Windows 10**.
 
 
-*******************
-Project information
-*******************
-
-About
-=====
-These links will guide you to the source code of the
-»Terkin Datalogger« and its documentation.
-
-- `Terkin Datalogger on GitHub <https://github.com/hiveeyes/terkin-datalogger>`_
-
-Contributing
-============
-We are always happy to receive code contributions, ideas, suggestions
-and problem reports from the community.
-
-So, if you'd like to contribute you're most welcome.
-Spend some time taking a look around, locate a bug, design issue or
-spelling mistake and then send us a pull request or `create an issue`_.
-
-Thanks in advance for your efforts, we really appreciate any help or feedback.
-
-Licenses
-========
-This software is copyright © 2017-2020 The Hiveeyes Developers and contributors. All rights reserved.
-
-It is and will always be **free and open source software**.
-
-Use of the source code included here is governed by the GNU General Public License
-`GNU-GPL-3.0`_ and the European Union Public License `EUPL-1.2`_.
-Please also have a look at the notices about licenses of third-party components.
-
-
 ****************
 Acknowledgements
 ****************
-This firmware is an effort of many people. So, thanks to all
-the `contributors`_ who got their hands dirty and helped to
-co-create and conceive it in one way or another.
+This software is an effort of many people. Thanks to all the
+`contributors`_ who helped to co-create and conceive
+it in one way or another. You know who you are.
 
-You know who you are.
+
+*******
+License
+*******
+This project is licensed under the terms of the AGPL license.
+
 
 
 ----
@@ -195,11 +211,11 @@ You know who you are.
 Have fun!
 
 
-.. _Setup Terkin Datalogger sandbox: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/sandbox-setup.rst
-.. _contributors: https://github.com/hiveeyes/terkin-datalogger/blob/master/CONTRIBUTORS.rst
+.. _Setup Terkin Datalogger sandbox: https://terkin.org/docs/development/
+.. _contributors: https://terkin.org/docs/project/contributors.html
 .. _create an issue: https://github.com/hiveeyes/terkin-datalogger/issues/new
-.. _Getting started with the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst
-.. _Running the Terkin Datalogger: https://github.com/hiveeyes/terkin-datalogger/blob/0.4.0/doc/screenshots/05-running.rst
+.. _Getting started with the Terkin Datalogger: https://terkin.org/docs/getting-started/
+.. _Running the Terkin Datalogger: https://terkin.org/docs/gallery/screenshots/05-running.html
 .. _release page: https://github.com/hiveeyes/terkin-datalogger/releases
 
 .. _Pycom FiPy: https://pycom.io/product/fipy/
@@ -209,7 +225,7 @@ Have fun!
 .. _LTE Cat M1: https://docs.pycom.io/tutorials/lte/cat-m1.html
 .. _LTE Cat NB1: https://docs.pycom.io/tutorials/lte/nb-iot.html
 
-.. _GNU-GPL-3.0: https://opensource.org/licenses/GPL-3.0
+.. _GNU-AGPL-3.0: https://opensource.org/licenses/AGPL-3.0
 .. _EUPL-1.2: https://opensource.org/licenses/EUPL-1.2
 
 .. _Dragino LoRa/GPS HAT: https://wiki.dragino.com/index.php?title=Lora/GPS_HAT

@@ -25,7 +25,10 @@ class DeviceStatus:
 
 
 class TerkinDevice:
-    """ """
+    """
+    Singleton object for enabling different device-related subsystems
+    and providing lowlevel routines for sleep/resume functionality.
+    """
 
     def __init__(self, application_info: ApplicationInfo):
 
@@ -54,7 +57,9 @@ class TerkinDevice:
         self.rtc = None
 
     def start_networking(self):
-        """ """
+        """ 
+        Start all configured networking devices.
+        """
         log.info('Starting networking')
 
         from terkin.network import NetworkManager, WiFiException
@@ -108,6 +113,17 @@ class TerkinDevice:
         else:
             log.info("[LoRa] Interface not enabled in settings.")
 
+        # Initialize LTE modem.
+        if self.settings.get('networking.lte.enabled'):
+            try:
+                self.networking.start_lte()
+                self.status.networking = True
+            except Exception as ex:
+                log.exc(ex, 'Unable to start LTE modem')
+                self.status.networking = False
+        else:
+            log.info("[LTE]  Interface not enabled in settings.")
+
         # Initialize GPRS modem.
         if self.settings.get('networking.gprs.enabled'):
             try:
@@ -123,7 +139,10 @@ class TerkinDevice:
         #self.networking.print_status()
 
     def start_rtc(self):
-        """The RTC is used to keep track of the date and time."""
+        """
+        The RTC is used to keep track of the date and time.
+        Syncs RTC with a NTP server.
+        """
         # https://docs.pycom.io/firmwareapi/pycom/machine/rtc.html
         # https://medium.com/@chrismisztur/pycom-uasyncio-installation-94931fc71283
         import time
@@ -136,12 +155,12 @@ class TerkinDevice:
         log.info('RTC: %s', self.rtc.now())
 
     def run_gc(self):
-        """Curate the garbage collector.
+        """
+        Curate the garbage collector.
         https://docs.pycom.io/firmwareapi/micropython/gc.html
-        
+
         For a "quick fix", issue the following periodically.
         https://community.hiveeyes.org/t/timing-things-on-micropython-for-esp32/2329/9
-
 
         """
         import gc
@@ -167,7 +186,7 @@ class TerkinDevice:
     def blink_led(self, color, count=1):
         """
 
-        :param color: 
+        :param color: rgb value as three hex values 0-255, e.g. 0x00FF00 for green
         :param count:  (Default value = 1)
 
         """
@@ -180,6 +199,15 @@ class TerkinDevice:
                     time.sleep(0.15)
                     pycom.rgbled(0x000000)
                     time.sleep(0.10)
+        elif self.settings.get('main.rgb_led.simple', False):
+            led = machine.Pin(int(self.settings.get('main.rgb_led.pin')[1:]),machine.Pin.OUT)
+            for _ in range(count):
+                led.value(1)
+                time.sleep(0.15)
+                led.value(0)
+                time.sleep(0.10)
+            
+
 
     def start_telemetry(self):
         """ """

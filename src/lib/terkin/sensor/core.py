@@ -69,20 +69,40 @@ class SensorManager:
         """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
+    def get_sensor_by_type(self, type):
+        """
+        Return all sensors filtered by type.
+        """
+        for sensor in self.sensors:
+            if hasattr(sensor, 'type') and sensor.type == type:
+                yield sensor
+
+    def get_sensors_by_family(self, family):
+        """
+        Return all sensors filtered by family.
+        """
+        for sensor in self.sensors:
+            if hasattr(sensor, 'family') and sensor.family == family:
+                yield sensor
+
     def setup_buses(self, buses_settings):
         """Register configured I2C, OneWire and SPI buses.
 
         :param buses_settings: 
 
         """
-        log.info("Starting all buses %s", buses_settings)
+
+        effective_buses = []
+        effective_bus_ids = []
         for bus_settings in buses_settings:
 
-            if bus_settings.get("enabled") is False:
-                log.debug('Bus with id "{}" and family "{}" is disabled, '
-                         'skipping registration'.format(bus_settings.get('id'), bus_settings.get('family')))
-                continue
+            if bus_settings.get("enabled"):
+                effective_buses.append(bus_settings)
+                effective_bus_ids.append(bus_settings['id'])
 
+        log.info('Starting buses: %s', effective_bus_ids)
+
+        for bus_settings in effective_buses:
             try:
                 self.setup_bus(bus_settings)
             except Exception as ex:
@@ -208,8 +228,9 @@ class OneWireBus(AbstractBus):
             self.ready = True
 
         except Exception as ex:
-            log.exc(ex, '1-Wire hardware driver failed')
-            return False
+            #log.exc(ex, '1-Wire hardware driver failed')
+            #return False
+            raise
 
         return True
 
@@ -333,13 +354,14 @@ class I2CBus(AbstractBus):
             self.ready = True
 
         except Exception as ex:
-            log.exc(ex, 'I2C hardware driver failed')
+            #log.exc(ex, 'I2C hardware driver failed')
+            raise
 
     def scan_devices(self):
         log.info('Scan I2C with id={} bus for devices...'.format(self.number))
         self.devices = self.adapter.scan()
         # i2c.readfrom(0x76, 5)
-        log.info("Found {} I2C devices: {}.".format(len(self.devices), self.devices))
+        log.info("Found {} I2C devices: {}".format(len(self.devices), self.devices))
 
     def scan_devices_smbus2(self, start=0x03, end=0x78):
         try:

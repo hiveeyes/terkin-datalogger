@@ -3,11 +3,27 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 from terkin import logging
-from terkin.sensor import AbstractSensor
+from terkin.sensor import SensorManager, AbstractSensor
 from terkin.util import get_platform_info
 
 log = logging.getLogger(__name__)
 platform_info = get_platform_info()
+
+
+def includeme(sensor_manager: SensorManager, sensor_info):
+    """
+    Create ADS1x15 sensor object.
+
+    :param sensor_manager:
+    :param sensor_info:
+
+    :return: sensor_object
+    """
+    sensor_object = ADS1x15Sensor(settings=sensor_info)
+    sensor_bus = sensor_manager.get_bus_by_name(sensor_info.get('bus'))
+    sensor_object.acquire_bus(sensor_bus)
+
+    return sensor_object
 
 
 class ADS1x15Sensor(AbstractSensor):
@@ -27,7 +43,7 @@ class ADS1x15Sensor(AbstractSensor):
         self.model = self.settings['model']
 
         # Can be overwritten by ``.set_address()``.
-        self.address = 0x48
+        self.address = self.settings.get('address', 0x48)
 
     def start(self):
 
@@ -39,6 +55,7 @@ class ADS1x15Sensor(AbstractSensor):
 
             # MicroPython
             if platform_info.vendor in [platform_info.MICROPYTHON.Vanilla, platform_info.MICROPYTHON.Pycom]:
+                # TODO: Integrate https://github.com/robert-hh/ads1x15 here.
                 raise NotImplementedError('ADS1x15 driver not implemented on MicroPython')
 
             # CPython

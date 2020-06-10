@@ -1,7 +1,8 @@
 import os
+import time
 import binascii
+
 from terkin import logging
-from terkin.sensor.common import AbstractBus, AbstractSensor
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ class LinuxSysfsDS18B20:
         # Analyze if the last 3 characters are 'YES'.
         while lines[0].strip()[-3:] != 'YES':
             time.sleep(0.2)
-            lines = read_temp_raw()
+            lines = self.read_temp_raw(device_file)
         # Find the index of 't=' in a string.
         equals_pos = lines[1].find('t=')
         if equals_pos != -1:

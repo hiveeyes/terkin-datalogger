@@ -3,19 +3,34 @@
 # General settings.
 main = {
 
-    # Measurement intervals in seconds.
+    # Measurement intervals in seconds, for shutoff in minutes.
     'interval': {
 
         # Apply this interval if device is in field mode.
-        'field': 60.0,
+        'field': 15.0,
 
         # Apply this interval if device is in maintenance mode.
         # https://community.hiveeyes.org/t/wartungsmodus-fur-den-terkin-datenlogger/2274
         'maintenance': 15.0,
+
+        # Apply this interval if device goes into shutoff
+        'shutoff': 10,
+        # night & winter mode: during the night or winter the interval is doubled (-> in a winter night it is quadrupled)
+        # beginning & end months are included: night from 20 to 5 -> 20.00h to 5.59h, winter from 10 to 2 -> October 1st to February 29th
+        # a start value of 0 means there is no night/winter, night_start > night_end, winter_start > winter_end
+        'night_start': 20,
+        'night_end' : 5,
+        'winter_start' : 10,
+        'winter_end' : 2,
     },
 
+    # the next three options are logically exclusive but if you insist: shutoff > deepsleep > lightsleep
+    # Whether to completely shutoff between measurements (requires DS3231!)
+    'shutoff': False,
     # Whether to use deep sleep between measurement cycles.
     'deepsleep': False,
+    # Whether to use ight sleep between measurement cycles.
+    'lightsleep': False,
 
     # Configure logging.
     'logging': {
@@ -24,7 +39,7 @@ main = {
         'enabled': True,
 
         # Log configuration settings at system startup.
-        'configuration': True,
+        'configuration': False,
     },
 
     # Configure Watchdog.
@@ -116,10 +131,11 @@ networking = {
 
     # LoRaWAN/TTN
     'lora': {
-        'enabled': True,
-        'antenna_attached': True,
+        'enabled': False,
+        'antenna_attached': False,
         'region': 'EU868',
-        'adr': False,
+        'datarate_join': 5, # 5 -> SF7BW125, 0 -> SF12BW125
+        'adr': True, # Adaptive data rate
 
         # Over-the-Air Activation (OTAA) vs. Activation by Personalization (ABP)
         # https://www.thethingsnetwork.org/forum/t/what-is-the-difference-between-otaa-and-abp-devices/2723
@@ -135,6 +151,15 @@ networking = {
             'network_session_key': '<FROM TTN CONSOLE>',
             'app_session_key': '<FROM TTN CONSOLE>',
         },
+    },
+
+    # LTE
+    'lte': {
+        'enabled': False,
+        'band': 8,
+        'apn': 'iot.1nce.net',
+        'attach_timeout': 10.0,
+        'connect_timeout': 5.0,
     },
 
     # GPRS/SIM800
@@ -341,7 +366,7 @@ sensors = {
             'description': 'Battery',
 
             # Enable/disable sensor.
-            'enabled': True,
+            'enabled': False,
 
             # On which Pin to schnuckle this.
             'pin': 'P16',
@@ -391,11 +416,11 @@ sensors = {
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
-            'enabled': True,
+            'enabled': False,
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
-            'scale': 4.424242,
             'offset': -73000,
+            'scale': 4.424242,
             'decimals': 3,
         },
         {
@@ -434,10 +459,18 @@ sensors = {
         },
         {
             'id': 'bme280-1',
-            'description': 'Temperatur, Druck und Feuchte außen (BME280)',
+            'description': 'Temperatur, Druck und Feuchte (BME280)',
             'type': 'BME280',
             'enabled': True,
             'bus': 'i2c:0',
+            'address': 0x76,
+        },
+        {
+            'id': 'bmp280-1',
+            'description': 'BMP280 on ic2:1 0x77',
+            'type': 'BMP280',
+            'enabled': False,
+            'bus': 'i2c:1',
             'address': 0x77,
         },
         {
@@ -447,6 +480,30 @@ sensors = {
             'enabled': False,
             'bus': 'i2c:0',
             'address': 0x40,
+        },
+        {
+            'id': 'ina219-1',
+            'description': 'INA219 on ic2:1 0x40',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x40,
+        },
+        {
+            'id': 'ina219-2',
+            'description': 'INA219 on ic2:1 0x44',
+            'type': 'INA219',
+            'enabled': False,
+            'bus': 'i2c:1',
+            'address': 0x44,
+        },
+        {
+            'id': 'max17043-1',
+            'description': 'Akkuspannung und -prozent (MAX17043)',
+            'type': 'MAX17043',
+            'enabled': False,
+            'bus': 'i2c:0',
+            'address': 0x36,
         },
     ],
     'buses': [
@@ -470,7 +527,7 @@ sensors = {
             "id": "bus-onewire-0",
             "family": "onewire",
             "number": 0,
-            "enabled": True,
+            "enabled": False,
             "pin_data": "P11",
             "driver": "native",
         },
