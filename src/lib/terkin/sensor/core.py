@@ -61,6 +61,14 @@ class SensorManager:
         log.debug('Found bus by name "%s": %s', name, bus)
         return bus
 
+    def get_bus_by_sensortype(self, type):
+        """
+        Return the bus for this sensor type.
+        """
+        for sensor in self.sensors:
+            if hasattr(sensor, 'type') and sensor.type == type:
+                return sensor.bus
+
     def get_sensor_by_name(self, name):
         """
 

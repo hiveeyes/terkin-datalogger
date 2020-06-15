@@ -255,11 +255,17 @@ class WiFiManager:
 
         # WiFi
         if self.station:
-            try:
-                log.info('Turning off WiFi')
-                self.station.deinit()
-            except Exception as ex:
-                log.exc(ex, 'Turning off WiFi failed')
+
+            if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
+
+                try:
+                    log.info('Turning off WiFi')
+                    self.station.deinit()
+                except Exception as ex:
+                    log.exc(ex, 'Turning off WiFi failed')
+
+            else:   # TODO: other platforms
+                pass
 
     def connect_stations(self, network_names):
         """

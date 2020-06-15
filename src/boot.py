@@ -15,10 +15,12 @@
 
 
 # Required to receive logging output when freezing the firmware.
-import os
-from machine import UART
-os.dupterm(UART(0, 115200))
-
+try:
+    import os
+    from machine import UART
+    os.dupterm(UART(0, 115200))
+except:
+    pass
 
 # Global reference to Bootloader object.
 bootloader = None

@@ -671,7 +671,7 @@ class TerkinDatalogger:
         led.value(0)
         horn.value(0)
 
-        bus = self.sensor_manager.get_bus_by_name('i2c:0')
+        bus = self.sensor_manager.get_bus_by_sensortype('DS3231')
         ds = DS3231tokei.DS3231(bus.adapter)
         interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert from minutes to seconds
         (year,month,day,dotw,hour,minute,second) = ds.getDateTime() # get the current time
