@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 def includeme(sensor_manager: SensorManager, sensor_info):
     """
-    Create MAX17043 sensor object.
+    Create HX711 sensor object.
 
     :param sensor_manager:
     :param sensor_info:
@@ -26,6 +26,9 @@ def includeme(sensor_manager: SensorManager, sensor_info):
     sensor_object.register_parameter('scale', float(sensor_info['scale']))
     sensor_object.register_parameter('offset', float(sensor_info['offset']))
     sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
+    sensor_object.register_parameter('dualchannel', sensor_info.get('dualchannel', False))
+    sensor_object.register_parameter('scaleB', float(sensor_info['scaleB']))
+    sensor_object.register_parameter('offsetB', float(sensor_info['offsetB']))
 
     # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
     # hx711_sensor.select_driver('gerber')
@@ -86,10 +89,15 @@ class HX711Sensor(AbstractSensor):
         gain = self.parameter.get('gain', 128)
         scale = self.parameter['scale']
         offset = self.parameter['offset']
+        scaleB = self.parameter['scaleB']
+        offsetB = self.parameter['offsetB']
 
         # Initialize the HX711 hardware driver.
         log.info('Initializing HX711 sensor with '
                  'pin_dout={}, pin_pdsck={}, gain={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
+        if self.parameter['dualchannel']:
+            log.info('HX711 channel B with gain=32 '
+                    'scale={}, offset={}'.format(scaleB, offsetB))
 
         try:
             self.loadcell = self.driver_class(pin_dout, pin_pdsck, gain)
@@ -110,16 +118,31 @@ class HX711Sensor(AbstractSensor):
         if self.loadcell is None:
             return self.SENSOR_NOT_INITIALIZED
 
+        address = self.address
+
         #log.info('Acquire reading from HX711')
         reading = self.loadcell.get_reading()
 
-        address = self.address
-
         # Propagate main kg value.
         key = 'weight.{}'.format(address)
-        effective_data = {
-            key: reading.kg
-        }
+
+        if self.parameter['dualchannel']:   # read channel B
+            self.loadcell.set_gain(32)      # switch to channel B
+            self.loadcell.set_scale(self.parameter['scaleB'])
+            self.loadcell.set_offset(self.parameter['offsetB'])
+            readingB = self.loadcell.get_reading()
+            self.loadcell.set_gain(self.parameter.get('gain', 128))      # switch everything back
+            self.loadcell.set_scale(self.parameter['scale'])
+            self.loadcell.set_offset(self.parameter['offset'])
+
+            effective_data = {
+                key: reading.kg + readingB.kg
+            }
+
+        else:
+            effective_data = {
+                key: reading.kg
+            }
 
         # Propagate _all_ values from HX711 (raw, scale, offset, whatever).
         data = reading.get_data()
