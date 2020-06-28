@@ -417,10 +417,13 @@ sensors = {
             'description': 'Waage 1',
             'type': 'HX711',
             'enabled': False,
+            'dualchannel': False,    # this will activate reading channel B
             'pin_dout': 'P22',
             'pin_pdsck': 'P21',
-            'offset': -73000,
-            'scale': 4.424242,
+            'offset': -73000,   # channel A
+            'scale': 4.424242,  # channel A
+            'offsetB': 11642,   # channel B            
+            'scaleB': 10767,    # channel B
             'decimals': 3,
         },
         {
