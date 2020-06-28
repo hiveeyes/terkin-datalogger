@@ -121,10 +121,10 @@ class HX711:
         # Shift in data, gain & channel info.
         result = 0
         for j in range(24 + self.GAIN):
-            #state = disable_irq()
+            state = disable_irq()
             self.pSCK(True)
             self.pSCK(False)
-            #enable_irq(state)
+            enable_irq(state)
             result = (result << 1) | self.pOUT()
 
         # Shift back the extra bits.
