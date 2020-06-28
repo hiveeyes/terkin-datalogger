@@ -662,26 +662,25 @@ class TerkinDatalogger:
         import utime
         from machine import Pin, RTC
 
-        # LED an
-        led = Pin(14,Pin.OUT)
-        horn = Pin(26,Pin.OUT)
-        led.value(1)
-        horn.value(1)
-        utime.sleep(1)
-        led.value(0)
-        horn.value(0)
-
         bus = self.sensor_manager.get_bus_by_sensortype('DS3231')
         ds = DS3231tokei.DS3231(bus.adapter)
         interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert from minutes to seconds
         (year,month,day,dotw,hour,minute,second) = ds.getDateTime() # get the current time
 
-        #print('Time is: ', day,hour,minute)
-
         rtc = RTC() # create RTC
         if year < 2001:
             year = 2001 # sanity check, as of mpy 1.12 year must be >= 2001
         rtc.init((year,month,day,dotw,hour,minute,second,0)) # set time
+
+        # check if its night or winter and adjust interval
+        night_start = self.settings.get('main.interval.night_start', 0)
+        night_end =  self.settings.get('main.interval.night_end', 0)
+        winter_start = self.settings.get('main.interval.winter_start', 0)
+        winter_end =  self.settings.get('main.interval.winter_end', 0)
+        if night_start > 0 and (hour >= night_start or hour <= night_end):  # double interval for the night
+            interval *= 2
+        if winter_start > 0 and (month >= winter_start or month <= winter_end):  # double interval for winter
+            interval *= 2
 
         # Compute sleeping duration from measurement interval and elapsed time.
         elapsed = int(self.duty_chrono.read())
@@ -690,20 +689,13 @@ class TerkinDatalogger:
         if (wake_at - now_secs) < 180:  # don't shutoff for less than 3 minutes
             wake_at += interval
 
-        #print('Now:',now_secs, 'Wake at:', wake_at)
-
         (year,month,day,hour,minute,second, dotw, doty) = utime.localtime(wake_at) # convert the wake up time
 
         # set alarm
         ds.setAlarm2(day,hour,minute, DS3231tokei.A2_ON_HOUR_MINUTE)
 
-        #print('Wake at: ', day,hour,minute)
-
         # turn off MCU via MOSFET
-        #print('Good night')
-
         utime.sleep(1)
-
         ds.enableAlarm2()
         ds.resetAlarm2()        
 
