@@ -676,7 +676,7 @@ class TerkinDatalogger:
         interval = self.settings.get('main.interval.shutoff', 10) * 60  # convert from minutes to seconds
         (year,month,day,dotw,hour,minute,second) = ds.getDateTime() # get the current time
 
-        print('Time is: ', day,hour,minute)
+        #print('Time is: ', day,hour,minute)
 
         rtc = RTC() # create RTC
         if year < 2001:
@@ -690,17 +690,17 @@ class TerkinDatalogger:
         if (wake_at - now_secs) < 180:  # don't shutoff for less than 3 minutes
             wake_at += interval
 
-        print('Now:',now_secs, 'Wake at:', wake_at)
+        #print('Now:',now_secs, 'Wake at:', wake_at)
 
         (year,month,day,hour,minute,second, dotw, doty) = utime.localtime(wake_at) # convert the wake up time
 
         # set alarm
         ds.setAlarm2(day,hour,minute, DS3231tokei.A2_ON_HOUR_MINUTE)
 
-        print('Wake at: ', day,hour,minute)
+        #print('Wake at: ', day,hour,minute)
 
         # turn off MCU via MOSFET
-        print('Good night')
+        #print('Good night')
 
         utime.sleep(1)
 

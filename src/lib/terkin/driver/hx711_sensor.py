@@ -96,7 +96,7 @@ class HX711Sensor(AbstractSensor):
         log.info('Initializing HX711 sensor with '
                  'pin_dout={}, pin_pdsck={}, gain={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
         if self.parameter['dualchannel']:
-            log.info('HX711 channel B with gain=32 '
+            log.info('Initializing HX711 sensor channel B with gain=32 '
                     'scale={}, offset={}'.format(scaleB, offsetB))
 
         try:

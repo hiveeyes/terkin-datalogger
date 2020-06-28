@@ -422,8 +422,8 @@ sensors = {
             'pin_pdsck': 'P21',
             'offset': -73000,   # channel A
             'scale': 4.424242,  # channel A
-            'scaleB': 10767,    # channel B
             'offsetB': 11642,   # channel B            
+            'scaleB': 10767,    # channel B
             'decimals': 3,
         },
         {
