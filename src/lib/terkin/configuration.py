@@ -143,12 +143,12 @@ class TerkinConfiguration:
             if key.startswith('__'):
                 continue
             thing = deepcopy(value)
-            self.purge_sensible_settings(thing)
+            self.purge_protected_settings(thing)
             log.info('Section "{}": {}'.format(key, json.dumps(thing)))
 
-    def purge_sensible_settings(self, thing):
+    def purge_protected_settings(self, thing):
         """
-        This function purges all sensible pieces from the data structure
+        This function purges all protected pieces from the data structure
         holding the configuration settings in order to protect information
         leakage os sensitive information to STDOUT.
 
@@ -161,11 +161,11 @@ class TerkinConfiguration:
                     value = '## redacted ##'
                     thing[key] = value
 
-                self.purge_sensible_settings(value)
+                self.purge_protected_settings(value)
 
         elif isinstance(thing, list):
             for item in thing:
-                self.purge_sensible_settings(item)
+                self.purge_protected_settings(item)
 
     def to_dict(self):
         """ """
