@@ -118,23 +118,15 @@ class TerkinConfiguration:
         """
         self.record = False
         try:
-            self.add_real(data)
+            if isinstance(data, types.ModuleType):
+                blacklist = ['__name__', '__file__', '__class__']
+                for key in dir(data):
+                    if key in blacklist: continue
+                    value = getattr(data, key)
+                    self.store[key] = value
         except Exception as ex:
             log.exc(ex, 'Reading configuration settings failed')
         self.record = True
-
-    def add_real(self, data):
-        """
-
-        :param data: 
-
-        """
-        if isinstance(data, types.ModuleType):
-            blacklist = ['__name__', '__file__', '__class__']
-            for key in dir(data):
-                if key in blacklist: continue
-                value = getattr(data, key)
-                self.store[key] = value
 
     def dump(self):
         """ """
