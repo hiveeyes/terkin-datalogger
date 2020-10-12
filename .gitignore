@@ -23,7 +23,6 @@ presets.mk
 /spikes
 /doc/build
 /docker/volumes/influxdb/data
-*.passwd
 /docker/volumes/grafana/data
 /docker/volumes/grafana/log
 /docker/volumes/influxdb/log
@@ -32,7 +31,7 @@ presets.mk
 /docker/volumes/mongodb/data
 /docker/volumes/mosquitto/data
 /docker/volumes/mosquitto/log
+/docker/volumes/**/*.passwd
 /docker/volumes/nginx/log
-/docker/volumes/nginx/conf.d/*.htpasswd
 /docker/volumes/nginx/conf.d
 /docker/volumes/redis/data
