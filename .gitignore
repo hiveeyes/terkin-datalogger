@@ -22,3 +22,17 @@ presets.mk
 .coverage
 /spikes
 /doc/build
+/docker/volumes/influxdb/data
+*.passwd
+/docker/volumes/grafana/data
+/docker/volumes/grafana/log
+/docker/volumes/influxdb/log
+/docker/volumes/kotori/log
+/docker/volumes/mongodb/log
+/docker/volumes/mongodb/data
+/docker/volumes/mosquitto/data
+/docker/volumes/mosquitto/log
+/docker/volumes/nginx/log
+/docker/volumes/nginx/conf.d/*.htpasswd
+/docker/volumes/nginx/conf.d
+/docker/volumes/redis/data
