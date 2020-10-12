@@ -12,12 +12,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer:/data
 
-  hiveeyes:
+  terkin:
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile
     image: debian/buster-slim
-    container_name: hiveeyes
     restart: unless-stopped
     volumes:
       - ../terkin-datalogger:/opt/terkin-datalogger
@@ -40,6 +39,7 @@ services:
     image: influxdb:${INFLUXDB_IMAGE_VERSION}
     init: true
     restart: unless-stopped
+    ports:
       - ${INFLUXDB_HTTP_PORT}:1883
     volumes:
       - ${VOLUMES_DIR}/influxdb/data:/var/lib/influxdb
