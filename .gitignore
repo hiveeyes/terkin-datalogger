@@ -35,3 +35,4 @@ presets.mk
 /docker/volumes/nginx/log
 /docker/volumes/nginx/conf.d
 /docker/volumes/redis/data
+/docker/portainer
