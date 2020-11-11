@@ -77,6 +77,19 @@ class SensorManager:
         """
         raise NotImplementedError('"get_sensor_by_name" not implemented yet')
 
+    def get_sensor_by_id(self, id):
+        """
+        Return sensor with defined id.
+        """
+
+        log.info('Trying to find bus by name "%s"', id)
+        for sensor in self.sensors:
+            log.debug('checking sensor with settings "%s"', sensor.settings)
+            if hasattr(sensor, 'settings') and sensor.settings.get('id') == id:
+                log.debug('sensor with id {} found'.format(id))
+                return sensor
+        log.info('sensor with id {} NOT found'.format(id))
+
     def get_sensor_by_type(self, type):
         """
         Return all sensors filtered by type.
