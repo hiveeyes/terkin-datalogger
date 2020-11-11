@@ -416,6 +416,10 @@ sensors = {
             'name': 'scale',
             'description': 'Waage 1',
             'type': 'HX711',
+            #'type': 'hx711_temp_compensated',
+            #'temperature_sensor_id': 'bme280-1',
+            #'temperature_offset': 0, # temperature when calculating scale and offset
+            #'temp_compensation_factor': 0,
             'enabled': False,
             'dualchannel': False,    # this will activate reading channel B
             'pin_dout': 'P22',
