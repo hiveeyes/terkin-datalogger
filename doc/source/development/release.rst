@@ -6,9 +6,11 @@ Releasing
 *****************
 Cut a new release
 *****************
-::
 
-    make release bump=minor
+1. Update CHANGES.rst
+2. Bump version::
+
+       make release bump=minor
 
 
 *********************************
