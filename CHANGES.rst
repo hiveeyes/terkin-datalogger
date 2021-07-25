@@ -10,6 +10,7 @@ Development
 - Add "make firmwares" release target
 - Add "get_sensor_by_type" helper method
 - Switch to "DS3231tokei" library. Thanks, @poesel!
+- Fix installation on CPython
 
 
 2020-05-22 0.10.0

@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 requires = [
-    'pycopy-cpython-micropython==0.2',
+    'pycopy-cpython-micropython==1.0',
     'pycopy-cpython-usocket==0.1',
     'pycopy-cpython-uio==0.3',
 ]
