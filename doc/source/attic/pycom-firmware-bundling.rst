@@ -18,7 +18,7 @@ Step by step
 
 Install ``esptool`` into Python virtualenv::
 
-    .venv3/bin/pip install esptool
+    .venv/bin/pip install esptool
     pio run
 
 Get and extract vanilla tarball::

@@ -83,7 +83,7 @@ Advanced
 ========
 Prepare::
 
-    source .venv3/bin/activate
+    source .venv/bin/activate
 
 Invoke specific tests, with names::
 

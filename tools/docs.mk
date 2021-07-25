@@ -1,4 +1,4 @@
-$(eval sphinx       := $(venv3path)/bin/sphinx-build)
+$(eval sphinx       := $(venvpath)/bin/sphinx-build)
 
 setup-docs: setup-virtualenv3
 	@$(pip3) --quiet install --requirement requirements-docs.txt

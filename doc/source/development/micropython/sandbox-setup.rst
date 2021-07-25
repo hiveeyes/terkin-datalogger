@@ -86,15 +86,15 @@ which will inform you about what's going on when operating the sandbox.
 
 Linux/Windows::
 
-    .venv3/bin/pip install py-notifier
+    .venv/bin/pip install py-notifier
 
 macOS::
 
-    .venv3/bin/pip install pync
+    .venv/bin/pip install pync
 
 Windows::
 
-    .venv3/bin/pip install zroya
+    .venv/bin/pip install zroya
 
 
 Pre-flight checks

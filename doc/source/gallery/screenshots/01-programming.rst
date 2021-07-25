@@ -5,7 +5,7 @@ Programming
 ::
 
     $ time make recycle
-    .venv3/bin/rshell --port /dev/cu.usbmodemPye090a1 --buffer-size 2048 --timing --file tools/upload-requirements.rshell
+    .venv/bin/rshell --port /dev/cu.usbmodemPye090a1 --buffer-size 2048 --timing --file tools/upload-requirements.rshell
     Using buffer-size of 2048
     Connecting to /dev/cu.usbmodemPye090a1 (buffer-size 2048)...
     Testing if ubinascii.unhexlify exists ... Y
@@ -16,7 +16,7 @@ Programming
     Unable to create /flash/lib/terkin
     took 0.539 seconds
     took 20.476 seconds
-    .venv3/bin/rshell --port /dev/cu.usbmodemPye090a1 --buffer-size 2048 --timing --file tools/upload-sketch.rshell
+    .venv/bin/rshell --port /dev/cu.usbmodemPye090a1 --buffer-size 2048 --timing --file tools/upload-sketch.rshell
     Using buffer-size of 2048
     Connecting to /dev/cu.usbmodemPye090a1 (buffer-size 2048)...
     Testing if ubinascii.unhexlify exists ... Y

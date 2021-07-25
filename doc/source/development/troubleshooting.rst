@@ -295,7 +295,7 @@ USSL not found
 ::
 
     make setup
-    .venv3/bin/pip --quiet install --requirement requirements-dev.txt
+    .venv/bin/pip --quiet install --requirement requirements-dev.txt
     INFO: Please install MicroPython for Unix
     micropython -m upip install -p dist-packages -r requirements-mpy.txt
     Traceback (most recent call last):
@@ -372,21 +372,21 @@ Problem
 -------
 ::
 
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1249, in connect
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/main.py", line 1249, in connect
         ip_address = socket.gethostbyname(port)
     socket.gaierror: [Errno 8] nodename nor servname provided, or not known
 
     During handling of the above exception, another exception occurred:
 
     Traceback (most recent call last):
-      File ".venv3/bin/rshell", line 10, in <module>
+      File ".venv/bin/rshell", line 10, in <module>
         sys.exit(main())
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/command_line.py", line 4, in main
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/command_line.py", line 4, in main
         rshell.main.main()
 
     [...]
 
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1453, in remote_eval
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/main.py", line 1453, in remote_eval
         return eval(self.remote(func, *args, **kwargs))
       File "<string>", line 0
 
@@ -489,13 +489,13 @@ rshell error
 Issue when running things like ``rshell cat settings.py``::
 
     Traceback (most recent call last):
-      File ".venv3/bin/rshell", line 10, in <module>
+      File ".venv/bin/rshell", line 10, in <module>
         sys.exit(main())
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 652, in cp
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/main.py", line 652, in cp
         filesize, xfer_func=recv_file_from_remote)
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1435, in remote
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/main.py", line 1435, in remote
         xfer_func(self, *args, **kwargs)
-      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv3/lib/python3.7/site-packages/rshell/main.py", line 1050, in recv_file_from_remote
+      File "/Users/amo/dev/hiveeyes/sources/hiveeyes-micropython-firmware/.venv/lib/python3.7/site-packages/rshell/main.py", line 1050, in recv_file_from_remote
         dst_file.write(binascii.unhexlify(write_buf[0:read_size]))
     binascii.Error: Non-hexadecimal digit found
     make: *** [rshell] Error 1
@@ -816,7 +816,7 @@ Here: Setting ``main.interval.field`` to ``None``.
         symlink=options.symlink)
       File "/usr/lib/python3/dist-packages/virtualenv.py", line 950, in create_environment
         site_packages=site_packages, clear=clear, symlink=symlink))
-      File "/home/pi/terkin-datalogger/.venv3/lib/python3.7/posixpath.py", line 378, in abspath
+      File "/home/pi/terkin-datalogger/.venv/lib/python3.7/posixpath.py", line 378, in abspath
         path = os.fspath(path)
     TypeError: expected str, bytes or os.PathLike object, not NoneType
 

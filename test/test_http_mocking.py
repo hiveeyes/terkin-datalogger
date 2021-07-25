@@ -51,7 +51,7 @@ def test_mocket_socket():
         >       _, self.body = decode_from_bytes(data).split('\r\n\r\n', 1)
         E       ValueError: not enough values to unpack (expected 2, got 1)
 
-        .venv3/lib/python3.8/site-packages/mocket/mockhttp.py:23: ValueError
+        .venv/lib/python3.8/site-packages/mocket/mockhttp.py:23: ValueError
 
     The reason is that ``data`` is essentially::
 

@@ -2,8 +2,8 @@
 setup-cpython:
 
 	@# Define program paths.
-	$(eval pip := .venv3/bin/pip3)
-	$(eval python := .venv3/bin/python)
+	$(eval pip := .venv/bin/pip3)
+	$(eval python := .venv/bin/python)
 
 	# Install Terkin
 	$(python) setup.py develop
@@ -25,7 +25,7 @@ setup-cpython:
 setup-sbc:
 
 	@# Define path to the "pip" program.
-	$(eval pip := .venv3/bin/pip3)
+	$(eval pip := .venv/bin/pip3)
 
 	# Install modules.
 	$(pip) install -r requirements-sbc.txt
@@ -35,7 +35,7 @@ setup-gpsd:
 
 ## Invoke datalogger on CPython
 run-cpython:
-	.venv3/bin/terkin --config=src/settings.py --daemon
+	.venv/bin/terkin --config=src/settings.py --daemon
 
 run-cpython-callgraph:
 
@@ -55,10 +55,10 @@ run-cpython-callgraph:
 	$(eval pycg_options :=  --no-groups --include="terkin.datalogger.*" --include="terkin.device.*" --include="terkin.network.*" --include="terkin.telemetry.*")
 
 	# Generate "pycallgraph.png"
-	.venv3/bin/pycallgraph ${pycg_options} graphviz -- .venv3/bin/terkin --config=src/settings.py
+	.venv/bin/pycallgraph ${pycg_options} graphviz -- .venv/bin/terkin --config=src/settings.py
 
 	# Generate "pycallgraph.dot"
-	.venv3/bin/pycallgraph ${pycg_options} graphviz --output-format=dot --output-file=pycallgraph.dot -- .venv3/bin/terkin --config=src/settings.py
+	.venv/bin/pycallgraph ${pycg_options} graphviz --output-format=dot --output-file=pycallgraph.dot -- .venv/bin/terkin --config=src/settings.py
 	dot -Tsvg pycallgraph.dot > pycallgraph.svg
 
 

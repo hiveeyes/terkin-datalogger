@@ -15,16 +15,16 @@ $(eval pip2         := $(venv2path)/bin/pip)
 $(eval python2      := $(venv2path)/bin/python)
 $(eval platformio   := $(venv2path)/bin/platformio)
 
-$(eval venv3path    := .venv3)
-$(eval pip3         := $(venv3path)/bin/pip)
-$(eval python3      := $(venv3path)/bin/python)
-$(eval ampy         := $(venv3path)/bin/ampy)
-$(eval rshell       := $(venv3path)/bin/rshell)
-$(eval miniterm     := $(venv3path)/bin/miniterm.py)
+$(eval venvpath    := .venv)
+$(eval pip3         := $(venvpath)/bin/pip)
+$(eval python3      := $(venvpath)/bin/python)
+$(eval ampy         := $(venvpath)/bin/ampy)
+$(eval rshell       := $(venvpath)/bin/rshell)
+$(eval miniterm     := $(venvpath)/bin/miniterm.py)
 
-$(eval bumpversion  := $(venv3path)/bin/bumpversion)
-$(eval pytest       := $(venv3path)/bin/pytest)
-$(eval coverage     := $(venv3path)/bin/coverage)
+$(eval bumpversion  := $(venvpath)/bin/bumpversion)
+$(eval pytest       := $(venvpath)/bin/pytest)
+$(eval coverage     := $(venvpath)/bin/coverage)
 
 
 # ------------------
@@ -37,7 +37,7 @@ setup-virtualenv2: check-virtualenv
 	virtualenv --python=python2 $(venv2path)
 
 setup-virtualenv3: check-virtualenv
-	@test -e $(python3) || virtualenv --python=python3 $(venv3path)
+	@test -e $(python3) || virtualenv --python=python3 $(venvpath)
 	@$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3
@@ -110,7 +110,7 @@ PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(l
 
 ## Setup requirements for running the testsuite
 setup-tests: check-virtualenv
-	virtualenv --python=python3 $(venv3path)
+	virtualenv --python=python3 $(venvpath)
 	$(pip3) install --requirement requirements-test.txt
 
 .PHONY: test
