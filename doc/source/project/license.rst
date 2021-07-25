@@ -8,7 +8,7 @@ License
 ***********
 Source code
 ***********
-This software is copyright © 2017-2020 The Terkin Developers. All rights reserved.
+This software is copyright © 2017-2021 The Terkin Developers. All rights reserved.
 
 The source code of Terkin is licensed under the terms of the
 `GNU Affero General Public License`_ and the `European Union Public Licence`_.
@@ -20,7 +20,7 @@ It is and will always be **free and open source software**.
 
     Terkin is a flexible data logger for MicroPython and CPython.
 
-    Copyright (C) 2017-2020 The Terkin Developers <developers@getkotori.org>.
+    Copyright (C) 2017-2021 The Terkin Developers <developers@getkotori.org>.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as

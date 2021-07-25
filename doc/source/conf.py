@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('../src/lib'))
 # -- Project information -----------------------------------------------------
 
 project = 'Terkin Datalogger'
-copyright = '2017-2020, The Terkin Developers'
+copyright = '2017-2021, The Terkin Developers'
 author = 'The Terkin Developers'
 
 # The full version, including alpha/beta/rc tags
