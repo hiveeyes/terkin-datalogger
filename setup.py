@@ -12,6 +12,7 @@ requires = [
 
     # Runtime
     'mock==4.0.2',
+    'psutil<=5.8.0,<6',
 
     # Mocks some HAL modules not available on CPython.
     'esp32-machine-emulator==1.1.3',

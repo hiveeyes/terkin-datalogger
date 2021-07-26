@@ -7,6 +7,11 @@ Development
 ===========
 
 
+2021-07-26 0.11.2
+=================
+- CPython: Add "psutil" to list of runtime dependencies
+
+
 2021-07-26 0.11.1
 =================
 - CPython: Fix runtime dependency: Don't use ``os_path``
