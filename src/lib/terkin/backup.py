@@ -5,7 +5,10 @@
 import os
 import uos
 import time
-import os_path
+try:
+    import os_path
+except ImportError:
+    import os.path as os_path
 from shutil import copyfileobj
 from terkin import logging
 from terkin.util import file_remove, file_exists, ensure_directory
