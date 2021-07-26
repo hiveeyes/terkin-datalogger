@@ -8,7 +8,7 @@ README = open(os.path.join(here, 'README.rst'), encoding="utf-8").read()
 requires = [
 
     # 3rd-party libraries
-    'terkin-micropython-libraries==0.11.2',
+    'terkin-micropython-libraries==0.11.3',
 
     # Runtime
     'mock==4.0.2',
@@ -63,7 +63,7 @@ extras = {
 }
 
 setup(name='terkin',
-      version='0.11.2',
+      version='0.11.3',
       description='A flexible data logger for MicroPython and CPython',
       long_description=README,
       license="AGPL 3, EUPL 1.2",

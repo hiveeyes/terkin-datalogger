@@ -11,7 +11,7 @@ extras = {
 }
 
 setup(name='terkin-micropython-libraries',
-      version='0.11.2',
+      version='0.11.3',
       description='Terkin MicroPython runtime libraries',
       long_description='This package contains all MicroPython runtime libraries '
                        'required to run Terkin, even on CPython.',
