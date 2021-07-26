@@ -29,7 +29,7 @@ Configuration
 *************
 Create configuration from blueprint::
 
-    cp src/settings.raspberrypi.py src/settings.py
+    cp src/settings.raspberrypi-basic.py src/settings.py
 
 
 ***

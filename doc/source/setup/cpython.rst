@@ -29,7 +29,11 @@ Configuration
 *************
 Create configuration from blueprint::
 
-    wget https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/src/settings.raspberrypi.py
+    wget https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/src/settings.raspberrypi-basic.py
+
+When aiming at LoRa, use::
+
+    wget https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/src/settings.raspberrypi-lorawan.py
 
 
 ***
@@ -37,4 +41,4 @@ Run
 ***
 Invoke::
 
-    terkin --config settings.raspberrypi.py
+    terkin --config settings.raspberrypi-basic.py
