@@ -9,7 +9,7 @@ setup-cpython:
 	$(python) setup.py develop
 
 	# Install CircuitPython libraries.
-	$(pip) install -r requirements-cpython.txt
+	$(pip) install --requirement=requirements-cpython.txt --upgrade
 
 
 	@# Define path to the "dist-packages" installation directory.
