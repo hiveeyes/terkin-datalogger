@@ -7,6 +7,11 @@ Development
 ===========
 
 
+2021-07-26 0.11.4
+=================
+- CPython: Add missing dependency modules ``umqtt`` and ``urequests``
+
+
 2021-07-26 0.11.3
 =================
 - CPython: Fix runtime dependency: Don't use ``os_path``

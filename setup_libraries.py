@@ -58,6 +58,14 @@ setup(name='terkin-micropython-libraries',
           '': 'dist-packages',
       },
       packages=find_packages('dist-packages'),
+
+      # py_modules lists top-level single file packages to include.
+      # find_packages only finds packages in directories with __init__.py files.
+      py_modules=[
+          "umqtt",
+          "urequests",
+      ],
+
       include_package_data=True,
       package_data={
       },
