@@ -5,7 +5,10 @@
 import os
 import json
 import types
-import os_path
+try:
+    import os_path
+except ImportError:
+    import os.path as os_path
 from copy import deepcopy
 from dotty_dict import dotty
 from shutil import copyfileobj

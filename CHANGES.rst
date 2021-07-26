@@ -5,6 +5,7 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
+- Fix runtime dependency: Don't use ``os_path`` on CPython
 
 
 2021-07-26 0.11.0
