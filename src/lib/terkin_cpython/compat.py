@@ -53,9 +53,10 @@ def monkeypatch_stdlib():
     sys.modules['micropython'].const = int
 
     import gc
+    import psutil
     gc.threshold = Mock()
-    gc.mem_free = Mock(return_value=1000000)
-    gc.mem_alloc = Mock(return_value=2000000)
+    gc.mem_free = lambda: psutil.virtual_memory().available * 100 / psutil.virtual_memory().total
+    gc.mem_alloc = lambda: psutil.virtual_memory().percent
 
     # Optional convenience to improve speed.
     gc.collect = Mock()
@@ -77,12 +78,13 @@ def monkeypatch_machine():
 
     import uuid
     import machine
+    import psutil
 
     # Some primitives.
     machine.enable_irq = Mock()
     machine.disable_irq = Mock()
     machine.unique_id = lambda: str(uuid.uuid4().fields[-1])[:5].encode()
-    machine.freq = Mock(return_value=42000000)
+    machine.freq = lambda: psutil.cpu_freq().current * 1000000
     machine.idle = Mock()
 
     # Reset cause and wake reason.

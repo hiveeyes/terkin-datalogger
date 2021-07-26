@@ -5,8 +5,9 @@ Terkin Datalogger CHANGES
 
 Development
 ===========
-- Fix runtime dependency: Don't use ``os_path`` on CPython
-- Improve CPython configuration blueprints
+- CPython: Fix runtime dependency: Don't use ``os_path``
+- CPython: Improve configuration blueprints
+- CPython: Provide real values to mem_{free,alloc} and machine.freq
 
 
 2021-07-26 0.11.0
