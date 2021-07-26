@@ -8,6 +8,7 @@ Development
 - CPython: Fix runtime dependency: Don't use ``os_path``
 - CPython: Improve configuration blueprints
 - CPython: Provide real values to mem_{free,alloc} and machine.freq
+- Fix software tests by making dualchannel scale mode ("scaleB") optional
 
 
 2021-07-26 0.11.0

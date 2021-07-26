@@ -27,8 +27,11 @@ def includeme(sensor_manager: SensorManager, sensor_info):
     sensor_object.register_parameter('offset', float(sensor_info['offset']))
     sensor_object.register_parameter('gain', sensor_info.get('gain', 128))
     sensor_object.register_parameter('dualchannel', sensor_info.get('dualchannel', False))
-    sensor_object.register_parameter('scaleB', float(sensor_info['scaleB']))
-    sensor_object.register_parameter('offsetB', float(sensor_info['offsetB']))
+
+    if "scaleB" in sensor_info:
+        sensor_object.register_parameter('scaleB', float(sensor_info['scaleB']))
+    if "offsetB" in sensor_info:
+        sensor_object.register_parameter('offsetB', float(sensor_info['offsetB']))
 
     # Select driver module. Use "gerber" (vanilla) or "heisenberg" (extended).
     # hx711_sensor.select_driver('gerber')
@@ -89,13 +92,13 @@ class HX711Sensor(AbstractSensor):
         gain = self.parameter.get('gain', 128)
         scale = self.parameter['scale']
         offset = self.parameter['offset']
-        scaleB = self.parameter['scaleB']
-        offsetB = self.parameter['offsetB']
 
         # Initialize the HX711 hardware driver.
         log.info('Initializing HX711 sensor with '
                  'pin_dout={}, pin_pdsck={}, gain={}, scale={}, offset={}'.format(pin_dout, pin_pdsck, gain, scale, offset))
         if self.parameter['dualchannel']:
+            scaleB = self.parameter['scaleB']
+            offsetB = self.parameter['offsetB']
             log.info('Initializing HX711 sensor channel B with gain=32 '
                     'scale={}, offset={}'.format(scaleB, offsetB))
 
