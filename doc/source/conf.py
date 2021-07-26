@@ -74,7 +74,7 @@ html_static_path = ['_static']
 
 html_logo = '_static/img/terkin-logo.png'
 def setup(app):
-    app.add_stylesheet("css/terkin-sphinx.css")
+    app.add_css_file("css/terkin-sphinx.css")
 
 
 
