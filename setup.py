@@ -10,12 +10,15 @@ requires = [
     # 3rd-party libraries
     'terkin-micropython-libraries==0.11.4',
 
-    # Runtime
+    # Mocks some HAL modules not available on CPython.
     'mock==4.0.2',
+    'esp32-machine-emulator==1.1.3',
+
+    # Sensors
     'psutil<=5.8.0,<6',
 
-    # Mocks some HAL modules not available on CPython.
-    'esp32-machine-emulator==1.1.3',
+    # Telemetry
+    'requests',
 
     # Command line interface
     'click==7.1.2',

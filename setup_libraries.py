@@ -1,15 +1,6 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-requires = [
-    'pycopy-cpython-micropython==1.0',
-    'pycopy-cpython-usocket==0.1',
-    'pycopy-cpython-uio==0.3',
-]
-
-extras = {
-}
-
 setup(name='terkin-micropython-libraries',
       version='0.11.4',
       description='Terkin MicroPython runtime libraries',
@@ -71,8 +62,8 @@ setup(name='terkin-micropython-libraries',
       },
       zip_safe=False,
       test_suite='test',
-      install_requires=requires,
-      extras_require=extras,
+      install_requires=[],
+      extras_require={},
       #tests_require=extras['test'],
       dependency_links=[
       ],

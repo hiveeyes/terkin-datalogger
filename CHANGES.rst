@@ -5,9 +5,14 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+
+
+2021-07-28 0.12.0
+=================
 - Documentation: Fix build and update to Sphinx 4
 - CPython: Don't enable modeserver in example configuration blueprints
 - Sensors: Implement temperature compensation for HX711 sensors. Thanks, @WSt89!
+- CPython: Fix HTTP telemetry
 
 
 2021-07-26 0.11.4

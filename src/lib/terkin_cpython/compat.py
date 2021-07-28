@@ -43,14 +43,23 @@ def monkeypatch_stdlib():
     time.ticks_diff = ticks_diff
     sys.modules['utime'] = time
 
+    sys.modules['micropython'] = Mock()
+    sys.modules['micropython'].const = int
+
     import io
     sys.modules['uio'] = io
 
     import os
     sys.modules['uos'] = os
 
-    sys.modules['micropython'] = Mock()
-    sys.modules['micropython'].const = int
+    import ssl
+    sys.modules['ussl'] = ssl
+
+    import socket
+    sys.modules['usocket'] = socket
+
+    import requests
+    sys.modules['urequests'] = requests
 
     import gc
     import psutil
