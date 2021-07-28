@@ -59,7 +59,7 @@ main = {
 services = {
     'api': {
         'modeserver': {
-            'enabled': True,
+            'enabled': False,
         },
         'http': {
             'enabled': False,

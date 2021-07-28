@@ -6,6 +6,7 @@ Terkin Datalogger CHANGES
 Development
 ===========
 - Documentation: Fix build and update to Sphinx 4
+- CPython: Don't enable modeserver in example configuration blueprints
 
 
 2021-07-26 0.11.4
