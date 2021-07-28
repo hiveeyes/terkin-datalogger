@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='terkin-micropython-libraries',
-      version='0.11.4',
+      version='0.12.0',
       description='Terkin MicroPython runtime libraries',
       long_description='This package contains all MicroPython runtime libraries '
                        'required to run Terkin, even on CPython.',
