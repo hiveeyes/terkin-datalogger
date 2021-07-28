@@ -25,6 +25,7 @@ contributed to this software in one way or another.
 * Thorsten Kluß <https://community.hiveeyes.org/u/tox/>
 * Vincent Kuhlen <vkuhlen@uni-bremen.de>
 * Weef <https://community.hiveeyes.org/u/weef/>
+* Werner Sturm <wernersturm89@gmail.com>
 
 Thanks a bunch!
 
