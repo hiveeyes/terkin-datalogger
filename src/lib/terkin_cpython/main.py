@@ -105,3 +105,6 @@ class TerkinApplication:
 
         finally:
             ui.stop()
+
+if __name__ == "__main__":
+    cli()
