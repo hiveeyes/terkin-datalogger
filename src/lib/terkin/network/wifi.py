@@ -319,8 +319,12 @@ class WiFiManager:
         auth_mode = None
         if self.platform_info.vendor == self.platform_info.MICROPYTHON.Pycom:
             log.info('WiFi STA: Getting auth mode')
-            auth_mode = self.get_auth_mode(network_name)
-            log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
+            try:
+                auth_mode = self.get_auth_mode(network_name)
+                log.info('WiFi STA: Auth mode is "{}"'.format(auth_mode))
+            except WiFiException as _:
+                log.error('Failed to get auth mode, will attempt fresh')
+                auth_mode = None
 
         password = network['password']
 
