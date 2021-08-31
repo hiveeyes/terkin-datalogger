@@ -95,6 +95,12 @@ interfaces = {
 
 # Networking configuration.
 networking = {
+    'ntp': {
+        # Must have networking enabled. Unsure if functional over LoRaWAN/TTN
+        'enabled': True,
+        'server': 'pool.ntp.org'
+    },
+
     'wifi': {
 
         # Enable/disable WiFi completely.
