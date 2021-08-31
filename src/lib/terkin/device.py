@@ -135,6 +135,15 @@ class TerkinDevice:
         else:
             log.info("[GPRS] Interface not enabled in settings.")
 
+        # Optionally sync time with NTP
+        ntp_enabled = self.settings.get('networking.ntp.enabled')
+        if self.status.networking and ntp_enabled:
+            try:
+                self.start_rtc()
+            except Exception as ex:
+                log.exc(ex, 'Unable start / sync RTC & NTP')
+
+
         # Inform about networking status.
         #self.networking.print_status()
 
@@ -148,8 +157,8 @@ class TerkinDevice:
         import time
         from machine import RTC
         self.rtc = RTC()
-        # TODO: Use values from configuration settings here.
-        self.rtc.ntp_sync("pool.ntp.org", 360)
+        server = self.settings.get('networking.ntp.server')
+        self.rtc.ntp_sync(server, 360)
         while not self.rtc.synced():
             time.sleep_ms(50)
         log.info('RTC: %s', self.rtc.now())
