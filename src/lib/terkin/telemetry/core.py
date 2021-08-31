@@ -287,7 +287,8 @@ class TelemetryClient:
             payload = to_cayenne_lpp_ratrack(dataframe)
 
         elif self.format == TelemetryClient.FORMAT_CSV:
-            raise NotImplementedError('Serialization format "CSV" not implemented yet')
+            from terkin.telemetry.formatter import to_csv
+            payload = to_csv(dataframe)
 
         else:
             raise ValueError('Unknown serialization format "{}"'.format(self.format))

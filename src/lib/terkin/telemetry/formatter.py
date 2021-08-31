@@ -156,3 +156,26 @@ def to_cayenne_lpp_ratrack(dataframe: DataFrame):
             hu1 = 2
 
     return frame.bytes()
+
+
+def to_csv(dataframe: DataFrame):
+    """Return a simple CSV string with headers"""
+    DELIM = ","
+    NEWLINE = "\n"
+    try:
+        from datetime import datetime
+        try:
+            dt = datetime.now().isoformat(timespec="seconds")
+        except TypeError:
+            # Micropython's datetime does not accept timespec="seconds"
+            dt = datetime.now().isoformat()
+    except ImportError:
+        import utime
+        dt = "{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}".format(*utime.localtime())
+    from uio import StringIO
+    with StringIO() as buff:
+        # Manually insert datetime in iso format in first column
+        buff.write(DELIM.join(["datetime.ISO8601"] + [str(key) for key in dataframe.data_out.keys()]))
+        buff.write(NEWLINE)
+        buff.write(DELIM.join([dt] + [str(value) for value in dataframe.data_out.values()]))
+        return buff.getvalue()
