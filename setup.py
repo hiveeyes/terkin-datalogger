@@ -40,7 +40,7 @@ requires = [
 
 
     # Victron Energy VE.Direct text protocol driver.
-    #'git+https://github.com/karioja/vedirect@f74c0f2',
+    'vedirect @ https://github.com/nznobody/vedirect/tarball/345a688',
 
 ]
 
