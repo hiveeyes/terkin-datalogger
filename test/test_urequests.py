@@ -126,18 +126,3 @@ def test_redirect_urequests(httpserver_ipv4):
     assert request.get_data() == json.dumps(request_data).encode()
     assert response.status_code == 200
     assert response.get_data() == json.dumps(response_data, indent=4).encode()
-
-
-@pytest.fixture(scope='function')
-def httpserver_ipv4():
-
-    if Plugin.SERVER:
-        Plugin.SERVER.clear()
-        yield Plugin.SERVER
-        return
-
-    server = PluginHTTPServer(host='127.0.0.1', port=8888)
-    server.start()
-    #time.sleep(0.1)
-    yield server
-    server.stop()

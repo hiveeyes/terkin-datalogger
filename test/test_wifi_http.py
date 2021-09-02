@@ -5,6 +5,7 @@
 import json
 import mock
 import pytest
+
 import logging
 from test.util.terkin import invoke_datalogger
 
@@ -13,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.telemetry
 @pytest.mark.http
-@pytest.mark.docker
 @pytest.mark.esp32
 @mock.patch('sys.platform', 'esp32')
 def test_uplink_wifi_http(httpserver_ipv4, caplog):
@@ -37,7 +37,7 @@ def test_uplink_wifi_http(httpserver_ipv4, caplog):
     socket.setdefaulttimeout(2.0)
 
     # Acquire settings with HTTP telemetry.
-    import test.settings.telemetry_http as http_settings
+    import test.settings.telemetry_http_json as http_settings
 
     # Invoke datalogger with a single duty cycle.
     datalogger = invoke_datalogger(caplog, http_settings)
@@ -80,21 +80,3 @@ def test_uplink_wifi_http(httpserver_ipv4, caplog):
 
     # Check, check, check.
     assert data_reference == data, data
-
-
-@pytest.fixture
-def httpserver_ipv4():
-
-    import time
-    from pytest_httpserver.pytest_plugin import Plugin, PluginHTTPServer
-
-    if Plugin.SERVER:
-        Plugin.SERVER.clear()
-        yield Plugin.SERVER
-        return
-
-    server = PluginHTTPServer(host='127.0.0.1', port=8888)
-    server.start()
-    #time.sleep(0.1)
-    yield server
-    server.stop()

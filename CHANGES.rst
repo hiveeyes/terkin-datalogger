@@ -5,6 +5,7 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+- CPython: Improve tests for HTTP telemetry subsystem
 
 
 2021-07-28 0.12.0

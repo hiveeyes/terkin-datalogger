@@ -4,6 +4,9 @@ from .micropython import micropython_stdlib
 # Fixture to capture MQTT messages.
 from .mqtt import capmqtt
 
+# Fixture to capture HTTP requests.
+from .http import httpserver_ipv4
+
 # Fixture to start Mosquitto within Docker container.
 from .mosquitto import mosquitto
 

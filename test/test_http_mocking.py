@@ -250,18 +250,3 @@ def send_request_stream(url, method, data):
     sock.write(b"Content-Length: %d\r\n" % len(data))
     sock.write(b"Connection: close\r\n\r\n")
     sock.write(data)
-
-
-@pytest.fixture(scope='function')
-def httpserver_ipv4():
-
-    if Plugin.SERVER:
-        Plugin.SERVER.clear()
-        yield Plugin.SERVER
-        return
-
-    server = PluginHTTPServer(host='127.0.0.1', port=8888)
-    server.start()
-    #time.sleep(0.1)
-    yield server
-    server.stop()
