@@ -24,4 +24,4 @@ adafruit-circuitpython-bmp280==3.2.1
 adafruit-circuitpython-ina219==3.4.2
 
 # Victron Energy VE.Direct text protocol driver.
-git+https://github.com/karioja/vedirect@f74c0f2
+https://github.com/nznobody/vedirect/tarball/345a688
