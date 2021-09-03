@@ -6,6 +6,7 @@ Terkin Datalogger CHANGES
 in progress
 ===========
 - CPython: Improve tests for HTTP telemetry subsystem
+- Implement TelemetryClient.FORMAT_CSV. Thanks, @nznobody!
 
 
 2021-07-28 0.12.0

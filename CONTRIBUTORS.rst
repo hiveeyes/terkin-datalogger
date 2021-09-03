@@ -14,6 +14,7 @@ contributed to this software in one way or another.
 * Ingo Porzucek <https://community.hiveeyes.org/u/ingop/>
 * Jan Hoffmann <j.hoffmann@isarengineering.de>
 * Kolja <https://github.com/pinguin999>
+* Manu Lange <manu.lange@plantandfood.co.nz>
 * Markus Mohr <https://github.com/poesel>
 * Matthias Büchner <https://github.com/thiasB>
 * Matthias Mehldau <wetter@hiveeyes.org>
