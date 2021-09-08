@@ -11,7 +11,7 @@ from pytest_docker_fixtures.containers._base import BaseImage
 from pytest_docker_fixtures import images
 images.settings['mosquitto'] = {
     'image': 'eclipse-mosquitto',
-    'version': '2.0.11',
+    'version': '2.0.12',
     'options': {
         'command': 'mosquitto -c /mosquitto-no-auth.conf',
         'publish_all_ports': False,
