@@ -147,11 +147,11 @@ download-requirements-real:
 	$(fetch) $(target_dir) --output-document=$(target_dir)/onewire_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/onewire.py
 	$(fetch) $(target_dir) --output-document=$(target_dir)/ds18x20_python.py https://raw.githubusercontent.com/robert-hh/Onewire_DS18X20/e2a8e8a/ds18x20.py
 
-    # 3. Install driver for MAX17043
+	# 3. Install driver for MAX17043
 	rm $(target_dir)/max17043.py || true
 	$(fetch) $(target_dir) --output-document=$(target_dir)/max17043.py https://raw.githubusercontent.com/hiveeyes/DFRobot_MAX17043/better-micropython/micropython/DFRobot_MAX17043.py
 
-    # 4. Install driver for SI7021
+	# 4. Install driver for SI7021
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/robert-hh/SI7021/e5d49689/SI7021.py
 
 	# 5. Install INA219 library

@@ -33,11 +33,14 @@ Terkin
 
 - **Status**:
 
-  .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg
+  .. image:: https://github.com/hiveeyes/terkin-datalogger/workflows/Tests/badge.svg
+        :target: https://github.com/hiveeyes/terkin-datalogger/actions?workflow=Tests
+
+  .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg?&color=blue
         :target: https://micropython.org
 
-  .. image:: https://img.shields.io/badge/CPython-3.x-green.svg
-        :target: https://python.org
+  .. image:: https://img.shields.io/pypi/pyversions/terkin.svg?label=CPython
+        :target: https://pypi.org/project/terkin/
 
   .. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
         :target: https://github.com/hiveeyes/terkin-datalogger
