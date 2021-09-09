@@ -36,8 +36,8 @@ check-virtualenv:
 setup-virtualenv2: check-virtualenv
 	virtualenv --python=python2 $(venv2path)
 
-setup-virtualenv3: check-virtualenv
-	@test -e $(python3) || virtualenv --python=python3 $(venvpath)
+setup-virtualenv3:
+	@test -e $(python3) || python3 -m venv $(venvpath)
 	@$(pip3) --quiet install --requirement requirements-dev.txt
 
 setup-environment: setup-virtualenv3
