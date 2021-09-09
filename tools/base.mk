@@ -109,8 +109,7 @@ install-releasetools: setup-virtualenv3
 PYTEST_OPTIONS="--log-level DEBUG --log-format='%(asctime)-15s [%(name)-35s] %(levelname)-8s: %(message)s' --log-date-format='%Y-%m-%dT%H:%M:%S%z' --verbose"
 
 ## Setup requirements for running the testsuite
-setup-tests: check-virtualenv
-	virtualenv --python=python3 $(venvpath)
+setup-tests: setup-virtualenv3
 	$(pip3) install --requirement requirements-test.txt
 
 .PHONY: test
