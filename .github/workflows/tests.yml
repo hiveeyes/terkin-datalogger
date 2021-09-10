@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # , macos-latest, windows-latest ]
         python-version: [ "3.7", "3.8", "3.9" ]
-        mosquitto-version: [ "1.6" ] # , "2.0" ]
+        mosquitto-version: [ "1.6.15", "2.0.12" ]
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip
@@ -21,15 +21,6 @@ jobs:
         #  path: ~/Library/Caches/pip
         #- os: windows-latest
         #  path: ~\AppData\Local\pip\Cache
-
-    # https://docs.github.com/en/free-pro-team@latest/actions/guides/about-service-containers
-    services:
-
-      # TODO: Maybe use https://github.com/marketplace/actions/mosquitto-mqtt-broker-in-github-actions
-      mosquitto:
-        image: eclipse-mosquitto:${{ matrix.mosquitto-version }}
-        ports:
-          - 1883:1883
 
     env:
       OS: ${{ matrix.os }}
@@ -40,6 +31,15 @@ jobs:
 
       - name: Acquire sources
         uses: actions/checkout@v2
+
+      - name: Start Mosquitto
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: ${{ matrix.mosquitto-version }}
+          ports: '1883:1883 8883:8883'
+          # certificates: ${{ github.workspace }}/.ci/tls-certificates
+          config: ${{ github.workspace }}/.github/etc/mosquitto-no-auth.conf
+          # container-name: 'mqtt'
 
       - name: Setup Python
         uses: actions/setup-python@v2
