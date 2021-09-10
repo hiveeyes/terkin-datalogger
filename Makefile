@@ -94,7 +94,7 @@ help: show-rules
 # -----
 
 ## Prepare sandbox environment and download requirements
-setup: setup-environment download-requirements mpy-cross-setup
+setup: setup-environment download-requirements
 
 
 
@@ -103,7 +103,7 @@ setup: setup-environment download-requirements mpy-cross-setup
 # -----------------------------
 
 ## Compile all library files using mpy-cross
-mpy-compile: check-mpy-version check-mpy-target
+mpy-compile: mpy-cross-setup check-mpy-version check-mpy-target
 
 	@echo "$(INFO) Ahead-of-time compiling to .mpy $(MPY_TARGET)"
 
