@@ -1,9 +1,15 @@
 name: Tests
+
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
+  # Also, run each Monday At 07:00.
+  schedule:
+    - cron: '0 7 * * 1'
+
 jobs:
 
   tests:
@@ -13,7 +19,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # , macos-latest, windows-latest ]
         python-version: [ "3.7", "3.8", "3.9" ]
-        mosquitto-version: [ "1.6.15", "2.0.12" ]
+        mosquitto-version: [ "1.6", "2.0" ]
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip
