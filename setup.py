@@ -61,7 +61,7 @@ extras = {
     ],
     'lorawan': [
         # Required for LoRaWAN.
-        'pycrypto==2.6.1',
+        'pycryptodome==3.10.1',
     ],
 }
 
