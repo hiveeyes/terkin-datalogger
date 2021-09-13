@@ -141,8 +141,7 @@ class TerkinDevice:
             try:
                 self.start_rtc()
             except Exception as ex:
-                log.exc(ex, 'Unable start / sync RTC & NTP')
-
+                log.exc(ex, 'Unable to start/synchronize RTC with NTP')
 
         # Inform about networking status.
         #self.networking.print_status()
@@ -158,6 +157,7 @@ class TerkinDevice:
         from machine import RTC
         self.rtc = RTC()
         server = self.settings.get('networking.ntp.server')
+        log.info('Syncing RTC with NTP server "%s"', server)
         self.rtc.ntp_sync(server, 360)
         while not self.rtc.synced():
             time.sleep_ms(50)

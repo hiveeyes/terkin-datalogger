@@ -222,6 +222,9 @@ def monkeypatch_machine():
     # UART peripheral
     machine.UART = MagicMock()
 
+    # RTC module
+    machine.RTC = MagicMock()
+
 
 def wake_reason():
     from terkin.util import get_platform_info
