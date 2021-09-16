@@ -104,11 +104,19 @@ class VEDirectSensor(AbstractSensor):
             return
         log.info('Reading sensor "Victron Energy VE.Direct"')
 
+        # Read raw data from sensor.
         data_raw = self.driver.read_data_single()
 
+        # Compute key fragment based on information from data packet.
+        if "PID" in data_raw:
+            product_id = str(data_raw["PID"])
+        else:
+            product_id = "unknown-pid"
+
+        # Aggregate measurement values.
         data = {}
         for key, value in data_raw.items():
-            key = "vedirect:{}".format(key)
+            key = "vedirect-{}:{}".format(product_id, key)
             data[key] = value
 
         return data
