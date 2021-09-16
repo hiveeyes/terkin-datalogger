@@ -38,10 +38,6 @@ requires = [
     'adafruit-circuitpython-bmp280==3.2.1',
     'adafruit-circuitpython-ina219==3.4.2',
 
-
-    # Victron Energy VE.Direct text protocol driver.
-    'vedirect @ https://github.com/nznobody/vedirect/tarball/345a688',
-
 ]
 
 extras = {
@@ -62,6 +58,13 @@ extras = {
     'lorawan': [
         # Required for LoRaWAN.
         'pycryptodome==3.10.1',
+    ],
+
+    # Victron Energy VE.Direct text protocol driver.
+    # Unless the version at https://github.com/nznobody/vedirect has been published on PyPI,
+    # it can't be part of the vanilla `install_requires` section.
+    'vedirect': [
+        'vedirect==2.0.0',
     ],
 }
 
@@ -126,6 +129,7 @@ setup(name='terkin',
       extras_require=extras,
       #tests_require=extras['test'],
       dependency_links=[
+          "https://github.com/nznobody/vedirect/tarball/345a688#egg=vedirect-2.0.0"
       ],
       entry_points={
           'console_scripts': [
