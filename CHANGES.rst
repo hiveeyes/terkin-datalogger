@@ -5,11 +5,15 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+
+
+2021-09-17 0.13.0
+=================
 - CPython: Improve tests for HTTP telemetry subsystem
+- CPython: Adjust software tests to use Mosquitto 2.0
+- CPython: Run software tests on GitHub Actions
+- CPython: Switch from PyCrypto to PyCryptodome
 - Implement TelemetryClient.FORMAT_CSV. Thanks, @nznobody!
-- Adjust software tests to use Mosquitto 2.0
-- Run software tests on GitHub Actions
-- Switch from PyCrypto to PyCryptodome
 - Enable NTP/RTC sync from settings with ``networking.ntp.enabled``. Thanks, @nznobody!
 - VEDirect driver: Add support for MicroPython. Thanks, @nznobody!
 
