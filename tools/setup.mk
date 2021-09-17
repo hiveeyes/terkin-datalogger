@@ -158,7 +158,9 @@ download-requirements-real:
 	$(fetch) $(target_dir) https://raw.githubusercontent.com/chrisb2/pyb_ina219/f427017/ina219.py
 
 	# 6. Install VEDirect library
-	$(fetch) $(target_dir) https://github.com/nznobody/vedirect/raw/345a688/src/vedirect/vedirect.py
+	mkdir -p $(target_dir)/vedirect
+	$(fetch) $(target_dir)/vedirect https://github.com/nznobody/vedirect/raw/345a688/src/vedirect/__init__.py
+	$(fetch) $(target_dir)/vedirect https://github.com/nznobody/vedirect/raw/345a688/src/vedirect/vedirect.py
 
 
 download-requirements-ui:
