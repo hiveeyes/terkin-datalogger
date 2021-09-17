@@ -12,7 +12,7 @@ communication scenarios and testing for their outcomes.
 
 Setup
 =====
-- https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/tests.rst
+- https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/tests.rst
 
 Synopsis
 ========

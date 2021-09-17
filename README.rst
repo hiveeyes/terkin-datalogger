@@ -52,7 +52,7 @@ Terkin
         :target: https://pypi.org/project/terkin/
 
   .. image:: https://img.shields.io/pypi/l/terkin.svg
-        :target: https://github.com/hiveeyes/terkin-datalogger/blob/master/LICENSE
+        :target: https://github.com/hiveeyes/terkin-datalogger/blob/main/LICENSE
 
   .. image:: https://img.shields.io/pypi/dm/terkin.svg
         :target: https://pypi.org/project/terkin/
@@ -179,7 +179,7 @@ and adjust each configuration setting appropriately. The
 documentation of all parameters is in the file itself
 and should be reasonably self-explanatory.
 For using Terkin with TTN/LoRaWAN find some more details
-`here <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/README.rst>`_.
+`here <https://github.com/hiveeyes/terkin-datalogger/blob/main/client/TTN/README.rst>`_.
 
 Sandbox setup
 =============

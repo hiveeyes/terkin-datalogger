@@ -39,7 +39,7 @@ has been extended to also encode ``load`` and ``voltage`` readings.
 In order to forward those variables into your TTN payload you would need to insert
 the given decoder.js code into your TTN App. In TTN console under Payload Formats
 switch to Custom and paste the Javascript from
-`decoder.js <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/decoder.js>`_.
+`decoder.js <https://github.com/hiveeyes/terkin-datalogger/blob/main/client/TTN/decoder.js>`_.
 The decoder function is backwards compatible to the built-in CayenneLPP decoder.
 
 *********************
@@ -56,15 +56,15 @@ HTTP endpoint URLs for common use are already set up and can be requested from
 @thiasB or @ClemensGruber but you can of course set up your own endpoint and use the
 Javascript provided in
 
-- `putsreq.hiveeyes.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.hiveeyes.js>`_ for the Hiveeyes.org target, or
-- `putsreq.bee-observer.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.bee-observer.js>`_ for the bee-observer.org target, or
-- `putsreq.beep.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/master/client/TTN/putsreq.beep.js>`_ for the beep.nl target
+- `putsreq.hiveeyes.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/main/client/TTN/putsreq.hiveeyes.js>`_ for the Hiveeyes.org target, or
+- `putsreq.bee-observer.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/main/client/TTN/putsreq.bee-observer.js>`_ for the bee-observer.org target, or
+- `putsreq.beep.js <https://raw.githubusercontent.com/hiveeyes/terkin-datalogger/main/client/TTN/putsreq.beep.js>`_ for the beep.nl target
 
 ************
 Telegram Bot
 ************
 A Telegram bot for interacting with the device via LoRaWAN downlinks is
-available from the `telegram_terkin_ttn_bot.py <https://github.com/hiveeyes/terkin-datalogger/blob/master/client/TTN/telegram_terkin_ttn_bot.py>`_ file.
+available from the `telegram_terkin_ttn_bot.py <https://github.com/hiveeyes/terkin-datalogger/blob/main/client/TTN/telegram_terkin_ttn_bot.py>`_ file.
 
 Currently these two capabilities are implemented:
 
