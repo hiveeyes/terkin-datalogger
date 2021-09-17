@@ -15,3 +15,6 @@ from .pycom import pycom_nvram
 
 # Fixture to emulate Pycom's "network.LoRa" API.
 from .lora import network_lora
+
+# Fixture to emulate a Linux serial port.
+from .serial import fake_serial

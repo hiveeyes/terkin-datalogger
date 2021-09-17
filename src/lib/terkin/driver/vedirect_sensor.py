@@ -58,7 +58,7 @@ class VEDirectSensor(AbstractSensor):
         self.driver = None
 
     def start(self):
-        log.info('Initializing sensor "Victron Energy VE.Direct"')
+        log.info('Initializing sensor "Victron Energy VE.Direct" on "{}"'.format(self.device))
 
         # Initialize the hardware driver.
         try:

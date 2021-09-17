@@ -30,8 +30,8 @@ def invoke_umal():
     return bootloader
 
 
-def invoke_datalogger_pycom(caplog, settings):
-    return invoke_datalogger(caplog, settings, pycom=True)
+def invoke_datalogger_pycom(caplog, settings, after_setup=None):
+    return invoke_datalogger(caplog, settings, pycom=True, after_setup=after_setup)
 
 
 def invoke_datalogger_raspberrypi(caplog, settings):
@@ -50,10 +50,10 @@ def invoke_datalogger_raspberrypi(caplog, settings):
     return invoke_datalogger(caplog, settings, raspberrypi=True)
 
 
-def invoke_datalogger(caplog, settings, pycom=False, raspberrypi=False):
+def invoke_datalogger(caplog, settings, pycom=False, raspberrypi=False, after_setup=None):
 
     # Use a fake filesystem.
-    with FakeFS():
+    with FakeFS(additional_skip_names=["serial", "serial.serialutil", "serial.serialposix"]):
 
         # Pycom mounts the main filesystem at "/flash".
         if pycom:
@@ -90,6 +90,10 @@ def invoke_datalogger(caplog, settings, pycom=False, raspberrypi=False):
             from terkin.datalogger import TerkinDatalogger
             datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
             datalogger.setup()
+
+            if callable(after_setup):
+                after_setup(datalogger=datalogger)
+
             datalogger.duty_cycle()
 
             return datalogger
