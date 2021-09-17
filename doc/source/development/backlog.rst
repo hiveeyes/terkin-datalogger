@@ -41,7 +41,7 @@ S3
 - Doku bei
   https://community.hiveeyes.org/t/uberarbeitung-des-terkin-readme-im-repository/3152/5
   bzw.
-  https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/cpython.rst
+  https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/cpython.rst
   aktualisieren und veröffentlichen
 - Update credits
 
@@ -370,7 +370,7 @@ Prio 1.3
     - Add ``alive_timer`` based on ``Timer.Chrono()``
     - Battery low warning & shutdown: if voltage < 4.0 / < 3.7 (normal: 4.3)
     - MOSFET gate
-- [x] ESP32 Mock for testing: https://github.com/hiveeyes/terkin-datalogger/tree/master/test
+- [x] ESP32 Mock for testing: https://github.com/hiveeyes/terkin-datalogger/tree/main/test
 - [o] Scan Bluetooth neighbourhood for proximity applications
   https://docs.pycom.io/firmwareapi/pycom/network/bluetooth/
 - [o] Add Device ID as HTTP header

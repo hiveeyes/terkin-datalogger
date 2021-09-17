@@ -24,4 +24,4 @@
 
 .. Terkin
 .. _Install and configure the Terkin Datalogger development sandbox on Windows: https://community.hiveeyes.org/t/einrichten-der-micropython-firmware-unter-win10/2110
-.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/pycom-getting-started.rst
+.. _Getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/pycom-getting-started.rst

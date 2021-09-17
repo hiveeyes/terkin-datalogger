@@ -29,11 +29,11 @@ configurations based on devices like these:
 - `Hiveeyes Buerger`_
 
 
-.. _Reference hardware: https://github.com/hiveeyes/terkin-datalogger/blob/master/README-HARDWARE.md
+.. _Reference hardware: https://github.com/hiveeyes/terkin-datalogger/blob/main/README-HARDWARE.md
 
-.. _EasyHive Pycom-Shield: https://github.com/hiveeyes/terkin-datalogger/blob/master/README-HARDWARE.md#easyhive-pycom-shield
-.. _Hiverize Funktionsmuster: https://github.com/hiveeyes/terkin-datalogger/blob/master/README-HARDWARE.md#hiverize-funktionsmuster
-.. _Hiveeyes Buerger: https://github.com/hiveeyes/terkin-datalogger/blob/master/README-HARDWARE.md#hiveeyes-buerger
+.. _EasyHive Pycom-Shield: https://github.com/hiveeyes/terkin-datalogger/blob/main/README-HARDWARE.md#easyhive-pycom-shield
+.. _Hiverize Funktionsmuster: https://github.com/hiveeyes/terkin-datalogger/blob/main/README-HARDWARE.md#hiverize-funktionsmuster
+.. _Hiveeyes Buerger: https://github.com/hiveeyes/terkin-datalogger/blob/main/README-HARDWARE.md#hiveeyes-buerger
 
 
 .. _Pycom FiPy: https://pycom.io/product/fipy/

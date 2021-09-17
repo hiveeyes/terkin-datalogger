@@ -177,7 +177,7 @@ you along, please have a look at `Terkin Datalogger troubleshooting`_.
 
 
 
-.. _upgrade the Pycom firmware: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/pycom-firmware-upgrade.rst
+.. _upgrade the Pycom firmware: https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/pycom-firmware-upgrade.rst
 .. _Filesystem corruption on FiPy's FatFS in brownout conditions: https://community.hiveeyes.org/t/fipy-verliert-programm-nach-power-off-durch-leeren-lipo-vermutlich-brownout-filesystem-corruption/2057
-.. _Terkin Datalogger troubleshooting: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/troubleshooting.rst
+.. _Terkin Datalogger troubleshooting: https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/troubleshooting.rst
 .. _create an issue: https://github.com/hiveeyes/terkin-datalogger/issues/new

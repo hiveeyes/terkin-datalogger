@@ -142,4 +142,4 @@ At this point, you should take a minute to have a look at
 you through essential commands and function keys you will definitively need after
 taking the red pill.
 
-.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/master/doc/getting-started.rst
+.. _getting started with Pycom MicroPython: https://github.com/hiveeyes/terkin-datalogger/blob/main/doc/getting-started.rst
