@@ -11,4 +11,4 @@ gpiozero==1.5.1
 rpi-piusv==0.1.0
 
 # Required for LoRaWAN.
-pycryptodome==3.10.1
+pycrypto==2.6.1

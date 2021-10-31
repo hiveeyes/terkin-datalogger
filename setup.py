@@ -57,7 +57,7 @@ extras = {
     ],
     'lorawan': [
         # Required for LoRaWAN.
-        'pycryptodome==3.10.1',
+        'pycrypto==2.6.1',
     ],
 
     # Victron Energy VE.Direct text protocol driver.
