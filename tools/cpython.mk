@@ -11,16 +11,6 @@ setup-cpython:
 	# Install CircuitPython libraries.
 	$(pip) install --requirement=requirements-cpython.txt --upgrade
 
-
-	@# Define path to the "dist-packages" installation directory.
-	$(eval target_dir := ./dist-packages)
-
-	# Install driver support for Dragino LoRa Hat.
-	curl --location https://github.com/daq-tools/dragino-lorawan/archive/ttn2-terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-lorawan-ttn2-terkin/dragino
-
-	# Install updated pySX127x driver.
-	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x
-
 ## Setup prerequisites for CPython on single-board-computers (SBC)
 setup-sbc:
 
@@ -62,9 +52,22 @@ run-cpython-callgraph:
 	dot -Tsvg pycallgraph.dot > pycallgraph.svg
 
 
-## Setup prerequisites for running on Raspberry Pi / Dragino
-setup-dragino:
+## Setup Dragino/LoRaWAN libraries
+setup-dragino-lorawan:
 	-$(MAKE) setup
 	-$(MAKE) setup-cpython
+
+	@# Define path to the "dist-packages" installation directory.
+	$(eval target_dir := ./dist-packages)
+
+	# Install driver support for Dragino LoRa Hat.
+	curl --location https://github.com/daq-tools/dragino-lorawan/archive/ttn2-terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-lorawan-ttn2-terkin/dragino
+
+	# Install updated pySX127x driver.
+	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x
+
+## Setup prerequisites for running on Raspberry Pi / Dragino
+setup-dragino:
+	-$(MAKE) setup-dragino-lorawan
 	-$(MAKE) setup-sbc
 	-$(MAKE) setup-gpsd
