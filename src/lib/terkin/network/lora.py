@@ -25,6 +25,9 @@ class LoRaAdapter:
         elif platform_info.vendor == platform_info.MICROPYTHON.RaspberryPi:
             self.driver = LoRaDriverDragino(self.network_manager, self.settings)
 
+        else:
+            raise NotImplementedError("No LoRa driver implemented for this vendor or platform")
+
     def start(self):
         log.info('[LoRa] Starting LoRa Adapter')
         return self.driver.start()
@@ -217,7 +220,12 @@ class LoRaDriverDragino:
         from dragino.SX127x.board_config import BOARD
         BOARD.DIO3 = None
 
-        from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
+        # TTNv2 vs. TTNv3
+        try:
+            from dragino.dragino import Dragino, LoRaWANAuthentication, LoRaWANConfig
+        except ImportError:
+            from dragino.Config import LoRaWANAuthentication, LoRaWANConfig
+            from dragino.dragino import Dragino
 
         # Over-the-Air Activation (OTAA)
         if self.settings.get('networking.lora.activation') == 'otaa':
@@ -233,8 +241,10 @@ class LoRaDriverDragino:
                                               nwskey=self.settings.get('networking.lora.abp.network_session_key'),
                                               appskey=self.settings.get('networking.lora.abp.app_session_key'))
 
+        # FIXME: Use this configuration again.
         lora_config = LoRaWANConfig(auth=lora_auth)
-        self.dragino = Dragino(config=lora_config, logging_level=logging.DEBUG)
+
+        self.dragino = Dragino(config_filename='dragino.toml', logging_level=logging.DEBUG)
 
     def start(self):
         log.info('[LoRa] Starting join')

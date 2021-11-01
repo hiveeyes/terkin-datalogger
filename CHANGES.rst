@@ -5,6 +5,7 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+- CPython/Dragino: Upgrade to TTN V3 compatible driver
 
 
 2021-09-17 0.13.0

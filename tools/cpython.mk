@@ -61,10 +61,13 @@ setup-dragino-lorawan:
 	$(eval target_dir := ./dist-packages)
 
 	# Install driver support for Dragino LoRa Hat.
-	curl --location https://github.com/daq-tools/dragino-lorawan/archive/ttn2-terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-lorawan-ttn2-terkin/dragino
+	curl --location https://github.com/daq-tools/dragino-lorawan/archive/ttn3-terkin.tar.gz | tar -C $(target_dir) --strip-components=1 -xzvf - dragino-lorawan-ttn3-terkin/dragino
 
 	# Install updated pySX127x driver.
 	curl --location https://github.com/daq-tools/pySX127x/archive/dragino.tar.gz | tar -C $(target_dir)/dragino --strip-components=1 -xzvf - pySX127x-dragino/SX127x
+
+	# Install default `dragino.toml`
+	wget --no-clobber https://raw.githubusercontent.com/daq-tools/dragino-lorawan/ttn3-terkin/dragino.toml
 
 ## Setup prerequisites for running on Raspberry Pi / Dragino
 setup-dragino:
