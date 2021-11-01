@@ -124,17 +124,25 @@ def to_cayenne_lpp_ratrack(dataframe: DataFrame):
     channel = {}
     channel['temp']   = 10
 
-    if ('alt' or 'altitude') and ('lat' or 'longitude') and ('lon' or 'longitude') in dataframe.data_out.keys():
-        log.info('GOT GPS!')
-        frame.add_gps(0, dataframe.data_out.get('lat'), dataframe.data_out.get('lon'), dataframe.data_out.get('alt'))
+    log.debug("dataframe.data_out.keys:", dataframe.data_out.keys())
 
     if 'batterie_volt' in dataframe.data_out.keys():
         frame.add_analog_input(14, dataframe.data_out.get('batterie_volt'))
+
+    gps_alt = None
+    gps_lat = None
+    gps_lon = None
 
     for key, value in dataframe.data_out.items():
 
         name = key
 
+        if "altitude.gpsd" in name:
+            gps_alt = value
+        if "latitude.gpsd" in name:
+            gps_lat = value
+        if "longitude.gpsd" in name:
+            gps_lon = value
         if "system" in name:
             pass
         elif "i2c" in name:
@@ -155,6 +163,8 @@ def to_cayenne_lpp_ratrack(dataframe: DataFrame):
             #log.info('[CayenneLPP] Sensor type "{}" not found in CayenneLPP'.format(name))
             hu1 = 2
 
+    if gps_lon is not None and gps_lat is not None and gps_alt is not None:
+        frame.add_gps(0, gps_lat, gps_lon, gps_alt)
     return frame.bytes()
 
 
