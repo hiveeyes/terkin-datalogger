@@ -3,26 +3,47 @@ version: '3.7'
 
 services:
 
-  portainer:
-    image: portainer/portainer
-    container_name: portainer
-    restart: unless-stopped
-    ports:
-      - 9000:9000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer:/data
+  # portainer:
+  #   image: portainer/portainer
+  #   container_name: portainer
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9000:9000
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./portainer:/data
 
-  hiveeyes:
+  dev:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: debian/buster-slim
-    container_name: hiveeyes
-    restart: unless-stopped
+      dockerfile: dev.dockerfile
+    image: hiveeyes/dev:latest
     volumes:
-      - ../terkin-datalogger:/opt/terkin-datalogger
+      - ./:/src/terkin-datalogger
     stdin_open: true
     tty: true
+    expose: 
+      - "80"
 
+  build:
+    image: hiveeyes/dev:latest
+    volumes:
+      - ./:/src/terkin-datalogger
+    command: |
+      bash -c
+      "python3 setup.py clean --all &&
+      python3 setup_libraries.py bdist_wheel &&
+      python3 setup.py clean --all &&
+      python3 setup.py bdist_wheel &&
+      python3 setup.py clean --all"
+
+  daemon:
+    build:
+      context: .
+      dockerfile: daemon.dockerfile
+    volumes:
+      - ./src/settings.py:/opt/terkin-datalogger/settings.py:ro
+    image: hiveeyes/daemon:latest
+    ports: 
+      - 8080:80
 

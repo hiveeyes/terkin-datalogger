@@ -64,7 +64,6 @@ setup(name='terkin-micropython-libraries',
       test_suite='test',
       install_requires=[],
       extras_require={},
-      #tests_require=extras['test'],
       dependency_links=[
       ],
       entry_points={
