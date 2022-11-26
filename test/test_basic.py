@@ -20,31 +20,29 @@ def test_basic_esp32(caplog):
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    with FakeFS():
+    with caplog.at_level(logging.DEBUG):
 
-        with caplog.at_level(logging.DEBUG):
+        # Invoke bootloader.
+        bootloader = invoke_umal()
 
-            # Invoke bootloader.
-            bootloader = invoke_umal()
+        # Start datalogger with a single duty cycle on a fake filesystem.
+        from terkin.datalogger import TerkinDatalogger
+        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+        datalogger.setup()
+        datalogger.duty_task()
 
-            # Start datalogger with a single duty cycle on a fake filesystem.
-            from terkin.datalogger import TerkinDatalogger
-            datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-            datalogger.setup()
-            datalogger.duty_task()
+        # Capture log output.
+        captured = caplog.text
 
-            # Capture log output.
-            captured = caplog.text
-
-            # Proof it works by verifying log output.
-            assert "Starting Terkin datalogger" in captured, captured
-            assert "platform: esp32" in captured, captured
-            assert "[WiFi] Interface not enabled in settings." in captured, captured
-            assert "[LoRa] Interface not enabled in settings." in captured, captured
-            assert "[GPRS] Interface not enabled in settings." in captured, captured
-            assert "Reading 0 sensor ports" in captured, captured
-            assert "Sensor data:  {}" in captured, captured
-            assert "Telemetry status: SUCCESS (0/0)" in captured, captured
+        # Proof it works by verifying log output.
+        assert "Starting Terkin datalogger" in captured, captured
+        assert "platform: esp32" in captured, captured
+        assert "[WiFi] Interface not enabled in settings." in captured, captured
+        assert "[LoRa] Interface not enabled in settings." in captured, captured
+        assert "[GPRS] Interface not enabled in settings." in captured, captured
+        assert "Reading 0 sensor ports" in captured, captured
+        assert "Sensor data:  {}" in captured, captured
+        assert "Telemetry status: SUCCESS (0/0)" in captured, captured
 
 
 @pytest.mark.basic
@@ -87,22 +85,20 @@ def test_basic_cpython(caplog):
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    with FakeFS():
+    with caplog.at_level(logging.DEBUG):
 
-        with caplog.at_level(logging.DEBUG):
+        # Invoke bootloader.
+        bootloader = invoke_umal()
 
-            # Invoke bootloader.
-            bootloader = invoke_umal()
+        # Start datalogger with a single duty cycle on a fake filesystem.
+        from terkin.datalogger import TerkinDatalogger
+        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+        datalogger.setup()
+        datalogger.duty_task()
 
-            # Start datalogger with a single duty cycle on a fake filesystem.
-            from terkin.datalogger import TerkinDatalogger
-            datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-            datalogger.setup()
-            datalogger.duty_task()
+        # Capture log output.
+        captured = caplog.text
 
-            # Capture log output.
-            captured = caplog.text
-
-            # Proof it works by verifying log output.
-            assert "Starting Terkin datalogger" in captured, captured
-            assert "platform: linux2" in captured, captured
+        # Proof it works by verifying log output.
+        assert "Starting Terkin datalogger" in captured, captured
+        assert "platform: linux2" in captured, captured
