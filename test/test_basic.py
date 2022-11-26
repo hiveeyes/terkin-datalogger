@@ -4,9 +4,6 @@
 # License: GNU General Public License, Version 3
 import os
 import pytest
-import logging
-
-from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 
 from test.util.terkin import invoke_umal
 
@@ -47,7 +44,7 @@ def test_basic_esp32(mocker, caplog):
 @pytest.mark.basic
 @pytest.mark.pycom
 @pytest.mark.wipy
-def test_basic_wipy(mocker, caplog):
+def test_basic_wipy(mocker, fs_no_root, caplog):
 
     # Define platform.
     mocker.patch("sys.platform", "WiPy")
@@ -55,25 +52,24 @@ def test_basic_wipy(mocker, caplog):
     # Use very basic settings without networking.
     import test.settings.basic as settings
 
-    with FakeFS():
-        # Pycom mounts the main filesystem at "/flash".
-        os.mkdir('/flash')
+    # Pycom mounts the main filesystem at "/flash".
+    os.mkdir('/flash')
 
-        # Invoke bootloader.
-        bootloader = invoke_umal()
+    # Invoke bootloader.
+    bootloader = invoke_umal()
 
-        # Start datalogger with a single duty cycle on a fake filesystem.
-        from terkin.datalogger import TerkinDatalogger
-        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-        datalogger.setup()
-        datalogger.duty_task()
+    # Start datalogger with a single duty cycle on a fake filesystem.
+    from terkin.datalogger import TerkinDatalogger
+    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+    datalogger.setup()
+    datalogger.duty_task()
 
-        # Capture log output.
-        captured = caplog.text
+    # Capture log output.
+    captured = caplog.text
 
-        # Proof it works by verifying log output.
-        assert "Starting Terkin datalogger" in captured, captured
-        assert "platform: WiPy" in captured, captured
+    # Proof it works by verifying log output.
+    assert "Starting Terkin datalogger" in captured, captured
+    assert "platform: WiPy" in captured, captured
 
 
 @pytest.mark.basic
