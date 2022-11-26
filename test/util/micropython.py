@@ -6,6 +6,8 @@ import sys
 
 from unittest.mock import Mock, MagicMock
 
+from terkin_cpython.compat import monkeypatch_stdlib as monkeypatch_stdlib_vanilla
+
 
 def monkeypatch():
     monkeypatch_stdlib()
@@ -18,42 +20,12 @@ def monkeypatch():
 
 
 def monkeypatch_stdlib():
-
-    import builtins
-    builtins.const = int
-
-    sys.modules['micropython'] = Mock()
-    sys.modules['micropython'].const = int
-
-    import struct
-    sys.modules['ustruct'] = struct
-
-    import binascii
-    sys.modules['ubinascii'] = binascii
-
-    import time
-    def ticks_ms():
-        import time
-        return time.time() * 1000
-    def ticks_diff(ticks1, ticks2):
-        return abs(ticks1 - ticks2)
-    time.ticks_ms = ticks_ms
-    time.ticks_diff = ticks_diff
-    sys.modules['utime'] = time
-
-    import io
-    sys.modules['uio'] = io
-
-    import os
-    sys.modules['uos'] = os
+    monkeypatch_stdlib_vanilla()
 
     import gc
     gc.threshold = Mock()
     gc.mem_free = Mock(return_value=1000000)
     gc.mem_alloc = Mock(return_value=2000000)
-
-    # Optional convenience to improve speed.
-    gc.collect = Mock()
 
 
 def monkeypatch_exceptions():
