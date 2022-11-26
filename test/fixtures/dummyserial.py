@@ -1,5 +1,10 @@
 # https://github.com/nznobody/vedirect/blob/master/tests/conftest.py
 from __future__ import absolute_import
+
+# Patch for `pyserial==3.5` against `ImportError: cannot import name 'portNotOpenError' from 'serial.serialutil'`
+import serial.serialutil
+serial.serialutil.portNotOpenError = serial.serialutil.PortNotOpenError
+
 from pytest import fixture
 from unittest.mock import patch, Mock
 import dummyserial
