@@ -106,6 +106,7 @@ def test_redirect_urequests(httpserver_ipv4):
 
     # Get URL to be invoked.
     url = httpserver.url_for("/api/v1/data")
+    print("\nurl:", url)
 
     # Invoke HTTP request.
     import urequests
