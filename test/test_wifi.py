@@ -4,9 +4,6 @@
 # License: GNU General Public License, Version 3
 import os
 import pytest
-import logging
-
-from pyfakefs.fake_filesystem_unittest import Patcher as FakeFS
 
 from test.util.terkin import invoke_umal
 
@@ -48,7 +45,7 @@ def test_wifi_esp32(mocker, caplog):
 
 @pytest.mark.pycom
 @pytest.mark.wipy
-def test_wifi_wipy(mocker, caplog):
+def test_wifi_wipy(mocker, fs_no_root, caplog):
 
     # Define platform and start bootloader.
     mocker.patch("sys.platform", "WiPy")
@@ -59,25 +56,24 @@ def test_wifi_wipy(mocker, caplog):
 
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
-    with FakeFS():
 
-        # Pycom mounts the main filesystem at "/flash".
-        os.mkdir('/flash')
+    # Pycom mounts the main filesystem at "/flash".
+    os.mkdir('/flash')
 
-        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-        datalogger.setup()
-        datalogger.duty_task()
+    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+    datalogger.setup()
+    datalogger.duty_task()
 
-        # Capture log output.
-        captured = caplog.text
+    # Capture log output.
+    captured = caplog.text
 
-        # Proof it works by verifying log output.
-        assert "Starting Terkin datalogger" in captured, captured
-        assert "platform: WiPy" in captured, captured
+    # Proof it works by verifying log output.
+    assert "Starting Terkin datalogger" in captured, captured
+    assert "platform: WiPy" in captured, captured
 
-        assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
-        assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
-        assert "Network stack ready" in captured, captured
+    assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+    assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+    assert "Network stack ready" in captured, captured
 
 
 @pytest.mark.cpython
