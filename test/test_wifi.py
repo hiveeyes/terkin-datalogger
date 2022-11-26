@@ -24,27 +24,26 @@ def test_wifi_esp32(mocker, caplog):
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
 
-    with caplog.at_level(logging.DEBUG):
-        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-        datalogger.setup()
-        datalogger.duty_task()
+    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+    datalogger.setup()
+    datalogger.duty_task()
 
-        # Capture log output.
-        captured = caplog.text
+    # Capture log output.
+    captured = caplog.text
 
-        # Proof it works by verifying log output.
-        assert "Starting Terkin datalogger" in captured, captured
-        assert "platform: esp32" in captured, captured
+    # Proof it works by verifying log output.
+    assert "Starting Terkin datalogger" in captured, captured
+    assert "platform: esp32" in captured, captured
 
-        assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
-        assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
-        assert "Network stack ready" in captured, captured
+    assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+    assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+    assert "Network stack ready" in captured, captured
 
-        assert "[LoRa] Interface not enabled in settings" in captured, captured
-        assert "[GPRS] Interface not enabled in settings" in captured, captured
-        assert "Reading 0 sensor ports" in captured, captured
-        assert "Sensor data:  {}" in captured, captured
-        assert "Telemetry status: SUCCESS (0/0)" in captured, captured
+    assert "[LoRa] Interface not enabled in settings" in captured, captured
+    assert "[GPRS] Interface not enabled in settings" in captured, captured
+    assert "Reading 0 sensor ports" in captured, captured
+    assert "Sensor data:  {}" in captured, captured
+    assert "Telemetry status: SUCCESS (0/0)" in captured, captured
 
 
 @pytest.mark.pycom
@@ -65,21 +64,20 @@ def test_wifi_wipy(mocker, caplog):
         # Pycom mounts the main filesystem at "/flash".
         os.mkdir('/flash')
 
-        with caplog.at_level(logging.DEBUG):
-            datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-            datalogger.setup()
-            datalogger.duty_task()
+        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+        datalogger.setup()
+        datalogger.duty_task()
 
-            # Capture log output.
-            captured = caplog.text
+        # Capture log output.
+        captured = caplog.text
 
-            # Proof it works by verifying log output.
-            assert "Starting Terkin datalogger" in captured, captured
-            assert "platform: WiPy" in captured, captured
+        # Proof it works by verifying log output.
+        assert "Starting Terkin datalogger" in captured, captured
+        assert "platform: WiPy" in captured, captured
 
-            assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
-            assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
-            assert "Network stack ready" in captured, captured
+        assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+        assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+        assert "Network stack ready" in captured, captured
 
 
 @pytest.mark.cpython
@@ -95,18 +93,17 @@ def test_wifi_cpython(mocker, caplog):
     # Start datalogger with a single duty cycle on a fake filesystem.
     from terkin.datalogger import TerkinDatalogger
 
-    with caplog.at_level(logging.DEBUG):
-        datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
-        datalogger.setup()
-        datalogger.duty_task()
+    datalogger = TerkinDatalogger(settings, platform_info=bootloader.platform_info)
+    datalogger.setup()
+    datalogger.duty_task()
 
-        # Capture log output.
-        captured = caplog.text
+    # Capture log output.
+    captured = caplog.text
 
-        # Proof it works by verifying log output.
-        assert "Starting Terkin datalogger" in captured, captured
-        assert "platform: linux2" in captured, captured
+    # Proof it works by verifying log output.
+    assert "Starting Terkin datalogger" in captured, captured
+    assert "platform: linux2" in captured, captured
 
-        assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
-        assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
-        assert "Network stack ready" in captured, captured
+    assert "WiFi STA: Preparing connection to network \"FooBarWiFi\"" in captured, captured
+    assert "WiFi STA: Connected to \"FooBarWiFi\"" in captured, captured
+    assert "Network stack ready" in captured, captured
