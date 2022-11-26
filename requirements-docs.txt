@@ -1,3 +1,3 @@
-Sphinx==4.1.2
-sphinx-material==0.0.34
+Sphinx<6
+sphinx-material<1
 Pygments>=2.7.4,<3
