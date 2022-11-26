@@ -28,13 +28,6 @@ jobs:
         os: [ ubuntu-latest ] # , macos-latest, windows-latest ]
         python-version: [ "3.7", "3.8", "3.9" ]
         mosquitto-version: [ "2.0" ]
-        include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
-        #- os: macos-latest
-        #  path: ~/Library/Caches/pip
-        #- os: windows-latest
-        #  path: ~\AppData\Local\pip\Cache
 
     env:
       OS: ${{ matrix.os }}
@@ -44,7 +37,7 @@ jobs:
     steps:
 
       - name: Acquire sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Start Mosquitto
         uses: namoshek/mosquitto-github-action@v1
@@ -56,18 +49,22 @@ jobs:
           # container-name: 'mqtt'
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-
-      - name: Apply caching of dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ matrix.path }}
-          key: ${{ runner.os }}-pip-py${{ matrix.python-version }}-${{ hashFiles('setup.py', 'requirements-build.txt', 'requirements-cpython.txt', 'requirements-dev.txt', 'requirements-docs.txt', 'requirements-mpy.txt', 'requirements-release.txt', 'requirements-sbc.txt', 'requirements-terkin-agent.txt', 'requirements-test.txt') }}
-          restore-keys: |
-           ${{ runner.os }}-pip-
+          cache: 'pip'
+          cache-dependency-path: |
+            setup.py
+            requirements-build.txt
+            requirements-cpython.txt
+            requirements-dev.txt
+            requirements-docs.txt
+            requirements-mpy.txt
+            requirements-release.txt
+            requirements-sbc.txt
+            requirements-terkin-agent.txt
+            requirements-test.txt
 
       - name: Install program
         run: |
