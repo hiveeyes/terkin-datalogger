@@ -24,7 +24,7 @@ requires = [
     'click<8',
 
     # UART access.
-    'pyserial<4',
+    'pyserial==3.4',
 
     # GPSD client library.
     'gps<4',
