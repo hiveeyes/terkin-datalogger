@@ -76,6 +76,15 @@ jobs:
           make setup-tests
           make test
 
+      - name: Upload coverage results to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
   docs:
     runs-on: ubuntu-latest
 
@@ -94,9 +103,6 @@ jobs:
           cache-dependency-path: |
             setup.py
             requirements-docs.txt
-
-      - name: Setup Graphviz
-        uses: ts-graphviz/setup-graphviz@v1
 
       - name: Build documentation
         run: |

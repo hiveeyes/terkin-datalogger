@@ -1,6 +1,8 @@
 [run]
 omit =
     */dist-packages/cayennelpp/*
+    */dist-packages/dragino/*
+    */dist-packages/MicroWebSrv2/*
     */dist-packages/pysm/*
     */lib/ratrack/*
 
