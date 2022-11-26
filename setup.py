@@ -30,12 +30,12 @@ requires = [
 
     # Adafruit CircuitPython libraries.
     'Adafruit-Blinka>=5.4.0,<6',
-    'adafruit-circuitpython-busdevice==4.3.1',
-    'adafruit-circuitpython-bme280==2.4.1',
-    'adafruit-circuitpython-ads1x15==2.2.1',
-    'adafruit-circuitpython-si7021==3.2.1',
-    'adafruit-circuitpython-bmp280==3.2.1',
-    'adafruit-circuitpython-ina219==3.4.2',
+    'adafruit-circuitpython-busdevice<5',
+    'adafruit-circuitpython-bme280<2.6',
+    'adafruit-circuitpython-ads1x15<2.3',
+    'adafruit-circuitpython-si7021<3.3',
+    'adafruit-circuitpython-bmp280<3.3',
+    'adafruit-circuitpython-ina219<3.5',
 
 ]
 

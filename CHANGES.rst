@@ -9,6 +9,7 @@ in progress
 - Update runtime and sandbox dependencies
 - Add support for CPython 3.10 and 3.11
 - Update to ``pyserial==3.5``
+- Update Adafruit library versions
 
 
 2021-09-17 0.13.0
