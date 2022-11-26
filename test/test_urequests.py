@@ -98,7 +98,7 @@ def test_redirect_urequests(httpserver_ipv4):
     # Mock HTTP conversation.
     def handler(request: werkzeug.Request):
         response = werkzeug.Response(status=307)
-        response.headers.add('Location', '/api/v2/data')
+        response.headers.add('Location', 'http://127.0.0.1:8888/api/v2/data')
         return response
 
     httpserver.expect_request("/api/v1/data").respond_with_handler(handler)
