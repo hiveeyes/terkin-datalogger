@@ -11,4 +11,5 @@ gpiozero<2
 rpi-piusv==0.1.0
 
 # Required for LoRaWAN.
-pycrypto<3
+pycrypto<3; python_version<='3.10'
+pycryptodome<4; python_version>='3.11'
