@@ -5,7 +5,7 @@ setup(name='terkin-micropython-libraries',
       version='0.13.0',
       description='Terkin MicroPython runtime libraries',
       long_description='This package contains all MicroPython runtime libraries '
-                       'required to run Terkin, even on CPython.',
+                       'required to run Terkin on CPython.',
       license="MIT, Apache 2.0",
       classifiers=[
         "Programming Language :: Python",
@@ -48,7 +48,7 @@ setup(name='terkin-micropython-libraries',
 
       # find_packages only finds packages in directories with __init__.py files.
       # py_modules lists top-level single file packages to include.
-      packages=find_packages('dist-packages'),
+      packages=find_packages('.'),
       py_modules=[
           "umqtt",
           "urequests",
