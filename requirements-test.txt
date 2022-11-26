@@ -7,7 +7,7 @@ pyfakefs<6
 esp32-machine-emulator<2
 fake-rpi<1
 
-mocket<3.10
+mocket<3.9
 httpretty<1
 pytest-httpserver<2
 
