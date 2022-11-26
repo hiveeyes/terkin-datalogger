@@ -7,6 +7,7 @@ in progress
 ===========
 - Allow joining hidden WiFi APs on MicroPython devices. Thanks, @nznobody!
 - Update runtime and sandbox dependencies
+- Add support for CPython 3.10 and 3.11
 
 
 2021-09-17 0.13.0
