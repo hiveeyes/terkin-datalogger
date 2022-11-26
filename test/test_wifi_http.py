@@ -3,7 +3,6 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import json
-import mock
 import pytest
 
 import logging
@@ -15,8 +14,10 @@ logger = logging.getLogger(__name__)
 @pytest.mark.telemetry
 @pytest.mark.http
 @pytest.mark.esp32
-@mock.patch('sys.platform', 'esp32')
-def test_uplink_wifi_http(httpserver_ipv4, caplog):
+def test_uplink_wifi_http(mocker, httpserver_ipv4, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     httpserver = httpserver_ipv4
 

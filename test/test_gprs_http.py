@@ -40,14 +40,16 @@ def sim800mock():
 
 @pytest.mark.telemetry
 @pytest.mark.gprs
-@mock.patch('sys.platform', 'esp32')
-def test_uplink_gprs_http(caplog, sim800mock):
+def test_uplink_gprs_http(mocker, caplog, sim800mock):
     """
     Pretend to invoke the datalogger on a TTGO T-Call with some sensors.
 
     By intercepting the Pythings SIM800 driver, proof that the submitted
     payload is correct. Also, check log output.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     # Mix together different settings.
     from test.settings import telemetry_gprs

@@ -3,7 +3,6 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import os
-import sys
 import pytest
 import logging
 
@@ -13,10 +12,10 @@ from test.util.terkin import invoke_umal
 
 
 @pytest.mark.esp32
-def test_wifi_esp32(monkeypatch, caplog):
+def test_wifi_esp32(mocker, caplog):
 
     # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'esp32')
+    mocker.patch("sys.platform", "esp32")
     bootloader = invoke_umal()
 
     # Use very basic settings without networking.
@@ -50,10 +49,10 @@ def test_wifi_esp32(monkeypatch, caplog):
 
 @pytest.mark.pycom
 @pytest.mark.wipy
-def test_wifi_wipy(monkeypatch, caplog):
+def test_wifi_wipy(mocker, caplog):
 
     # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'WiPy')
+    mocker.patch("sys.platform", "WiPy")
     bootloader = invoke_umal()
 
     # Use very basic settings without networking.
@@ -84,10 +83,10 @@ def test_wifi_wipy(monkeypatch, caplog):
 
 
 @pytest.mark.cpython
-def test_wifi_cpython(monkeypatch, caplog):
+def test_wifi_cpython(mocker, caplog):
 
     # Define platform and start bootloader.
-    monkeypatch.setattr(sys, 'platform', 'linux2')
+    mocker.patch("sys.platform", "linux2")
     bootloader = invoke_umal()
 
     # Use very basic settings without networking.

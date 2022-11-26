@@ -21,7 +21,6 @@ To invoke these tests, just type::
     make test marker="lorawan"
 
 """
-import mock
 import pytest
 import logging
 from test.util.terkin import invoke_datalogger_pycom
@@ -31,8 +30,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
-def test_uplink_system_temperature(network_lora, caplog):
+def test_uplink_system_temperature(mocker, network_lora, caplog):
     """
     Pretend to invoke the datalogger on a LoPy4 with basic system sensors.
     Effectively, only the "system.temperature" sensor will be transmitted
@@ -42,6 +40,9 @@ def test_uplink_system_temperature(network_lora, caplog):
     submitted payload is correct by checking the raw payload value
     and decoding it through Cayenne.
     """
+
+    # Define platform and start bootloader.
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation()
@@ -83,7 +84,6 @@ def test_uplink_system_temperature(network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
 def test_uplink_environmental_sensors(mocker, network_lora, caplog):
     """
     Pretend to invoke the datalogger on a LoPy4 with environmental sensors.
@@ -92,6 +92,8 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
     submitted payload is correct by checking the raw payload value
     and decoding it through Cayenne.
     """
+
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation()
@@ -170,11 +172,12 @@ def test_uplink_environmental_sensors(mocker, network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
-def test_downlink_interval_set(network_lora, caplog):
+def test_downlink_interval_set(mocker, network_lora, caplog):
     """
     Simulate a downlink "set interval" command on LoRaWAN port 1.
     """
+
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=1, response_data=[b'\x03'])
@@ -192,11 +195,12 @@ def test_downlink_interval_set(network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
-def test_downlink_interval_reset(network_lora, caplog):
+def test_downlink_interval_reset(mocker, network_lora, caplog):
     """
     Simulate a downlink "reset interval" command on LoRaWAN port 1.
     """
+
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=1, response_data=[b'\x00'])
@@ -214,11 +218,12 @@ def test_downlink_interval_reset(network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
-def test_downlink_pause(network_lora, caplog):
+def test_downlink_pause(mocker, network_lora, caplog):
     """
     Simulate a downlink "pause" command on LoRaWAN port 2.
     """
+
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=2, response_data=[b'\x01'])
@@ -236,11 +241,12 @@ def test_downlink_pause(network_lora, caplog):
 
 @pytest.mark.telemetry
 @pytest.mark.lorawan
-@mock.patch('sys.platform', 'LoPy4')
-def test_downlink_unpause(network_lora, caplog):
+def test_downlink_unpause(mocker, network_lora, caplog):
     """
     Simulate a downlink "unpause" command on LoRaWAN port 2.
     """
+
+    mocker.patch("sys.platform", "LoPy4")
 
     # Define artificial LoRa conversation.
     network_lora.register_conversation(response_port=2, response_data=[b'\x00'])

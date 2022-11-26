@@ -16,8 +16,11 @@ logger = logging.getLogger(__name__)
 @pytest.mark.telemetry
 @pytest.mark.http
 @freeze_time("2019-03-01 22:09:52")
-@mock.patch('sys.platform', 'linux')
-def test_telemetry_http_csv(httpserver_ipv4, caplog):
+def test_telemetry_http_csv(mocker, httpserver_ipv4, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "linux")
+
     httpserver = httpserver_ipv4
 
     # Define HTTP request details.

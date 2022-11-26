@@ -47,9 +47,11 @@ def test_sensors_vedirect_sbc(mocker, caplog, fake_serial):
 
 @pytest.mark.sensors
 @pytest.mark.esp32
-@mock.patch('sys.platform', 'esp32')
 @mock.patch('sys.implementation', types.SimpleNamespace(_multiarch='micropython', name='micropython', cache_tag='micropython-1.14', version=sys.version_info))
-def test_sensors_vedirect_mpy(caplog):
+def test_sensors_vedirect_mpy(mocker, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     import vedirect
     vedirect.vedirect.MICROPYTHON = True
