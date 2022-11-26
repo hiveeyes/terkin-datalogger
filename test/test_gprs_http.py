@@ -2,7 +2,8 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import mock
+from unittest.mock import Mock
+
 import pytest
 import logging
 from test.util.terkin import invoke_datalogger
@@ -16,7 +17,7 @@ def sim800mock():
     # TODO: Make it answer to real AT-command conversations.
     import pythings_sim800
     #mock.patch('pythings_sim800.Modem.get_ip_addr', mock.Mock(return_value='192.168.111.42'))
-    pythings_sim800.Modem.get_ip_addr = mock.Mock(return_value='192.168.111.42')
+    pythings_sim800.Modem.get_ip_addr = Mock(return_value='192.168.111.42')
 
     def execute_at_command(self, command, data=None, clean_output=True):
 

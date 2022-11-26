@@ -2,9 +2,10 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
+from unittest.mock import MagicMock
+
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from mock import MagicMock
 from mocket.mocket import MocketSocket
 
 

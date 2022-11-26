@@ -19,7 +19,7 @@ def monkeypatch_cpython():
 
 def monkeypatch_stdlib():
 
-    from mock import Mock
+    from unittest.mock import Mock
 
     import time
     sys.modules['utime'] = time
@@ -83,7 +83,7 @@ def monkeypatch_exceptions():
 
 def monkeypatch_machine():
 
-    from mock import Mock
+    from unittest.mock import Mock
 
     import uuid
     import machine
@@ -124,7 +124,7 @@ def wake_reason():
 
 def monkeypatch_pycom():
 
-    from mock import MagicMock
+    from unittest.mock import MagicMock
 
     import network
     network.Bluetooth = MagicMock()
