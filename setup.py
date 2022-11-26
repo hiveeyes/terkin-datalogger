@@ -11,23 +11,23 @@ requires = [
     'terkin-micropython-libraries==0.13.0',
 
     # Mocks some HAL modules not available on CPython.
-    'mock==4.0.2',
-    'esp32-machine-emulator==1.1.3',
+    'mock<5',
+    'esp32-machine-emulator<2',
 
     # Sensors
-    'psutil<=5.8.0,<6',
+    'psutil<6',
 
     # Telemetry
-    'requests',
+    'requests<3',
 
     # Command line interface
-    'click==7.1.2',
+    'click<8',
 
     # UART access.
-    'pyserial==3.4',
+    'pyserial<4',
 
     # GPSD client library.
-    'gps==3.19',
+    'gps<4',
 
     # Adafruit CircuitPython libraries.
     'Adafruit-Blinka>=5.4.0,<6',
@@ -47,17 +47,17 @@ extras = {
         'smbus==1.1.post2',
 
         # SPI HAL module.
-        'spidev==3.4',
+        'spidev<4',
 
         # RPI USV+ Raspberry Pi - USV+
         'rpi-piusv==0.1.0',
 
         # Raspberry Pi utilities.
-        'gpiozero==1.5.1',
+        'gpiozero<2',
     ],
     'lorawan': [
         # Required for LoRaWAN.
-        'pycrypto==2.6.1',
+        'pycrypto<3',
     ],
 
     # Victron Energy VE.Direct text protocol driver.

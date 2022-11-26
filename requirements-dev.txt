@@ -1,2 +1,2 @@
-adafruit-ampy==1.0.7
-rshell==0.0.27
+adafruit-ampy<2
+rshell<1
