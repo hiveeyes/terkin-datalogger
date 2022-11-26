@@ -10,7 +10,6 @@ from terkin.model import DataFrame
 from terkin.util import to_base64, format_exception, get_device_id, urlparse, dformat, get_platform_info
 
 log = logging.getLogger(__name__)
-platform_info = get_platform_info()
 
 #log.setLevel(logging.DEBUG)
 
@@ -453,6 +452,8 @@ class TelemetryTransportLORA:
         """
 
         import binascii
+
+        platform_info = get_platform_info()
 
         if platform_info.vendor == platform_info.MICROPYTHON.Pycom:
             import pycom
