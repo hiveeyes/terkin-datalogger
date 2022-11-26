@@ -35,21 +35,30 @@ Terkin
 
   .. image:: https://github.com/hiveeyes/terkin-datalogger/workflows/Tests/badge.svg
         :target: https://github.com/hiveeyes/terkin-datalogger/actions?workflow=Tests
+        :alt: CI outcome
+
+  .. image:: https://codecov.io/gh/hiveeyes/terkin-datalogger/branch/main/graph/badge.svg
+        :target: https://codecov.io/gh/hiveeyes/terkin-datalogger
+        :alt: Test suite code coverage
 
   .. image:: https://img.shields.io/badge/MicroPython-3.4-green.svg?&color=blue
         :target: https://micropython.org
 
   .. image:: https://img.shields.io/pypi/pyversions/terkin.svg?label=CPython
         :target: https://pypi.org/project/terkin/
+        :alt: Supported Python versions
 
   .. image:: https://img.shields.io/pypi/v/terkin.svg
         :target: https://pypi.org/project/terkin/
+        :alt: Package version on PyPI
 
   .. image:: https://img.shields.io/pypi/status/terkin.svg
         :target: https://pypi.org/project/terkin/
+        :alt: Project status (alpha, beta, stable)
 
   .. image:: https://img.shields.io/pypi/l/terkin.svg
         :target: https://github.com/hiveeyes/terkin-datalogger/blob/main/LICENSE
+        :alt: Project license
 
   .. image:: https://pepy.tech/badge/terkin/month
         :target: https://pepy.tech/project/terkin

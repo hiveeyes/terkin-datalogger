@@ -21,5 +21,6 @@ settings.py
 presets.mk
 *~
 .coverage
+coverage.xml
 /spikes
 /doc/build
