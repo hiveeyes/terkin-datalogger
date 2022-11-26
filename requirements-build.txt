@@ -1,4 +1,4 @@
-pyserial<4
+pyserial==3.4
 pyparsing<3
 shell-utils<3
 esptool<3
