@@ -4,7 +4,8 @@
 *.pyc
 *.egg-info
 settings.py
-/dist-packages
+/dist-packages/*
+!/dist-packages/setup.py
 /dist-packages-mpy
 /lib-mpy*
 /dist-firmwares

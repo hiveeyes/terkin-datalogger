@@ -45,13 +45,10 @@ setup(name='terkin-micropython-libraries',
       url='https://github.com/hiveeyes/terkin-datalogger',
       keywords='sensor networks data acquisition transformation daq routing '
                'telemetry m2m iot mqtt http',
-      package_dir={
-          '': 'dist-packages',
-      },
-      packages=find_packages('dist-packages'),
 
-      # py_modules lists top-level single file packages to include.
       # find_packages only finds packages in directories with __init__.py files.
+      # py_modules lists top-level single file packages to include.
+      packages=find_packages('dist-packages'),
       py_modules=[
           "umqtt",
           "urequests",
@@ -64,7 +61,6 @@ setup(name='terkin-micropython-libraries',
       test_suite='test',
       install_requires=[],
       extras_require={},
-      #tests_require=extras['test'],
       dependency_links=[
       ],
       entry_points={

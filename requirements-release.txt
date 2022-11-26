@@ -1,3 +1,4 @@
+build
 bump2version<2
 wheel
 twine<5
