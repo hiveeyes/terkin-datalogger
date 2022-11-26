@@ -21,11 +21,14 @@ def monkeypatch_stdlib():
 
     from unittest.mock import Mock
 
-    import time
-    sys.modules['utime'] = time
-
     import builtins
     builtins.const = int
+
+    sys.modules['micropython'] = Mock()
+    sys.modules['micropython'].const = int
+
+    import time
+    sys.modules['utime'] = time
 
     import struct
     sys.modules['ustruct'] = struct
@@ -42,9 +45,6 @@ def monkeypatch_stdlib():
     time.ticks_ms = ticks_ms
     time.ticks_diff = ticks_diff
     sys.modules['utime'] = time
-
-    sys.modules['micropython'] = Mock()
-    sys.modules['micropython'].const = int
 
     import io
     sys.modules['uio'] = io

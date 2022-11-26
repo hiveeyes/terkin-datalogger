@@ -15,4 +15,3 @@ def micropython_stdlib(monkeypatch):
     monkeypatch.delitem(sys.modules, 'urllib')
     monkeypatch.delitem(sys.modules, 'base64')
     monkeypatch.delitem(sys.modules, 'shutil')
-    monkeypatch.delitem(sys.modules, 'types')
