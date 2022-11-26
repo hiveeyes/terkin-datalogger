@@ -4,7 +4,7 @@
 # License: GNU General Public License, Version 3
 import sys
 
-from mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock
 
 
 def monkeypatch():

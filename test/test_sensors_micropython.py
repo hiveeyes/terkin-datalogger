@@ -2,7 +2,8 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import mock
+from unittest.mock import Mock
+
 import pytest
 from test.util.terkin import invoke_datalogger_pycom
 
@@ -21,7 +22,7 @@ def test_sensors(mocker, caplog):
     from test.settings import sensors_micropython as sensor_settings
 
     # Pretend the HX711 to be ready.
-    mocker.patch('terkin.lib.hx711_heisenberg.HX711Heisenberg.is_ready', mock.Mock(return_value=True))
+    mocker.patch('terkin.lib.hx711_heisenberg.HX711Heisenberg.is_ready', Mock(return_value=True))
 
     # Invoke datalogger for a single duty cycle.
     datalogger = invoke_datalogger_pycom(caplog, settings=sensor_settings)

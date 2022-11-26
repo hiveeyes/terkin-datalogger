@@ -2,21 +2,21 @@
 # (c) 2020 Richard Pobering <richard@hiveeyes.org>
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import mock
 import pytest
 from test.util.terkin import invoke_datalogger_raspberrypi
 
 
 @pytest.mark.sensors
 @pytest.mark.sbc
-@mock.patch('adafruit_blinka.agnostic.board_id', "RASPBERRY_PI_4B")
-@mock.patch('adafruit_blinka.agnostic.chip_id', "BCM2XXX")
-@mock.patch('adafruit_platformdetect.board.Board.any_raspberry_pi_40_pin', True)
-@mock.patch('adafruit_platformdetect.board.Board.any_embedded_linux', True)
 def test_sensors_sbc(mocker, caplog):
     """
     Check the whole sensor machinery.
     """
+
+    mocker.patch('adafruit_blinka.agnostic.board_id', "RASPBERRY_PI_4B")
+    mocker.patch('adafruit_blinka.agnostic.chip_id', "BCM2XXX")
+    mocker.patch('adafruit_platformdetect.board.Board.any_raspberry_pi_40_pin', True)
+    mocker.patch('adafruit_platformdetect.board.Board.any_embedded_linux', True)
 
     # Acquire minimal settings.
     from test.settings import sensors_sbc as sensor_settings

@@ -5,7 +5,6 @@
 # License: GNU General Public License, Version 3
 import sys
 import types
-import mock
 import pytest
 from test.util.terkin import invoke_datalogger_raspberrypi, invoke_datalogger_pycom
 
@@ -15,14 +14,15 @@ MPPT_DATA = '\r\nV\t12800\r\nVPV\t3350\r\nPPV\t130\r\nI\t15000\r\nIL\t1500\r\nLO
 
 @pytest.mark.sensors
 @pytest.mark.sbc
-@mock.patch('adafruit_blinka.agnostic.board_id', "RASPBERRY_PI_4B")
-@mock.patch('adafruit_blinka.agnostic.chip_id', "BCM2XXX")
-@mock.patch('adafruit_platformdetect.board.Board.any_raspberry_pi_40_pin', True)
-@mock.patch('adafruit_platformdetect.board.Board.any_embedded_linux', True)
 def test_sensors_vedirect_sbc(mocker, caplog, fake_serial):
     """
     Check the whole sensor machinery.
     """
+
+    mocker.patch('adafruit_blinka.agnostic.board_id', "RASPBERRY_PI_4B")
+    mocker.patch('adafruit_blinka.agnostic.chip_id', "BCM2XXX")
+    mocker.patch('adafruit_platformdetect.board.Board.any_raspberry_pi_40_pin', True)
+    mocker.patch('adafruit_platformdetect.board.Board.any_embedded_linux', True)
 
     fake_serial._waiting_data = MPPT_DATA
 
@@ -47,8 +47,11 @@ def test_sensors_vedirect_sbc(mocker, caplog, fake_serial):
 
 @pytest.mark.sensors
 @pytest.mark.esp32
-@mock.patch('sys.implementation', types.SimpleNamespace(_multiarch='micropython', name='micropython', cache_tag='micropython-1.14', version=sys.version_info))
 def test_sensors_vedirect_mpy(mocker, caplog):
+
+    mocker.patch('sys.implementation',
+                types.SimpleNamespace(_multiarch='micropython', name='micropython', cache_tag='micropython-1.14',
+                                      version=sys.version_info))
 
     # Define platform.
     mocker.patch("sys.platform", "esp32")

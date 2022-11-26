@@ -11,7 +11,6 @@ requires = [
     'terkin-micropython-libraries==0.13.0',
 
     # Mocks some HAL modules not available on CPython.
-    'mock<5',
     'esp32-machine-emulator<2',
 
     # Sensors

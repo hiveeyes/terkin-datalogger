@@ -1,5 +1,4 @@
 # Runtime
-mock<5
 psutil<6
 
 # Mocks some HAL modules not available on CPython.

@@ -6,7 +6,6 @@ import io
 import logging
 from test.util.terkin import invoke_datalogger
 
-import mock
 import pytest
 from freezegun import freeze_time
 
