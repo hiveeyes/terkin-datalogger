@@ -5,6 +5,10 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+
+
+2022-11-26 0.14.0
+=================
 - Allow joining hidden WiFi APs on MicroPython devices. Thanks, @nznobody!
 - Update runtime and sandbox dependencies
 - Add support for CPython 3.10 and 3.11
