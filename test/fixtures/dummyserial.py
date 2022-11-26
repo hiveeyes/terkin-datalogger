@@ -1,4 +1,5 @@
 # https://github.com/nznobody/vedirect/blob/master/tests/conftest.py
+from __future__ import absolute_import
 from pytest import fixture
 from unittest.mock import patch, Mock
 import dummyserial

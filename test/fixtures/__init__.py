@@ -17,4 +17,4 @@ from .pycom import pycom_nvram
 from .lora import network_lora
 
 # Fixture to emulate a Linux serial port.
-from .serial import fake_serial
+from .dummyserial import fake_serial
