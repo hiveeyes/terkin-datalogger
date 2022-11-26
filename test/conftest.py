@@ -2,11 +2,11 @@
 import pytest
 from pyfakefs.fake_filesystem_unittest import Patcher
 
-from test.util.terkin import monkeypatch_terkin
-monkeypatch_terkin()
-
 from test.util.micropython import monkeypatch
 monkeypatch()
+
+from test.util.terkin import monkeypatch_terkin
+monkeypatch_terkin()
 
 from test.util.adafruit import monkeypatch
 monkeypatch()
