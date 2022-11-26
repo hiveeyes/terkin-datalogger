@@ -42,20 +42,18 @@ Terkin
   .. image:: https://img.shields.io/pypi/pyversions/terkin.svg?label=CPython
         :target: https://pypi.org/project/terkin/
 
-  .. image:: https://img.shields.io/github/tag/hiveeyes/terkin-datalogger.svg
-        :target: https://github.com/hiveeyes/terkin-datalogger
-
-  .. image:: https://img.shields.io/pypi/status/terkin.svg
+  .. image:: https://img.shields.io/pypi/v/terkin.svg
         :target: https://pypi.org/project/terkin/
 
-  .. image:: https://img.shields.io/pypi/v/terkin.svg
+  .. image:: https://img.shields.io/pypi/status/terkin.svg
         :target: https://pypi.org/project/terkin/
 
   .. image:: https://img.shields.io/pypi/l/terkin.svg
         :target: https://github.com/hiveeyes/terkin-datalogger/blob/main/LICENSE
 
-  .. image:: https://img.shields.io/pypi/dm/terkin.svg
-        :target: https://pypi.org/project/terkin/
+  .. image:: https://pepy.tech/badge/terkin/month
+        :target: https://pepy.tech/project/terkin
+        :alt: PyPI downloads per month
 
 ----
 
