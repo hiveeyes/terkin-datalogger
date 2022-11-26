@@ -147,14 +147,14 @@ firmwares: prepare-release
 	$(eval imagefile := dist/firmware/FiPy-1.20.2.rc6-$(version)-annapurna.tar.gz)
 	$(github-release) upload --user hiveeyes --repo terkin-datalogger --tag $(version) --name $(notdir $(imagefile)) --file $(imagefile) --replace
 
-sdist:
-	@$(python3) setup.py sdist
-	@$(python3) setup_libraries.py bdist_wheel
+pypi-build:
+	@$(python3) -m build
+	@$(python3) -m build --outdir=dist dist-packages
 
 pypi-upload: install-releasetools
 	twine upload --skip-existing --verbose dist/*.tar.gz dist/*.whl
 
 ## Release this piece of software
-release: bumpversion push sdist pypi-upload
+release: bumpversion push pypi-build pypi-upload
 	@# Synopsis:
 	@#   "make release bump=minor"   (major,minor,patch)
