@@ -9,11 +9,13 @@ from test.util.terkin import invoke_datalogger_pycom
 
 @pytest.mark.sensors
 @pytest.mark.micropython
-@mock.patch('sys.platform', 'FiPy')
 def test_sensors(mocker, caplog):
     """
     Check the whole sensor machinery.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "FiPy")
 
     # Acquire minimal settings.
     from test.settings import sensors_micropython as sensor_settings

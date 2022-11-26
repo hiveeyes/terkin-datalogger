@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # (c) 2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
-import mock
 import pytest
 import logging
 
@@ -10,8 +9,10 @@ from test.util.terkin import invoke_umal
 
 @pytest.mark.basic
 @pytest.mark.esp32
-@mock.patch('sys.platform', 'esp32')
-def test_rtc_ntp_success(caplog):
+def test_rtc_ntp_success(mocker, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     # Use very basic settings without networking.
     import test.settings.rtc_ntp as settings

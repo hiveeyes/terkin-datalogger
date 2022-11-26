@@ -3,7 +3,6 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import os
-import mock
 import pytest
 import logging
 
@@ -14,8 +13,10 @@ from test.util.terkin import invoke_umal
 
 @pytest.mark.basic
 @pytest.mark.esp32
-@mock.patch('sys.platform', 'esp32')
-def test_basic_esp32(caplog):
+def test_basic_esp32(mocker, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     # Use very basic settings without networking.
     import test.settings.basic as settings
@@ -48,8 +49,10 @@ def test_basic_esp32(caplog):
 @pytest.mark.basic
 @pytest.mark.pycom
 @pytest.mark.wipy
-@mock.patch('sys.platform', 'WiPy')
-def test_basic_wipy(caplog):
+def test_basic_wipy(mocker, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "WiPy")
 
     # Use very basic settings without networking.
     import test.settings.basic as settings
@@ -79,8 +82,10 @@ def test_basic_wipy(caplog):
 
 @pytest.mark.basic
 @pytest.mark.cpython
-@mock.patch('sys.platform', 'linux2')
-def test_basic_cpython(caplog):
+def test_basic_cpython(mocker, caplog):
+
+    # Define platform.
+    mocker.patch("sys.platform", "linux2")
 
     # Use very basic settings without networking.
     import test.settings.basic as settings

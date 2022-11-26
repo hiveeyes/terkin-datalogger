@@ -5,7 +5,6 @@
 import json
 import time
 
-import mock
 import pytest
 
 import logging
@@ -19,8 +18,10 @@ logger = logging.getLogger(__name__)
 @pytest.mark.mqtt
 @pytest.mark.docker
 @pytest.mark.esp32
-@mock.patch('sys.platform', 'esp32')
-def test_uplink_wifi_mqtt(mosquitto, caplog, capmqtt):
+def test_uplink_wifi_mqtt(mocker, mosquitto, caplog, capmqtt):
+
+    # Define platform.
+    mocker.patch("sys.platform", "esp32")
 
     # Acquire settings with MQTT telemetry.
     import test.settings.telemetry_mqtt as settings

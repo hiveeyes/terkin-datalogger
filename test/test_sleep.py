@@ -3,17 +3,18 @@
 # (c) 2020 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU General Public License, Version 3
 import re
-import mock
 import pytest
 from test.util.terkin import invoke_datalogger_pycom
 
 
 @pytest.mark.sleep
-@mock.patch('sys.platform', 'WiPy')
 def test_timesleep(mocker, caplog):
     """
     Check normal "time.sleep()" behavior without any machine.sleep methods.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "WiPy")
 
     # Acquire minimal settings.
     from test.settings import sleep as sleep_settings
@@ -39,11 +40,13 @@ def test_timesleep(mocker, caplog):
 
 
 @pytest.mark.sleep
-@mock.patch('sys.platform', 'WiPy')
 def test_lightsleep(mocker, caplog):
     """
     Check lightsleep behavior.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "WiPy")
 
     # Acquire minimal settings.
     from test.settings import sleep as sleep_settings
@@ -72,11 +75,13 @@ def test_lightsleep(mocker, caplog):
 
 
 @pytest.mark.sleep
-@mock.patch('sys.platform', 'WiPy')
 def test_deepsleep(mocker, caplog):
     """
     Check deepsleep behavior.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "WiPy")
 
     # Acquire minimal settings.
     from test.settings import sleep as sleep_settings
@@ -105,7 +110,6 @@ def test_deepsleep(mocker, caplog):
 
 
 @pytest.mark.sleep
-@mock.patch('sys.platform', 'WiPy')
 def test_maintenance(mocker, caplog):
     """
     Check maintenance mode.
@@ -115,6 +119,9 @@ def test_maintenance(mocker, caplog):
     order to keep the appliance "online", even when deepsleep mode
     is enabled through the configuration.
     """
+
+    # Define platform.
+    mocker.patch("sys.platform", "WiPy")
 
     # Acquire minimal settings.
     from test.settings import sleep as sleep_settings
