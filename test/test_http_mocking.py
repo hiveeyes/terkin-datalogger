@@ -15,6 +15,11 @@ from urllib.parse import urlparse, splitport
 from pytest_httpserver.pytest_plugin import Plugin, PluginHTTPServer
 
 
+pytest.skip(reason="Those test cases mess up subsequent test cases since Mocket 3.10. "
+                   "Because they are not needed to validate Terkin's functionality, "
+                   "they will be skipped.", allow_module_level=True)
+
+
 @mocketize
 @pytest.mark.httpmock
 def test_mocket_cpython_requests():
