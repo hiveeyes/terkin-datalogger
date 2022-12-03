@@ -8,7 +8,11 @@ pyfakefs<6
 esp32-machine-emulator<2
 fake-rpi<1
 
-mocket>=3.10.9,<3.11
+# Use a modern version of Mocket in general, but downgrade on Python 3.11.
+# https://github.com/mindflayer/python-mocket/pull/181
+mocket>=3.10.9,<3.11; python_version<"3.11"
+mocket<3.9; python_version>="3.11"
+
 httpretty<1
 pytest-httpserver<2
 
