@@ -13,9 +13,12 @@
 #
 # Have fun!
 
-
 print('[main.py] INFO: Loading settings')
-import settings
+try:
+    import settings
+except ImportError:
+    print('[main.py] INFO: No python settings detected')
+    settings = None
 
 print('[main.py] INFO: Starting logging')
 from terkin import logging

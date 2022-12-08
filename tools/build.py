@@ -111,6 +111,7 @@ class MicroPythonBuilder:
         self.verbose = verbose
 
         self.pycom_frozen_path = f'{self.micropython_path}/esp32/frozen/Custom'
+        self.pycom_frozen_base_path = f'{self.micropython_path}/esp32/frozen/Base'
 
     def build_genuine(self, board, manifest):
 
@@ -169,27 +170,27 @@ class MicroPythonBuilder:
 
     def purge_frozen(self):
 
-        frozen_path = self.pycom_frozen_path
+        for frozen_path in (self.pycom_frozen_path, self.pycom_frozen_base_path):
+            if not os.path.exists(frozen_path):
+                click.secho(f'{red("ERROR")}: Frozen path {red(frozen_path)} does not exist.')
+                sys.exit(2)
 
-        if not os.path.exists(frozen_path):
-            click.secho(f'{red("ERROR")}: Frozen path {red(frozen_path)} does not exist.')
-            sys.exit(2)
-
-        click.secho(f'Purging contents of frozen path {frozen_path}.')
-        pattern = f'{frozen_path}/*'
-        if glob(pattern):
-            shell(f'rm -r {frozen_path}/*')
+            click.secho(f'Purging contents of frozen path {frozen_path}.')
+            pattern = f'{frozen_path}/*'
+            if glob(pattern):
+                shell(f'rm -r {frozen_path}/*')
 
     def sync_frozen(self):
         frozen_path = self.pycom_frozen_path
+        frozen_base_path = self.pycom_frozen_base_path
 
         click.secho(f'Copying sources from {yellow(str(self.sources))} to frozen path {frozen_path}.')
         shell(f'rsync -auv --delete --exclude=__pycache__ --exclude=*.egg-info --exclude=terkin_cpython --exclude=ratrack {" ".join(self.sources)} {frozen_path}')
 
-        click.secho(f'Copying main files from {yellow(str(self.main_files))} to frozen path {frozen_path}.')
+        click.secho(f'Copying main files from {yellow(str(self.main_files))} to frozen path {frozen_base_path}.')
         for main_file in self.main_files:
             filename = os.path.basename(main_file)
-            target_file = os.path.join(frozen_path, '_' + filename)
+            target_file = os.path.join(frozen_base_path, '_' + filename)
             shell(f'cp {main_file} {target_file}')
 
         # MicroWebSrv2 is too large to be frozen into the firmware, so remove it.
