@@ -23,6 +23,8 @@ def patch_system():
     log.info('Setting up CPython compatibility layer')
     from terkin_cpython.compat import monkeypatch_cpython
     monkeypatch_cpython()
+    from terkin_cpython.compat import monkeypatch_sx127x
+    monkeypatch_sx127x()
 
 
 def setup_logging():

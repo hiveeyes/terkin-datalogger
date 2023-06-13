@@ -144,3 +144,16 @@ def monkeypatch_logging():
         self.log(logging.ERROR, msg + "\n" + buf.getvalue(), *args)
 
     logging.Logger.exc = exc
+
+
+def monkeypatch_sx127x():
+    from unittest.mock import MagicMock
+    sys.modules["dragino.SX127x.board_config"] = MagicMock()
+    import dragino
+    from dragino.SX127x.LoRa import LoRa as orig
+    orig.get_freq = lambda x: 5.
+    def set_mode(self, mode):
+        self.mode = 0x80
+    orig.set_mode = set_mode
+    orig.get_agc_auto_on = lambda x: 1
+    dragino.SX127x.LoRa.LoRa = orig
