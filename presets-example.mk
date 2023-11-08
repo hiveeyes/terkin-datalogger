@@ -8,6 +8,9 @@
 # The serial port the device is attached to.
 MCU_PORT ?= /dev/ttyS3
 
+# Use "FiPy", "WiPy" or "LoPy" here for the appropriate PyCom device you are using.
+MCU_DEVICE ?= FiPy
+
 # Whether to cross-compile to bytecode.
 MPY_CROSS ?= true
 
