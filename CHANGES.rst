@@ -5,6 +5,8 @@ Terkin Datalogger CHANGES
 
 in progress
 ===========
+- CPython/Dragino: Upgrade to TTN V3 compatible driver
+- CPython/Dragino: Improve Ratrack LoRaWAN serializer
 
 
 2022-11-26 0.14.0
