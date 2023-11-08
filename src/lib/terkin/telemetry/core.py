@@ -323,6 +323,14 @@ class TelemetryClient:
         # Resolve handler by URI.
         handler = self.get_handler(real_uri)
 
+        # Add timestamp to outbound telemetry message.
+        # TODO: Using the timestamp of the first reading is a bit vague.
+        #       How can it be improved?
+        try:
+            dataframe.data_out["timestamp"] = dataframe.readings[0].timestamp
+        except IndexError:
+            pass
+
         # Prepare dataframe for egress.
         dataframe.payload_out = dataframe.data_out
         if serialize:
